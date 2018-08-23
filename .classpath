@@ -17,13 +17,13 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry excluding="org/warp/picalculator/gui/graphicengine/cpu/CPUEngine|org/warp/picalculator/gui/graphicengine/cpu/CPURenderer|org/warp/picalculator/gui/graphicengine/cpu/SwingWindow|org/warp/picalculator/gui/graphicengine/gpu/*|org/warp/picalculator/gui/graphicengine/headless24bit/*|org/warp/picalculator/gui/graphicengine/headless256/*|org/warp/picalculator/gui/graphicengine/headless8/*|org/warp/picalculator/gui/graphicengine/framebuffer/*" kind="src" output="target/classes" path="src/main/java">
+	<classpathentry excluding="veryverylongandparticularpath/abcd" kind="src" output="target/classes" path="src/main/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry excluding="org/warp/picalculator/gui/graphicengine/cpu/CPUEngine|org/warp/picalculator/gui/graphicengine/cpu/CPURenderer|org/warp/picalculator/gui/graphicengine/cpu/SwingWindow|org/warp/picalculator/gui/graphicengine/gpu/*|org/warp/picalculator/gui/graphicengine/headless24bit/*|org/warp/picalculator/gui/graphicengine/headless256/*|org/warp/picalculator/gui/graphicengine/headless8/*|org/warp/picalculator/gui/graphicengine/framebuffer/*" kind="src" output="target/classes" path="src/main/rules">
+	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/rules">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="optional" value="true"/>
@@ -34,7 +34,7 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry excluding="org/warp/picalculator/gui/graphicengine/cpu/CPUEngine|org/warp/picalculator/gui/graphicengine/cpu/CPURenderer|org/warp/picalculator/gui/graphicengine/cpu/SwingWindow|org/warp/picalculator/gui/graphicengine/gpu/*|org/warp/picalculator/gui/graphicengine/headless24bit/*|org/warp/picalculator/gui/graphicengine/headless256/*|org/warp/picalculator/gui/graphicengine/headless8/*|org/warp/picalculator/gui/graphicengine/framebuffer/*" kind="src" output="target/classes" path="src/js-specific/java">
+	<classpathentry excluding="veryverylongandparticularpath/abcd" kind="src" output="target/classes" path="src/jar-specific/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
