@@ -319,13 +319,7 @@ public class Headless24bitEngine implements org.warp.picalculator.gui.graphiceng
 
 	@Override
 	public boolean isSupported() {
-		if (
-				StaticVars.startupArguments.isMSDOSModeEnabled()
-				|| (
-						StaticVars.startupArguments.isEngineForced()
-						&& StaticVars.startupArguments.isHeadless24bitEngineForced() == false
-					)
-			) {
+		if (StaticVars.startupArguments.isMSDOSModeEnabled() || (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isHeadless24bitEngineForced() == false)) {
 			return false;
 		}
 		return true;

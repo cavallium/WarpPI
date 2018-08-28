@@ -10,13 +10,13 @@ import org.warp.picalculator.gui.screens.Screen;
 public class PIHardwareTouchDevice implements HardwareTouchDevice {
 
 	private final boolean invertXY, invertX, invertY;
-	
+
 	public PIHardwareTouchDevice(boolean invertXY, boolean invertX, boolean invertY) {
 		this.invertXY = invertXY;
 		this.invertX = invertX;
 		this.invertY = invertY;
 	}
-	
+
 	@Override
 	public boolean onTouchStart(TouchStartEvent e) {
 		final Screen scr = HardwareDevice.INSTANCE.getDisplayManager().getScreen();
@@ -93,12 +93,13 @@ public class PIHardwareTouchDevice implements HardwareTouchDevice {
 	}
 
 	@Override
-	public TouchPoint makePoint(long id, float x, float y, int screenWidth, int screenHeight, float radiusX, float radiusY, float force, float rotationAngle) {
+	public TouchPoint makePoint(long id, float x, float y, int screenWidth, int screenHeight, float radiusX,
+			float radiusY, float force, float rotationAngle) {
 		if (getInvertedXY()) {
 			double oldX = x;
 			double oldY = y;
-			x = (float) (oldY * ((double)screenWidth)/((double)screenHeight));
-			y = (float) (oldX * ((double)screenHeight)/((double)screenWidth));
+			x = (float) (oldY * ((double) screenWidth) / ((double) screenHeight));
+			y = (float) (oldX * ((double) screenHeight) / ((double) screenWidth));
 		}
 		if (getInvertedX()) {
 			x = screenWidth - x;

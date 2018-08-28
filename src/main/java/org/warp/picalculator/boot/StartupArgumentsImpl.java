@@ -5,7 +5,7 @@ public class StartupArgumentsImpl implements StartupArguments {
 	StartupArgumentsImpl() {
 		isRaspberryModeAllowed = true;
 	}
-	
+
 	private boolean isRaspberryModeAllowed;
 	private boolean isZoomed;
 	private boolean isHeadlessEngineForced;
@@ -34,10 +34,7 @@ public class StartupArgumentsImpl implements StartupArguments {
 
 	@Override
 	public boolean isHeadlessEngineForced() {
-		return isHeadlessEngineForced ||
-				isHeadless8EngineForced ||
-				isHeadless256EngineForced ||
-				isHeadless24bitEngineForced;
+		return isHeadlessEngineForced || isHeadless8EngineForced || isHeadless256EngineForced || isHeadless24bitEngineForced;
 	}
 
 	@Override
@@ -102,16 +99,9 @@ public class StartupArgumentsImpl implements StartupArguments {
 
 	@Override
 	public boolean isEngineForced() {
-		return isCPUEngineForced
-				|| isFrameBufferEngineForced
-				|| isGPUEngineForced
-				|| isHeadless24bitEngineForced
-				|| isHeadless256EngineForced
-				|| isHeadless8EngineForced
-				|| isHTMLEngineForced
-				|| isNoGUIEngineForced;
+		return isCPUEngineForced || isFrameBufferEngineForced || isGPUEngineForced || isHeadless24bitEngineForced || isHeadless256EngineForced || isHeadless8EngineForced || isHTMLEngineForced || isNoGUIEngineForced;
 	}
-	
+
 	void setRaspberryModeAllowed(boolean isRaspberryModeAllowed) {
 		this.isRaspberryModeAllowed = isRaspberryModeAllowed;
 	}

@@ -12,7 +12,7 @@ public class DSemaphore extends Semaphore {
 		super(arg0);
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public DSemaphore(int permits, boolean fair) {
 		super(permits, fair);
 		// TODO Auto-generated constructor stub

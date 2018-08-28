@@ -72,7 +72,7 @@ public final class DisplayManager implements RenderingLoop {
 		displayDebugString = "";
 		errorMessages = new ObjectArrayList<>();
 	}
-	
+
 	public void initialize() {
 		monitor.initialize();
 
@@ -97,7 +97,7 @@ public final class DisplayManager implements RenderingLoop {
 		}
 		monitor.shutdown();
 	}
-	
+
 	/*
 	 * private void load_skin() {
 	 * try {

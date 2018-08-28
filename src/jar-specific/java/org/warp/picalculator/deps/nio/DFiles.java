@@ -11,7 +11,7 @@ public class DFiles {
 
 	public static boolean deleteIfExists(DPath path) throws IOException {
 		return Files.deleteIfExists(path.toPath());
-		
+
 	}
 
 	public static boolean exists(DPath f) {

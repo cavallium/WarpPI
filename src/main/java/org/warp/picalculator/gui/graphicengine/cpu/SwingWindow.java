@@ -121,14 +121,16 @@ public class SwingWindow extends JFrame {
 				TouchMoveEvent tse = new TouchMoveEvent(changedTouches, touches);
 				HardwareDevice.INSTANCE.getInputManager().getTouchDevice().onTouchMove(tse);
 			}
+
 			@Override
-			public void mouseMoved(MouseEvent e) {
-			}
+			public void mouseMoved(MouseEvent e) {}
 		});
 		addMouseListener(new MouseListener() {
-			@Override public void mouseClicked(MouseEvent e) {
-			}
-			@Override public void mousePressed(MouseEvent e) {
+			@Override
+			public void mouseClicked(MouseEvent e) {}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
 				final Insets wp = SwingWindow.this.getInsets();
 				TouchPoint p = new TouchPoint(0, e.getX() - wp.left, e.getY() - wp.top, 5, 5, 1, 0);
 				ObjectArrayList<TouchPoint> touches = new ObjectArrayList<>();
@@ -138,7 +140,9 @@ public class SwingWindow extends JFrame {
 				TouchStartEvent tse = new TouchStartEvent(changedTouches, touches);
 				HardwareDevice.INSTANCE.getInputManager().getTouchDevice().onTouchStart(tse);
 			}
-			@Override public void mouseReleased(MouseEvent e) {
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
 				final Insets wp = SwingWindow.this.getInsets();
 				TouchPoint p = new TouchPoint(0, e.getX() - wp.left, e.getY() - wp.top, 5, 5, 1, 0);
 				ObjectArrayList<TouchPoint> touches = new ObjectArrayList<>();
@@ -147,10 +151,12 @@ public class SwingWindow extends JFrame {
 				TouchEndEvent tse = new TouchEndEvent(changedTouches, touches);
 				HardwareDevice.INSTANCE.getInputManager().getTouchDevice().onTouchEnd(tse);
 			}
-			@Override public void mouseEntered(MouseEvent e) {
-			}
-			@Override public void mouseExited(MouseEvent e) {
-			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {}
+
+			@Override
+			public void mouseExited(MouseEvent e) {}
 		});
 	}
 

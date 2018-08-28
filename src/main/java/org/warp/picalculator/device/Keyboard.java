@@ -108,7 +108,7 @@ public class Keyboard {
 		PlatformUtils.setDaemon(kt);
 		kt.start();
 	}
-	
+
 	public static void debugKeyPressed(int keyCode) {
 		switch (keyCode) {
 			case KeyEvent.VK_ESCAPE:

@@ -12,7 +12,7 @@ public class TouchMoveEvent implements TouchEvent {
 		this.changedTouches = changedTouches;
 		this.touches = touches;
 	}
-	
+
 	@Override
 	public List<TouchPoint> getChangedTouches() {
 		return changedTouches;

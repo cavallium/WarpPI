@@ -95,8 +95,8 @@ public class NormalInputContainer extends InputContainer {
 			case MathematicalSymbols.PARENTHESIS_CLOSE:
 				moveRight();
 			case MathematicalSymbols.DIVISION:
-				@SuppressWarnings("unchecked") final
-				BlockReference<BlockDivision> ref = (BlockReference<BlockDivision>) getSelectedBlock();
+				@SuppressWarnings("unchecked")
+				final BlockReference<BlockDivision> ref = (BlockReference<BlockDivision>) getSelectedBlock();
 				final BlockContainer parentContainer = ref.getContainer();
 				BlockReference<?> currentBlock = ref;
 				boolean groupedBefore = false;

@@ -67,7 +67,8 @@ public class Utils {
 
 	public static boolean isInArray(char ch, char[] a) {
 		for (final char c : a) {
-			if (c == ch) return true;
+			if (c == ch)
+				return true;
 		}
 		return false;
 	}
@@ -456,7 +457,6 @@ public class Utils {
 		}
 	}
 
-	
 	public static byte[] convertStreamToByteArray(InputStream stream, long size) throws IOException {
 
 		// check to ensure that file size is not larger than Integer.MAX_VALUE.
@@ -637,10 +637,11 @@ public class Utils {
 		} // for
 		System.out.println("============");
 	}
-	
+
 	public static boolean isRunningOnRaspberry() {
-		return CacheUtils.get("isRunningOnRaspberry", 24*60*60*1000, () -> {
-			if (PlatformUtils.isJavascript) return false;
+		return CacheUtils.get("isRunningOnRaspberry", 24 * 60 * 60 * 1000, () -> {
+			if (PlatformUtils.isJavascript)
+				return false;
 			try {
 				// Check if it's a raspberry using pi4j
 				return DGpio.getBoardType() != DGpio.UnknownBoardType;
@@ -649,13 +650,11 @@ public class Utils {
 				if (PlatformUtils.osName.equals("Linux")) {
 					try {
 						final DPath osRelease = DPaths.get("/etc", "os-release");
-						return DFiles.readAllLines(osRelease).stream()
-						.map(String::toLowerCase)
-						.anyMatch(line -> line.contains("raspbian") && line.contains("name"));
+						return DFiles.readAllLines(osRelease).stream().map(String::toLowerCase).anyMatch(line -> line.contains("raspbian") && line.contains("name"));
 					} catch (IOException readException) {
 						return false;
 					}
-					
+
 				} else {
 					return false;
 				}

@@ -33,7 +33,7 @@ public class PICalculator {
 		PlatformUtils.setThreadName(Thread.currentThread(), "Main thread");
 		DisplayManager dm = new DisplayManager(disp, hud, screen, "WarpPI Calculator by Andrea Cavalli (@Cavallium)");
 		Keyboard k = new Keyboard();
-		HardwareTouchDevice touch = new PIHardwareTouchDevice(false,false,false);
+		HardwareTouchDevice touch = new PIHardwareTouchDevice(false, false, false);
 		InputManager im = new InputManager(k, touch);
 		HardwareDevice hardwareDevice = new HardwareDevice(dm, im);
 		hardwareDevice.setup(() -> {
@@ -77,7 +77,7 @@ public class PICalculator {
 
 	private void checkDeviceType() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void beforeShutdown() {

@@ -11,11 +11,11 @@ public class CacheUtils {
 
 	private static final Map<String, Object> cache = Collections.synchronizedMap(new HashMap<>());
 	private static final Map<String, Long> time = Collections.synchronizedMap(new HashMap<>());
-	
+
 	@SuppressWarnings("unchecked")
 	public static <T> T get(String entryName, long expireDelta, Supplier<T> function) {
 		refreshEntry(entryName);
-		synchronized(cache) {
+		synchronized (cache) {
 			if (cache.containsKey(entryName)) {
 				return (T) cache.get(entryName);
 			} else {
@@ -26,10 +26,10 @@ public class CacheUtils {
 			}
 		}
 	}
-	
+
 	private static void refreshEntry(String entryName) {
-		synchronized(time) {
-			synchronized(cache) {
+		synchronized (time) {
+			synchronized (cache) {
 				if (time.getOrDefault(entryName, 0L) <= System.currentTimeMillis()) {
 					time.remove(entryName);
 					cache.remove(entryName);

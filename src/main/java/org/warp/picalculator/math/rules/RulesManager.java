@@ -106,7 +106,7 @@ public class RulesManager {
 						ex.printStackTrace();
 					}
 				}
-	
+
 				for (final String rulesLine : ruleLines) {
 					if (rulesLine.length() > 0) {
 						final String[] ruleDetails = rulesLine.split(",", 1);
@@ -140,7 +140,7 @@ public class RulesManager {
 								} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
 									e.printStackTrace();
 								}
-	
+
 							}
 							if (r != null) {
 								RulesManager.addRule(r);

@@ -19,7 +19,7 @@ public class Main {
 	public static StartupArguments parseStartupArguments(final String[] a) {
 		final StartupArgumentsImpl args = new StartupArgumentsImpl();
 		Arrays.asList(a).stream().parallel().map(String::toLowerCase).forEach(arg -> {
-			switch(arg) {
+			switch (arg) {
 				case "2x":
 					args.setZoomed(true);
 					break;
@@ -70,11 +70,7 @@ public class Main {
 					break;
 			}
 		});
-		args.setHeadlessEngineForced(args.isHeadlessEngineForced() ||
-			args.isHeadless8EngineForced() ||
-			args.isHeadless256EngineForced() ||
-			args.isHeadless24bitEngineForced()
-		);
+		args.setHeadlessEngineForced(args.isHeadlessEngineForced() || args.isHeadless8EngineForced() || args.isHeadless256EngineForced() || args.isHeadless24bitEngineForced());
 		return args;
 	}
 }

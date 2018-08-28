@@ -106,8 +106,8 @@ public class CPUFont implements BinaryFont {
 	private void loadFont(String string) throws IOException {
 		InputStream res;
 		try {
-			if (!string.startsWith("/")) 
-				string = "/"+string;
+			if (!string.startsWith("/"))
+				string = "/" + string;
 			res = StorageUtils.getResourceStream(string);
 		} catch (URISyntaxException e) {
 			IOException ex = new IOException();

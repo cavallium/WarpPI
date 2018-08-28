@@ -7,7 +7,7 @@ import java.lang.ref.WeakReference;
 public final class PlatformUtils {
 	public static final boolean isJavascript = false;
 	public static String osName = System.getProperty("os.name").toLowerCase();
-	
+
 	public static void setThreadName(Thread t, String string) {
 		t.setName(string);
 	}
@@ -31,8 +31,7 @@ public final class PlatformUtils {
 		return sw.toString().toUpperCase().replace("\t", "    ").replace("\r", "").split("\n");
 	}
 
-	public static void loadPlatformRules() {
-	}
+	public static void loadPlatformRules() {}
 
 	public static void gc() {
 		Object obj = new Object();
@@ -43,9 +42,7 @@ public final class PlatformUtils {
 		}
 	}
 
-	public static void shiftChanged(boolean alpha) {
-	}
+	public static void shiftChanged(boolean alpha) {}
 
-	public static void alphaChanged(boolean alpha) {
-	}
+	public static void alphaChanged(boolean alpha) {}
 }

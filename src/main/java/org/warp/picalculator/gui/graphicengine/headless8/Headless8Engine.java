@@ -276,13 +276,7 @@ public class Headless8Engine implements org.warp.picalculator.gui.graphicengine.
 
 	@Override
 	public boolean isSupported() {
-		if (
-				StaticVars.startupArguments.isMSDOSModeEnabled()
-				|| (
-						StaticVars.startupArguments.isEngineForced()
-						&& StaticVars.startupArguments.isHeadless8EngineForced() == false
-					)
-			) {
+		if (StaticVars.startupArguments.isMSDOSModeEnabled() || (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isHeadless8EngineForced() == false)) {
 			return false;
 		}
 		return true;

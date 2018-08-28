@@ -8,7 +8,7 @@ public class TouchPoint {
 	private final float x;
 	private final float y;
 	private final long id;
-	
+
 	public TouchPoint(long id, float x, float y, float radiusX, float radiusY, float force, float rotationAngle) {
 		super();
 		this.id = id;
@@ -23,7 +23,7 @@ public class TouchPoint {
 	public long getID() {
 		return id;
 	}
-	
+
 	public float getRadiusX() {
 		return radiusX;
 	}
@@ -92,6 +92,5 @@ public class TouchPoint {
 	public String toString() {
 		return "TouchPoint [id=" + id + ", radiusX=" + radiusX + ", radiusY=" + radiusY + ", rotationAngle=" + rotationAngle + ", force=" + force + ", x=" + x + ", y=" + y + "]";
 	}
-	
-	
+
 }

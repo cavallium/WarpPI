@@ -6,7 +6,7 @@ import org.warp.picalculator.ClassUtils.Var;
 public class DGpio {
 
 	public static final int OUTPUT = com.pi4j.wiringpi.Gpio.OUTPUT;
-	public static final int PWM_OUTPUT =  com.pi4j.wiringpi.Gpio.PWM_OUTPUT;
+	public static final int PWM_OUTPUT = com.pi4j.wiringpi.Gpio.PWM_OUTPUT;
 	public static final int INPUT = com.pi4j.wiringpi.Gpio.INPUT;
 	public static final int HIGH = com.pi4j.wiringpi.Gpio.HIGH;
 	public static final int LOW = com.pi4j.wiringpi.Gpio.LOW;

@@ -237,10 +237,11 @@ public class MathSolver {
 				}
 			}
 		}
-		if (appliedRules.isEmpty()) results = null;
+		if (appliedRules.isEmpty())
+			results = null;
 		if (StaticVars.debugOn & results != null && !appliedRules.isEmpty()) {
 			StringBuilder rulesStr = new StringBuilder();
-			for(Rule r : appliedRules) {
+			for (Rule r : appliedRules) {
 				rulesStr.append(r.getRuleName());
 				rulesStr.append(',');
 			}

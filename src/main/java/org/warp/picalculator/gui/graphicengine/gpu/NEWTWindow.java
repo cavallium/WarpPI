@@ -318,13 +318,13 @@ class NEWTWindow implements GLEventListener {
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
@@ -363,11 +363,10 @@ class NEWTWindow implements GLEventListener {
 			}
 
 			@Override
-			public void mouseMoved(MouseEvent e) {
-			}
+			public void mouseMoved(MouseEvent e) {}
 
 			private long lastDraggedTime = 0;
-			
+
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				long curTime = System.currentTimeMillis();
@@ -399,11 +398,11 @@ class NEWTWindow implements GLEventListener {
 
 			@Override
 			public void mouseWheelMoved(MouseEvent e) {
-				
+
 			}
-			
+
 		});
-		
+
 		glWindow.addGLEventListener(this /* GLEventListener */);
 		final Animator animator = new Animator();
 		animator.add(glWindow);

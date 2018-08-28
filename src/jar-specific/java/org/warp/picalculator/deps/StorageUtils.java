@@ -33,7 +33,7 @@ public class StorageUtils {
 	public static final boolean exists(Path f) {
 		return Files.exists(f);
 	}
-	
+
 	public static final boolean exists(File f) {
 		return f.exists();
 	}
@@ -45,9 +45,9 @@ public class StorageUtils {
 	public static File get(String path, String... others) {
 		return Paths.get(path, others).toFile();
 	}
-	
+
 	private static Map<String, File> resourcesCache = new HashMap<String, File>();
-	
+
 	@Deprecated()
 	public static File getResource(String string) throws IOException, URISyntaxException {
 		final URL res = ClassUtils.classLoader.getResource(string);
@@ -74,12 +74,11 @@ public class StorageUtils {
 					InputStream is = Files.newInputStream(myFolderPath);
 					final File tempFile = File.createTempFile("picalcresource-", "");
 					tempFile.deleteOnExit();
-					try (FileOutputStream out = new FileOutputStream(tempFile))
-					{
+					try (FileOutputStream out = new FileOutputStream(tempFile)) {
 						IOUtils.copy(is, out, (int) tempFile.length());
 					}
 					resourcesCache.put(string, tempFile);
-					
+
 					return tempFile;
 				} else {
 					return Paths.get(uri).toFile();
@@ -91,7 +90,7 @@ public class StorageUtils {
 			return Paths.get(string.substring(1)).toFile();
 		}
 	}
-	
+
 	public static InputStream getResourceStream(String string) throws IOException, URISyntaxException {
 		final URL res = ClassUtils.classLoader.getResource(string);
 		final boolean isResource = res != null;

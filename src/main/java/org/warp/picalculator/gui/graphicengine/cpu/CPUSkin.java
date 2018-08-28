@@ -30,8 +30,8 @@ public class CPUSkin implements Skin {
 	@SuppressWarnings("unused")
 	@Override
 	public void load(String file) throws IOException {
-		if (!file.startsWith("/")) 
-			file = "/"+file;
+		if (!file.startsWith("/"))
+			file = "/" + file;
 		try {
 			PngReader r = new PngReader(StorageUtils.getResourceStream(file));
 			if (r == null) {
@@ -56,32 +56,31 @@ public class CPUSkin implements Skin {
 		final int[] pixels = new int[width * height];
 		int pi = 0;
 		ImageLineInt lint;
-		while ( r.hasMoreRows() ) {
-		    lint = (ImageLineInt) r.readRow();
-		    int[] scanLine = lint.getScanline();
+		while (r.hasMoreRows()) {
+			lint = (ImageLineInt) r.readRow();
+			int[] scanLine = lint.getScanline();
 
-		    for ( int i = 0; i < width; i++ ) {
-		        int offset = i * channels;
+			for (int i = 0; i < width; i++) {
+				int offset = i * channels;
 
-		        // Adjust the following code depending on your source image.
-		        // I need the to set the alpha channel to 0xFF000000 since my destination image
-		        // is TRANSLUCENT : BufferedImage bi = CONFIG.createCompatibleImage( width, height, Transparency.TRANSLUCENT );
-		        // my source was 3 channels RGB without transparency
-		        int nextPixel;
-		        if (channels == 4) {
-		        	nextPixel = (scanLine[offset] << 16 ) | ( scanLine[offset + 1] << 8 ) | ( scanLine[offset + 2] ) | ( scanLine[offset + 3] << 24 );
-		        } else {
-		        	nextPixel = (scanLine[offset] << 16 ) | ( scanLine[offset + 1] << 8 ) | ( scanLine[offset + 2] ) | ( 0xFF << 24 );
-		        }
+				// Adjust the following code depending on your source image.
+				// I need the to set the alpha channel to 0xFF000000 since my destination image
+				// is TRANSLUCENT : BufferedImage bi = CONFIG.createCompatibleImage( width, height, Transparency.TRANSLUCENT );
+				// my source was 3 channels RGB without transparency
+				int nextPixel;
+				if (channels == 4) {
+					nextPixel = (scanLine[offset] << 16) | (scanLine[offset + 1] << 8) | (scanLine[offset + 2]) | (scanLine[offset + 3] << 24);
+				} else {
+					nextPixel = (scanLine[offset] << 16) | (scanLine[offset + 1] << 8) | (scanLine[offset + 2]) | (0xFF << 24);
+				}
 
-		        // I'm placing the pixels on a memory mapped file
-		        pixels[pi] = nextPixel;
-		        pi++;
-		     }
+				// I'm placing the pixels on a memory mapped file
+				pixels[pi] = nextPixel;
+				pi++;
+			}
 
 		}
-		
-		
+
 		return pixels;
 	}
 

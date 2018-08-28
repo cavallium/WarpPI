@@ -276,13 +276,7 @@ public class Headless256Engine implements org.warp.picalculator.gui.graphicengin
 
 	@Override
 	public boolean isSupported() {
-		if (
-				StaticVars.startupArguments.isMSDOSModeEnabled()
-				|| (
-						StaticVars.startupArguments.isEngineForced()
-						&& StaticVars.startupArguments.isHeadless256EngineForced() == false
-					)
-			) {
+		if (StaticVars.startupArguments.isMSDOSModeEnabled() || (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isHeadless256EngineForced() == false)) {
 			return false;
 		}
 		return true;

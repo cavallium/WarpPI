@@ -3,9 +3,9 @@ package org.warp.picalculator.deps.nio;
 import java.nio.file.Path;
 
 public class DPath {
-	
+
 	private final Path p;
-	
+
 	public DPath(Path p) {
 		this.p = p;
 	}

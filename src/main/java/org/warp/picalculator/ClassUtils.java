@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class ClassUtils {
-	
+
 	public static Class<?> classLoader;
 
 	public static Object invokeStaticMethod(String path, Var<?>... vars) {
@@ -19,8 +19,8 @@ public class ClassUtils {
 		Class[] classes = new Class[vars.length];
 		Object[] objects = new Object[vars.length];
 		String[] blob = path.split("\\.");
-		String className = String.join(".", Arrays.copyOfRange(blob, 0, blob.length-1));
-		String methodName = blob[blob.length-1];
+		String className = String.join(".", Arrays.copyOfRange(blob, 0, blob.length - 1));
+		String methodName = blob[blob.length - 1];
 		int index = 0;
 		for (Var<?> v : vars) {
 			classes[index] = v.getType();
@@ -69,8 +69,8 @@ public class ClassUtils {
 	public static <T> T getStaticField(String path, Class<T> type) {
 		try {
 			String[] blob = path.split("\\.");
-			String className = String.join(".", Arrays.copyOfRange(blob, 0, blob.length-1));
-			String var = blob[blob.length-1];
+			String className = String.join(".", Arrays.copyOfRange(blob, 0, blob.length - 1));
+			String var = blob[blob.length - 1];
 			return (T) classLoader.getClassLoader().loadClass(className).getField(var).get(null);
 		} catch (ClassNotFoundException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
 			e.printStackTrace();
@@ -84,7 +84,7 @@ public class ClassUtils {
 		T obj = getStaticField(path, type);
 		return new Var<T>(obj, type);
 	}
-	
+
 	public static int getEnumIndex(String className, String value) {
 		try {
 			Object[] enumConstants = classLoader.getClassLoader().loadClass(className).getEnumConstants();
@@ -103,7 +103,7 @@ public class ClassUtils {
 		}
 		return -1;
 	}
-	
+
 	public static Object getEnumObject(String className, String value) {
 		try {
 			Object[] enumConstants = classLoader.getClassLoader().loadClass(className).getEnumConstants();
@@ -120,16 +120,16 @@ public class ClassUtils {
 		}
 		return new Object();
 	}
-	
+
 	public static class Var<E> {
 		private final E var;
 		private final Class<E> type;
-		
+
 		public Var(E var, Class<E> type) {
 			this.var = var;
 			this.type = type;
 		}
-		
+
 		public synchronized final E getVar() {
 			return var;
 		}
@@ -137,6 +137,7 @@ public class ClassUtils {
 		public synchronized final Class<E> getType() {
 			return type;
 		}
+
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -223,10 +224,10 @@ public class ClassUtils {
 		public static <E> Var<E> newVar(E[] i, Class<E> type) {
 			return new Var(i, getArrayClass(type));
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		private static <T> Class<? extends T[]> getArrayClass(Class<T> clazz) {
-		    return (Class<? extends T[]>) Array.newInstance(clazz, 0).getClass();
+			return (Class<? extends T[]>) Array.newInstance(clazz, 0).getClass();
 		}
 
 		@SuppressWarnings({ "unchecked", "rawtypes" })

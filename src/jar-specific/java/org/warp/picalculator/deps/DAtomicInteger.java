@@ -6,6 +6,7 @@ public class DAtomicInteger extends AtomicInteger {
 	public DAtomicInteger() {
 		super();
 	}
+
 	public DAtomicInteger(int i) {
 		super(i);
 	}
