@@ -186,7 +186,7 @@
 								</goals>
 								<phase>process-classes</phase>
 								<configuration>
-									<mainClass>org.warp.picalculator.Main</mainClass>
+									<mainClass>org.warp.picalculator.boot.Main</mainClass>
 									<mainPageIncluded>true</mainPageIncluded>
 									<debugInformationGenerated>true</debugInformationGenerated>
 									<sourceMapsGenerated>true</sourceMapsGenerated>
@@ -300,7 +300,7 @@
 					<!-- MainClass in mainfest make a executable jar -->
 					<archive>
 						<manifest>
-							<mainClass>org.warp.picalculator.Main</mainClass>
+							<mainClass>org.warp.picalculator.boot.Main</mainClass>
 						</manifest>
 					</archive>
 
@@ -322,6 +322,6 @@
 		<artifactId>maven-jar-plugin</artifactId> <version>2.4</version> <configuration> 
 		<failOnError>false</failOnError> <source>1.8</source> <target>1.8</target> 
 		<archive> <manifest> <addClasspath>true</addClasspath> <classpathPrefix>libs/</classpathPrefix> 
-		<mainClass>org.warp.picalculator.Main</mainClass> </manifest> </archive> 
+		<mainClass>org.warp.picalculator.boot.Main</mainClass> </manifest> </archive> 
 		</configuration> </plugin> </plugins> </build> -->
 </project>
