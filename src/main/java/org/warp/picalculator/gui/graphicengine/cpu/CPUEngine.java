@@ -14,11 +14,13 @@ import org.warp.picalculator.gui.graphicengine.GraphicEngine;
 import org.warp.picalculator.gui.graphicengine.RenderingLoop;
 import org.warp.picalculator.gui.graphicengine.Skin;
 
+import io.reactivex.Observable;
+
 public class CPUEngine implements GraphicEngine {
 
 	private SwingWindow INSTANCE;
 	public final CPURenderer r = new CPURenderer();
-	public BufferedImage g = new BufferedImage(r.size[0], r.size[1], BufferedImage.TYPE_INT_RGB);
+	public volatile BufferedImage g = new BufferedImage(r.size[0], r.size[1], BufferedImage.TYPE_INT_RGB);
 	public volatile boolean initialized = false;
 	public Semaphore exitSemaphore = new Semaphore(0);
 
@@ -40,8 +42,7 @@ public class CPUEngine implements GraphicEngine {
 		INSTANCE.setSize(ww, wh);
 		r.size = new int[] { ww, wh };
 		CPURenderer.canvas2d = new int[ww * wh];
-		g = new BufferedImage(ww, wh, BufferedImage.TYPE_INT_ARGB);
-		INSTANCE.wasResized = false;
+		g = new BufferedImage(ww, wh, BufferedImage.TYPE_INT_RGB);
 	}
 
 	@Override
@@ -62,21 +63,8 @@ public class CPUEngine implements GraphicEngine {
 	}
 
 	@Override
-	public boolean wasResized() {
-		if (INSTANCE.wasResized) {
-			r.size = new int[] { INSTANCE.getWidth(), INSTANCE.getHeight() };
-			if (r.size[0] <= 0) {
-				r.size[0] = 1;
-			}
-			if (r.size[1] <= 0) {
-				r.size[1] = 1;
-			}
-			CPURenderer.canvas2d = new int[r.size[0] * r.size[1]];
-			g = new BufferedImage(r.size[0], r.size[1], BufferedImage.TYPE_INT_ARGB);
-			INSTANCE.wasResized = false;
-			return true;
-		}
-		return false;
+	public Observable<Integer[]> onResize() {
+		return INSTANCE.onResize();
 	}
 
 	@Override
@@ -104,14 +92,12 @@ public class CPUEngine implements GraphicEngine {
 			try {
 				double extratime = 0;
 				while (initialized) {
-					final long start = System.currentTimeMillis();
+					final long start = System.nanoTime();
 					repaint();
-					final long end = System.currentTimeMillis();
-					final double delta = (end - start) / 1000d;
-					final int deltaInt = (int) Math.floor(delta);
-					final int extraTimeInt = (int) Math.floor(extratime);
-					if (extraTimeInt + deltaInt < 50) {
-						Thread.sleep(50 - (extraTimeInt + deltaInt));
+					final long end = System.nanoTime();
+					final double delta = (end - start);
+					if (extratime + delta < 50 * 1000d * 1000d) {
+						Thread.sleep((long) Math.floor(50d - (extratime + delta) / 1000d / 1000d));
 						extratime = 0;
 					} else {
 						extratime += delta - 50d;
@@ -129,7 +115,7 @@ public class CPUEngine implements GraphicEngine {
 	@Deprecated()
 	public void refresh() {
 		if (HardwareDevice.INSTANCE.getDisplayManager().getScreen() == null || (HardwareDevice.INSTANCE.getDisplayManager().error != null && HardwareDevice.INSTANCE.getDisplayManager().error.length() > 0) || HardwareDevice.INSTANCE.getDisplayManager().getScreen() == null || HardwareDevice.INSTANCE.getDisplayManager().getScreen().mustBeRefreshed()) {
-			INSTANCE.c.repaint();
+			INSTANCE.c.paintImmediately(0, 0, getWidth(), getHeight());
 		}
 	}
 

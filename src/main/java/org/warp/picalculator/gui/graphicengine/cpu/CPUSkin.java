@@ -5,11 +5,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 
 import javax.imageio.ImageIO;
 
 import org.warp.picalculator.deps.DSystem;
 import org.warp.picalculator.deps.StorageUtils;
+import org.warp.picalculator.deps.nio.DFiles;
+import org.warp.picalculator.deps.nio.DPath;
+import org.warp.picalculator.deps.nio.DPaths;
 import org.warp.picalculator.gui.graphicengine.GraphicEngine;
 import org.warp.picalculator.gui.graphicengine.Skin;
 
@@ -33,6 +37,13 @@ public class CPUSkin implements Skin {
 		if (!file.startsWith("/"))
 			file = "/" + file;
 		try {
+			if (!file.endsWith(".png")) {
+				File f = File.createTempFile("picalculator-png", ".png");
+				f.deleteOnExit();
+				BufferedImage img = ImageIO.read(StorageUtils.getResourceStream(file));
+				ImageIO.write(img, "PNG", f);
+				file = f.toString();
+			}
 			PngReader r = new PngReader(StorageUtils.getResourceStream(file));
 			if (r == null) {
 				skinData = new int[0];
@@ -70,8 +81,12 @@ public class CPUSkin implements Skin {
 				int nextPixel;
 				if (channels == 4) {
 					nextPixel = (scanLine[offset] << 16) | (scanLine[offset + 1] << 8) | (scanLine[offset + 2]) | (scanLine[offset + 3] << 24);
-				} else {
+				} else if (channels == 3) {
 					nextPixel = (scanLine[offset] << 16) | (scanLine[offset + 1] << 8) | (scanLine[offset + 2]) | (0xFF << 24);
+				} else if (channels == 2) {
+					nextPixel = (scanLine[offset] << 16) | (scanLine[offset + 1] << 8)  | 0xFF | (0xFF << 24);
+				} else {
+					nextPixel = (scanLine[offset] << 16) | (scanLine[offset] << 8) | scanLine[offset] | (0xFF << 24);
 				}
 
 				// I'm placing the pixels on a memory mapped file

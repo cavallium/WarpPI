@@ -28,9 +28,12 @@
 
 package org.warp.picalculator.gui.graphicengine.gpu;
 
+import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.warp.picalculator.ConsoleUtils;
 import org.warp.picalculator.StaticVars;
 import org.warp.picalculator.device.HardwareDevice;
 import org.warp.picalculator.device.Keyboard;
@@ -40,6 +43,7 @@ import org.warp.picalculator.event.TouchMoveEvent;
 import org.warp.picalculator.event.TouchPoint;
 import org.warp.picalculator.event.TouchStartEvent;
 import org.warp.picalculator.gui.DisplayManager;
+import org.warp.picalculator.gui.graphicengine.GraphicEngine;
 
 import com.jogamp.newt.event.GestureHandler.GestureEvent;
 import com.jogamp.newt.event.GestureHandler.GestureListener;
@@ -63,6 +67,15 @@ import com.jogamp.opengl.fixedfunc.GLPointerFunc;
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.texture.Texture;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.processors.BehaviorProcessor;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.ReplaySubject;
+import io.reactivex.subjects.Subject;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
@@ -75,18 +88,35 @@ class NEWTWindow implements GLEventListener {
 
 	private final GPUEngine disp;
 	private final GPURenderer renderer;
-	public float windowZoom;
+	public GLWindow window;
+	public volatile float windowZoom = 1;
 	public int[] realWindowSize;
 	public Runnable onInitialized;
+	public volatile boolean refreshViewport;
 	public List<TouchPoint> touches = new ObjectArrayList<>();
+
+	final BehaviorSubject<Integer[]> onResize = BehaviorSubject.create();
+	private BehaviorSubject<Float> onZoom = BehaviorSubject.create();
+	private Subject<GL2ES1> onGLContext = PublishSubject.create();
 
 	public NEWTWindow(GPUEngine disp) {
 		this.disp = disp;
 		renderer = disp.getRenderer();
 		realWindowSize = new int[] { 1, 1 };
+		
+		Observable.zip(onZoom, onGLContext, (gl,zoom)->{return Pair.of(gl, zoom);}).subscribe((pair) -> {
+			windowZoom = pair.getLeft();
+			onDisplayChanged(pair.getRight(), true, false);
+		});
+		Observable.zip(onResize, onGLContext, (gl,size)->{return Pair.of(gl, size);}).subscribe((pair) -> {
+			final Integer[] size = pair.getLeft();
+			realWindowSize[0] = size[0];
+			realWindowSize[1] =size[1];
+			disp.size[0] = size[0];
+			disp.size[1] = size[1];
+			onDisplayChanged(pair.getRight(), false, true);
+		});
 	}
-
-	public GLWindow window;
 
 	public void create() {
 		System.out.println("Loading OpenGL...");
@@ -105,11 +135,12 @@ class NEWTWindow implements GLEventListener {
 		caps.setBackgroundOpaque(true); //transparency window
 //		caps.setSampleBuffers(true);
 //		caps.setNumSamples(4);
+		
 		final GLWindow glWindow = GLWindow.create(caps);
 		window = glWindow;
-
+		
 		glWindow.setTitle("WarpPI Calculator by Andrea Cavalli (@Cavallium)");
-
+		
 		glWindow.addWindowListener(new WindowListener() {
 
 			@Override
@@ -120,7 +151,10 @@ class NEWTWindow implements GLEventListener {
 
 			@Override
 			public void windowDestroyed(WindowEvent e) {
-				HardwareDevice.INSTANCE.getDisplayManager().engine.destroy();
+				GraphicEngine engine = HardwareDevice.INSTANCE.getDisplayManager().engine;
+				if (engine.isInitialized()) {
+					engine.destroy();
+				}
 			}
 
 			@Override
@@ -250,7 +284,7 @@ class NEWTWindow implements GLEventListener {
 							Keyboard.keyReleased(Key.SHIFT);
 						}
 						break;
-					case KeyEvent.VK_A:
+					case KeyEvent.VK_CONTROL:
 						Keyboard.keyReleased(Key.ALPHA);
 						if (Keyboard.alpha) {
 							Keyboard.keyPressed(Key.ALPHA);
@@ -402,7 +436,7 @@ class NEWTWindow implements GLEventListener {
 			}
 
 		});
-
+		
 		glWindow.addGLEventListener(this /* GLEventListener */);
 		final Animator animator = new Animator();
 		animator.add(glWindow);
@@ -412,7 +446,8 @@ class NEWTWindow implements GLEventListener {
 	@Override
 	public void init(GLAutoDrawable drawable) {
 		final GL2ES1 gl = drawable.getGL().getGL2ES1();
-
+		onGLContext.onNext(gl);
+		
 		if (StaticVars.debugOn) {
 			//Vsync
 			gl.setSwapInterval(1);
@@ -431,15 +466,18 @@ class NEWTWindow implements GLEventListener {
 
 		//Multisampling
 		//gl.glEnable(GL.GL_MULTISAMPLE);
-
-		if (onInitialized != null) {
-			onInitialized.run();
-			onInitialized = null;
-		}
+		
 		try {
 			renderer.currentTex = ((GPUSkin) disp.loadSkin("test.png")).t;
 		} catch (final Exception e) {
 			e.printStackTrace();
+		}
+		StaticVars.windowZoom$.subscribe((zoom) -> {onZoom.onNext(zoom);});
+		onResize.onNext(new Integer[] {disp.size[0], disp.size[1]});
+		
+		if (onInitialized != null) {
+			onInitialized.run();
+			onInitialized = null;
 		}
 
 		System.err.println("Chosen GLCapabilities: " + drawable.getChosenGLCapabilities());
@@ -451,55 +489,29 @@ class NEWTWindow implements GLEventListener {
 
 	@Override
 	public void reshape(GLAutoDrawable glad, int x, int y, int width, int height) {
-		realWindowSize[0] = width;
-		realWindowSize[1] = height;
-		disp.size[0] = width;
-		disp.size[1] = height;
-		final GL2ES1 gl = glad.getGL().getGL2ES1();
-
-		onZoomChanged(gl, true);
+		onResize.onNext(new Integer[] {width, height});
 	}
 
-	private void onZoomChanged(GL2ES1 gl, boolean sizeChanged) {
-		final float precWindowZoom = windowZoom;
-		windowZoom = StaticVars.getCurrentZoomValue();
-
-		if (((precWindowZoom % ((int) precWindowZoom)) != 0f) != ((windowZoom % ((int) windowZoom)) != 0f)) {
+	private void onDisplayChanged(GL2ES1 gl, boolean zoomChanged, boolean sizeChanged) {
+		disp.size[0] = (int) (realWindowSize[0] / windowZoom);
+		disp.size[1] = (int) (realWindowSize[1] / windowZoom);
+		
+		if (zoomChanged) {
 			final boolean linear = (windowZoom % ((int) windowZoom)) != 0f;
-
 			for (final Texture t : disp.registeredTextures) {
 				t.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, linear ? GL.GL_LINEAR : GL.GL_NEAREST);
 				t.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
 			}
 		}
-
-		final int width = realWindowSize[0];
-		final int height = realWindowSize[1];
-
-		disp.size[0] = (int) (realWindowSize[0] / windowZoom);
-		disp.size[1] = (int) (realWindowSize[1] / windowZoom);
-
-		gl.glViewport(0, 0, width, height);
-
-		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-		gl.glLoadIdentity();
-
-		gl.glOrtho(0.0, disp.size[0], disp.size[1], 0.0, -1, 1);
-
-		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-		gl.glLoadIdentity();
+		refreshViewport = true;
 	}
 
 	@Override
 	public void display(GLAutoDrawable glad) {
 		final GL2ES1 gl = glad.getGL().getGL2ES1();
-
 		GPURenderer.gl = gl;
-
-		if (windowZoom != StaticVars.getCurrentZoomValue()) {
-			onZoomChanged(gl, false);
-		}
-
+		onGLContext.onNext(gl);
+		
 		Boolean linear = null;
 		while (!disp.unregisteredTextures.isEmpty()) {
 			if (linear == null) {
@@ -510,23 +522,45 @@ class NEWTWindow implements GLEventListener {
 			t.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
 			disp.registeredTextures.addLast(t);
 		}
+		
+		if (refreshViewport) {
+			refreshViewport = false;
+			gl.glViewport(0, 0, realWindowSize[0], realWindowSize[1]);
+
+			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+			gl.glLoadIdentity();
+
+			gl.glOrtho(0.0, disp.size[0], disp.size[1], 0.0, -1, 1);
+
+			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+			gl.glLoadIdentity();
+		}
 
 		gl.glEnableClientState(GLPointerFunc.GL_COLOR_ARRAY);
 		gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
-
+		
 		renderer.initDrawCycle();
 
 		disp.repaint();
 
 		renderer.endDrawCycle();
-
-		GPURenderer.gl = null;
-
+		
 		gl.glDisableClientState(GLPointerFunc.GL_COLOR_ARRAY);
 		gl.glDisableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
 		gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
+		
+		GPURenderer.gl = null;
+
 	}
+	
+    public void setSize(final int width, final int height) {
+    	int zoom = (int) windowZoom;
+    	if (zoom == 0) {
+        	zoom = onZoom.blockingFirst().intValue();
+    	}
+        window.setSize(width * zoom, height * zoom);
+    }
 
 	@Override
 	public void dispose(GLAutoDrawable drawable) {

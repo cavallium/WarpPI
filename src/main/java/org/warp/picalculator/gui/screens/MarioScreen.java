@@ -61,7 +61,6 @@ public class MarioScreen extends Screen {
 				try {
 					gpuTest1 = HardwareDevice.INSTANCE.getDisplayManager().engine.loadFont("gputest12");
 					gpuTest12 = true;
-					StaticVars.windowZoom = 1;
 				} catch (final Exception ex) {
 					gpuTest12 = false;
 					try {
@@ -72,7 +71,9 @@ public class MarioScreen extends Screen {
 			if (gpuTest3 == null) {
 				try {
 					gpuTest3 = HardwareDevice.INSTANCE.getDisplayManager().engine.loadSkin("font_gputest3.png");
-				} catch (final Exception ex) {}
+				} catch (final Exception ex) {
+					ex.printStackTrace();
+				}
 			}
 		} catch (final IOException e) {
 			e.printStackTrace();

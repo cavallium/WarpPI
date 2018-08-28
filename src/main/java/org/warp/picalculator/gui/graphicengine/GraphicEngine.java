@@ -3,6 +3,8 @@ package org.warp.picalculator.gui.graphicengine;
 import java.io.IOException;
 import java.util.List;
 
+import io.reactivex.Observable;
+
 public interface GraphicEngine {
 
 	public int[] getSize();
@@ -21,7 +23,7 @@ public interface GraphicEngine {
 
 	public void create(Runnable object);
 
-	public boolean wasResized();
+	public Observable<Integer[]> onResize();
 
 	public int getWidth();
 

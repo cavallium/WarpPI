@@ -11,6 +11,8 @@ import org.warp.picalculator.gui.graphicengine.Renderer;
 import org.warp.picalculator.gui.graphicengine.RenderingLoop;
 import org.warp.picalculator.gui.graphicengine.Skin;
 
+import io.reactivex.Observable;
+
 public class NoGuiEngine implements GraphicEngine {
 
 	private boolean initialized;
@@ -44,8 +46,8 @@ public class NoGuiEngine implements GraphicEngine {
 	}
 
 	@Override
-	public boolean wasResized() {
-		return false;
+	public Observable<Integer[]> onResize() {
+		return null;
 	}
 
 	@Override

@@ -12,6 +12,8 @@ import org.warp.picalculator.event.Key;
 import org.warp.picalculator.gui.graphicengine.Renderer;
 import org.warp.picalculator.gui.graphicengine.RenderingLoop;
 
+import io.reactivex.Observable;
+
 public class Headless24bitEngine implements org.warp.picalculator.gui.graphicengine.GraphicEngine {
 
 	private final Headless24bitRenderer r = new Headless24bitRenderer();
@@ -138,8 +140,8 @@ public class Headless24bitEngine implements org.warp.picalculator.gui.graphiceng
 	}
 
 	@Override
-	public boolean wasResized() {
-		return false;
+	public Observable<Integer[]> onResize() {
+		return null;
 	}
 
 	@Override

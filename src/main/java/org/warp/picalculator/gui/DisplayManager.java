@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 import org.warp.picalculator.ConsoleUtils;
 import org.warp.picalculator.PlatformUtils;
@@ -29,9 +30,14 @@ import org.warp.picalculator.gui.graphicengine.Skin;
 import org.warp.picalculator.gui.graphicengine.nogui.NoGuiEngine;
 import org.warp.picalculator.gui.screens.Screen;
 
+import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap.Entry;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public final class DisplayManager implements RenderingLoop {
+	private static final int tickDuration = 50;
+	
 	private HardwareDevice device;
 	private float brightness;
 
@@ -379,13 +385,6 @@ public final class DisplayManager implements RenderingLoop {
 
 	}
 
-	private void checkDisplayResized() {
-		if (engine.wasResized()) {
-			StaticVars.screenSize[0] = engine.getWidth();
-			StaticVars.screenSize[1] = engine.getHeight();
-		}
-	};
-
 	public void loop() {
 		try {
 			load_skin();
@@ -401,84 +400,24 @@ public final class DisplayManager implements RenderingLoop {
 				e.printStackTrace();
 				DSystem.exit(0);
 			}
-
-			//Working thread
-			final Thread workThread = new Thread(() -> {
-				try {
-					while (true) {
-						float dt = 0;
-						final long newtime = System.nanoTime();
-						if (precTime == -1) {
-							dt = 0;
-						} else {
-							dt = (float) ((newtime - precTime) / 1000000000d);
-						}
-						precTime = newtime;
-						/*
-						 * Calcoli
-						 */
-						checkDisplayResized();
-
-						screen.beforeRender(dt);
-
-						Thread.sleep(50);
-//						for (int i = 0; i < 10; i++) {
-//							System.out.println("============");
-//							OperatingSystemMXBean operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
-//							for (Method method : operatingSystemMXBean.getClass().getDeclaredMethods()) {
-//								method.setAccessible(true);
-//								if (method.getName().startsWith("get") && Modifier.isPublic(method.getModifiers())) {
-//									Object value;
-//									try {
-//										value = method.invoke(operatingSystemMXBean);
-//									} catch (Exception e) {
-//										value = e;
-//									} // try
-//									boolean percent = false;
-//									boolean mb = false;
-//									String displayName = method.getName();
-//									String displayValue = value.toString();
-//									if (displayName.endsWith("CpuLoad")) {
-//										percent = true;
-//									}
-//									if (displayName.endsWith("MemorySize")) {
-//										mb = true;
-//									}
-//									ObjectArrayList<String> arr = new ObjectArrayList<>();
-//									arr.add("getFreePhysicalMemorySize");
-//									arr.add("getProcessCpuLoad");
-//									arr.add("getSystemCpuLoad");
-//									arr.add("getTotalPhysicalMemorySize");
-//									if (arr.contains(displayName)) {
-//										if (percent) {
-//											try {
-//												System.out.println(displayName + " = " + (((int)(Float.parseFloat(displayValue) * 10000f))/100f) + "%");
-//											}catch(Exception ex) {
-//												System.out.println(displayName + " = " + displayValue);
-//											}
-//										} else if (mb) {
-//											try {
-//												System.out.println(displayName + " = " + (Long.parseLong(displayValue) / 1024L / 1024L) + " MB");
-//											}catch(Exception ex) {
-//												System.out.println(displayName + " = " + displayValue);
-//											}
-//										} else {
-//											System.out.println(displayName + " = " + displayValue);
-//										}
-//									}
-//								} // if
-//							} // for
-//							System.out.println("============");
-//							Thread.sleep(5000);
-//						}
-					}
-				} catch (final InterruptedException e) {
-					e.printStackTrace();
+			
+			Observable<Long> workTimer = Observable.interval(tickDuration, TimeUnit.MILLISECONDS);
+			
+			Observable.combineLatest(workTimer, engine.onResize(), (time, windowSize) -> windowSize).subscribe((windowSize) -> {
+				double dt = 0;
+				final long newtime = System.nanoTime();
+				if (precTime == -1) {
+					dt = tickDuration;
+				} else {
+					dt = (newtime - precTime) / 1000d / 1000d;
 				}
+				precTime = newtime;
+
+				StaticVars.screenSize[0] = windowSize[0];
+				StaticVars.screenSize[1] = windowSize[1];
+				
+				screen.beforeRender((float) (dt / 1000d));
 			});
-			PlatformUtils.setDaemon(workThread);
-			PlatformUtils.setThreadName(workThread, "Work thread");
-			workThread.start();
 
 			engine.start(getDrawable());
 		} catch (final Exception ex) {

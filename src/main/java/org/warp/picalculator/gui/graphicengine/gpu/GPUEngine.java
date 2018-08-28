@@ -18,6 +18,10 @@ import org.warp.picalculator.gui.graphicengine.Skin;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.texture.Texture;
 
+import io.reactivex.Observable;
+import io.reactivex.processors.BehaviorProcessor;
+import io.reactivex.subjects.BehaviorSubject;
+
 public class GPUEngine implements GraphicEngine {
 
 	private volatile boolean initialized = false;
@@ -61,7 +65,7 @@ public class GPUEngine implements GraphicEngine {
 	public void setDisplayMode(int ww, int wh) {
 		size[0] = ww;
 		size[1] = wh;
-		wnd.window.setSize(ww, wh);
+		wnd.setSize(ww, wh);
 	}
 
 	@Override
@@ -82,10 +86,10 @@ public class GPUEngine implements GraphicEngine {
 		initialized = true;
 		wnd.onInitialized = onInitialized;
 	}
-
+	
 	@Override
-	public boolean wasResized() {
-		return StaticVars.screenSize[0] != size[0] | StaticVars.screenSize[1] != size[1];
+	public Observable<Integer[]> onResize() {
+		return wnd.onResize;
 	}
 
 	@Override
@@ -100,10 +104,12 @@ public class GPUEngine implements GraphicEngine {
 
 	@Override
 	public void destroy() {
-		initialized = false;
-		created = false;
-		exitSemaphore.release();
-		wnd.window.destroy();
+		if (initialized && created) {
+			initialized = false;
+			created = false;
+			exitSemaphore.release();
+			wnd.window.destroy();
+		}
 	}
 
 	@Override

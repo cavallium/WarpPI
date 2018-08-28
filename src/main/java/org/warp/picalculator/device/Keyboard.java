@@ -118,7 +118,7 @@ public class Keyboard {
 				if (Keyboard.shift) {
 					Keyboard.keyPressed(Key.ARCSINE);
 				} else if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					Keyboard.keyPressed(Key.LETTER_S);
 				} else {
 					Keyboard.keyPressed(Key.SINE);
 				}
@@ -127,7 +127,7 @@ public class Keyboard {
 				if (Keyboard.shift) {
 					Keyboard.keyPressed(Key.ARCCOSINE);
 				} else if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					Keyboard.keyPressed(Key.LETTER_C);
 				} else {
 					Keyboard.keyPressed(Key.COSINE);
 				}
@@ -136,7 +136,7 @@ public class Keyboard {
 				if (Keyboard.shift) {
 					Keyboard.keyPressed(Key.ARCTANGENT);
 				} else if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					Keyboard.keyPressed(Key.LETTER_T);
 				} else {
 					Keyboard.keyPressed(Key.TANGENT);
 				}
@@ -144,6 +144,8 @@ public class Keyboard {
 			case KeyEvent.VK_D:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					Keyboard.keyPressed(Key.debug_DEG);
+				} else if (Keyboard.alpha) {
+					Keyboard.keyPressed(Key.LETTER_D);
 				} else {
 					Keyboard.keyPressed(Key.NONE);
 				}
@@ -151,6 +153,8 @@ public class Keyboard {
 			case KeyEvent.VK_R:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					Keyboard.keyPressed(Key.debug_RAD);
+				} else if (Keyboard.alpha) {
+					Keyboard.keyPressed(Key.LETTER_R);
 				} else {
 					Keyboard.keyPressed(Key.NONE);
 				}
@@ -158,6 +162,8 @@ public class Keyboard {
 			case KeyEvent.VK_G:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					Keyboard.keyPressed(Key.debug_GRA);
+				} else if (Keyboard.alpha) {
+					Keyboard.keyPressed(Key.LETTER_G);
 				} else {
 					Keyboard.keyPressed(Key.NONE);
 				}
@@ -170,17 +176,19 @@ public class Keyboard {
 				}
 				break;
 			case KeyEvent.VK_P:
-				if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.PI);
-				} else {
+				if (Keyboard.shift) {
 					Keyboard.keyPressed(Key.NONE);
+				} else if (Keyboard.alpha) {
+					Keyboard.keyPressed(Key.LETTER_P);
+				} else {
+					Keyboard.keyPressed(Key.PI);
 				}
 				break;
 			case KeyEvent.VK_E:
 				if (Keyboard.shift) {
 					Keyboard.keyPressed(Key.NONE);
 				} else if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					Keyboard.keyPressed(Key.LETTER_E);
 				} else {
 					Keyboard.keyPressed(Key.EULER_NUMBER);
 				}
@@ -198,14 +206,14 @@ public class Keyboard {
 				} else if (!Keyboard.shift && !Keyboard.alpha) {
 					Keyboard.keyPressed(Key.BRIGHTNESS_CYCLE);
 				} else {
-					Keyboard.keyPressed(Key.ZOOM_MODE);
+					Keyboard.keyPressed(Key.LETTER_B);
 				}
 				break;
 			case KeyEvent.VK_L:
 				if (Keyboard.shift) {
 					Keyboard.keyPressed(Key.LOGARITHM);
 				} else if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					Keyboard.keyPressed(Key.LETTER_L);
 				} else {
 					Keyboard.keyPressed(Key.LOGARITHM);
 				}
@@ -307,7 +315,7 @@ public class Keyboard {
 				} else if (Keyboard.shift) {
 					Keyboard.keyPressed(Key.NONE);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					Keyboard.keyPressed(Key.LETTER_M);
 				}
 				break;
 			case DJogamp.VK_ADD:
@@ -345,11 +353,7 @@ public class Keyboard {
 				}
 				break;
 			case KeyEvent.VK_BACK_SPACE:
-				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.DELETE);
-				} else {
-					Keyboard.keyPressed(Key.NONE);
-				}
+				Keyboard.keyPressed(Key.DELETE);
 				break;
 			case DJogamp.VK_DELETE:
 			case KeyEvent.VK_DELETE:
@@ -441,11 +445,154 @@ public class Keyboard {
 					Keyboard.keyPressed(Key.NONE);
 				}
 				break;
+			case KeyEvent.VK_A:
+				if (!Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else if (Keyboard.alpha && !Keyboard.shift) {
+					Keyboard.keyPressed(Key.LETTER_A);
+				} else if (Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else {
+					Keyboard.keyPressed(Key.NONE);
+				}
+				break;
+			case KeyEvent.VK_F:
+				if (!Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else if (Keyboard.alpha && !Keyboard.shift) {
+					Keyboard.keyPressed(Key.LETTER_F);
+				} else if (Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else {
+					Keyboard.keyPressed(Key.NONE);
+				}
+				break;
+			case KeyEvent.VK_H:
+				if (!Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else if (Keyboard.alpha && !Keyboard.shift) {
+					Keyboard.keyPressed(Key.LETTER_H);
+				} else if (Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else {
+					Keyboard.keyPressed(Key.NONE);
+				}
+				break;
+			case KeyEvent.VK_I:
+				if (!Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else if (Keyboard.alpha && !Keyboard.shift) {
+					Keyboard.keyPressed(Key.LETTER_I);
+				} else if (Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else {
+					Keyboard.keyPressed(Key.NONE);
+				}
+				break;
+			case KeyEvent.VK_J:
+				if (!Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else if (Keyboard.alpha && !Keyboard.shift) {
+					Keyboard.keyPressed(Key.LETTER_J);
+				} else if (Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else {
+					Keyboard.keyPressed(Key.NONE);
+				}
+				break;
+			case KeyEvent.VK_K:
+				if (!Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else if (Keyboard.alpha && !Keyboard.shift) {
+					Keyboard.keyPressed(Key.LETTER_K);
+				} else if (Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else {
+					Keyboard.keyPressed(Key.NONE);
+				}
+				break;
+			case KeyEvent.VK_N:
+				if (!Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else if (Keyboard.alpha && !Keyboard.shift) {
+					Keyboard.keyPressed(Key.LETTER_N);
+				} else if (Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else {
+					Keyboard.keyPressed(Key.NONE);
+				}
+				break;
+			case KeyEvent.VK_O:
+				if (!Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else if (Keyboard.alpha && !Keyboard.shift) {
+					Keyboard.keyPressed(Key.LETTER_O);
+				} else if (Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else {
+					Keyboard.keyPressed(Key.NONE);
+				}
+				break;
+			case KeyEvent.VK_Q:
+				if (!Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else if (Keyboard.alpha && !Keyboard.shift) {
+					Keyboard.keyPressed(Key.LETTER_Q);
+				} else if (Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else {
+					Keyboard.keyPressed(Key.NONE);
+				}
+				break;
+			case KeyEvent.VK_U:
+				if (!Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else if (Keyboard.alpha && !Keyboard.shift) {
+					Keyboard.keyPressed(Key.LETTER_U);
+				} else if (Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else {
+					Keyboard.keyPressed(Key.NONE);
+				}
+				break;
+			case KeyEvent.VK_V:
+				if (!Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else if (Keyboard.alpha && !Keyboard.shift) {
+					Keyboard.keyPressed(Key.LETTER_V);
+				} else if (Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else {
+					Keyboard.keyPressed(Key.NONE);
+				}
+				break;
+			case KeyEvent.VK_W:
+				if (!Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else if (Keyboard.alpha && !Keyboard.shift) {
+					Keyboard.keyPressed(Key.LETTER_W);
+				} else if (Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else {
+					Keyboard.keyPressed(Key.NONE);
+				}
+				break;
+			case KeyEvent.VK_Z:
+				if (!Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.NONE);
+				} else if (Keyboard.alpha && !Keyboard.shift) {
+					Keyboard.keyPressed(Key.LETTER_Z);
+				} else if (Keyboard.shift && !Keyboard.alpha) {
+					Keyboard.keyPressed(Key.ZOOM_MODE);
+				} else {
+					Keyboard.keyPressed(Key.NONE);
+				}
+				break;
 			case DJogamp.VK_SHIFT:
 			case KeyEvent.VK_SHIFT:
 				Keyboard.keyPressed(Key.SHIFT);
 				break;
-			case KeyEvent.VK_A:
+			case KeyEvent.VK_CONTROL:
 				Keyboard.keyPressed(Key.ALPHA);
 				break;
 			case DJogamp.VK_NUMPAD1:
@@ -656,9 +803,6 @@ public class Keyboard {
 						break;
 					case NONE:
 						break;
-					case LETTER_X:
-						letterPressed('X');
-						break;
 					case BRIGHTNESS_CYCLE:
 						HardwareDevice.INSTANCE.getDisplayManager().cycleBrightness(false);
 						refresh = true;
@@ -669,7 +813,9 @@ public class Keyboard {
 						refresh = true;
 						break;
 					case ZOOM_MODE:
-						StaticVars.windowZoom = (StaticVars.windowZoom % 3) + 1;
+						float newZoom = (StaticVars.windowZoom.blockingLatest().iterator().next().floatValue() % 3) + 1;
+						StaticVars.windowZoom.onNext(newZoom);
+						ConsoleUtils.out.println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Keyboard", "Zoom: " + newZoom);
 //						StaticVars.windowZoom = ((StaticVars.windowZoom - 0.5f) % 2f) + 1f;
 						refresh = true;
 					case HISTORY_BACK:
@@ -715,10 +861,6 @@ public class Keyboard {
 		} else if (!done) {
 			ConsoleUtils.out.println(1, "Key " + k.toString() + " ignored.");
 		}
-	}
-
-	private static void letterPressed(char L) {
-
 	}
 
 	public synchronized static void keyReleased(Key k) {

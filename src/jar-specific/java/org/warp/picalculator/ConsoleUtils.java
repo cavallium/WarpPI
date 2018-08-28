@@ -28,7 +28,7 @@ public class ConsoleUtils {
 			return str.replace("" + MathematicalSymbols.NTH_ROOT, "root").replace("" + MathematicalSymbols.SQUARE_ROOT, "sqrt").replace("" + MathematicalSymbols.POWER, "powerOf").replace("" + MathematicalSymbols.POWER_OF_TWO, "powerOfTwo").replace("" + MathematicalSymbols.SINE, "sine").replace("" + MathematicalSymbols.COSINE, "cosine").replace("" + MathematicalSymbols.TANGENT, "tangent").replace("" + MathematicalSymbols.ARC_SINE, "asin").replace("" + MathematicalSymbols.ARC_COSINE, "acos").replace("" + MathematicalSymbols.ARC_TANGENT, "atan").replace("" + MathematicalSymbols.UNDEFINED, "undefined").replace("" + MathematicalSymbols.PI, "PI").replace("" + MathematicalSymbols.EULER_NUMBER, "EULER_NUMBER").replace("" + MathematicalSymbols.X, "X").replace("" + MathematicalSymbols.Y, "Y");
 		}
 
-		public void println(String str) {
+		public void println(Object str) {
 			println(0, str);
 		}
 
@@ -43,13 +43,13 @@ public class ConsoleUtils {
 			}
 		}
 
-		public void println(int level, String str) {
+		public void println(int level, Object str) {
 			if (StaticVars.outputLevel >= level) {
 				final String time = getTimeString();
 				if (StaticVars.outputLevel == 0) {
-					println(System.out, "[" + time + "]" + str);
+					println(System.out, "[" + time + "] " + str);
 				} else {
-					println(System.out, "[" + time + "]" + str);
+					println(System.out, "[" + time + "] " + str);
 				}
 			}
 		}
@@ -68,9 +68,9 @@ public class ConsoleUtils {
 			if (StaticVars.outputLevel >= level) {
 				final String time = getTimeString();
 				if (StaticVars.outputLevel == 0) {
-					println(System.out, "[" + time + "][" + prefix + "]" + str);
+					println(System.out, "[" + time + "][" + prefix + "] " + str);
 				} else {
-					println(System.out, "[" + time + "][" + prefix + "]" + str);
+					println(System.out, "[" + time + "][" + prefix + "] " + str);
 				}
 			}
 		}
@@ -78,18 +78,24 @@ public class ConsoleUtils {
 		public void println(int level, String... parts) {
 			if (StaticVars.outputLevel >= level) {
 				final String time = getTimeString();
-				String output = "";
+				StringBuilder output = new StringBuilder();
 				for (int i = 0; i < parts.length; i++) {
 					if (i + 1 == parts.length) {
-						output += parts[i];
+						output.append(' ');
+						output.append(parts[i]);
 					} else {
-						output += "[" + parts[i] + "]";
+						output.append('[');
+						output.append(parts[i]);
+						output.append(']');
 					}
 				}
+				output.insert(0, '[');
+				output.insert(1, time);
+				output.insert(time.length() + 1, ']');
 				if (StaticVars.outputLevel == 0) {
-					println(System.out, "[" + time + "]" + output);
+					println(System.out, output.toString());
 				} else {
-					println(System.out, "[" + time + "]" + output);
+					println(System.out, output.toString());
 				}
 			}
 		}

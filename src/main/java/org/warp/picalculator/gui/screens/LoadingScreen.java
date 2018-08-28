@@ -26,8 +26,8 @@ public class LoadingScreen extends Screen {
 
 	@Override
 	public void initialized() throws InterruptedException {
-		previousZoomValue = StaticVars.getCurrentZoomValue();
-		StaticVars.windowZoom = 1;
+		previousZoomValue = StaticVars.windowZoomValue.next();
+		StaticVars.windowZoom.onNext(1f);
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class LoadingScreen extends Screen {
 
 		endLoading += dt;
 		if (loaded && (StaticVars.debugOn || endLoading >= 3.5f)) {
-			StaticVars.windowZoom = previousZoomValue;
+			StaticVars.windowZoom.onNext(previousZoomValue);
 			HardwareDevice.INSTANCE.getDisplayManager().setScreen(new MathInputScreen());
 		}
 		mustRefresh = true;

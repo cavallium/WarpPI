@@ -18,6 +18,9 @@ import org.warp.picalculator.gui.graphicengine.Skin;
 import org.warp.picalculator.gui.graphicengine.cpu.CPUFont;
 import org.warp.picalculator.gui.graphicengine.cpu.CPUSkin;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
+
 public class FBEngine implements GraphicEngine {
 
 	private static final int FB_DISPLAY_WIDTH = 320;
@@ -26,6 +29,7 @@ public class FBEngine implements GraphicEngine {
 	private static final int WIDTH = 480;
 	private static final int HEIGHT = 320;
 	private static final int[] SIZE = new int[] { WIDTH, HEIGHT };
+	private BehaviorSubject<Integer[]> onResize;
 	private final TestJNI jni = new TestJNI();
 	public FBRenderer r;
 	private MappedByteBuffer fb;
@@ -33,8 +37,7 @@ public class FBEngine implements GraphicEngine {
 	private RandomAccessFile fbFileRW;
 	public volatile boolean initialized = false;
 	public Semaphore exitSemaphore = new Semaphore(0);
-	private boolean resizedTrigger = false;
-
+	
 	@Override
 	public int[] getSize() {
 		return SIZE;
@@ -56,11 +59,11 @@ public class FBEngine implements GraphicEngine {
 
 	@Override
 	public void create(Runnable onInitialized) {
-		resizedTrigger = true;
+		onResize = BehaviorSubject.createDefault(new Integer[] {SIZE[0], SIZE[1]});
 		realFb = jni.retrieveBuffer();
 		final long fbLen = realFb.getLength();
 		fb = (MappedByteBuffer) ByteBuffer.allocateDirect((int) fbLen);
-
+		
 		r = new FBRenderer(this, fb);
 
 		initialized = true;
@@ -70,13 +73,8 @@ public class FBEngine implements GraphicEngine {
 	}
 
 	@Override
-	public boolean wasResized() {
-		if (resizedTrigger) {
-			resizedTrigger = false;
-			return true;
-		} else {
-			return false;
-		}
+	public Observable<Integer[]> onResize() {
+		return onResize;
 	}
 
 	@Override

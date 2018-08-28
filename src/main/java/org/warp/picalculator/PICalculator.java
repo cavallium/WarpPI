@@ -60,6 +60,12 @@ public class PICalculator {
 		instance = this;
 		ClassUtils.classLoader = this.getClass();
 		StaticVars.startupArguments = args;
+		Utils.debugThirdScreen = StaticVars.debugOn & false;
+		StaticVars.debugWindow2x = args.isZoomed();
+		if (args.isVerboseLoggingEnabled() || args.isDebugEnabled()) {
+			StaticVars.outputLevel = ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE;
+		}
+		ConsoleUtils.out.println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, args);
 		checkDeviceType();
 		if (Utils.isRunningOnRaspberry() && args.isRaspberryModeAllowed()) {
 			DGpio.wiringPiSetupPhys();
@@ -67,11 +73,6 @@ public class PICalculator {
 		} else {
 			StaticVars.screenPos = new int[] { 0, 0 };
 			StaticVars.debugOn = true;
-		}
-		Utils.debugThirdScreen = StaticVars.debugOn & false;
-		StaticVars.debugWindow2x = args.isZoomed();
-		if (args.isVerboseLoggingEnabled() || args.isDebugEnabled()) {
-			StaticVars.outputLevel = ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE;
 		}
 	}
 
