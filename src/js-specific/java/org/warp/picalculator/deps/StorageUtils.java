@@ -31,7 +31,6 @@ import org.apache.commons.io.Charsets;
 import org.apache.commons.io.IOUtils;
 import org.teavm.classlib.java.nio.charset.TCharset;
 import org.teavm.jso.browser.Window;
-import org.warp.picalculator.Main;
 
 public class StorageUtils {
 	public static final String basepath;

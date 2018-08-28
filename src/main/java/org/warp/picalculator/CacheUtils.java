@@ -30,9 +30,11 @@ public class CacheUtils {
 	private static void refreshEntry(String entryName) {
 		synchronized (time) {
 			synchronized (cache) {
-				if (time.getOrDefault(entryName, 0L) <= System.currentTimeMillis()) {
-					time.remove(entryName);
-					cache.remove(entryName);
+				if (time.containsKey(entryName)) {
+					if (time.get(entryName) <= System.currentTimeMillis()) {
+						time.remove(entryName);
+						cache.remove(entryName);
+					}
 				}
 			}
 		}
