@@ -63,7 +63,7 @@ public class Headless8Engine implements org.warp.picalculator.gui.graphicengine.
 	public void create(Runnable onInitialized) {
 		StaticVars.outputLevel = -1;
 		AnsiConsole.systemInstall();
-		if (Utils.isWindows() && !Utils.msDosMode) {
+		if (Utils.isWindows() && !StaticVars.startupArguments.isMSDOSModeEnabled()) {
 			win = true;
 			WindowsSupport.setConsoleMode(0x0200);
 			final Thread t = new Thread(() -> {
@@ -276,7 +276,13 @@ public class Headless8Engine implements org.warp.picalculator.gui.graphicengine.
 
 	@Override
 	public boolean isSupported() {
-		if (Utils.forceEngine != null && Utils.forceEngine != "console-8") {
+		if (
+				StaticVars.startupArguments.isMSDOSModeEnabled()
+				|| (
+						StaticVars.startupArguments.isEngineForced()
+						&& StaticVars.startupArguments.isHeadless8EngineForced() == false
+					)
+			) {
 			return false;
 		}
 		return true;

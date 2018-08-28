@@ -1,5 +1,6 @@
 package org.warp.picalculator.gui.graphicengine.headless8;
 
+import org.warp.picalculator.StaticVars;
 import org.warp.picalculator.Utils;
 import org.warp.picalculator.gui.graphicengine.Renderer;
 
@@ -19,7 +20,7 @@ public class Headless8Renderer implements Renderer {
 	public static final String[] colorANSI = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "0;1", "1;1", "2;1", "3;1", "4;1", "5;1", "6;1", "7;1" };
 
 	public static final String ANSI_RESET = "\u001B[0m";
-	public static final char FILL = Utils.msDosMode ? 0xDB : '█';
+	public static final char FILL = StaticVars.startupArguments.isMSDOSModeEnabled() ? 0xDB : '█';
 
 	private int hexColor(int red, int green, int blue) {
 		final int r1 = red;

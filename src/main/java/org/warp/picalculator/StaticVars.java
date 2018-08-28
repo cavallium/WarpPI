@@ -1,5 +1,7 @@
 package org.warp.picalculator;
 
+import org.warp.picalculator.boot.StartupArguments;
+
 public class StaticVars {
 	public static final boolean enableVBO = true;
 	public static final String calculatorName = "WarpPI";
@@ -13,6 +15,7 @@ public class StaticVars {
 	public static int outputLevel = 0;
 	public static boolean debugWindow2x = false;
 	public static float windowZoom = 2;
+	public static StartupArguments startupArguments;
 
 	private StaticVars() {
 

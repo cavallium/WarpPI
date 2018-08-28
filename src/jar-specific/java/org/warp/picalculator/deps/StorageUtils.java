@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 import org.warp.picalculator.ClassUtils;
-import org.warp.picalculator.Main;
+import org.warp.picalculator.boot.Main;
 
 public class StorageUtils {
 	public static final boolean exists(Path f) {

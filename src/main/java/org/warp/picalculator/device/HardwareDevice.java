@@ -1,5 +1,6 @@
 package org.warp.picalculator.device;
 
+import org.warp.picalculator.PlatformUtils;
 import org.warp.picalculator.gui.DisplayManager;
 
 public class HardwareDevice {
@@ -25,8 +26,8 @@ public class HardwareDevice {
 		displayManager.initialize();
 	    inputManager.getKeyboard().startKeyboard();
 		Thread t = new Thread(r);
-		t.setDaemon(false);
-		t.setName("Main thread (after setup)");
+		PlatformUtils.setDaemon(t, false);
+		PlatformUtils.setThreadName(t, "Main thread (after setup)");
 		t.start();
 	}
 	

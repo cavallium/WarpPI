@@ -63,7 +63,7 @@ public class Headless256Engine implements org.warp.picalculator.gui.graphicengin
 	public void create(Runnable onInitialized) {
 		StaticVars.outputLevel = -1;
 		AnsiConsole.systemInstall();
-		if (Utils.isWindows() && !Utils.msDosMode) {
+		if (Utils.isWindows() && !StaticVars.startupArguments.isMSDOSModeEnabled()) {
 			win = true;
 			WindowsSupport.setConsoleMode(0x0200);
 			final Thread t = new Thread(() -> {
@@ -276,7 +276,13 @@ public class Headless256Engine implements org.warp.picalculator.gui.graphicengin
 
 	@Override
 	public boolean isSupported() {
-		if (Utils.msDosMode || (Utils.forceEngine != null && Utils.forceEngine != "console-256")) {
+		if (
+				StaticVars.startupArguments.isMSDOSModeEnabled()
+				|| (
+						StaticVars.startupArguments.isEngineForced()
+						&& StaticVars.startupArguments.isHeadless256EngineForced() == false
+					)
+			) {
 			return false;
 		}
 		return true;

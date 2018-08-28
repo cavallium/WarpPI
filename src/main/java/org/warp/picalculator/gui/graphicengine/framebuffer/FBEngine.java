@@ -7,6 +7,7 @@ import java.nio.MappedByteBuffer;
 import java.util.concurrent.Semaphore;
 
 import org.warp.picalculator.MmapByteBuffer;
+import org.warp.picalculator.StaticVars;
 import org.warp.picalculator.TestJNI;
 import org.warp.picalculator.Utils;
 import org.warp.picalculator.gui.graphicengine.BinaryFont;
@@ -174,10 +175,10 @@ public class FBEngine implements GraphicEngine {
 
 	@Override
 	public boolean isSupported() {
-		if (Utils.forceEngine != null && Utils.forceEngine != "fb") {
+		if (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isFrameBufferEngineForced() == false) {
 			return false;
 		}
-		if (Utils.headlessOverride) {
+		if (StaticVars.startupArguments.isHeadlessEngineForced()) {
 			return false;
 		}
 		/*

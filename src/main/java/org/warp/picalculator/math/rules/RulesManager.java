@@ -11,7 +11,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +20,7 @@ import org.apache.commons.io.IOUtils;
 import org.warp.picalculator.ConsoleUtils;
 import org.warp.picalculator.Error;
 import org.warp.picalculator.PlatformUtils;
+import org.warp.picalculator.StaticVars;
 import org.warp.picalculator.Utils;
 import org.warp.picalculator.ZipUtils;
 import org.warp.picalculator.deps.StorageUtils;
@@ -101,7 +101,7 @@ public class RulesManager {
 							tDir.delete();
 						}
 						ZipUtils.unzip(cacheFilePath.toString(), tDir.getParent().toString(), "");
-						useCache = !Utils.debugCache;
+						useCache = !StaticVars.startupArguments.isUncached();
 					} catch (final Exception ex) {
 						ex.printStackTrace();
 					}
@@ -189,7 +189,7 @@ public class RulesManager {
 			}
 			StorageUtils.write(tFileJava, javaCode.getBytes("UTF-8"), DStandardOpenOption.WRITE, DStandardOpenOption.CREATE);
 			final boolean compiled = DJDTCompiler.compile(new String[] { "-nowarn", "-1.8", tFileJava.toString() }, new PrintWriter(System.out), new PrintWriter(System.err));
-			if (Utils.debugCache) {
+			if (StaticVars.startupArguments.isUncached()) {
 				tFileJava.deleteOnExit();
 			} else {
 				tFileJava.delete();

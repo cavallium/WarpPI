@@ -191,10 +191,10 @@ public class CPUEngine implements GraphicEngine {
 
 	@Override
 	public boolean isSupported() {
-		if (Utils.forceEngine != null && Utils.forceEngine != "cpu") {
+		if (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isCPUEngineForced() == false) {
 			return false;
 		}
-		return (Utils.headlessOverride || GraphicsEnvironment.isHeadless()) == false;
+		return (StaticVars.startupArguments.isHeadlessEngineForced() || GraphicsEnvironment.isHeadless()) == false;
 	}
 
 	@Override

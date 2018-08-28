@@ -5,11 +5,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.UUID;
 
 import org.warp.picalculator.StaticVars;
+import org.warp.picalculator.deps.nio.DFiles;
+import org.warp.picalculator.deps.nio.DPaths;
 
 public class CacheFile {
 	private String path;
@@ -21,9 +21,9 @@ public class CacheFile {
 	public CacheFile() {
 		do {
 			path = UUID.randomUUID().toString() + ".ser";
-		} while (Files.exists(Paths.get(path)));
+		} while (DFiles.exists(DPaths.get(path)));
 		try {
-			Files.createTempFile(StaticVars.calculatorNameLOWER, "");
+			DFiles.createTempFile(StaticVars.calculatorNameLOWER, "");
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -80,7 +80,7 @@ public class CacheFile {
 	public void dispose() {
 		closeStreams();
 		try {
-			Files.deleteIfExists(Paths.get(path));
+			DFiles.deleteIfExists(DPaths.get(path));
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}

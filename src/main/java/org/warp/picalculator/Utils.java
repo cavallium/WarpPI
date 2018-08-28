@@ -15,14 +15,20 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.nevec.rjm.BigDecimalMath;
 import org.nevec.rjm.Rational;
+import org.warp.picalculator.deps.DGpio;
 import org.warp.picalculator.deps.StorageUtils;
+import org.warp.picalculator.deps.nio.DFiles;
+import org.warp.picalculator.deps.nio.DPath;
+import org.warp.picalculator.deps.nio.DPaths;
 import org.warp.picalculator.device.HardwareDevice;
 import org.warp.picalculator.gui.DisplayManager;
 import org.warp.picalculator.gui.graphicengine.BinaryFont;
@@ -53,32 +59,17 @@ public class Utils {
 	public static final RoundingMode scaleMode2 = RoundingMode.HALF_UP;
 
 	public static boolean debugThirdScreen;
-	public static boolean headlessOverride = false;
-	public static String forceEngine;
-	public static boolean msDosMode;
-	public static boolean debugCache;
 	public static boolean newtMode = true;
 
-	public static boolean isInArray(String ch, String[] a) {
-		boolean contains = false;
-		for (final String c : a) {
-			if (c.equals(ch)) {
-				contains = true;
-				break;
-			}
-		}
-		return contains;
+	public static <T> boolean isInArray(T ch, T[] a) {
+		return Arrays.stream(a).anyMatch(item -> ch.equals(item));
 	}
 
 	public static boolean isInArray(char ch, char[] a) {
-		boolean contains = false;
 		for (final char c : a) {
-			if (c == ch) {
-				contains = true;
-				break;
-			}
+			if (c == ch) return true;
 		}
-		return contains;
+		return false;
 	}
 
 	private static final String[] regexNormalSymbols = new String[] { "\\", ".", "[", "]", "{", "}", "(", ")", "*", "+", "-", "?", "^", "$", "|" };
@@ -646,24 +637,30 @@ public class Utils {
 		} // for
 		System.out.println("============");
 	}
-
+	
 	public static boolean isRunningOnRaspberry() {
-		if (PlatformUtils.osName.equals("Linux")) {
-			final File file = new File("/etc", "os-release");
-			try (FileInputStream fis = new FileInputStream(file); BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(fis))) {
-				String string;
-				while ((string = bufferedReader.readLine()) != null) {
-					if (string.toLowerCase().contains("raspbian")) {
-						if (string.toLowerCase().contains("name")) {
-							return true;
-						}
-					}
-				}
+		return CacheUtils.get("isRunningOnRaspberry", 24*60*60*1000, () -> {
+			if (PlatformUtils.isJavascript) return false;
+			try {
+				// Check if it's a raspberry using pi4j
+				return DGpio.getBoardType() != DGpio.UnknownBoardType;
 			} catch (final Exception e) {
-				e.printStackTrace();
+				// Check if it's a raspberry using other methods
+				if (PlatformUtils.osName.equals("Linux")) {
+					try {
+						final DPath osRelease = DPaths.get("/etc", "os-release");
+						return DFiles.readAllLines(osRelease).stream()
+						.map(String::toLowerCase)
+						.anyMatch(line -> line.contains("raspbian") && line.contains("name"));
+					} catch (IOException readException) {
+						return false;
+					}
+					
+				} else {
+					return false;
+				}
 			}
-		}
-		return false;
+		});
 	}
 
 	public static boolean isWindows() {
@@ -684,7 +681,7 @@ public class Utils {
 		}
 	}
 
-	public static Path getJarDirectory() {
-		return Paths.get("").toAbsolutePath();
+	public static DPath getJarDirectory() {
+		return DPaths.get("").toAbsolutePath();
 	}
 }

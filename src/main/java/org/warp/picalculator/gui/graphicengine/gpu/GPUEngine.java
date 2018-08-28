@@ -162,10 +162,10 @@ public class GPUEngine implements GraphicEngine {
 
 	@Override
 	public boolean isSupported() {
-		if (Utils.forceEngine != null && Utils.forceEngine != "gpu") {
+		if (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isGPUEngineForced() == false) {
 			return false;
 		}
-		if (Utils.headlessOverride) {
+		if (StaticVars.startupArguments.isHeadlessEngineForced()) {
 			return false;
 		}
 		boolean available = false;
