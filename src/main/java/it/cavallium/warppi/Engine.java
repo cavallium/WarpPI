@@ -43,7 +43,7 @@ public class Engine {
 	public static void start(Screen screen, HardwareDisplay disp, HardwareTouchDevice touchdevice, HUD hud,
 			StartupArguments args) throws InterruptedException, IOException {
 		if (running) {
-			throw new IllegalAccessError("Already running!");
+			throw new RuntimeException("Already running!");
 		} else {
 			running = true;
 			INSTANCE.startInstance(screen, disp, touchdevice, hud, args);
