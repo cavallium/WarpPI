@@ -5,13 +5,12 @@ import java.util.concurrent.Semaphore;
 
 import org.warp.picalculator.Utils;
 import org.warp.picalculator.deps.DSemaphore;
+import org.warp.picalculator.flow.Observable;
 import org.warp.picalculator.gui.graphicengine.BinaryFont;
 import org.warp.picalculator.gui.graphicengine.GraphicEngine;
 import org.warp.picalculator.gui.graphicengine.Renderer;
 import org.warp.picalculator.gui.graphicengine.RenderingLoop;
 import org.warp.picalculator.gui.graphicengine.Skin;
-
-import io.reactivex.Observable;
 
 public class NoGuiEngine implements GraphicEngine {
 

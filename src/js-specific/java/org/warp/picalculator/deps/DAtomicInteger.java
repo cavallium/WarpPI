@@ -36,7 +36,6 @@
 package org.warp.picalculator.deps;
 import java.util.function.IntUnaryOperator;
 import java.util.function.IntBinaryOperator;
-import sun.misc.Unsafe;
 
 /**
  * An {@code int} value that may be updated atomically.  See the

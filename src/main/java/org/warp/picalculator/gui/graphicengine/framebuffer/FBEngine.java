@@ -10,6 +10,8 @@ import org.warp.picalculator.MmapByteBuffer;
 import org.warp.picalculator.StaticVars;
 import org.warp.picalculator.TestJNI;
 import org.warp.picalculator.Utils;
+import org.warp.picalculator.flow.BehaviorSubject;
+import org.warp.picalculator.flow.Observable;
 import org.warp.picalculator.gui.graphicengine.BinaryFont;
 import org.warp.picalculator.gui.graphicengine.GraphicEngine;
 import org.warp.picalculator.gui.graphicengine.Renderer;
@@ -17,9 +19,6 @@ import org.warp.picalculator.gui.graphicengine.RenderingLoop;
 import org.warp.picalculator.gui.graphicengine.Skin;
 import org.warp.picalculator.gui.graphicengine.cpu.CPUFont;
 import org.warp.picalculator.gui.graphicengine.cpu.CPUSkin;
-
-import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
 
 public class FBEngine implements GraphicEngine {
 
@@ -59,7 +58,7 @@ public class FBEngine implements GraphicEngine {
 
 	@Override
 	public void create(Runnable onInitialized) {
-		onResize = BehaviorSubject.createDefault(new Integer[] {SIZE[0], SIZE[1]});
+		onResize = BehaviorSubject.create(new Integer[] {SIZE[0], SIZE[1]});
 		realFb = jni.retrieveBuffer();
 		final long fbLen = realFb.getLength();
 		fb = (MappedByteBuffer) ByteBuffer.allocateDirect((int) fbLen);

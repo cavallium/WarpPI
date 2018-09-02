@@ -24,6 +24,8 @@ import org.warp.picalculator.Utils;
 import org.warp.picalculator.deps.DSemaphore;
 import org.warp.picalculator.deps.StorageUtils;
 import org.warp.picalculator.device.Keyboard;
+import org.warp.picalculator.flow.BehaviorSubject;
+import org.warp.picalculator.flow.Observable;
 import org.warp.picalculator.gui.graphicengine.BinaryFont;
 import org.warp.picalculator.gui.graphicengine.GraphicEngine;
 import org.warp.picalculator.gui.graphicengine.Renderer;
@@ -43,6 +45,7 @@ public class HtmlEngine implements GraphicEngine {
 	private HtmlRenderer renderer;
 	private int width = -1, height = -1;
 	private final int frameTime = (int) (1000d/10d);
+	private final BehaviorSubject<Integer[]> onResize = BehaviorSubject.create();
 	
 	@Override
 	public int[] getSize() {
@@ -195,11 +198,6 @@ public class HtmlEngine implements GraphicEngine {
 	}
 
 	@Override
-	public boolean wasResized() {
-		return false;
-	}
-
-	@Override
 	public int getWidth() {
 		if (width == -1) {
 			width = canvas.getWidth();
@@ -291,6 +289,11 @@ public class HtmlEngine implements GraphicEngine {
 	@Override
 	public boolean doesRefreshPauses() {
 		return true;
+	}
+
+	@Override
+	public Observable<Integer[]> onResize() {
+		return onResize;
 	}
 
 }

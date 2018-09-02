@@ -8,13 +8,12 @@ import java.util.concurrent.Semaphore;
 import org.warp.picalculator.StaticVars;
 import org.warp.picalculator.Utils;
 import org.warp.picalculator.device.HardwareDevice;
+import org.warp.picalculator.flow.Observable;
 import org.warp.picalculator.gui.DisplayManager;
 import org.warp.picalculator.gui.graphicengine.BinaryFont;
 import org.warp.picalculator.gui.graphicengine.GraphicEngine;
 import org.warp.picalculator.gui.graphicengine.RenderingLoop;
 import org.warp.picalculator.gui.graphicengine.Skin;
-
-import io.reactivex.Observable;
 
 public class CPUEngine implements GraphicEngine {
 

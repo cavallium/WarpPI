@@ -43,7 +43,7 @@ public class ConsoleUtils {
 			}
 		}
 	
-		public void println(int level, String str) {
+		public void println(int level, Object str) {
 			if (StaticVars.outputLevel >= level) {
 				final String time = getTimeString();
 				if (StaticVars.outputLevel == 0) {
@@ -64,7 +64,7 @@ public class ConsoleUtils {
 			}
 		}
 	
-		public void println(int level, String prefix, String str) {
+		public void println(int level, Object prefix, Object str) {
 			if (StaticVars.outputLevel >= level) {
 				final String time = getTimeString();
 				if (StaticVars.outputLevel == 0) {
@@ -75,7 +75,7 @@ public class ConsoleUtils {
 			}
 		}
 	
-		public void println(int level, String... parts) {
+		public void println(int level, Object... parts) {
 			if (StaticVars.outputLevel >= level) {
 				final String time = getTimeString();
 				String output = "";

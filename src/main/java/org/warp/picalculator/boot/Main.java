@@ -1,15 +1,9 @@
 package org.warp.picalculator.boot;
 
-import java.io.IOException;
 import java.util.Arrays;
-import java.util.stream.Stream;
-
 import org.warp.picalculator.ConsoleUtils;
 import org.warp.picalculator.PICalculator;
-import org.warp.picalculator.Utils;
-import org.warp.picalculator.device.PIHardwareDisplay;
-import org.warp.picalculator.gui.CalculatorHUD;
-import org.warp.picalculator.gui.screens.LoadingScreen;
+import org.warp.picalculator.flow.TestFlow;
 
 public class Main {
 	public static void main(String[] args) throws Exception {

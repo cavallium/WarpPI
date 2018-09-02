@@ -22,6 +22,7 @@ import org.warp.picalculator.event.TouchEvent;
 import org.warp.picalculator.event.TouchEventListener;
 import org.warp.picalculator.event.TouchMoveEvent;
 import org.warp.picalculator.event.TouchStartEvent;
+import org.warp.picalculator.flow.Observable;
 import org.warp.picalculator.gui.graphicengine.BinaryFont;
 import org.warp.picalculator.gui.graphicengine.GraphicEngine;
 import org.warp.picalculator.gui.graphicengine.Renderer;
@@ -30,8 +31,6 @@ import org.warp.picalculator.gui.graphicengine.Skin;
 import org.warp.picalculator.gui.graphicengine.nogui.NoGuiEngine;
 import org.warp.picalculator.gui.screens.Screen;
 
-import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap.Entry;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
@@ -401,9 +400,9 @@ public final class DisplayManager implements RenderingLoop {
 				DSystem.exit(0);
 			}
 			
-			Observable<Long> workTimer = Observable.interval(tickDuration, TimeUnit.MILLISECONDS);
+			Observable<Long> workTimer = Observable.interval(tickDuration);
 			
-			Observable.combineLatest(workTimer, engine.onResize(), (time, windowSize) -> windowSize).subscribe((windowSize) -> {
+			Observable.combineChanged(workTimer, engine.onResize()).subscribe((pair) -> {
 				double dt = 0;
 				final long newtime = System.nanoTime();
 				if (precTime == -1) {
@@ -413,8 +412,11 @@ public final class DisplayManager implements RenderingLoop {
 				}
 				precTime = newtime;
 
-				StaticVars.screenSize[0] = windowSize[0];
-				StaticVars.screenSize[1] = windowSize[1];
+				if (pair.getRight() != null) {
+					Integer[] windowSize = pair.getRight();
+					StaticVars.screenSize[0] = windowSize[0];
+					StaticVars.screenSize[1] = windowSize[1];
+				}
 				
 				screen.beforeRender((float) (dt / 1000d));
 			});

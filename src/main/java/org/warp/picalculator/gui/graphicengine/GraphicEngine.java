@@ -3,7 +3,7 @@ package org.warp.picalculator.gui.graphicengine;
 import java.io.IOException;
 import java.util.List;
 
-import io.reactivex.Observable;
+import org.warp.picalculator.flow.Observable;
 
 public interface GraphicEngine {
 

@@ -10,6 +10,7 @@ import java.util.concurrent.Semaphore;
 
 import org.warp.picalculator.StaticVars;
 import org.warp.picalculator.Utils;
+import org.warp.picalculator.flow.Observable;
 import org.warp.picalculator.gui.graphicengine.BinaryFont;
 import org.warp.picalculator.gui.graphicengine.GraphicEngine;
 import org.warp.picalculator.gui.graphicengine.RenderingLoop;
@@ -17,10 +18,6 @@ import org.warp.picalculator.gui.graphicengine.Skin;
 
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.texture.Texture;
-
-import io.reactivex.Observable;
-import io.reactivex.processors.BehaviorProcessor;
-import io.reactivex.subjects.BehaviorSubject;
 
 public class GPUEngine implements GraphicEngine {
 
@@ -63,8 +60,6 @@ public class GPUEngine implements GraphicEngine {
 
 	@Override
 	public void setDisplayMode(int ww, int wh) {
-		size[0] = ww;
-		size[1] = wh;
 		wnd.setSize(ww, wh);
 	}
 
@@ -89,7 +84,7 @@ public class GPUEngine implements GraphicEngine {
 	
 	@Override
 	public Observable<Integer[]> onResize() {
-		return wnd.onResize;
+		return wnd.onResizeEvent;
 	}
 
 	@Override

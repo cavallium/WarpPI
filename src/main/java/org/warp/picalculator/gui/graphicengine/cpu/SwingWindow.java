@@ -29,11 +29,11 @@ import org.warp.picalculator.event.TouchEndEvent;
 import org.warp.picalculator.event.TouchMoveEvent;
 import org.warp.picalculator.event.TouchPoint;
 import org.warp.picalculator.event.TouchStartEvent;
+import org.warp.picalculator.flow.BehaviorSubject;
+import org.warp.picalculator.flow.Observable;
 import org.warp.picalculator.gui.DisplayManager;
 import org.warp.picalculator.gui.graphicengine.RenderingLoop;
 
-import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class SwingWindow extends JFrame {
@@ -55,7 +55,8 @@ public class SwingWindow extends JFrame {
 		// Transparent 16 x 16 pixel cursor image.
 		final BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 
-		mult = StaticVars.windowZoomValue.next().intValue();
+		mult = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue()).intValue();
+		
 		if (StaticVars.debugOn) {
 			if (Utils.debugThirdScreen) {
 				this.setLocation(2880, 900);

@@ -26,7 +26,7 @@ public class LoadingScreen extends Screen {
 
 	@Override
 	public void initialized() throws InterruptedException {
-		previousZoomValue = StaticVars.windowZoomValue.next();
+		previousZoomValue = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue());
 		StaticVars.windowZoom.onNext(1f);
 	}
 

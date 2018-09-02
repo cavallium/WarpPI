@@ -9,10 +9,9 @@ import org.warp.picalculator.StaticVars;
 import org.warp.picalculator.Utils;
 import org.warp.picalculator.device.Keyboard;
 import org.warp.picalculator.event.Key;
+import org.warp.picalculator.flow.DObservable;
 import org.warp.picalculator.gui.graphicengine.Renderer;
 import org.warp.picalculator.gui.graphicengine.RenderingLoop;
-
-import io.reactivex.Observable;
 
 public class Headless24bitEngine implements org.warp.picalculator.gui.graphicengine.GraphicEngine {
 
@@ -140,7 +139,7 @@ public class Headless24bitEngine implements org.warp.picalculator.gui.graphiceng
 	}
 
 	@Override
-	public Observable<Integer[]> onResize() {
+	public DObservable<Integer[]> onResize() {
 		return null;
 	}
 

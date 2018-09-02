@@ -28,12 +28,8 @@
 
 package org.warp.picalculator.gui.graphicengine.gpu;
 
-import java.nio.file.WatchService;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.warp.picalculator.ConsoleUtils;
 import org.warp.picalculator.StaticVars;
 import org.warp.picalculator.device.HardwareDevice;
 import org.warp.picalculator.device.Keyboard;
@@ -42,11 +38,11 @@ import org.warp.picalculator.event.TouchEndEvent;
 import org.warp.picalculator.event.TouchMoveEvent;
 import org.warp.picalculator.event.TouchPoint;
 import org.warp.picalculator.event.TouchStartEvent;
-import org.warp.picalculator.gui.DisplayManager;
+import org.warp.picalculator.flow.BehaviorSubject;
+import org.warp.picalculator.flow.SimpleSubject;
+import org.warp.picalculator.flow.Subject;
 import org.warp.picalculator.gui.graphicengine.GraphicEngine;
 
-import com.jogamp.newt.event.GestureHandler.GestureEvent;
-import com.jogamp.newt.event.GestureHandler.GestureListener;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.MouseEvent;
@@ -67,15 +63,6 @@ import com.jogamp.opengl.fixedfunc.GLPointerFunc;
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.texture.Texture;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.processors.BehaviorProcessor;
-import io.reactivex.subjects.BehaviorSubject;
-import io.reactivex.subjects.PublishSubject;
-import io.reactivex.subjects.ReplaySubject;
-import io.reactivex.subjects.Subject;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
@@ -95,26 +82,46 @@ class NEWTWindow implements GLEventListener {
 	public volatile boolean refreshViewport;
 	public List<TouchPoint> touches = new ObjectArrayList<>();
 
-	final BehaviorSubject<Integer[]> onResize = BehaviorSubject.create();
+	final BehaviorSubject<Integer[]> onRealResize;
+	final BehaviorSubject<Integer[]> onResizeEvent = BehaviorSubject.create();
 	private BehaviorSubject<Float> onZoom = BehaviorSubject.create();
-	private Subject<GL2ES1> onGLContext = PublishSubject.create();
+	private Subject<GL2ES1> onGLContext = SimpleSubject.create();
 
 	public NEWTWindow(GPUEngine disp) {
 		this.disp = disp;
 		renderer = disp.getRenderer();
-		realWindowSize = new int[] { 1, 1 };
+		disp.size[0] = StaticVars.screenSize[0];
+		disp.size[1] = StaticVars.screenSize[1];
+		realWindowSize = new int[] { StaticVars.screenSize[0], StaticVars.screenSize[1] };
+		windowZoom = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue());
+		onRealResize = BehaviorSubject.create(new Integer[] {(int) (StaticVars.screenSize[0] * windowZoom), (int) (StaticVars.screenSize[1] * windowZoom)});
 		
-		Observable.zip(onZoom, onGLContext, (gl,zoom)->{return Pair.of(gl, zoom);}).subscribe((pair) -> {
-			windowZoom = pair.getLeft();
-			onDisplayChanged(pair.getRight(), true, false);
+		onRealResize.subscribe((realSize) -> {
+			System.err.println("[[[SET REALWINDOWZOOM");
+			realWindowSize[0] = realSize[0];
+			realWindowSize[1] = realSize[1];
+			disp.size[0] = realSize[0] / (int) windowZoom;
+			disp.size[1] = realSize[1] / (int) windowZoom;
+			System.err.println("[[["+realWindowSize[0]);
+			System.err.println("[[["+windowZoom);
+			System.err.println("[[["+disp.size[0]);
+			onResizeEvent.onNext(new Integer[] {disp.size[0], disp.size[1]});
+			refreshViewport = true;
 		});
-		Observable.zip(onResize, onGLContext, (gl,size)->{return Pair.of(gl, size);}).subscribe((pair) -> {
-			final Integer[] size = pair.getLeft();
-			realWindowSize[0] = size[0];
-			realWindowSize[1] =size[1];
-			disp.size[0] = size[0];
-			disp.size[1] = size[1];
-			onDisplayChanged(pair.getRight(), false, true);
+		StaticVars.windowZoom$.subscribe((zoom) -> {onZoom.onNext(zoom);});
+		onZoom.subscribe((z)-> {
+			if (windowZoom != 0) {
+				windowZoom = z;
+				disp.size[0] = (int) (realWindowSize[0] / windowZoom);
+				disp.size[1] = (int) (realWindowSize[1] / windowZoom);
+				StaticVars.screenSize[0] = disp.size[0];
+				StaticVars.screenSize[1] = disp.size[1];
+				System.err.println("[[[SET WINDOWZOOM");
+				System.err.println("[[["+realWindowSize[0]);
+				System.err.println("[[["+windowZoom);
+				System.err.println("[[[A:"+disp.size[0]);
+				refreshViewport = true;
+			}
 		});
 	}
 
@@ -472,8 +479,6 @@ class NEWTWindow implements GLEventListener {
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-		StaticVars.windowZoom$.subscribe((zoom) -> {onZoom.onNext(zoom);});
-		onResize.onNext(new Integer[] {disp.size[0], disp.size[1]});
 		
 		if (onInitialized != null) {
 			onInitialized.run();
@@ -489,21 +494,7 @@ class NEWTWindow implements GLEventListener {
 
 	@Override
 	public void reshape(GLAutoDrawable glad, int x, int y, int width, int height) {
-		onResize.onNext(new Integer[] {width, height});
-	}
-
-	private void onDisplayChanged(GL2ES1 gl, boolean zoomChanged, boolean sizeChanged) {
-		disp.size[0] = (int) (realWindowSize[0] / windowZoom);
-		disp.size[1] = (int) (realWindowSize[1] / windowZoom);
-		
-		if (zoomChanged) {
-			final boolean linear = (windowZoom % ((int) windowZoom)) != 0f;
-			for (final Texture t : disp.registeredTextures) {
-				t.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, linear ? GL.GL_LINEAR : GL.GL_NEAREST);
-				t.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-			}
-		}
-		refreshViewport = true;
+		onRealResize.onNext(new Integer[] {width, height});
 	}
 
 	@Override
@@ -512,18 +503,9 @@ class NEWTWindow implements GLEventListener {
 		GPURenderer.gl = gl;
 		onGLContext.onNext(gl);
 		
-		Boolean linear = null;
-		while (!disp.unregisteredTextures.isEmpty()) {
-			if (linear == null) {
-				linear = (windowZoom % ((int) windowZoom)) != 0f;
-			}
-			final Texture t = disp.unregisteredTextures.pop();
-			t.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-			t.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-			disp.registeredTextures.addLast(t);
-		}
-		
+		boolean linear = (windowZoom % ((int) windowZoom)) != 0f;
 		if (refreshViewport) {
+			System.err.println("[[[REFVP");
 			refreshViewport = false;
 			gl.glViewport(0, 0, realWindowSize[0], realWindowSize[1]);
 
@@ -534,6 +516,17 @@ class NEWTWindow implements GLEventListener {
 
 			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 			gl.glLoadIdentity();
+			
+			for (final Texture t : disp.registeredTextures) {
+				t.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, linear ? GL.GL_LINEAR : GL.GL_NEAREST);
+				t.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+			}
+		}
+		while (disp.unregisteredTextures.isEmpty() == false) {
+			final Texture t = disp.unregisteredTextures.pop();
+			t.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, linear ? GL.GL_LINEAR : GL.GL_NEAREST);
+			t.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+			disp.registeredTextures.addLast(t);
 		}
 
 		gl.glEnableClientState(GLPointerFunc.GL_COLOR_ARRAY);
@@ -554,12 +547,16 @@ class NEWTWindow implements GLEventListener {
 
 	}
 	
-    public void setSize(final int width, final int height) {
+    void setSize(final int width, final int height) {
     	int zoom = (int) windowZoom;
     	if (zoom == 0) {
-        	zoom = onZoom.blockingFirst().intValue();
+        	zoom = onZoom.getLastValue().intValue();
+    	}
+    	if (zoom == 0) {
+    		zoom = 1;
     	}
         window.setSize(width * zoom, height * zoom);
+		onRealResize.onNext(new Integer[] {width * zoom, height * zoom});
     }
 
 	@Override
