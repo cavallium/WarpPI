@@ -6,19 +6,19 @@ SETTINGS: (please don't move this part)
 
 
 
-import org.warp.picalculator.math.Function;
-import org.warp.picalculator.math.FunctionOperator;
-import org.warp.picalculator.math.MathContext;
+import it.cavallium.warppi.ScriptUtils;
+import it.cavallium.warppi.math.Function;
+import it.cavallium.warppi.math.FunctionOperator;
+import it.cavallium.warppi.math.MathContext;
+import it.cavallium.warppi.math.functions.Multiplication;
+import it.cavallium.warppi.math.functions.Number;
+import it.cavallium.warppi.math.functions.Subtraction;
+import it.cavallium.warppi.math.functions.Sum;
+import it.cavallium.warppi.math.functions.SumSubtraction;
+import it.cavallium.warppi.math.rules.Rule;
+import it.cavallium.warppi.math.rules.RuleType;
+import it.cavallium.warppi.math.rules.RulesManager;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import org.warp.picalculator.ScriptUtils;
-import org.warp.picalculator.math.rules.Rule;
-import org.warp.picalculator.math.rules.RuleType;
-import org.warp.picalculator.math.rules.RulesManager;
-import org.warp.picalculator.math.functions.Multiplication;
-import org.warp.picalculator.math.functions.Sum;
-import org.warp.picalculator.math.functions.Subtraction;
-import org.warp.picalculator.math.functions.SumSubtraction;
-import org.warp.picalculator.math.functions.Number;
 
 /**
  * Expand rule

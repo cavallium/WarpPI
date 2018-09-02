@@ -1,8 +1,8 @@
 eclipse.preferences.version=1
 encoding//src/jar-specific/java=UTF-8
 encoding//src/main/java=UTF-8
-encoding//src/main/java/org/warp/picalculator/gui/expression/blocks/BlockParenthesis.java=UTF-8
-encoding//src/main/java/org/warp/picalculator/math/MathematicalSymbols.java=UTF-8
+encoding//src/main/java/it/cavallium/warppi/gui/expression/blocks/BlockParenthesis.java=UTF-8
+encoding//src/main/java/it/cavallium/warppi/math/MathematicalSymbols.java=UTF-8
 encoding//src/main/resources=UTF-8
 encoding//src/main/rules=UTF-8
 encoding//src/teavm-specific/java=UTF-8

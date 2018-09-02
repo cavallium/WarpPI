@@ -5,8 +5,8 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.security.ProviderException;
 
-import org.warp.picalculator.Error;
-import org.warp.picalculator.Utils;
+import it.cavallium.warppi.Error;
+import it.cavallium.warppi.Utils;
 
 /**
  * Square roots on the real line.

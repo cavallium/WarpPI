@@ -4,23 +4,17 @@ SETTINGS: (please don't move this part)
  PATH=ExponentRule8
 */
 
-import org.warp.picalculator.math.Function;
-import org.warp.picalculator.math.FunctionOperator;
-import org.warp.picalculator.math.FunctionDynamic;
-import org.warp.picalculator.math.FunctionSingle;
-import org.warp.picalculator.math.MathContext;
-//Imports
-
-
-import org.warp.picalculator.Error;
-import org.warp.picalculator.math.Function;
-import org.warp.picalculator.math.MathContext;
-import org.warp.picalculator.math.functions.Multiplication;
-import org.warp.picalculator.math.functions.Power;
-import org.warp.picalculator.math.functions.Sum;
-import org.warp.picalculator.math.rules.Rule;
-import org.warp.picalculator.math.rules.RuleType;
-
+import it.cavallium.warppi.Error;
+import it.cavallium.warppi.math.Function;
+import it.cavallium.warppi.math.FunctionDynamic;
+import it.cavallium.warppi.math.FunctionOperator;
+import it.cavallium.warppi.math.FunctionSingle;
+import it.cavallium.warppi.math.MathContext;
+import it.cavallium.warppi.math.functions.Multiplication;
+import it.cavallium.warppi.math.functions.Power;
+import it.cavallium.warppi.math.functions.Sum;
+import it.cavallium.warppi.math.rules.Rule;
+import it.cavallium.warppi.math.rules.RuleType;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**

@@ -1,4 +1,4 @@
-package org.warp.picalculator;
+package it.cavallium.warppi;
 
 import java.nio.ByteBuffer;
 

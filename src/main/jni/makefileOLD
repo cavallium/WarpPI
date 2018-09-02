@@ -1,7 +1,7 @@
 # Define a variable for classpath
 CLASS_PATH = ../../../target/classes
-PATH1A = org/warp/picalculator
-PATH1B = org.warp.picalculator
+PATH1A = it/cavallium/warppi
+PATH1B = it.cavallium.warppi
 
 # Define a virtual path for .class in the bin directory
 vpath %.class $(CLASS_PATH)/$(PATH1A)

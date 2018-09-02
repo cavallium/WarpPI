@@ -5,8 +5,8 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
-import org.warp.picalculator.Error;
-import org.warp.picalculator.Errors;
+import it.cavallium.warppi.Error;
+import it.cavallium.warppi.Errors;
 
 /**
  * Fractions (rational numbers). They are divisions of two BigInteger numbers,

@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.security.ProviderException;
 
-import org.warp.picalculator.Error;
+import it.cavallium.warppi.Error;
 
 /**
  * BigDecimal special functions.

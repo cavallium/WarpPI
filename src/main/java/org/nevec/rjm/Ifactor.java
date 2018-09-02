@@ -4,7 +4,7 @@ import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Vector;
 
-import org.warp.picalculator.Error;
+import it.cavallium.warppi.Error;
 
 /**
  * Factored integers.

@@ -3,7 +3,7 @@ package org.nevec.rjm;
 import java.math.BigInteger;
 import java.util.Vector;
 
-import org.warp.picalculator.Error;
+import it.cavallium.warppi.Error;
 
 /**
  * BigInteger special functions and Number theory.

@@ -4,16 +4,12 @@ SETTINGS: (please don't move this part)
  PATH=FractionsRule2
 */
 
-//Imports
-
-
-import org.warp.picalculator.Error;
-import org.warp.picalculator.math.Function;
-import org.warp.picalculator.math.functions.Division;
-import org.warp.picalculator.math.functions.Number;
-import org.warp.picalculator.math.rules.Rule;
-import org.warp.picalculator.math.rules.RuleType;
-
+import it.cavallium.warppi.Error;
+import it.cavallium.warppi.math.Function;
+import it.cavallium.warppi.math.functions.Division;
+import it.cavallium.warppi.math.functions.Number;
+import it.cavallium.warppi.math.rules.Rule;
+import it.cavallium.warppi.math.rules.RuleType;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**

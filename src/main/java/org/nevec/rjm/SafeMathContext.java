@@ -3,7 +3,7 @@ package org.nevec.rjm;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
-import org.warp.picalculator.ConsoleUtils;
+import it.cavallium.warppi.ConsoleUtils;
 
 public final class SafeMathContext {
 

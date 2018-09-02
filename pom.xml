@@ -2,7 +2,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.warp.picalculator</groupId>
+	<groupId>it.cavallium.warppi</groupId>
 	<artifactId>warppi-calculator</artifactId>
 	<packaging>jar</packaging>
 	<version>0.8-SNAPSHOT</version>
@@ -100,13 +100,6 @@
 					<artifactId>ecj</artifactId>
 					<version>4.6.1</version>
 				</dependency>
-				<!--
-				<dependency>
-				    <groupId>net.sourceforge.streamsupport</groupId>
-				    <artifactId>android-retroflow</artifactId>
-				    <version>1.6.3</version>
-				</dependency>
-				-->
 			</dependencies>
 			<build>
 				<plugins>
@@ -193,7 +186,7 @@
 								</goals>
 								<phase>process-classes</phase>
 								<configuration>
-									<mainClass>org.warp.picalculator.boot.Main</mainClass>
+									<mainClass>it.cavallium.warppi.boot.WarpPI</mainClass>
 									<mainPageIncluded>true</mainPageIncluded>
 									<debugInformationGenerated>true</debugInformationGenerated>
 									<sourceMapsGenerated>true</sourceMapsGenerated>
@@ -210,12 +203,6 @@
 	<dependencies>
 		<!--<dependency> <groupId>junit</groupId> <artifactId>junit</artifactId> 
 			<version>4.12</version> <scope>test</scope> </dependency> -->
-
-		<dependency>
-			<groupId>org.infinispan</groupId>
-			<artifactId>infinispan-jcache</artifactId>
-			<version>9.4.0.Beta1</version>
-		</dependency>
 		<dependency>
 			<groupId>it.unimi.dsi</groupId>
 			<artifactId>fastutil</artifactId>
@@ -312,7 +299,7 @@
 					<!-- MainClass in mainfest make a executable jar -->
 					<archive>
 						<manifest>
-							<mainClass>org.warp.picalculator.boot.Main</mainClass>
+							<mainClass>it.cavallium.warppi.boot.WarpPI</mainClass>
 						</manifest>
 					</archive>
 
@@ -334,6 +321,6 @@
 		<artifactId>maven-jar-plugin</artifactId> <version>2.4</version> <configuration> 
 		<failOnError>false</failOnError> <source>1.8</source> <target>1.8</target> 
 		<archive> <manifest> <addClasspath>true</addClasspath> <classpathPrefix>libs/</classpathPrefix> 
-		<mainClass>org.warp.picalculator.boot.Main</mainClass> </manifest> </archive> 
+		<mainClass>it.cavallium.warppi.boot.WarpPI</mainClass> </manifest> </archive> 
 		</configuration> </plugin> </plugins> </build> -->
 </project>
