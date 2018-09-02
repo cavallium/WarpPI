@@ -57,7 +57,7 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<properties>
-				<buildprops.exclude1>org/warp/picalculator/gui/graphicengine/gpu/*</buildprops.exclude1>
+				<buildprops.exclude1>it/cavallium/warppi/gui/graphicengine/gpu/*</buildprops.exclude1>
 			</properties>
 		</profile>
 		<profile>
@@ -161,14 +161,14 @@
 						<version>2.3.2</version>
 						<configuration>
 							<excludes>
-								<exclude>org/warp/picalculator/gui/graphicengine/cpu/CPUEngine</exclude>
-								<exclude>org/warp/picalculator/gui/graphicengine/cpu/CPURenderer</exclude>
-								<exclude>org/warp/picalculator/gui/graphicengine/cpu/SwingWindow</exclude>
-								<exclude>org/warp/picalculator/gui/graphicengine/gpu/*</exclude>
-								<exclude>org/warp/picalculator/gui/graphicengine/headless24bit/*</exclude>
-								<exclude>org/warp/picalculator/gui/graphicengine/headless256/*</exclude>
-								<exclude>org/warp/picalculator/gui/graphicengine/headless8/*</exclude>
-								<exclude>org/warp/picalculator/gui/graphicengine/framebuffer/*</exclude>
+								<exclude>it/cavallium/warppi/gui/graphicengine/cpu/CPUEngine</exclude>
+								<exclude>it/cavallium/warppi/gui/graphicengine/cpu/CPURenderer</exclude>
+								<exclude>it/cavallium/warppi/gui/graphicengine/cpu/SwingWindow</exclude>
+								<exclude>it/cavallium/warppi/gui/graphicengine/gpu/*</exclude>
+								<exclude>it/cavallium/warppi/gui/graphicengine/headless24bit/*</exclude>
+								<exclude>it/cavallium/warppi/gui/graphicengine/headless256/*</exclude>
+								<exclude>it/cavallium/warppi/gui/graphicengine/headless8/*</exclude>
+								<exclude>it/cavallium/warppi/gui/graphicengine/framebuffer/*</exclude>
 							</excludes>
 							<source>${maven.compiler.source}</source>
 							<target>${maven.compiler.target}</target>

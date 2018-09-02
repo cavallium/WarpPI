@@ -35,7 +35,7 @@ public class RulesManager {
 
 	private RulesManager() {}
 
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({ "unchecked", "unused" })
 	public static void initialize() {
 		ConsoleUtils.out.println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "RulesManager", "Loading the rules");
 		rules = new ObjectArrayList[RuleType.values().length];
