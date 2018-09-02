@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.warp.picalculator.ConsoleUtils;
 import org.warp.picalculator.PlatformUtils;
 import org.warp.picalculator.StaticVars;
@@ -402,7 +403,15 @@ public final class DisplayManager implements RenderingLoop {
 			
 			Observable<Long> workTimer = Observable.interval(tickDuration);
 			
-			Observable.combineChanged(workTimer, engine.onResize()).subscribe((pair) -> {
+			Observable<Integer[]> onResizeObservable = engine.onResize();
+			Observable<Pair<Long, Integer[]>> refreshObservable;
+			if (onResizeObservable == null) {
+				refreshObservable = workTimer.map((l) -> Pair.of(l, null));
+			} else {
+				refreshObservable = Observable.combineChanged(workTimer, engine.onResize());
+			}
+			
+			refreshObservable.subscribe((pair) -> {
 				double dt = 0;
 				final long newtime = System.nanoTime();
 				if (precTime == -1) {

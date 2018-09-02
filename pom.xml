@@ -128,9 +128,9 @@
 			</build>
 		</profile>
 		<profile>
-			<id>jsprofile</id>
+			<id>teavmprofile</id>
 			<properties>
-				<src.dir>js-specific</src.dir>
+				<src.dir>teavm-specific</src.dir>
 				<src.dir2>src/main/rules</src.dir2>
 			</properties>
 			<activation>
