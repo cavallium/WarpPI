@@ -1,8 +1,6 @@
 package org.warp.picalculator.gui.screens;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import org.warp.picalculator.ConsoleUtils;
 import org.warp.picalculator.Error;
@@ -16,7 +14,6 @@ import org.warp.picalculator.device.Keyboard;
 import org.warp.picalculator.event.Key;
 import org.warp.picalculator.event.KeyPressedEvent;
 import org.warp.picalculator.event.KeyReleasedEvent;
-import org.warp.picalculator.gui.DisplayManager;
 import org.warp.picalculator.gui.expression.InputContext;
 import org.warp.picalculator.gui.expression.blocks.Block;
 import org.warp.picalculator.gui.expression.blocks.BlockContainer;
@@ -58,6 +55,7 @@ public class MathInputScreen extends Screen {
 	private double computingElapsedTime = 0;
 	private boolean computingBreakTipVisible = false;
 	boolean mustRefresh = true;
+	@SuppressWarnings("unused")
 	private int currentStep = 0;
 
 	public MathInputScreen() {

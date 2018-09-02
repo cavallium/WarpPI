@@ -23,6 +23,7 @@ public class BlockLogarithm extends Block {
 	private int bl;
 	private int chw;
 	private int chh;
+	@SuppressWarnings("unused")
 	private int schh;
 	private int nmbh;
 	private int toph;

@@ -1,19 +1,16 @@
 package org.warp.picalculator.flow;
 
-import java.util.LinkedList;
-import java.util.List;
-
 public class BehaviorSubject<T> extends Subject<T> {
 
 	private T lastValue;
 	private boolean lastValueSet;
-	
+
 	protected BehaviorSubject() {
 		super();
 		lastValue = null;
 		lastValueSet = false;
 	}
-	
+
 	protected BehaviorSubject(T initialValue) {
 		super();
 		lastValue = initialValue;
@@ -23,7 +20,7 @@ public class BehaviorSubject<T> extends Subject<T> {
 	public final static <T> BehaviorSubject<T> create() {
 		return new BehaviorSubject<>();
 	}
-	
+
 	public final static <T> BehaviorSubject<T> create(T initialValue) {
 		return new BehaviorSubject<T>(initialValue);
 	}
@@ -39,7 +36,7 @@ public class BehaviorSubject<T> extends Subject<T> {
 	public void onError(Throwable e) {
 		for (Subscriber<? super T> sub : this.subscribers) {
 			sub.onError(e);
-		};
+		} ;
 	}
 
 	@Override
@@ -94,5 +91,5 @@ public class BehaviorSubject<T> extends Subject<T> {
 	public T getLastValue() {
 		return lastValue;
 	}
-	
+
 }

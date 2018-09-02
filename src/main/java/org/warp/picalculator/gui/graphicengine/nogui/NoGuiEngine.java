@@ -1,9 +1,7 @@
 package org.warp.picalculator.gui.graphicengine.nogui;
 
 import java.io.IOException;
-import java.util.concurrent.Semaphore;
 
-import org.warp.picalculator.Utils;
 import org.warp.picalculator.deps.DSemaphore;
 import org.warp.picalculator.flow.Observable;
 import org.warp.picalculator.gui.graphicengine.BinaryFont;

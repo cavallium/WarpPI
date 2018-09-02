@@ -5,10 +5,8 @@ import java.io.IOException;
 import org.warp.picalculator.StaticVars;
 import org.warp.picalculator.device.HardwareDevice;
 import org.warp.picalculator.device.Keyboard;
-import org.warp.picalculator.event.Key;
 import org.warp.picalculator.extra.mario.MarioGame;
 import org.warp.picalculator.extra.mario.MarioWorld;
-import org.warp.picalculator.gui.DisplayManager;
 import org.warp.picalculator.gui.graphicengine.BinaryFont;
 import org.warp.picalculator.gui.graphicengine.Skin;
 

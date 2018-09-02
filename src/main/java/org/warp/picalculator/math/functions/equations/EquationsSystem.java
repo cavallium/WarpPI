@@ -5,6 +5,7 @@ import org.warp.picalculator.gui.expression.blocks.Block;
 import org.warp.picalculator.math.Function;
 import org.warp.picalculator.math.FunctionDynamic;
 import org.warp.picalculator.math.MathContext;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class EquationsSystem extends FunctionDynamic {

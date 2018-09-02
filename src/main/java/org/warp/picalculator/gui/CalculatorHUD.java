@@ -33,7 +33,6 @@ public class CalculatorHUD extends HUD {
 	public void renderTopmostBackground() {
 		final Renderer renderer = d.renderer;
 		final GraphicEngine engine = d.engine;
-		final Skin guiSkin = d.guiSkin;
 
 		renderer.glColor(0xFFc5c2af);
 		renderer.glFillColor(0, 0, engine.getWidth(), 20);

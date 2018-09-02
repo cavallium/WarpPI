@@ -1,7 +1,5 @@
 package org.warp.picalculator.deps;
 
-import java.util.ArrayList;
-import java.util.Queue;
 import java.util.concurrent.Semaphore;
 
 public class DSemaphore extends Semaphore {

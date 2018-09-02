@@ -1,7 +1,6 @@
 package org.warp.picalculator.math.solver;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.warp.picalculator.ConsoleUtils;
 import org.warp.picalculator.Error;
@@ -12,7 +11,6 @@ import org.warp.picalculator.math.rules.Rule;
 import org.warp.picalculator.math.rules.RuleType;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class MathSolver {
 
@@ -114,6 +112,7 @@ public class MathSolver {
 		return false;
 	}
 
+	@SuppressWarnings("unused")
 	private ObjectArrayList<Function> solveStep(ObjectArrayList<Function> fncs) throws InterruptedException, Error {
 		return solveStep(fncs, stepState);
 	}
@@ -143,8 +142,7 @@ public class MathSolver {
 				break;
 			}
 			default:
-				System.err.println("Unknown Step State");
-				throw new NotImplementedException();
+				throw new RuntimeException("Unknown Step State");
 		}
 		final ObjectArrayList<Function> results = applyRules(fncs, currentAcceptedRules);
 		switch (stepStates[stepState.get()]) {
@@ -203,8 +201,7 @@ public class MathSolver {
 				break;
 			}
 			default:
-				System.err.println("Unknown Step State");
-				throw new NotImplementedException();
+				throw new RuntimeException("Unknown Step State");
 		}
 		return null;
 	}
@@ -214,27 +211,25 @@ public class MathSolver {
 		final ObjectArrayList<Rule> rules = initialFunction.getMathContext().getAcceptableRules(currentAcceptedRules);
 		ObjectArrayList<Function> results = null;
 		ObjectArrayList<Rule> appliedRules = new ObjectArrayList<>();
-		out: {
-			for (final Function fnc : fncs) {
-				boolean didSomething = false;
-				for (final Rule rule : rules) {
-					List<Function> ruleResults = fnc.simplify(rule);
-					if ((ruleResults != null && !ruleResults.isEmpty())) {
-						if (results == null) {
-							results = new ObjectArrayList<>();
-						}
-						results.addAll(ruleResults);
-						appliedRules.add(rule);
-						didSomething = true;
-						break;
-					}
-				}
-				if (!didSomething && fncs.size() > 1) {
+		for (final Function fnc : fncs) {
+			boolean didSomething = false;
+			for (final Rule rule : rules) {
+				List<Function> ruleResults = fnc.simplify(rule);
+				if ((ruleResults != null && !ruleResults.isEmpty())) {
 					if (results == null) {
 						results = new ObjectArrayList<>();
 					}
-					results.add(fnc);
+					results.addAll(ruleResults);
+					appliedRules.add(rule);
+					didSomething = true;
+					break;
 				}
+			}
+			if (!didSomething && fncs.size() > 1) {
+				if (results == null) {
+					results = new ObjectArrayList<>();
+				}
+				results.add(fnc);
 			}
 		}
 		if (appliedRules.isEmpty())

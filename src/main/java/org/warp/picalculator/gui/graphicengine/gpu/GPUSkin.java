@@ -8,7 +8,6 @@ import org.warp.picalculator.gui.graphicengine.GraphicEngine;
 import org.warp.picalculator.gui.graphicengine.Skin;
 import org.warp.picalculator.gui.graphicengine.gpu.GPURenderer.OpenedTextureData;
 
-import com.jogamp.opengl.GL2ES1;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.util.texture.Texture;
 
@@ -40,7 +39,6 @@ public class GPUSkin implements Skin {
 	public void initialize(GraphicEngine d) {
 		try {
 			final OpenedTextureData i = GPURenderer.openTexture(texturePath, isResource);
-			final GL2ES1 gl = GPURenderer.gl;
 			t = GPURenderer.importTexture(i.f, i.deleteOnExit);
 			w = i.w;
 			h = i.h;

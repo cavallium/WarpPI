@@ -5,12 +5,12 @@ import org.warp.picalculator.gui.expression.blocks.Block;
 import org.warp.picalculator.gui.expression.blocks.BlockChar;
 import org.warp.picalculator.gui.expression.blocks.BlockContainer;
 import org.warp.picalculator.gui.expression.blocks.BlockDivision;
+import org.warp.picalculator.gui.expression.blocks.BlockLogarithm;
 import org.warp.picalculator.gui.expression.blocks.BlockNumericChar;
 import org.warp.picalculator.gui.expression.blocks.BlockParenthesis;
 import org.warp.picalculator.gui.expression.blocks.BlockPower;
 import org.warp.picalculator.gui.expression.blocks.BlockReference;
 import org.warp.picalculator.gui.expression.blocks.BlockSine;
-import org.warp.picalculator.gui.expression.blocks.BlockLogarithm;
 import org.warp.picalculator.gui.expression.blocks.BlockSquareRoot;
 import org.warp.picalculator.gui.expression.blocks.BlockVariable;
 import org.warp.picalculator.math.MathematicalSymbols;
@@ -97,7 +97,7 @@ public class NormalInputContainer extends InputContainer {
 			case MathematicalSymbols.DIVISION:
 				@SuppressWarnings("unchecked")
 				final BlockReference<BlockDivision> ref = (BlockReference<BlockDivision>) getSelectedBlock();
-				final BlockContainer parentContainer = ref.getContainer();
+				@SuppressWarnings("unused") final BlockContainer parentContainer = ref.getContainer();
 				BlockReference<?> currentBlock = ref;
 				boolean groupedBefore = false;
 				int before = 0;

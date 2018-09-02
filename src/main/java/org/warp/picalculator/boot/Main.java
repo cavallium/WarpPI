@@ -1,9 +1,9 @@
 package org.warp.picalculator.boot;
 
 import java.util.Arrays;
+
 import org.warp.picalculator.ConsoleUtils;
 import org.warp.picalculator.PICalculator;
-import org.warp.picalculator.flow.TestFlow;
 
 public class Main {
 	public static void main(String[] args) throws Exception {
@@ -16,7 +16,7 @@ public class Main {
 		args.setHeadlessEngineForced(args.isHeadlessEngineForced() || args.isHeadless8EngineForced() || args.isHeadless256EngineForced() || args.isHeadless24bitEngineForced());
 		return args;
 	}
-	
+
 	public static void parseArgument(StartupArgumentsImpl args, String arg) {
 		switch (arg) {
 			case "-zoomed":

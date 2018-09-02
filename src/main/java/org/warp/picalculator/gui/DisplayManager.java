@@ -3,26 +3,15 @@ package org.warp.picalculator.gui;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.warp.picalculator.ConsoleUtils;
-import org.warp.picalculator.PlatformUtils;
 import org.warp.picalculator.StaticVars;
 import org.warp.picalculator.Utils;
 import org.warp.picalculator.deps.DEngine;
 import org.warp.picalculator.deps.DSemaphore;
 import org.warp.picalculator.deps.DSystem;
-import org.warp.picalculator.device.HardwareDevice;
 import org.warp.picalculator.device.Keyboard;
-import org.warp.picalculator.event.KeyReleasedEvent;
-import org.warp.picalculator.event.TouchCancelEvent;
-import org.warp.picalculator.event.TouchEndEvent;
-import org.warp.picalculator.event.TouchEvent;
-import org.warp.picalculator.event.TouchEventListener;
-import org.warp.picalculator.event.TouchMoveEvent;
-import org.warp.picalculator.event.TouchStartEvent;
 import org.warp.picalculator.flow.Observable;
 import org.warp.picalculator.gui.graphicengine.BinaryFont;
 import org.warp.picalculator.gui.graphicengine.GraphicEngine;
@@ -32,13 +21,11 @@ import org.warp.picalculator.gui.graphicengine.Skin;
 import org.warp.picalculator.gui.graphicengine.nogui.NoGuiEngine;
 import org.warp.picalculator.gui.screens.Screen;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap.Entry;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public final class DisplayManager implements RenderingLoop {
 	private static final int tickDuration = 50;
-	
-	private HardwareDevice device;
+
 	private float brightness;
 
 	public final GraphicEngine engine;
@@ -400,9 +387,9 @@ public final class DisplayManager implements RenderingLoop {
 				e.printStackTrace();
 				DSystem.exit(0);
 			}
-			
+
 			Observable<Long> workTimer = Observable.interval(tickDuration);
-			
+
 			Observable<Integer[]> onResizeObservable = engine.onResize();
 			Observable<Pair<Long, Integer[]>> refreshObservable;
 			if (onResizeObservable == null) {
@@ -410,7 +397,7 @@ public final class DisplayManager implements RenderingLoop {
 			} else {
 				refreshObservable = Observable.combineChanged(workTimer, engine.onResize());
 			}
-			
+
 			refreshObservable.subscribe((pair) -> {
 				double dt = 0;
 				final long newtime = System.nanoTime();
@@ -426,7 +413,7 @@ public final class DisplayManager implements RenderingLoop {
 					StaticVars.screenSize[0] = windowSize[0];
 					StaticVars.screenSize[1] = windowSize[1];
 				}
-				
+
 				screen.beforeRender((float) (dt / 1000d));
 			});
 

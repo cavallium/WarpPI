@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import org.warp.picalculator.ClassUtils;
-import org.warp.picalculator.PICalculator;
 import org.warp.picalculator.Utils;
 import org.warp.picalculator.deps.DSystem;
 

@@ -34,7 +34,6 @@ public class ConsoleUtils {
 
 		public void println(int level) {
 			if (StaticVars.outputLevel >= level) {
-				final String time = getTimeString();
 				if (StaticVars.outputLevel == 0) {
 					println(System.out);
 				} else {

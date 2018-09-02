@@ -94,22 +94,24 @@ class NEWTWindow implements GLEventListener {
 		disp.size[1] = StaticVars.screenSize[1];
 		realWindowSize = new int[] { StaticVars.screenSize[0], StaticVars.screenSize[1] };
 		windowZoom = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue());
-		onRealResize = BehaviorSubject.create(new Integer[] {(int) (StaticVars.screenSize[0] * windowZoom), (int) (StaticVars.screenSize[1] * windowZoom)});
-		
+		onRealResize = BehaviorSubject.create(new Integer[] { (int) (StaticVars.screenSize[0] * windowZoom), (int) (StaticVars.screenSize[1] * windowZoom) });
+
 		onRealResize.subscribe((realSize) -> {
 			System.err.println("[[[SET REALWINDOWZOOM");
 			realWindowSize[0] = realSize[0];
 			realWindowSize[1] = realSize[1];
 			disp.size[0] = realSize[0] / (int) windowZoom;
 			disp.size[1] = realSize[1] / (int) windowZoom;
-			System.err.println("[[["+realWindowSize[0]);
-			System.err.println("[[["+windowZoom);
-			System.err.println("[[["+disp.size[0]);
-			onResizeEvent.onNext(new Integer[] {disp.size[0], disp.size[1]});
+			System.err.println("[[[" + realWindowSize[0]);
+			System.err.println("[[[" + windowZoom);
+			System.err.println("[[[" + disp.size[0]);
+			onResizeEvent.onNext(new Integer[] { disp.size[0], disp.size[1] });
 			refreshViewport = true;
 		});
-		StaticVars.windowZoom$.subscribe((zoom) -> {onZoom.onNext(zoom);});
-		onZoom.subscribe((z)-> {
+		StaticVars.windowZoom$.subscribe((zoom) -> {
+			onZoom.onNext(zoom);
+		});
+		onZoom.subscribe((z) -> {
 			if (windowZoom != 0) {
 				windowZoom = z;
 				disp.size[0] = (int) (realWindowSize[0] / windowZoom);
@@ -117,9 +119,9 @@ class NEWTWindow implements GLEventListener {
 				StaticVars.screenSize[0] = disp.size[0];
 				StaticVars.screenSize[1] = disp.size[1];
 				System.err.println("[[[SET WINDOWZOOM");
-				System.err.println("[[["+realWindowSize[0]);
-				System.err.println("[[["+windowZoom);
-				System.err.println("[[[A:"+disp.size[0]);
+				System.err.println("[[[" + realWindowSize[0]);
+				System.err.println("[[[" + windowZoom);
+				System.err.println("[[[A:" + disp.size[0]);
 				refreshViewport = true;
 			}
 		});
@@ -142,12 +144,12 @@ class NEWTWindow implements GLEventListener {
 		caps.setBackgroundOpaque(true); //transparency window
 //		caps.setSampleBuffers(true);
 //		caps.setNumSamples(4);
-		
+
 		final GLWindow glWindow = GLWindow.create(caps);
 		window = glWindow;
-		
+
 		glWindow.setTitle("WarpPI Calculator by Andrea Cavalli (@Cavallium)");
-		
+
 		glWindow.addWindowListener(new WindowListener() {
 
 			@Override
@@ -372,6 +374,7 @@ class NEWTWindow implements GLEventListener {
 			public void mousePressed(MouseEvent e) {
 				List<TouchPoint> newPoints = new ObjectArrayList<>();
 				List<TouchPoint> changedPoints = new ObjectArrayList<>();
+				@SuppressWarnings("unused")
 				List<TouchPoint> oldPoints = touches;
 				int[] xs = e.getAllX();
 				int[] ys = e.getAllY();
@@ -389,6 +392,7 @@ class NEWTWindow implements GLEventListener {
 			public void mouseReleased(MouseEvent e) {
 				List<TouchPoint> newPoints = new ObjectArrayList<>();
 				List<TouchPoint> changedPoints = new ObjectArrayList<>();
+				@SuppressWarnings("unused")
 				List<TouchPoint> oldPoints = touches;
 				int[] xs = e.getAllX();
 				int[] ys = e.getAllY();
@@ -443,7 +447,7 @@ class NEWTWindow implements GLEventListener {
 			}
 
 		});
-		
+
 		glWindow.addGLEventListener(this /* GLEventListener */);
 		final Animator animator = new Animator();
 		animator.add(glWindow);
@@ -454,7 +458,7 @@ class NEWTWindow implements GLEventListener {
 	public void init(GLAutoDrawable drawable) {
 		final GL2ES1 gl = drawable.getGL().getGL2ES1();
 		onGLContext.onNext(gl);
-		
+
 		if (StaticVars.debugOn) {
 			//Vsync
 			gl.setSwapInterval(1);
@@ -473,13 +477,13 @@ class NEWTWindow implements GLEventListener {
 
 		//Multisampling
 		//gl.glEnable(GL.GL_MULTISAMPLE);
-		
+
 		try {
 			renderer.currentTex = ((GPUSkin) disp.loadSkin("test.png")).t;
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		if (onInitialized != null) {
 			onInitialized.run();
 			onInitialized = null;
@@ -494,7 +498,7 @@ class NEWTWindow implements GLEventListener {
 
 	@Override
 	public void reshape(GLAutoDrawable glad, int x, int y, int width, int height) {
-		onRealResize.onNext(new Integer[] {width, height});
+		onRealResize.onNext(new Integer[] { width, height });
 	}
 
 	@Override
@@ -502,7 +506,7 @@ class NEWTWindow implements GLEventListener {
 		final GL2ES1 gl = glad.getGL().getGL2ES1();
 		GPURenderer.gl = gl;
 		onGLContext.onNext(gl);
-		
+
 		boolean linear = (windowZoom % ((int) windowZoom)) != 0f;
 		if (refreshViewport) {
 			System.err.println("[[[REFVP");
@@ -516,7 +520,7 @@ class NEWTWindow implements GLEventListener {
 
 			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 			gl.glLoadIdentity();
-			
+
 			for (final Texture t : disp.registeredTextures) {
 				t.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, linear ? GL.GL_LINEAR : GL.GL_NEAREST);
 				t.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
@@ -532,32 +536,32 @@ class NEWTWindow implements GLEventListener {
 		gl.glEnableClientState(GLPointerFunc.GL_COLOR_ARRAY);
 		gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
-		
+
 		renderer.initDrawCycle();
 
 		disp.repaint();
 
 		renderer.endDrawCycle();
-		
+
 		gl.glDisableClientState(GLPointerFunc.GL_COLOR_ARRAY);
 		gl.glDisableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
 		gl.glDisableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
-		
+
 		GPURenderer.gl = null;
 
 	}
-	
-    void setSize(final int width, final int height) {
-    	int zoom = (int) windowZoom;
-    	if (zoom == 0) {
-        	zoom = onZoom.getLastValue().intValue();
-    	}
-    	if (zoom == 0) {
-    		zoom = 1;
-    	}
-        window.setSize(width * zoom, height * zoom);
-		onRealResize.onNext(new Integer[] {width * zoom, height * zoom});
-    }
+
+	void setSize(final int width, final int height) {
+		int zoom = (int) windowZoom;
+		if (zoom == 0) {
+			zoom = onZoom.getLastValue().intValue();
+		}
+		if (zoom == 0) {
+			zoom = 1;
+		}
+		window.setSize(width * zoom, height * zoom);
+		onRealResize.onNext(new Integer[] { width * zoom, height * zoom });
+	}
 
 	@Override
 	public void dispose(GLAutoDrawable drawable) {

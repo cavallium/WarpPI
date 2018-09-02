@@ -7,13 +7,13 @@ import org.warp.picalculator.PlatformUtils;
 
 public class IntervalsManager {
 	private static List<ObservableInterval> intervals = new LinkedList<>();
-	
+
 	static {
 		startChecker();
 	}
-	
+
 	private IntervalsManager() {
-		
+
 	}
 
 	public static void register(ObservableInterval t) {
@@ -23,7 +23,7 @@ public class IntervalsManager {
 			}
 		}
 	}
-	
+
 	private static void startChecker() {
 		Thread t = new Thread(() -> {
 			try {

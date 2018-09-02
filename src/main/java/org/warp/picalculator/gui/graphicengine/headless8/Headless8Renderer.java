@@ -1,7 +1,6 @@
 package org.warp.picalculator.gui.graphicengine.headless8;
 
 import org.warp.picalculator.StaticVars;
-import org.warp.picalculator.Utils;
 import org.warp.picalculator.gui.graphicengine.Renderer;
 
 public class Headless8Renderer implements Renderer {

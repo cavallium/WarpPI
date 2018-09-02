@@ -1,7 +1,6 @@
 package org.warp.picalculator.deps;
 
 import org.warp.picalculator.ClassUtils;
-import org.warp.picalculator.StaticVars;
 import org.warp.picalculator.gui.graphicengine.GraphicEngine;
 import org.warp.picalculator.gui.graphicengine.cpu.CPUEngine;
 import org.warp.picalculator.gui.graphicengine.framebuffer.FBEngine;

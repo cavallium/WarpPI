@@ -1,7 +1,5 @@
 package org.warp.picalculator.gui.screens;
 
-import org.warp.picalculator.event.Key;
-
 public class EmptyScreen extends Screen {
 
 	public float endLoading;

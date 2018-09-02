@@ -9,7 +9,6 @@ import java.util.concurrent.Semaphore;
 import org.warp.picalculator.MmapByteBuffer;
 import org.warp.picalculator.StaticVars;
 import org.warp.picalculator.TestJNI;
-import org.warp.picalculator.Utils;
 import org.warp.picalculator.flow.BehaviorSubject;
 import org.warp.picalculator.flow.Observable;
 import org.warp.picalculator.gui.graphicengine.BinaryFont;
@@ -22,8 +21,11 @@ import org.warp.picalculator.gui.graphicengine.cpu.CPUSkin;
 
 public class FBEngine implements GraphicEngine {
 
+	@SuppressWarnings("unused")
 	private static final int FB_DISPLAY_WIDTH = 320;
+	@SuppressWarnings("unused")
 	private static final int FB_DISPLAY_HEIGHT = 480;
+	@SuppressWarnings("unused")
 	private static final int FB_DISPLAY_BPP = 32;
 	private static final int WIDTH = 480;
 	private static final int HEIGHT = 320;
@@ -36,7 +38,7 @@ public class FBEngine implements GraphicEngine {
 	private RandomAccessFile fbFileRW;
 	public volatile boolean initialized = false;
 	public Semaphore exitSemaphore = new Semaphore(0);
-	
+
 	@Override
 	public int[] getSize() {
 		return SIZE;
@@ -58,11 +60,11 @@ public class FBEngine implements GraphicEngine {
 
 	@Override
 	public void create(Runnable onInitialized) {
-		onResize = BehaviorSubject.create(new Integer[] {SIZE[0], SIZE[1]});
+		onResize = BehaviorSubject.create(new Integer[] { SIZE[0], SIZE[1] });
 		realFb = jni.retrieveBuffer();
 		final long fbLen = realFb.getLength();
 		fb = (MappedByteBuffer) ByteBuffer.allocateDirect((int) fbLen);
-		
+
 		r = new FBRenderer(this, fb);
 
 		initialized = true;

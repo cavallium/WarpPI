@@ -3,9 +3,7 @@ package org.warp.picalculator.gui.screens;
 import org.warp.picalculator.StaticVars;
 import org.warp.picalculator.Utils;
 import org.warp.picalculator.device.HardwareDevice;
-import org.warp.picalculator.event.Key;
 import org.warp.picalculator.event.KeyPressedEvent;
-import org.warp.picalculator.gui.DisplayManager;
 import org.warp.picalculator.math.Function;
 import org.warp.picalculator.math.functions.Variable.VariableValue;
 

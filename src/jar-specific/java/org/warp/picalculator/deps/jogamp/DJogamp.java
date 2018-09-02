@@ -1,8 +1,5 @@
 package org.warp.picalculator.deps.jogamp;
 
-import org.warp.picalculator.ClassUtils;
-import org.warp.picalculator.ClassUtils.Var;
-
 public class DJogamp {
 
 	//

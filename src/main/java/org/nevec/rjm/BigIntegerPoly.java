@@ -576,6 +576,7 @@ public class BigIntegerPoly implements Cloneable {
 		 */
 		final int l = ldegree();
 		if (a.elementAt(l).compareTo(BigInteger.ZERO) != 0) {
+			@SuppressWarnings("deprecation")
 			final Vector<BigInteger> cand = BigIntegerMath.divisors(a.elementAt(l).abs());
 
 			/* check the divisors (both signs) */
@@ -615,8 +616,10 @@ public class BigIntegerPoly implements Cloneable {
 		}
 
 		final BigInteger bsco = a.firstElement().abs();
+		@SuppressWarnings("deprecation")
 		final Vector<BigInteger> b = BigIntegerMath.divisors(bsco);
 		final BigInteger csco = a.lastElement().abs();
+		@SuppressWarnings("deprecation")
 		final Vector<BigInteger> c = BigIntegerMath.divisors(csco);
 
 		/*

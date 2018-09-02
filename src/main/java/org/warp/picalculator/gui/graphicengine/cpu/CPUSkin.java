@@ -3,17 +3,11 @@ package org.warp.picalculator.gui.graphicengine.cpu;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 
 import javax.imageio.ImageIO;
 
-import org.warp.picalculator.deps.DSystem;
 import org.warp.picalculator.deps.StorageUtils;
-import org.warp.picalculator.deps.nio.DFiles;
-import org.warp.picalculator.deps.nio.DPath;
-import org.warp.picalculator.deps.nio.DPaths;
 import org.warp.picalculator.gui.graphicengine.GraphicEngine;
 import org.warp.picalculator.gui.graphicengine.Skin;
 
@@ -24,6 +18,7 @@ public class CPUSkin implements Skin {
 
 	public int[] skinData;
 	public int[] skinSize;
+	@SuppressWarnings("unused")
 	private final boolean isResource;
 
 	public CPUSkin(String file) throws IOException {
@@ -84,7 +79,7 @@ public class CPUSkin implements Skin {
 				} else if (channels == 3) {
 					nextPixel = (scanLine[offset] << 16) | (scanLine[offset + 1] << 8) | (scanLine[offset + 2]) | (0xFF << 24);
 				} else if (channels == 2) {
-					nextPixel = (scanLine[offset] << 16) | (scanLine[offset + 1] << 8)  | 0xFF | (0xFF << 24);
+					nextPixel = (scanLine[offset] << 16) | (scanLine[offset + 1] << 8) | 0xFF | (0xFF << 24);
 				} else {
 					nextPixel = (scanLine[offset] << 16) | (scanLine[offset] << 8) | scanLine[offset] | (0xFF << 24);
 				}

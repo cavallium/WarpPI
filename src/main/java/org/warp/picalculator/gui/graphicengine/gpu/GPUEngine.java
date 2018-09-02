@@ -81,7 +81,7 @@ public class GPUEngine implements GraphicEngine {
 		initialized = true;
 		wnd.onInitialized = onInitialized;
 	}
-	
+
 	@Override
 	public Observable<Integer[]> onResize() {
 		return wnd.onResizeEvent;

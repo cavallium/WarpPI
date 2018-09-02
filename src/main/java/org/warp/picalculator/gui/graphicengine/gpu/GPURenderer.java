@@ -7,11 +7,11 @@ import java.io.IOException;
 import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
+
 import javax.imageio.ImageIO;
 
 import org.warp.picalculator.PlatformUtils;
 import org.warp.picalculator.StaticVars;
-import org.warp.picalculator.Utils;
 import org.warp.picalculator.gui.graphicengine.BinaryFont;
 import org.warp.picalculator.gui.graphicengine.Renderer;
 

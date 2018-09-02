@@ -10,6 +10,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class RemoveParentheses implements MathParserStep {
 
+	@SuppressWarnings("unused")
 	private final MathContext context;
 
 	public RemoveParentheses(MathContext context) {

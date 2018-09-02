@@ -2,10 +2,7 @@ package org.warp.picalculator.deps.nio;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Collection;
 import java.util.List;
-
-import org.warp.picalculator.math.Function;
 
 public class DFiles {
 

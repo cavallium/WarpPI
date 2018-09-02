@@ -5,20 +5,18 @@ import java.awt.event.KeyEvent;
 import org.warp.picalculator.ConsoleUtils;
 import org.warp.picalculator.PlatformUtils;
 import org.warp.picalculator.StaticVars;
+import org.warp.picalculator.deps.DGpio;
+import org.warp.picalculator.deps.jogamp.DJogamp;
 import org.warp.picalculator.device.chip.ParallelToSerial;
 import org.warp.picalculator.device.chip.SerialToParallel;
 import org.warp.picalculator.event.Key;
 import org.warp.picalculator.event.KeyPressedEvent;
 import org.warp.picalculator.event.KeyReleasedEvent;
 import org.warp.picalculator.event.KeyboardEventListener;
-import org.warp.picalculator.gui.DisplayManager;
 import org.warp.picalculator.gui.GUIErrorMessage;
 import org.warp.picalculator.gui.screens.KeyboardDebugScreen;
 import org.warp.picalculator.gui.screens.MarioScreen;
 import org.warp.picalculator.gui.screens.Screen;
-
-import org.warp.picalculator.deps.DGpio;
-import org.warp.picalculator.deps.jogamp.DJogamp;
 
 public class Keyboard {
 	public static volatile boolean alpha = false;
@@ -757,11 +755,7 @@ public class Keyboard {
 		if (k != null) {
 			keyPressed(k);
 		} else {
-			if (false) {
-
-			} else {
-				keyPressed(Key.NONE);
-			}
+			keyPressed(Key.NONE);
 		}
 	}
 
@@ -832,28 +826,25 @@ public class Keyboard {
 			}
 			switch (k) {
 				case SHIFT:
-					Keyboard.shift = !Keyboard.shift;
-					PlatformUtils.shiftChanged(Keyboard.shift);
+					if (Keyboard.alpha)
+						PlatformUtils.alphaChanged(Keyboard.alpha = false);
+					PlatformUtils.shiftChanged(Keyboard.shift = !Keyboard.shift);
 					refresh = true;
 					break;
 				case ALPHA:
-					Keyboard.alpha = !Keyboard.alpha;
-					PlatformUtils.alphaChanged(Keyboard.alpha);
+					if (Keyboard.shift)
+						PlatformUtils.shiftChanged(Keyboard.shift = false);
+					PlatformUtils.alphaChanged(Keyboard.alpha = !Keyboard.alpha);
 					refresh = true;
 					break;
 				default:
+					if (k != Key.NONE) {
+						if (Keyboard.shift)
+							PlatformUtils.shiftChanged(Keyboard.shift = false);
+						if (Keyboard.alpha)
+							PlatformUtils.alphaChanged(Keyboard.alpha = false);
+					}
 					break;
-			}
-			if (StaticVars.debugOn == false) {
-				if (k != Key.SHIFT && Keyboard.shift) {
-					Keyboard.shift = false;
-					PlatformUtils.shiftChanged(Keyboard.shift);
-					refresh = true;
-				} else if (k != Key.ALPHA && Keyboard.alpha) {
-					Keyboard.alpha = false;
-					PlatformUtils.alphaChanged(Keyboard.alpha);
-					refresh = true;
-				}
 			}
 			if (refresh) {
 				refreshRequest = true;

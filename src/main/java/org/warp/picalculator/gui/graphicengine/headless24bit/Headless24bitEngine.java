@@ -54,6 +54,7 @@ public class Headless24bitEngine implements org.warp.picalculator.gui.graphiceng
 
 	}
 
+	@SuppressWarnings("unused")
 	private long outHandle;
 
 	@Override

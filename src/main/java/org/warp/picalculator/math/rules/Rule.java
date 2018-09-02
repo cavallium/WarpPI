@@ -4,7 +4,6 @@ import org.warp.picalculator.Error;
 import org.warp.picalculator.math.Function;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import jdk.nashorn.internal.objects.annotations.SpecializedFunction;
 
 /**
  * Rule interface
@@ -27,7 +26,6 @@ public interface Rule {
 	 * 
 	 * @return
 	 */
-	@SpecializedFunction
 	public RuleType getRuleType();
 
 	/**

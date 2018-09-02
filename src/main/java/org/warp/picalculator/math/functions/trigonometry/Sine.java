@@ -7,6 +7,7 @@ import org.warp.picalculator.gui.expression.blocks.BlockSine;
 import org.warp.picalculator.math.Function;
 import org.warp.picalculator.math.FunctionSingle;
 import org.warp.picalculator.math.MathContext;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class Sine extends FunctionSingle {

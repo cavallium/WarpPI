@@ -7,7 +7,7 @@ public class TestFlow {
 		try {
 
 			BehaviorSubject<Float> subject0 = BehaviorSubject.create(0f);
-			
+
 			Disposable s00 = subject0.subscribe((val) -> {
 				System.out.println(val);
 			});
@@ -21,8 +21,7 @@ public class TestFlow {
 			s00.dispose();
 			subject0.onNext(60f);
 			subject0.onNext(7f);
-			
-			
+
 			subject0.onComplete();
 			System.out.println("items sent.");
 
@@ -41,7 +40,7 @@ public class TestFlow {
 			s01.dispose();
 			subject1.onNext(60f);
 			subject1.onNext(7f);
-			
+
 			subject1.onComplete();
 			System.out.println("items sent.");
 
@@ -62,7 +61,7 @@ public class TestFlow {
 			s1.dispose();
 			subjectB.onNext(60f);
 			subjectA.onNext(7f);
-			
+
 			subjectB.onComplete();
 			subjectA.onComplete();
 			Thread.sleep(100);
@@ -85,7 +84,7 @@ public class TestFlow {
 			subjectD.onNext(60f);
 			subjectC.onNext(7f);
 			s2.dispose();
-			
+
 			subjectD.onComplete();
 			subjectC.onComplete();
 			System.out.println("items sent.");
@@ -94,7 +93,7 @@ public class TestFlow {
 			Disposable d = timA.subscribe((t) -> {
 				System.out.println(t);
 			});
-			
+
 			Thread.sleep(500);
 			d.dispose();
 			System.out.println("items sent.");
@@ -124,12 +123,10 @@ public class TestFlow {
 			subjectF.onNext(7f);
 			Thread.sleep(500);
 			s3.dispose();
-			
+
 			subjectF.onComplete();
 			System.out.println("items sent.");
-			
-			
-			
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

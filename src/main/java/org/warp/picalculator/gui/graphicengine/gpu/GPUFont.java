@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import org.warp.picalculator.PlatformUtils;
-import org.warp.picalculator.Utils;
 import org.warp.picalculator.gui.graphicengine.BinaryFont;
 import org.warp.picalculator.gui.graphicengine.GraphicEngine;
 import org.warp.picalculator.gui.graphicengine.cpu.CPUFont;
@@ -102,6 +101,7 @@ public class GPUFont implements BinaryFont {
 		return compressedIndex;
 	}
 
+	@SuppressWarnings("unused")
 	private int decompressIndex(int compressedIndex) {
 		final int originalIndex = 0;
 		int i = 0;

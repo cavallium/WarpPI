@@ -1,14 +1,8 @@
 package org.warp.picalculator.flow;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 public class SimpleSubject<T> extends Subject<T> {
-	
-	protected SimpleSubject() {
-	}
+
+	protected SimpleSubject() {}
 
 	public final static <T> SimpleSubject<T> create() {
 		return new SimpleSubject<>();
@@ -18,21 +12,21 @@ public class SimpleSubject<T> extends Subject<T> {
 	public void onComplete() {
 		for (Subscriber<? super T> sub : this.subscribers) {
 			sub.onComplete();
-		};
+		} ;
 	}
 
 	@Override
 	public void onError(Throwable e) {
 		for (Subscriber<? super T> sub : this.subscribers) {
 			sub.onError(e);
-		};
+		} ;
 	}
 
 	@Override
 	public void onNext(T t) {
 		for (Subscriber<? super T> sub : this.subscribers) {
 			sub.onNext(t);
-		};
+		} ;
 	}
 
 	@Override
@@ -66,7 +60,6 @@ public class SimpleSubject<T> extends Subject<T> {
 	}
 
 	@Override
-	public void onSubscribe(Disposable d) {
-	}
-	
+	public void onSubscribe(Disposable d) {}
+
 }

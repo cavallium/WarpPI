@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,6 +33,7 @@ public class CPUFont implements BinaryFont {
 	public int[] intervals;
 	public int intervalsTotalSize = 0;
 	public static final int intBits = 31;
+	@SuppressWarnings("unused")
 	private final boolean isResource;
 
 	public CPUFont(String fontName) throws IOException {
@@ -186,6 +186,7 @@ public class CPUFont implements BinaryFont {
 		int beginIndex = -1;
 		int endIndex = 0;
 		int intervalSize = 0;
+		@SuppressWarnings("unused")
 		final int holeSize = 0;
 		for (int i = 0; i < rawchars.length; i++) {
 			if (rawchars[i] != null) {
@@ -273,6 +274,7 @@ public class CPUFont implements BinaryFont {
 		return compressedIndex;
 	}
 
+	@SuppressWarnings("unused")
 	private int decompressIndex(int compressedIndex) {
 		final int originalIndex = 0;
 		int i = 0;

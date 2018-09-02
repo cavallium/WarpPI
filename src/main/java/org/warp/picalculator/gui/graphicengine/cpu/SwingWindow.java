@@ -20,7 +20,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.warp.picalculator.ConsoleUtils;
-import org.warp.picalculator.PlatformUtils;
 import org.warp.picalculator.StaticVars;
 import org.warp.picalculator.Utils;
 import org.warp.picalculator.device.HardwareDevice;
@@ -31,7 +30,6 @@ import org.warp.picalculator.event.TouchPoint;
 import org.warp.picalculator.event.TouchStartEvent;
 import org.warp.picalculator.flow.BehaviorSubject;
 import org.warp.picalculator.flow.Observable;
-import org.warp.picalculator.gui.DisplayManager;
 import org.warp.picalculator.gui.graphicengine.RenderingLoop;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -56,7 +54,7 @@ public class SwingWindow extends JFrame {
 		final BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 
 		mult = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue()).intValue();
-		
+
 		if (StaticVars.debugOn) {
 			if (Utils.debugThirdScreen) {
 				this.setLocation(2880, 900);
@@ -87,7 +85,7 @@ public class SwingWindow extends JFrame {
 			CPURenderer.canvas2d = new int[disp.r.size[0] * disp.r.size[1]];
 			disp.g = new BufferedImage(disp.r.size[0], disp.r.size[1], BufferedImage.TYPE_INT_RGB);
 		});
-		
+
 		addComponentListener(new ComponentListener() {
 			@Override
 			public void componentHidden(ComponentEvent e) {
@@ -99,7 +97,7 @@ public class SwingWindow extends JFrame {
 
 			@Override
 			public void componentResized(ComponentEvent e) {
-				onResize.onNext(new Integer[] {getWidth(), getHeight()});
+				onResize.onNext(new Integer[] { getWidth(), getHeight() });
 			}
 
 			@Override
@@ -178,12 +176,11 @@ public class SwingWindow extends JFrame {
 		StaticVars.windowZoom$.subscribe((newZoomValue) -> {
 			if (newZoomValue != mult) {
 				mult = (int) newZoomValue.floatValue();
-				this.onResize.onNext(new Integer[] {getWidth(), getHeight()});
+				this.onResize.onNext(new Integer[] { getWidth(), getHeight() });
 				ConsoleUtils.out.println(3, "Engine", "CPU", "Zoom changed");
 			}
 		});
 	}
-	
 
 	public Observable<Integer[]> onResize() {
 		return onResize$;

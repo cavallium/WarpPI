@@ -1,7 +1,6 @@
 package org.warp.picalculator.deps;
 
 import org.warp.picalculator.ClassUtils;
-import org.warp.picalculator.ClassUtils.Var;
 
 public class DGpio {
 

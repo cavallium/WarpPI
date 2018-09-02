@@ -1,10 +1,8 @@
 package org.warp.picalculator.flow;
 
-import java.util.function.Function;
-
 import org.apache.commons.lang3.tuple.Pair;
 
-public class ObservableZipped<T, U> extends Observable<Pair<T, U>>  {
+public class ObservableZipped<T, U> extends Observable<Pair<T, U>> {
 	private volatile boolean initialized = false;
 	private Observable<T> a;
 	private Observable<U> b;
@@ -14,14 +12,11 @@ public class ObservableZipped<T, U> extends Observable<Pair<T, U>>  {
 	private volatile U lastB;
 	private volatile boolean didA;
 	private volatile boolean didB;
-	private Subject<Pair<T, U>> pairSubject;
-	private Subject<T> mapSubject;
-	
+
 	public ObservableZipped(Observable<T> a, Observable<U> b) {
 		super();
 		this.a = a;
 		this.b = b;
-		this.pairSubject = SimpleSubject.create();
 	}
 
 	private void initialize() {
@@ -32,11 +27,11 @@ public class ObservableZipped<T, U> extends Observable<Pair<T, U>>  {
 		}, (e) -> {
 			for (Subscriber<? super Pair<T, U>> sub : this.subscribers) {
 				sub.onError(e);
-			};
+			} ;
 		}, () -> {
 			for (Subscriber<? super Pair<T, U>> sub : this.subscribers) {
 				sub.onComplete();
-			};
+			} ;
 		});
 		this.disposableB = b.subscribe((t) -> {
 			lastB = t;
@@ -45,21 +40,21 @@ public class ObservableZipped<T, U> extends Observable<Pair<T, U>>  {
 		}, (e) -> {
 			for (Subscriber<? super Pair<T, U>> sub : this.subscribers) {
 				sub.onError(e);
-			};
+			} ;
 		}, () -> {
 			for (Subscriber<? super Pair<T, U>> sub : this.subscribers) {
 				sub.onComplete();
-			};
+			} ;
 		});
 	}
-	
+
 	private void receivedNext() {
 		if (didA && didB) {
 			didA = false;
 			didB = false;
 			for (Subscriber<? super Pair<T, U>> sub : this.subscribers) {
 				sub.onNext(Pair.of(lastA, lastB));
-			};
+			} ;
 		}
 	}
 
@@ -69,9 +64,9 @@ public class ObservableZipped<T, U> extends Observable<Pair<T, U>>  {
 			initialize();
 		}
 	}
-	
+
 	@Override
-	public Disposable subscribe(Subscriber<? super Pair<T,U>> sub) {
+	public Disposable subscribe(Subscriber<? super Pair<T, U>> sub) {
 		Disposable disp = super.subscribe(sub);
 		chechInitialized();
 		return disp;

@@ -1,15 +1,12 @@
 package org.warp.picalculator.flow;
 
-import java.util.function.Function;
-
-import org.apache.commons.lang3.tuple.Pair;
 import org.warp.picalculator.PlatformUtils;
 
-public class ObservableInterval extends Observable<Long>  {
+public class ObservableInterval extends Observable<Long> {
 	private final long interval;
 	volatile boolean running;
 	volatile Thread timeThread;
-	
+
 	protected ObservableInterval(long interval) {
 		super();
 		this.interval = interval;
@@ -19,14 +16,14 @@ public class ObservableInterval extends Observable<Long>  {
 			e.printStackTrace();
 		}
 	}
-	
+
 	void stopInterval() {
 		if (running) {
 			running = false;
 			this.timeThread.interrupt();
 		}
 	}
-	
+
 	@Override
 	public Disposable subscribe(Subscriber<? super Long> sub) {
 		try {
@@ -44,7 +41,7 @@ public class ObservableInterval extends Observable<Long>  {
 			}
 			timeThread = new Thread(() -> {
 				try {
-					while(!Thread.interrupted()) {
+					while (!Thread.interrupted()) {
 						for (Subscriber<? super Long> sub : this.subscribers) {
 							sub.onNext(System.currentTimeMillis());
 						}
@@ -62,7 +59,7 @@ public class ObservableInterval extends Observable<Long>  {
 	public static ObservableInterval create(long l) {
 		return new ObservableInterval(l);
 	}
-	
+
 	@Override
 	public void onDisposed(Subscriber<? super Long> sub) {
 		super.onDisposed(sub);

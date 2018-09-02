@@ -2,6 +2,7 @@ package org.warp.picalculator.extra.mario;
 
 public class PlayerEntity extends MarioEntity {
 
+	@SuppressWarnings("unused")
 	private final int life;
 	public float walkAnimation = 0;
 	public float jumptime = 0;

@@ -7,6 +7,7 @@ import org.warp.picalculator.gui.expression.blocks.BlockDivision;
 import org.warp.picalculator.math.Function;
 import org.warp.picalculator.math.FunctionOperator;
 import org.warp.picalculator.math.MathContext;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class Division extends FunctionOperator {

@@ -1,12 +1,8 @@
 package org.warp.picalculator;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
@@ -15,12 +11,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 
 import org.nevec.rjm.BigDecimalMath;
 import org.nevec.rjm.Rational;
@@ -30,7 +22,6 @@ import org.warp.picalculator.deps.nio.DFiles;
 import org.warp.picalculator.deps.nio.DPath;
 import org.warp.picalculator.deps.nio.DPaths;
 import org.warp.picalculator.device.HardwareDevice;
-import org.warp.picalculator.gui.DisplayManager;
 import org.warp.picalculator.gui.graphicengine.BinaryFont;
 import org.warp.picalculator.math.Function;
 import org.warp.picalculator.math.FunctionOperator;

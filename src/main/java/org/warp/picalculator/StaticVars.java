@@ -3,8 +3,8 @@ package org.warp.picalculator;
 import java.util.function.Function;
 
 import org.warp.picalculator.boot.StartupArguments;
-import org.warp.picalculator.flow.Observable;
 import org.warp.picalculator.flow.BehaviorSubject;
+import org.warp.picalculator.flow.Observable;
 
 public class StaticVars {
 	public static final boolean enableVBO = true;
@@ -14,7 +14,7 @@ public class StaticVars {
 	public static boolean haxMode = true;
 	public static final boolean zoomed = true;
 	public static int[] screenPos = new int[] { 0, 0 };
-	public static final int[] screenSize = new int[] {480, 320};
+	public static final int[] screenSize = new int[] { 480, 320 };
 	public static boolean debugOn;
 	public static int outputLevel = 0;
 	public static boolean debugWindow2x = false;

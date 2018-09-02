@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.warp.picalculator.deps.DEngine;
 import org.warp.picalculator.deps.DSystem;
 import org.warp.picalculator.device.Keyboard;
-import org.warp.picalculator.event.Key;
 import org.warp.picalculator.event.KeyPressedEvent;
 import org.warp.picalculator.event.KeyReleasedEvent;
 import org.warp.picalculator.event.KeyboardEventListener;

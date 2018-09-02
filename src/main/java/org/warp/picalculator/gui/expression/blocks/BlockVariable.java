@@ -2,10 +2,8 @@ package org.warp.picalculator.gui.expression.blocks;
 
 import org.warp.picalculator.Error;
 import org.warp.picalculator.device.HardwareDevice;
-import org.warp.picalculator.event.Key;
 import org.warp.picalculator.event.KeyPressedEvent;
 import org.warp.picalculator.event.KeyReleasedEvent;
-import org.warp.picalculator.gui.DisplayManager;
 import org.warp.picalculator.gui.expression.Caret;
 import org.warp.picalculator.gui.expression.ExtraMenu;
 import org.warp.picalculator.gui.expression.InputContext;

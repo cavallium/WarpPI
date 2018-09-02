@@ -2,38 +2,34 @@ package org.warp.picalculator.flow;
 
 import java.util.function.Function;
 
-import org.apache.commons.lang3.tuple.Pair;
-
-public class ObservableMap<T, U> extends Observable<U>  {
+public class ObservableMap<T, U> extends Observable<U> {
 	private Observable<T> originalObservable;
 	private Function<T, U> mapAction;
 	private volatile boolean initialized = false;
 	private Disposable mapDisposable;
-	private Subject<T> mapSubject;
-	
+
 	public ObservableMap(Observable<T> originalObservable, Function<T, U> mapAction) {
 		super();
 		this.originalObservable = originalObservable;
 		this.mapAction = mapAction;
-		this.mapSubject = SimpleSubject.create();
 	}
-	
+
 	private void initialize() {
 		this.mapDisposable = originalObservable.subscribe((t) -> {
 			for (Subscriber<? super U> sub : this.subscribers) {
 				sub.onNext(mapAction.apply(t));
-			};
+			} ;
 		}, (e) -> {
 			for (Subscriber<? super U> sub : this.subscribers) {
 				sub.onError(e);
-			};
+			} ;
 		}, () -> {
 			for (Subscriber<? super U> sub : this.subscribers) {
 				sub.onComplete();
-			};
+			} ;
 		});
 	}
-	
+
 	private void chechInitialized() {
 		if (!initialized) {
 			initialized = true;
@@ -47,6 +43,7 @@ public class ObservableMap<T, U> extends Observable<U>  {
 		chechInitialized();
 		return disp;
 	}
+
 	@Override
 	public void onDisposed(Subscriber<? super U> sub) {
 		super.onDisposed(sub);

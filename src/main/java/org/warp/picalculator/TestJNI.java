@@ -1,7 +1,5 @@
 package org.warp.picalculator;
 
-import org.warp.picalculator.MmapByteBuffer;
-
 public class TestJNI {
 	public TestJNI() {
 

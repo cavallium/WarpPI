@@ -7,6 +7,7 @@ import org.warp.picalculator.math.Function;
 import org.warp.picalculator.math.FunctionOperator;
 import org.warp.picalculator.math.MathContext;
 import org.warp.picalculator.math.MathematicalSymbols;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class Sum extends FunctionOperator {

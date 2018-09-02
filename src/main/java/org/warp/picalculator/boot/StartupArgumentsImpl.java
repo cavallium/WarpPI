@@ -166,6 +166,5 @@ public class StartupArgumentsImpl implements StartupArguments {
 	public String toString() {
 		return "StartupArguments = {\n\t\"isRaspberryModeAllowed\": \"" + isRaspberryModeAllowed + "\",\n\tisZoomed\": \"" + isZoomed + "\",\n\tisHeadlessEngineForced\": \"" + isHeadlessEngineForced + "\",\n\tisHeadless8EngineForced\": \"" + isHeadless8EngineForced + "\",\n\tisHeadless256EngineForced\": \"" + isHeadless256EngineForced + "\",\n\tisHeadless24bitEngineForced\": \"" + isHeadless24bitEngineForced + "\",\n\tisCPUEngineForced\": \"" + isCPUEngineForced + "\",\n\tisGPUEngineForced\": \"" + isGPUEngineForced + "\",\n\tisFrameBufferEngineForced\": \"" + isFrameBufferEngineForced + "\",\n\tisNoGUIEngineForced\": \"" + isNoGUIEngineForced + "\",\n\tisHTMLEngineForced\": \"" + isHTMLEngineForced + "\",\n\tisMSDOSModeEnabled\": \"" + isMSDOSModeEnabled + "\",\n\tisVerboseLoggingEnabled\": \"" + isVerboseLoggingEnabled + "\",\n\tisDebugEnabled\": \"" + isDebugEnabled + "\",\n\tisUncached\": \"" + isUncached + "\"\n}";
 	}
-	
-	
+
 }

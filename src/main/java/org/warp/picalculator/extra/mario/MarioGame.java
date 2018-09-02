@@ -39,7 +39,9 @@ public class MarioGame {
 		final double curY = player.getY();
 		final double futureX = curX + deltaX;
 		final double futureY = curY + deltaY;
+		@SuppressWarnings("unused")
 		final boolean forward = futureX >= curX;
+		@SuppressWarnings("unused")
 		final boolean up = futureY >= curY;
 		player.move(dt, futureX - curX, futureY - curY);
 	}
@@ -69,6 +71,7 @@ public class MarioGame {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private int nearest(double val, int a, int b) {
 		final double aa = Math.abs(val - a);
 		final double ab = Math.abs(val - b);

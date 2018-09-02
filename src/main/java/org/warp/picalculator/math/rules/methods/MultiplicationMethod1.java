@@ -4,6 +4,7 @@ import org.warp.picalculator.Error;
 import org.warp.picalculator.math.Function;
 import org.warp.picalculator.math.MathContext;
 import org.warp.picalculator.math.functions.Multiplication;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**

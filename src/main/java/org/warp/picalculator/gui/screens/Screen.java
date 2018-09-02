@@ -1,7 +1,5 @@
 package org.warp.picalculator.gui.screens;
 
-import org.warp.picalculator.event.KeyPressedEvent;
-import org.warp.picalculator.event.KeyReleasedEvent;
 import org.warp.picalculator.event.KeyboardEventListener;
 import org.warp.picalculator.event.TouchEventListener;
 import org.warp.picalculator.gui.DisplayManager;

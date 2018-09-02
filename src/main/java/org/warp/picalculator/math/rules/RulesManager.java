@@ -8,26 +8,19 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
 
-import org.apache.commons.io.IOUtils;
 import org.warp.picalculator.ConsoleUtils;
 import org.warp.picalculator.Error;
 import org.warp.picalculator.PlatformUtils;
 import org.warp.picalculator.StaticVars;
-import org.warp.picalculator.Utils;
 import org.warp.picalculator.ZipUtils;
-import org.warp.picalculator.deps.StorageUtils;
 import org.warp.picalculator.deps.DJDTCompiler;
 import org.warp.picalculator.deps.DStandardOpenOption;
 import org.warp.picalculator.deps.DSystem;
 import org.warp.picalculator.deps.DURLClassLoader;
+import org.warp.picalculator.deps.StorageUtils;
 import org.warp.picalculator.math.Function;
 import org.warp.picalculator.math.MathContext;
 import org.warp.picalculator.math.functions.Expression;
@@ -43,7 +36,7 @@ public class RulesManager {
 
 	private RulesManager() {}
 
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings({ "unchecked" })
 	public static void initialize() {
 		ConsoleUtils.out.println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "RulesManager", "Loading the rules");
 		rules = new ObjectArrayList[RuleType.values().length];
