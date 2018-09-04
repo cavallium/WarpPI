@@ -13,10 +13,10 @@ https://local.cavallium.it/webtests/warppiweb/
 
 # Keypad PCB
 https://workspace.circuitmaker.com/Projects/Details/Andrea-Cavalli/Scientific-calculator-Keypad
-![alt text](https://raw.githubusercontent.com/Cavallium/WarpPI/master/src/main/resources/keypad-preview.jpg "Pictures")
+![alt text](https://raw.githubusercontent.com/Cavallium/WarpPI/master/core/src/main/resources/keypad-preview.jpg "Pictures")
 
 # Photos and pictures
-![alt text](https://raw.githubusercontent.com/Cavallium/WarpPI/master/src/main/resources/algebra_input.gif "Algebra input screen")
-![alt text](https://raw.githubusercontent.com/Cavallium/WarpPI/master/src/main/resources/algebra%20variable%20type.gif "Algebra variable type menu")
-![alt text](https://raw.githubusercontent.com/Cavallium/WarpPI/master/src/main/resources/decimal.png "Example expression")
-![alt text](https://raw.githubusercontent.com/Cavallium/WarpPI/master/src/main/resources/algebra.png "Simplification of an expression")
+![alt text](https://raw.githubusercontent.com/Cavallium/WarpPI/master/core/src/main/resources/algebra_input.gif "Algebra input screen")
+![alt text](https://raw.githubusercontent.com/Cavallium/WarpPI/master/core/src/main/resources/algebra%20variable%20type.gif "Algebra variable type menu")
+![alt text](https://raw.githubusercontent.com/Cavallium/WarpPI/master/core/src/main/resources/decimal.png "Example expression")
+![alt text](https://raw.githubusercontent.com/Cavallium/WarpPI/master/core/src/main/resources/algebra.png "Simplification of an expression")
