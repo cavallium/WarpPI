@@ -110,4 +110,9 @@ public class TeaVMConsoleUtils implements it.cavallium.warppi.deps.Platform.Cons
 		return os;
 	}
 
+	@Override
+	public int getOutputLevel() {
+		return StaticVars.outputLevel;
+	}
+
 }

@@ -100,7 +100,7 @@ public class RulesManager {
 						final String[] ruleDetails = rulesLine.split(",", 1);
 						final String ruleName = ruleDetails[0];
 						final String ruleNameEscaped = ruleName.replace(".", "_");
-						Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "RulesManager", "Evaluating /rules/" + ruleNameEscaped + ".java");
+						Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "RulesManager", "Evaluating /rules/" + ruleNameEscaped + ".java");
 						final String pathWithoutExtension = "/rules/" + ruleNameEscaped;
 						final String scriptFile = pathWithoutExtension + ".java";
 						final InputStream resourcePath = Engine.getPlatform().getStorageUtils().getResourceStream(scriptFile);
@@ -117,7 +117,7 @@ public class RulesManager {
 									}
 								} catch (final Exception e) {
 									e.printStackTrace();
-									Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "RulesManager", ruleName, "Can't load the rule!");
+									Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "RulesManager", ruleName, "Can't load the rule "+ ruleNameEscaped +"!");
 								}
 							}
 							if (r == null || !useCache) {
@@ -200,7 +200,7 @@ public class RulesManager {
 		final String[] textArray = text.split("\\n", 6);
 		if (textArray[3].contains("PATH=")) {
 			final String javaClassName = textArray[3].substring(6);
-			System.err.println(javaClassName);
+			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "RulesManager", "Rule java class name: " + javaClassName);
 			final String javaClassNameAndPath = new StringBuilder("it.cavallium.warppi.math.rules.").append(javaClassName).toString();
 			try {
 				return loadClassRuleDirectly(javaClassNameAndPath, tDir);
@@ -257,6 +257,6 @@ public class RulesManager {
 
 	public static void addRule(Rule rule) {
 		rules[rule.getRuleType().ordinal()].add(rule);
-		Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "RulesManager", rule.getRuleName(), "Loaded as " + rule.getRuleType() + " rule");
+		Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "RulesManager", rule.getRuleName(), "Loaded as " + rule.getRuleType() + " rule");
 	}
 }

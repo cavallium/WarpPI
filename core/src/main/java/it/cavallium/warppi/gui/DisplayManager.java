@@ -52,14 +52,14 @@ public final class DisplayManager implements RenderingLoop {
 	public boolean forceRefresh;
 
 	public DisplayManager(HardwareDisplay monitor, HUD hud, Screen screen, String title) {
-		screenChange = Engine.getPlatform().newSemaphore();
-		engine = chooseGraphicEngine();
-		supportsPauses = engine.doesRefreshPauses();
-
 		this.monitor = monitor;
 		this.hud = hud;
 		this.initialTitle = title;
 		this.initialScreen = screen;
+		
+		screenChange = Engine.getPlatform().newSemaphore();
+		engine = chooseGraphicEngine();
+		supportsPauses = engine.doesRefreshPauses();
 
 		glyphsHeight = new int[] { 9, 6, 12, 9 };
 		displayDebugString = "";
@@ -122,12 +122,10 @@ public final class DisplayManager implements RenderingLoop {
 
 	private GraphicEngine chooseGraphicEngine() {
 		GraphicEngine d;
-		if (!StaticVars.debugOn) {
-			d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "framebuffer engine", null);
-			if (d != null && d.isSupported()) {
-				Engine.getPlatform().getConsoleUtils().out().println(1, "Using FB Graphic Engine");
-				return d;
-			}
+		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "framebuffer engine", null);
+		if (d != null && d.isSupported()) {
+			Engine.getPlatform().getConsoleUtils().out().println(1, "Using FB Graphic Engine");
+			return d;
 		}
 		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "GPU engine", null);
 		if (d != null && d.isSupported()) {

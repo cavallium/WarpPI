@@ -54,13 +54,7 @@ public class SwingWindow extends JFrame {
 
 		mult = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue()).intValue();
 
-		if (StaticVars.debugOn) {
-			if (Utils.debugThirdScreen) {
-				this.setLocation(2880, 900);
-				setResizable(false);
-				setAlwaysOnTop(true);
-			}
-		} else {
+		if (!StaticVars.debugOn) {
 			// Create a new blank cursor.
 			final Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
 
@@ -101,7 +95,7 @@ public class SwingWindow extends JFrame {
 
 			@Override
 			public void componentShown(ComponentEvent e) {
-				if (StaticVars.debugOn && !Utils.debugThirdScreen) {
+				if (StaticVars.debugOn) {
 					SwingWindow.this.centerWindow();
 				}
 			}

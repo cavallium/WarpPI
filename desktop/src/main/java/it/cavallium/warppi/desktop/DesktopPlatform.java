@@ -1,17 +1,25 @@
 package it.cavallium.warppi.desktop;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
+
+import it.cavallium.warppi.CacheUtils;
+import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Error;
 import it.cavallium.warppi.deps.Platform;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.cpu.CPUEngine;
 import it.cavallium.warppi.gui.graphicengine.gpu.GPUEngine;
+import it.cavallium.warppi.gui.graphicengine.headless24bit.Headless24bitEngine;
+import it.cavallium.warppi.gui.graphicengine.headless256.Headless256Engine;
+import it.cavallium.warppi.gui.graphicengine.headless8.Headless8Engine;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
@@ -34,6 +42,9 @@ public class DesktopPlatform implements Platform {
 		el = new HashMap<>();
 		el.put("CPU engine", new CPUEngine());
 		el.put("GPU engine", new GPUEngine());
+		el.put("headless 24 bit engine", new Headless24bitEngine());
+		el.put("headless 256 colors engine", new Headless256Engine());
+		el.put("headless 8 colors engine", new Headless8Engine());
 	}
 	
 	@Override
@@ -188,6 +199,25 @@ public class DesktopPlatform implements Platform {
 	@Override
 	public boolean compile(String[] command, PrintWriter printWriter, PrintWriter errors) {
 		return org.eclipse.jdt.internal.compiler.batch.Main.compile(command, printWriter, errors, null);
+	}
+
+	@Override
+	public boolean isRunningOnRaspberry() {
+		return CacheUtils.get("isRunningOnRaspberry", 24 * 60 * 60 * 1000, () -> {
+			if (Engine.getPlatform().isJavascript())
+				return false;
+			if (Engine.getPlatform().getOsName().equals("Linux")) {
+				try {
+					final File osRelease = new File("/etc", "os-release");
+					return FileUtils.readLines(osRelease, "UTF-8").stream().map(String::toLowerCase).anyMatch(line -> line.contains("raspbian") && line.contains("name"));
+				} catch (IOException readException) {
+					return false;
+				}
+
+			} else {
+				return false;
+			}
+		});
 	}
 
 }

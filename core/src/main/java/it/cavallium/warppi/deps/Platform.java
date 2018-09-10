@@ -27,7 +27,8 @@ public interface Platform {
 	public void gc();
 
 	public boolean isJavascript();
-
+	public boolean isRunningOnRaspberry();
+	
 	public String getOsName();
 
 	public void alphaChanged(boolean val);
@@ -81,6 +82,8 @@ public interface Platform {
 		public static final int OUTPUTLEVEL_DEBUG_VERBOSE = 4;
 		
 		public AdvancedOutputStream out();
+		
+		public int getOutputLevel();
 		
 		public interface AdvancedOutputStream {
 			public void println(Object str);

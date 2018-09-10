@@ -21,19 +21,9 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.jogamp.jogl</groupId>
-			<artifactId>jogl-all-main</artifactId>
-			<version>2.3.2</version>
-		</dependency>
-		<dependency>
-			<groupId>org.jogamp.gluegen</groupId>
-			<artifactId>gluegen-rt-main</artifactId>
-			<version>2.3.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.pi4j</groupId>
-			<artifactId>pi4j-core</artifactId>
-			<version>1.2-SNAPSHOT</version>
+			<groupId>it.cavallium</groupId>
+			<artifactId>warppi-engine-gpu</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.fusesource.jansi</groupId>
@@ -49,6 +39,10 @@
 			<groupId>org.eclipse.jdt.core.compiler</groupId>
 			<artifactId>ecj</artifactId>
 			<version>4.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>ar.com.hjg</groupId>
+			<artifactId>pngj</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

@@ -112,4 +112,9 @@ public class DesktopConsoleUtils implements it.cavallium.warppi.deps.Platform.Co
 		return os;
 	}
 
+	@Override
+	public int getOutputLevel() {
+		return StaticVars.outputLevel;
+	}
+
 }

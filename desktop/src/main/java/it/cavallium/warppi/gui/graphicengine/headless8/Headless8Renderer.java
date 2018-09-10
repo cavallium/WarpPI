@@ -19,7 +19,7 @@ public class Headless8Renderer implements Renderer {
 	public static final String[] colorANSI = new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "0;1", "1;1", "2;1", "3;1", "4;1", "5;1", "6;1", "7;1" };
 
 	public static final String ANSI_RESET = "\u001B[0m";
-	public static final char FILL = StaticVars.startupArguments.isMSDOSModeEnabled() ? 0xDB : '█';
+	public static char FILL;
 
 	private int hexColor(int red, int green, int blue) {
 		final int r1 = red;
@@ -250,6 +250,7 @@ public class Headless8Renderer implements Renderer {
 			}
 			final int precBG = colorMatrix[((int) x1) + ((int) y1) * Headless8Engine.C_WIDTH] & 0xF0;
 			colorMatrix[((int) x1) + ((int) y1) * Headless8Engine.C_WIDTH] = precBG | curColor;
+			if (FILL == 0) initFill();
 			charmatrix[((int) x1) + ((int) y1) * Headless8Engine.C_WIDTH] = FILL;
 
 			if (x1 == x2 && y1 == y2) {
@@ -270,6 +271,10 @@ public class Headless8Renderer implements Renderer {
 		}
 	}
 
+	private void initFill() {
+		FILL = StaticVars.startupArguments.isMSDOSModeEnabled() ? 0xDB : '█';
+	}
+
 	@Override
 	public void glFillRect(float x, float y, float width, float height, float uvX, float uvY, float uvWidth,
 			float uvHeight) {
@@ -282,6 +287,7 @@ public class Headless8Renderer implements Renderer {
 
 	@Override
 	public void glFillColor(float x, float y, float width, float height) {
+		if (FILL == 0) initFill();
 		glFillColor(x, y, width, height, FILL, curColor);
 	}
 
@@ -445,6 +451,7 @@ public class Headless8Renderer implements Renderer {
 						}
 						final int bgColor = colorMatrix[pixelX + pixelY * Headless8Engine.C_WIDTH] & 0xF0;
 						colorMatrix[pixelX + pixelY * Headless8Engine.C_WIDTH] = bgColor | hexColor(newColor >> 16 & 0xFF, newColor >> 8 & 0xFF, newColor & 0xFF);
+						if (FILL == 0) initFill();
 						charmatrix[pixelX + pixelY * Headless8Engine.C_WIDTH] = FILL;
 					}
 				}

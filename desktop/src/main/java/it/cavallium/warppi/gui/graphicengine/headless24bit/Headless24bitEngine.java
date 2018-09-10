@@ -16,13 +16,13 @@ import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
 
 public class Headless24bitEngine implements it.cavallium.warppi.gui.graphicengine.GraphicEngine {
 
-	private final Headless24bitRenderer r = new Headless24bitRenderer();
+	private Headless24bitRenderer r;
 	private boolean stopped = true;
 	private RenderingLoop renderLoop;
 	public static final int C_MUL_X = 4;//8;
 	public static final int C_MUL_Y = 8;//8;
-	protected static final int C_WIDTH = StaticVars.screenSize[0] / C_MUL_X;//Main.screenSize[0]/2;//;60;
-	protected static final int C_HEIGHT = StaticVars.screenSize[1] / C_MUL_Y;//Main.screenSize[1]/3;//;40;
+	protected static int C_WIDTH;
+	protected static int C_HEIGHT;
 	private String title = StaticVars.calculatorName;
 	private boolean win = false;
 	private Key precKey = null;
@@ -65,6 +65,9 @@ public class Headless24bitEngine implements it.cavallium.warppi.gui.graphicengin
 
 	@Override
 	public void create(Runnable onInitialized) {
+		r = new Headless24bitRenderer();
+		C_WIDTH = StaticVars.screenSize[0] / C_MUL_X;
+		C_HEIGHT = StaticVars.screenSize[1] / C_MUL_Y;
 		StaticVars.outputLevel = -1;
 		AnsiConsole.systemInstall();
 		if (Utils.isWindows() && !StaticVars.startupArguments.isMSDOSModeEnabled()) {

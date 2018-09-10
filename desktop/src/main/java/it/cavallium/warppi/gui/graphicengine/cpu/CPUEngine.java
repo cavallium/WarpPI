@@ -17,10 +17,10 @@ import it.cavallium.warppi.gui.graphicengine.Skin;
 public class CPUEngine implements GraphicEngine {
 
 	private SwingWindow INSTANCE;
-	public final CPURenderer r = new CPURenderer();
-	public volatile BufferedImage g = new BufferedImage(r.size[0], r.size[1], BufferedImage.TYPE_INT_RGB);
-	public volatile boolean initialized = false;
-	public Semaphore exitSemaphore = new Semaphore(0);
+	public CPURenderer r;
+	public volatile BufferedImage g;
+	public volatile boolean initialized;
+	public Semaphore exitSemaphore;
 
 	@Override
 	public void setTitle(String title) {
@@ -50,8 +50,12 @@ public class CPUEngine implements GraphicEngine {
 
 	@Override
 	public void create(Runnable onInitialized) {
+		r = new CPURenderer();
+		g = new BufferedImage(r.size[0], r.size[1], BufferedImage.TYPE_INT_RGB);
+		initialized = false;
+		exitSemaphore = new Semaphore(0);
 		INSTANCE = new SwingWindow(this);
-		setResizable(StaticVars.debugOn & !Utils.debugThirdScreen);
+		setResizable(StaticVars.debugOn);
 		setDisplayMode(StaticVars.screenSize[0], StaticVars.screenSize[1]);
 		INSTANCE.setVisible(true);
 		initialized = true;

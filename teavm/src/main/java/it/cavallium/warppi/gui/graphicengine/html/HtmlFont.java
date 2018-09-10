@@ -37,9 +37,6 @@ public class HtmlFont extends RFTFont {
 		imgElCtx.clearRect(0, 0, imgEl.getWidth(), imgEl.getHeight());
 		imgElCtx.setFillStyle("#000");
 		int minBound = 0, maxBound = intervalsTotalSize-1;
-		System.out.println("charIndex:"+0);
-		System.out.println("minBound"+minBound);
-		System.out.println("maxBound"+maxBound);
 		for (int charIndex = minBound; charIndex < maxBound; charIndex++) {
 			for (int dy = 0; dy < charH; dy++) {
 				for (int dx = 0; dx < charW; dx++) {

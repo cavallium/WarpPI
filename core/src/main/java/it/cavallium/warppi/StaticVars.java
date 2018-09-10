@@ -9,8 +9,8 @@ import it.cavallium.warppi.flow.Observable;
 public class StaticVars {
 	public static final boolean enableVBO = true;
 	public static final String calculatorName = "WarpPI";
-	public static final String calculatorNameLOWER = "warppi";
-	public static final String calculatorNameUPPER = "WARPPI";
+	public static final String calculatorNameLOWER = calculatorName.toLowerCase();
+	public static final String calculatorNameUPPER = calculatorName.toUpperCase();
 	public static boolean haxMode = true;
 	public static final boolean zoomed = true;
 	public static int[] screenPos = new int[] { 0, 0 };
@@ -20,7 +20,7 @@ public class StaticVars {
 	public static boolean debugWindow2x = false;
 	public static BehaviorSubject<Float> windowZoom = BehaviorSubject.create(2F);
 	public static Function<Float, Float> windowZoomFunction = (val) -> {
-		if (StaticVars.debugOn & StaticVars.debugWindow2x) {
+		if (StaticVars.debugWindow2x) {
 			return val + 1;
 		} else {
 			return val;

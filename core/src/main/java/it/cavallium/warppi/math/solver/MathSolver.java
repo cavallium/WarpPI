@@ -234,7 +234,7 @@ public class MathSolver {
 		}
 		if (appliedRules.isEmpty())
 			results = null;
-		if (StaticVars.debugOn & results != null && !appliedRules.isEmpty()) {
+		if ((Engine.getPlatform().getConsoleUtils().getOutputLevel() >= ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN) & results != null && !appliedRules.isEmpty()) {
 			StringBuilder rulesStr = new StringBuilder();
 			for (Rule r : appliedRules) {
 				rulesStr.append(r.getRuleName());

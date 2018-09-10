@@ -66,7 +66,7 @@ public abstract class RFTFont implements BinaryFont {
 	}
 
 	private void load(String path, boolean onlyRaw) throws IOException {
-		Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Loading font " + path);
+		Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN + 1, "Loading font " + path);
 		loadFont(path);
 		if (!onlyRaw) {
 			chars32 = new int[(intervalsTotalSize) * charIntCount];

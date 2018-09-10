@@ -1,6 +1,7 @@
 package it.cavallium.warppi.gui.graphicengine.html;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 
 import org.teavm.jso.JSObject;
@@ -41,7 +42,8 @@ public class HtmlSkin implements Skin {
 			file = "/"+file;
 			url = Engine.getPlatform().getStorageUtils().getBasePath()+file;
 		try {
-			PngReader r = new PngReader(Engine.getPlatform().getStorageUtils().getResourceStream(file));
+			InputStream stream = Engine.getPlatform().getStorageUtils().getResourceStream(file);
+			PngReader r = new PngReader(stream);
 			skinSize = new int[] { r.imgInfo.cols, r.imgInfo.rows };
 			r.close();
 		} catch (URISyntaxException e) {

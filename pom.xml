@@ -40,8 +40,10 @@
 	<modules>
 		<module>core</module>
 		<module>rules</module>
+		<module>hardware</module>
 		<module>desktop</module>
 		<module>teavm</module>
+		<module>engine-gpu</module>
 	</modules>
 
 	<repositories>
@@ -79,96 +81,6 @@
 		</pluginRepository>
 	</pluginRepositories>
 
-	<profiles>
-		<profile>
-			<id>aarch64</id>
-			<activation>
-				<!--<os> <family>Linux</family> <arch>aarch64</arch> </os> -->
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<buildprops.exclude1>it/cavallium/warppi/gui/graphicengine/gpu/*</buildprops.exclude1>
-			</properties>
-		</profile>
-		<profile>
-			<id>teavmprofile</id>
-			<properties>
-				<src.dir>teavm-specific</src.dir>
-				<src.dir2>src/main/rules</src.dir2>
-			</properties>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>org.teavm</groupId>
-					<artifactId>teavm-classlib</artifactId>
-					<version>0.6.0-dev-559</version>
-				</dependency>
-			</dependencies>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>versions-maven-plugin</artifactId>
-						<version>2.5</version>
-						<configuration>
-							<includes>
-								<include>org.teavm:*</include>
-							</includes>
-						</configuration>
-						<executions>
-							<execution>
-								<goals>
-									<goal>use-latest-versions</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-compiler-plugin</artifactId>
-						<version>2.3.2</version>
-						<configuration>
-							<excludes>
-								<exclude>it/cavallium/warppi/gui/graphicengine/cpu/CPUEngine</exclude>
-								<exclude>it/cavallium/warppi/gui/graphicengine/cpu/CPURenderer</exclude>
-								<exclude>it/cavallium/warppi/gui/graphicengine/cpu/SwingWindow</exclude>
-								<exclude>it/cavallium/warppi/gui/graphicengine/gpu/*</exclude>
-								<exclude>it/cavallium/warppi/gui/graphicengine/headless24bit/*</exclude>
-								<exclude>it/cavallium/warppi/gui/graphicengine/headless256/*</exclude>
-								<exclude>it/cavallium/warppi/gui/graphicengine/headless8/*</exclude>
-								<exclude>it/cavallium/warppi/gui/graphicengine/framebuffer/*</exclude>
-							</excludes>
-							<source>${maven.compiler.source}</source>
-							<target>${maven.compiler.target}</target>
-							<encoding>UTF-8</encoding>
-						</configuration>
-					</plugin>
-					<plugin>
-						<groupId>org.teavm</groupId>
-						<artifactId>teavm-maven-plugin</artifactId>
-						<version>0.6.0-dev-559</version>
-						<executions>
-							<execution>
-								<goals>
-									<goal>compile</goal>
-								</goals>
-								<phase>process-classes</phase>
-								<configuration>
-									<mainClass>it.cavallium.warppi.boot.WarpPI</mainClass>
-									<mainPageIncluded>true</mainPageIncluded>
-									<debugInformationGenerated>true</debugInformationGenerated>
-									<sourceMapsGenerated>true</sourceMapsGenerated>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -190,6 +102,11 @@
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
 				<version>3.8</version>
+			</dependency>
+			<dependency>
+				<groupId>ar.com.hjg</groupId>
+				<artifactId>pngj</artifactId>
+				<version>2.1.0</version>
 			</dependency>
 			<dependency>
 				<groupId>ar.com.hjg</groupId>

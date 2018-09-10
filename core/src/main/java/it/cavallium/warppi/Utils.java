@@ -50,7 +50,6 @@ public class Utils {
 	public static final int scaleMode = BigDecimal.ROUND_HALF_UP;
 	public static final RoundingMode scaleMode2 = RoundingMode.HALF_UP;
 
-	public static boolean debugThirdScreen;
 	public static boolean newtMode = true;
 
 	public static <T> boolean isInArray(T ch, T[] a) {
@@ -627,30 +626,6 @@ public class Utils {
 			} // if
 		} // for
 		System.out.println("============");
-	}
-
-	public static boolean isRunningOnRaspberry() {
-		return CacheUtils.get("isRunningOnRaspberry", 24 * 60 * 60 * 1000, () -> {
-			if (Engine.getPlatform().isJavascript())
-				return false;
-			try {
-				// Check if it's a raspberry using pi4j
-				return Engine.getPlatform().getGpio().getBoardType() != Engine.getPlatform().getGpio().valueUnknownBoardType();
-			} catch (final Exception e) {
-				// Check if it's a raspberry using other methods
-				if (Engine.getPlatform().getOsName().equals("Linux")) {
-					try {
-						final File osRelease = new File("/etc", "os-release");
-						return FileUtils.readLines(osRelease, "UTF-8").stream().map(String::toLowerCase).anyMatch(line -> line.contains("raspbian") && line.contains("name"));
-					} catch (IOException readException) {
-						return false;
-					}
-
-				} else {
-					return false;
-				}
-			}
-		});
 	}
 
 	public static boolean isWindows() {

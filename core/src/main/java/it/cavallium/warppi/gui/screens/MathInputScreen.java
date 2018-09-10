@@ -171,7 +171,7 @@ public class MathInputScreen extends Screen {
 
 	@Override
 	public boolean onKeyPressed(KeyPressedEvent k) {
-		Engine.getPlatform().getConsoleUtils().out().println(1, k.toString());
+		Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "MathInputScreen", "Pressed key " + k.getKey().toString());
 		try {
 			switch (k.getKey()) {
 				case OK:

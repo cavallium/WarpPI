@@ -6,73 +6,67 @@ public class DesktopGpio implements it.cavallium.warppi.deps.Platform.Gpio {
 
 	@Override
 	public int valueOutput() {
-		return com.pi4j.wiringpi.Gpio.OUTPUT;
+		return 4;
 	}
 
 	@Override
 	public int valuePwmOutput() {
-		return com.pi4j.wiringpi.Gpio.PWM_OUTPUT;
+		return 3;
 	}
 
 	@Override
 	public int valueInput() {
-		return com.pi4j.wiringpi.Gpio.INPUT;
+		return 2;
 	}
 
 	@Override
 	public int valueHigh() {
-		return com.pi4j.wiringpi.Gpio.HIGH;
+		return 1;
 	}
 
 	@Override
 	public int valueLow() {
-		return com.pi4j.wiringpi.Gpio.LOW;
+		return 0;
 	}
 
 	@Override
 	public Object valueUnknownBoardType() {
-		return com.pi4j.system.SystemInfo.BoardType.UNKNOWN;
+		return new Object();
 	}
 
 	@Override
 	public void wiringPiSetupPhys() {
-		com.pi4j.wiringpi.Gpio.wiringPiSetupPhys();
 	}
 
 	@Override
 	public void pinMode(int i, int type) {
-		com.pi4j.wiringpi.Gpio.pinMode(i, type);
 		
 	}
 
 	@Override
 	public void digitalWrite(int pin, int val) {
-		com.pi4j.wiringpi.Gpio.digitalWrite(pin, val);
 	}
 
 	@Override
 	public void digitalWrite(int pin, boolean val) {
-		com.pi4j.wiringpi.Gpio.digitalWrite(pin, val);
 	}
 
 	@Override
 	public void pwmWrite(int pin, int val) {
-		com.pi4j.wiringpi.Gpio.pwmWrite(pin, val);
 	}
 
 	@Override
 	public void delayMicroseconds(int t) {
-		com.pi4j.wiringpi.Gpio.delayMicroseconds(t);
 	}
 
 	@Override
 	public int digitalRead(int pin) {
-		return com.pi4j.wiringpi.Gpio.digitalRead(pin);
+		return 0;
 	}
 
 	@Override
 	public Object getBoardType() {
-		return ClassUtils.invokeStaticMethod("com.pi4j.system.SystemInfo.getBoardType");
+		return new Object();
 	}
 
 }

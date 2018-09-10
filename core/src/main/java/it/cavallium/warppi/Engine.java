@@ -81,14 +81,13 @@ public class Engine {
 	private void initializeEnvironment(StartupArguments args) throws IOException {
 		ClassUtils.classLoader = this.getClass();
 		StaticVars.startupArguments = args;
-		Utils.debugThirdScreen = StaticVars.debugOn & false;
 		StaticVars.debugWindow2x = args.isZoomed();
 		if (args.isVerboseLoggingEnabled() || args.isDebugEnabled()) {
 			StaticVars.outputLevel = ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE;
 		}
 		Engine.platform.getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, args);
 		checkDeviceType();
-		if (Utils.isRunningOnRaspberry() && args.isRaspberryModeAllowed()) {
+		if (Engine.getPlatform().isRunningOnRaspberry() && args.isRaspberryModeAllowed()) {
 			Engine.getPlatform().getGpio().wiringPiSetupPhys();
 			Engine.getPlatform().getGpio().pinMode(12, Engine.getPlatform().getGpio().valuePwmOutput());
 		} else {

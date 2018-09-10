@@ -8,6 +8,7 @@ public class ClassUtils {
 
 	public static Class<?> classLoader;
 
+	/*
 	public static Object invokeStaticMethod(String path, Var<?>... vars) {
 		return invokeMethod(path, null, vars);
 	}
@@ -240,4 +241,5 @@ public class ClassUtils {
 			}
 		}
 	}
+	*/
 }

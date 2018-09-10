@@ -3,12 +3,14 @@ package it.cavallium.warppi.teavm;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLDocument;
 
+import ar.com.hjg.pngj.PngHelperInternal;
 import it.cavallium.warppi.Error;
 import it.cavallium.warppi.deps.Platform;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
@@ -203,6 +205,11 @@ public class TeaVMPlatform implements Platform {
 	@Override
 	public boolean compile(String[] command, PrintWriter printWriter, PrintWriter errors) {
 		throw new java.lang.UnsupportedOperationException("Not implemented.");
+	}
+
+	@Override
+	public boolean isRunningOnRaspberry() {
+		return false;
 	}
 
 }

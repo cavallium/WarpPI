@@ -34,13 +34,13 @@ import it.cavallium.warppi.gui.graphicengine.Skin;
 public class HtmlEngine implements GraphicEngine {
 
 	private boolean initialized;
-	public Semaphore exitSemaphore = Engine.getPlatform().newSemaphore(0);
+	public Semaphore exitSemaphore;
 	private static final HTMLDocument document = Window.current().getDocument();
 	private HTMLCanvasElement canvas;
 	private CanvasRenderingContext2D g;
 	private RenderingLoop renderingLoop;
 	private HtmlRenderer renderer;
-	private int width = -1, height = -1;
+	private int width, height;
 	private final int frameTime = (int) (1000d/10d);
 	private final BehaviorSubject<Integer[]> onResize = BehaviorSubject.create();
 	
@@ -77,6 +77,9 @@ public class HtmlEngine implements GraphicEngine {
 	
 	@Override
 	public void create(Runnable onInitialized) {
+		exitSemaphore = Engine.getPlatform().newSemaphore(0);
+		width = -1;
+		height = -1;
 		canvas = (HTMLCanvasElement) document.createElement("canvas");
 		g = (CanvasRenderingContext2D ) canvas.getContext("2d");
 		HTMLInputElement keyInput = (HTMLInputElement) document.createElement("input");
