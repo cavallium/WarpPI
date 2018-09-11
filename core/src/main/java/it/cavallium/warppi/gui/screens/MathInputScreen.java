@@ -393,9 +393,11 @@ public class MathInputScreen extends Screen {
 								return true;
 							case SURD_MODE:
 								calc.exactMode = !calc.exactMode;
-								result.clear();
-								currentStep = 0;
-								Keyboard.keyPressed(Key.SIMPLIFY);
+								if (!result.isContentEmpty()) {
+									result.clear();
+									currentStep = 0;
+									Keyboard.keyPressed(Key.SIMPLIFY);
+								}
 								return true;
 							case debug1:
 								Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new EmptyScreen());
