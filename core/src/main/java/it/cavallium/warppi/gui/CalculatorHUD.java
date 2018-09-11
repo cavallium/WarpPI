@@ -80,7 +80,7 @@ public class CalculatorHUD extends HUD {
 
 		int padding = 2;
 
-		final int brightness = (int) (Math.ceil(HardwareDevice.INSTANCE.getDisplayManager().getBrightness() * 9));
+		final int brightness = (int) (Math.ceil(Engine.INSTANCE.getHardwareDevice().getDisplayManager().getBrightness() * 9));
 		if (brightness <= 10) {
 			renderer.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * brightness, 16 * 1, 16, 16);
 		} else {
@@ -89,8 +89,8 @@ public class CalculatorHUD extends HUD {
 
 		padding += 18 + 6;
 
-		final boolean canGoBack = HardwareDevice.INSTANCE.getDisplayManager().canGoBack();
-		final boolean canGoForward = HardwareDevice.INSTANCE.getDisplayManager().canGoForward();
+		final boolean canGoBack = Engine.INSTANCE.getHardwareDevice().getDisplayManager().canGoBack();
+		final boolean canGoForward = Engine.INSTANCE.getHardwareDevice().getDisplayManager().canGoForward();
 
 		if (StaticVars.haxMode) {
 			renderer.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 18, 16 * 0, 16, 16);
@@ -112,15 +112,15 @@ public class CalculatorHUD extends HUD {
 		//DRAW BOTTOM
 		d.renderer.glDrawStringLeft(2, 90, d.displayDebugString);
 
-		Utils.getFont(true, false).use(HardwareDevice.INSTANCE.getDisplayManager().engine);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor4i(255, 0, 0, 40);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringLeft(1 + 1, StaticVars.screenSize[1] - 7 - 7 + 1, "WORK IN");
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor4i(255, 0, 0, 80);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringLeft(1, StaticVars.screenSize[1] - 7 - 7, "WORK IN");
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor4i(255, 0, 0, 40);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringLeft(1 + 1, StaticVars.screenSize[1] - 7 + 1, "PROGRESS.");
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor4i(255, 0, 0, 80);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringLeft(1, StaticVars.screenSize[1] - 7, "PROGRESS.");
+		Utils.getFont(true, false).use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor4i(255, 0, 0, 40);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringLeft(1 + 1, StaticVars.screenSize[1] - 7 - 7 + 1, "WORK IN");
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor4i(255, 0, 0, 80);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringLeft(1, StaticVars.screenSize[1] - 7 - 7, "WORK IN");
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor4i(255, 0, 0, 40);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringLeft(1 + 1, StaticVars.screenSize[1] - 7 + 1, "PROGRESS.");
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor4i(255, 0, 0, 80);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringLeft(1, StaticVars.screenSize[1] - 7, "PROGRESS.");
 	}
 
 	@Override

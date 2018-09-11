@@ -672,6 +672,81 @@ public class Keyboard {
 		}
 	}
 
+	static final String[][][] KeyLabelsMap = /* [ROW, COLUMN, (0:normal 1:shift 2:alpha)] */
+		{ { /* ROW 0 */
+			{ "⇪", "⇪", null }, /* 0,0 */
+			{ "A", null, "A" }, /* 0,1 */
+			{"", null, null }, /* 0,2 */
+			{ "⇧", null, null }, /* 0,3 */
+			{"", null, null }, /* 0,4 */
+			{"", null, null }, /* 0,5 */
+			{ "☼", "☼", null }, /* 0,6 */
+			{"↩", null, null } /* 0,7 */
+	}, { /* ROW 1 */
+			{"", null, null }, /* 1,0 */
+			{"", null, null }, /* 1,1 */
+			{"⇦", null, null }, /* 1,2 */
+			{"OK", null, null }, /* 1,3 */
+			{"⇨", null, null }, /* 1,4 */
+			{"↤", null, null }, /* 1,5 */
+			{"↦", null, null }, /* 1,6 */
+			{"", null, null } /* 1,7 */
+	}, { /* ROW 2 */
+			{"", null, null }, /* 2,0 */
+			{"√", null, null }, /* 2,1 */
+			{"", null, null }, /* 2,2 */
+			{"⇩", null, null }, /* 2,3 */
+			{"", null, null }, /* 2,4 */
+			{"", null, null }, /* 2,5 */
+			{"", null, null }, /* 2,6 */
+			{"", null, null } /* 2,7 */
+	}, { /* ROW 3 */
+			{"", null, null }, /* 3,0 */
+			{"", null, null }, /* 3,1 */
+			{"^x", null, null }, /* 3,2 */
+			{"^2", null, null }, /* 3,3 */
+			{"", null, null }, /* 3,4 */
+			{"", null, null }, /* 3,5 */
+			{"", null, null }, /* 3,6 */
+			{".", null, "y" } /* 3,7 */
+	}, { /* ROW 4 */
+			{"", null, null }, /* 4,0 */
+			{"", null, null }, /* 4,1 */
+			{"(", null, null }, /* 4,2 */
+			{")", null, null }, /* 4,3 */
+			{"", null, null }, /* 4,4 */
+			{"S⇔D", null, null }, /* 4,5 */
+			{"", null, null }, /* 4,6 */
+			{"0", null, "x" } /* 4,7 */
+	}, { /* ROW 5 */
+			{"7", null, null }, /* 5,0 */
+			{"8", null, null }, /* 5,1 */
+			{"9", null, null }, /* 5,2 */
+			{"⌫", null, null }, /* 5,3 */
+			{"RESET", null, null }, /* 5,4 */
+			{"", null, null }, /* 5,5 */
+			{"", null, null }, /* 5,6 */
+			{"", null, null } /* 5,7 */
+	}, { /* ROW 6 */
+			{"4", null, null }, /* 6,0 */
+			{"5", null, null }, /* 6,1 */
+			{"6", null, null }, /* 6,2 */
+			{"/", null, null }, /* 6,3 */
+			{"*", null, null }, /* 6,4 */
+			{"", null, null }, /* 6,5 */
+			{"", null, null }, /* 6,6 */
+			{"", null, null } /* 6,7 */
+	}, { /* ROW 7 */
+			{"1", null, null }, /* 7,0 */
+			{"2", null, null }, /* 7,1 */
+			{"3", null, null }, /* 7,2 */
+			{"+", null, null }, /* 7,3 */
+			{"-", null, null }, /* 7,4 */
+			{"", null, null }, /* 7,5 */
+			{"", null, null }, /* 7,6 */
+			{"", null, null } /* 7,7 */
+	} };
+	
 	static final Key[][][] keyMap = /* [ROW, COLUMN, (0:normal 1:shift 2:alpha)] */
 			{ { /* ROW 0 */
 					{ Key.SHIFT, Key.SHIFT, Key.SHIFT }, /* 0,0 */
@@ -746,6 +821,35 @@ public class Keyboard {
 					{ Key.NONE, Key.NONE, Key.NONE }, /* 7,6 */
 					{ Key.NONE, Key.NONE, Key.NONE } /* 7,7 */
 			} };
+	
+	public static String getKeyName(int row, int col) {
+		return getKeyName(row, col, shift, alpha);
+	}
+	
+	public static String getKeyName(int row, int col, boolean shift, boolean alpha) {
+		String[] keyValues = KeyLabelsMap[row][col];
+		if (shift) {
+			if (keyValues[1] != null) {
+				return keyValues[1];
+			}
+		} else if (alpha) {
+			if (keyValues[2] != null) {
+				return keyValues[2];
+			}
+		}
+		return keyValues[0];
+	}
+
+	public static boolean hasKeyName(int row, int col) {
+		String[] keyValues = KeyLabelsMap[row][col];
+		if (shift) {
+			return keyValues[1] != null;
+		} else if (alpha) {
+			return keyValues[2] != null;
+		} else {
+			return true;
+		}
+	}
 
 	public static synchronized void keyPressedRaw(int row, int col) {
 //		KeyboardDebugScreen.keyX = row;
@@ -778,8 +882,8 @@ public class Keyboard {
 				new GUIErrorMessage(ex);
 			}
 		}
-		if (HardwareDevice.INSTANCE.getDisplayManager() != null) {
-			final Screen scr = HardwareDevice.INSTANCE.getDisplayManager().getScreen();
+		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager() != null) {
+			final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 			boolean refresh = false;
 			boolean scrdone = false;
 			try {
@@ -792,17 +896,17 @@ public class Keyboard {
 			} else {
 				switch (k) {
 					case POWEROFF:
-						HardwareDevice.INSTANCE.getDisplayManager().engine.destroy();
+						Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.destroy();
 						break;
 					case NONE:
 						break;
 					case BRIGHTNESS_CYCLE:
-						HardwareDevice.INSTANCE.getDisplayManager().cycleBrightness(false);
+						Engine.INSTANCE.getHardwareDevice().getDisplayManager().cycleBrightness(false);
 						refresh = true;
 						break;
 					case BRIGHTNESS_CYCLE_REVERSE:
-						HardwareDevice.INSTANCE.getDisplayManager().setScreen(new MarioScreen()); //TODO: rimuovere: prova
-						HardwareDevice.INSTANCE.getDisplayManager().cycleBrightness(true);
+						Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MarioScreen()); //TODO: rimuovere: prova
+						Engine.INSTANCE.getHardwareDevice().getDisplayManager().cycleBrightness(true);
 						refresh = true;
 						break;
 					case ZOOM_MODE:
@@ -812,11 +916,11 @@ public class Keyboard {
 //						StaticVars.windowZoom = ((StaticVars.windowZoom - 0.5f) % 2f) + 1f;
 						refresh = true;
 					case HISTORY_BACK:
-						HardwareDevice.INSTANCE.getDisplayManager().goBack();
+						Engine.INSTANCE.getHardwareDevice().getDisplayManager().goBack();
 						refresh = true;
 						break;
 					case HISTORY_FORWARD:
-						HardwareDevice.INSTANCE.getDisplayManager().goForward();
+						Engine.INSTANCE.getHardwareDevice().getDisplayManager().goForward();
 						refresh = true;
 						break;
 					default:
@@ -859,8 +963,8 @@ public class Keyboard {
 			done = additionalListener.onKeyReleased(new KeyReleasedEvent(k));
 		}
 		boolean refresh = false;
-		if (HardwareDevice.INSTANCE.getDisplayManager() != null) {
-			final Screen scr = HardwareDevice.INSTANCE.getDisplayManager().getScreen();
+		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager() != null) {
+			final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 			if (scr != null && scr.initialized && scr.onKeyReleased(new KeyReleasedEvent(k))) {
 				refresh = true;
 			} else {

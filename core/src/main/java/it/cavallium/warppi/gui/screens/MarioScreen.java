@@ -2,6 +2,7 @@ package it.cavallium.warppi.gui.screens;
 
 import java.io.IOException;
 
+import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.device.HardwareDevice;
 import it.cavallium.warppi.device.Keyboard;
@@ -45,30 +46,30 @@ public class MarioScreen extends Screen {
 	public void initialized() {
 		try {
 			if (skin == null) {
-				skin = HardwareDevice.INSTANCE.getDisplayManager().engine.loadSkin("marioskin.png");
+				skin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("marioskin.png");
 			}
 			if (groundskin == null) {
-				groundskin = HardwareDevice.INSTANCE.getDisplayManager().engine.loadSkin("marioground.png");
+				groundskin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("marioground.png");
 			}
 			if (gpuTest2 == null) {
 				try {
-					gpuTest2 = HardwareDevice.INSTANCE.getDisplayManager().engine.loadFont("gputest2");
+					gpuTest2 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("gputest2");
 				} catch (final Exception ex) {}
 			}
 			if (gpuTest1 == null) {
 				try {
-					gpuTest1 = HardwareDevice.INSTANCE.getDisplayManager().engine.loadFont("gputest12");
+					gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("gputest12");
 					gpuTest12 = true;
 				} catch (final Exception ex) {
 					gpuTest12 = false;
 					try {
-						gpuTest1 = HardwareDevice.INSTANCE.getDisplayManager().engine.loadFont("gputest1");
+						gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("gputest1");
 					} catch (final Exception ex2) {}
 				}
 			}
 			if (gpuTest3 == null) {
 				try {
-					gpuTest3 = HardwareDevice.INSTANCE.getDisplayManager().engine.loadSkin("font_gputest3.png");
+					gpuTest3 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("font_gputest3.png");
 				} catch (final Exception ex) {
 					ex.printStackTrace();
 				}
@@ -105,24 +106,24 @@ public class MarioScreen extends Screen {
 				gpuCharTestt1Elapsed -= 1.5;
 			}
 
-			HardwareDevice.INSTANCE.getDisplayManager().renderer.glClearColor(0xff000000);
+			Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xff000000);
 		}
 	}
 
 	@Override
 	public void render() {
 		if (errored) {
-			HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringLeft(0, 20, "ERROR");
+			Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringLeft(0, 20, "ERROR");
 		} else {
 			if (groundskin != null) {
 				final double playerX = g.getPlayer().getX();
 				final double playerY = g.getPlayer().getY();
-				groundskin.use(HardwareDevice.INSTANCE.getDisplayManager().engine);
+				groundskin.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 				final MarioWorld w = g.getCurrentWorld();
 				final int width = w.getWidth();
 				final int height = w.getHeight();
-				final float screenX = HardwareDevice.INSTANCE.getDisplayManager().engine.getWidth() / 2f - 8f;
-				final float screenY = HardwareDevice.INSTANCE.getDisplayManager().engine.getHeight() / 2f - 8f;
+				final float screenX = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getWidth() / 2f - 8f;
+				final float screenY = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() / 2f - 8f;
 				final float shiftX = -8 + 16 * (float) playerX;
 				final float shiftY = -8 + 16 * (height - (float) playerY);
 				int blue = -1;
@@ -135,59 +136,59 @@ public class MarioScreen extends Screen {
 							if (b == 0) {
 								if (blue != 1) {
 									blue = 1;
-									HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor(0xff9290ff);
+									Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xff9290ff);
 								}
-								HardwareDevice.INSTANCE.getDisplayManager().renderer.glFillColor(screenX - shiftX + 16 * ix, screenY - shiftY + 16 * (height - iy), 16, 16);
+								Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillColor(screenX - shiftX + 16 * ix, screenY - shiftY + 16 * (height - iy), 16, 16);
 							} else {
 								if (blue != 0) {
 									blue = 0;
-									HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor(0xffffffff);
+									Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xffffffff);
 								}
-								HardwareDevice.INSTANCE.getDisplayManager().renderer.glFillRect(screenX - shiftX + 16 * ix, screenY - shiftY + 16 * (height - iy), 16, 16, 0, 0, 16, 16);
+								Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(screenX - shiftX + 16 * ix, screenY - shiftY + 16 * (height - iy), 16, 16, 0, 0, 16, 16);
 							}
 						}
 					}
 				}
 				if (blue != 0) {
 					blue = 0;
-					HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor(0xffffffff);
+					Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xffffffff);
 				}
 
 				//DRAW MARIO
-				skin.use(HardwareDevice.INSTANCE.getDisplayManager().engine);
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glFillRect(screenX - (g.getPlayer().flipped ? 3 : 0), screenY, 35, 27, 35 * (g.getPlayer().marioSkinPos[0] + (g.getPlayer().flipped ? 2 : 1)), 27 * g.getPlayer().marioSkinPos[1], 35 * (g.getPlayer().flipped ? -1 : 1), 27);
+				skin.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(screenX - (g.getPlayer().flipped ? 3 : 0), screenY, 35, 27, 35 * (g.getPlayer().marioSkinPos[0] + (g.getPlayer().flipped ? 2 : 1)), 27 * g.getPlayer().marioSkinPos[1], 35 * (g.getPlayer().flipped ? -1 : 1), 27);
 //				PIDisplay.renderer.glDrawSkin(getPosX() - 18, 25 + getPosY(), 35 * (marioSkinPos[0] + (flipped ? 2 : 1)), 27 * marioSkinPos[1], 35 * (marioSkinPos[0] + (flipped ? 1 : 2)), 27 * (marioSkinPos[1] + 1), true);
 			}
 
 //		GPU PERFORMANCE TEST
 			if (gpuTest1 != null) {
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor3f(1, 1, 1);
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glFillColor(HardwareDevice.INSTANCE.getDisplayManager().engine.getWidth() - (gpuTest12 ? 512 : 256), HardwareDevice.INSTANCE.getDisplayManager().engine.getHeight() / 2 - (gpuTest12 ? 256 : 128), gpuTest12 ? 512 : 256, gpuTest12 ? 512 : 256);
-				gpuTest1.use(HardwareDevice.INSTANCE.getDisplayManager().engine);
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor3f(0, 0, 0);
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringRight(HardwareDevice.INSTANCE.getDisplayManager().engine.getWidth(), HardwareDevice.INSTANCE.getDisplayManager().engine.getHeight() / 2 - (gpuTest12 ? 256 : 128), gpuCharTest1[gpuCharTest1Num]);
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor3f(1, 1, 1);
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillColor(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getWidth() - (gpuTest12 ? 512 : 256), Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() / 2 - (gpuTest12 ? 256 : 128), gpuTest12 ? 512 : 256, gpuTest12 ? 512 : 256);
+				gpuTest1.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor3f(0, 0, 0);
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getWidth(), Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() / 2 - (gpuTest12 ? 256 : 128), gpuCharTest1[gpuCharTest1Num]);
 			}
 			if (gpuTest3 != null) {
-				gpuTest3.use(HardwareDevice.INSTANCE.getDisplayManager().engine);
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor4f(1, 1, 1, 0.7f);
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glFillRect(0, StaticVars.screenSize[1] - 128, 224, 128, gpuTestNum * 224, 0, 224, 128);
+				gpuTest3.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor4f(1, 1, 1, 0.7f);
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(0, StaticVars.screenSize[1] - 128, 224, 128, gpuTestNum * 224, 0, 224, 128);
 			}
 			if (gpuTest2 != null) {
-				gpuTest2.use(HardwareDevice.INSTANCE.getDisplayManager().engine);
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor(0xFF000000);
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], HardwareDevice.INSTANCE.getDisplayManager().engine.getHeight() - gpuTest2.getCharacterHeight(), "A");
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor(0xFF800000);
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], HardwareDevice.INSTANCE.getDisplayManager().engine.getHeight() - gpuTest2.getCharacterHeight(), "B");
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor(0xFFeea28e);
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], HardwareDevice.INSTANCE.getDisplayManager().engine.getHeight() - gpuTest2.getCharacterHeight(), "C");
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor(0xFFee7255);
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], HardwareDevice.INSTANCE.getDisplayManager().engine.getHeight() - gpuTest2.getCharacterHeight(), "D");
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor(0xFFeac0b0);
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], HardwareDevice.INSTANCE.getDisplayManager().engine.getHeight() - gpuTest2.getCharacterHeight(), "E");
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor(0xFFf3d8ce);
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], HardwareDevice.INSTANCE.getDisplayManager().engine.getHeight() - gpuTest2.getCharacterHeight(), "F");
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor(0xFFffede7);
-				HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], HardwareDevice.INSTANCE.getDisplayManager().engine.getHeight() - gpuTest2.getCharacterHeight(), "G");
+				gpuTest2.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xFF000000);
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - gpuTest2.getCharacterHeight(), "A");
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xFF800000);
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - gpuTest2.getCharacterHeight(), "B");
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xFFeea28e);
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - gpuTest2.getCharacterHeight(), "C");
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xFFee7255);
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - gpuTest2.getCharacterHeight(), "D");
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xFFeac0b0);
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - gpuTest2.getCharacterHeight(), "E");
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xFFf3d8ce);
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - gpuTest2.getCharacterHeight(), "F");
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xFFffede7);
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - gpuTest2.getCharacterHeight(), "G");
 			}
 		}
 	}

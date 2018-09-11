@@ -1,5 +1,6 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
+import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Error;
 import it.cavallium.warppi.device.HardwareDevice;
 import it.cavallium.warppi.event.KeyPressedEvent;
@@ -222,7 +223,7 @@ public class BlockVariable extends Block {
 		@Override
 		public void draw(GraphicEngine ge, Renderer r, Caret caret) {
 			r.glColor3f(1.0f, 1.0f, 1.0f);
-			HardwareDevice.INSTANCE.getDisplayManager().guiSkin.use(ge);
+			Engine.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(ge);
 			int popupX = location[0];
 			int popupY = location[1];
 			if (popupX < 0) {

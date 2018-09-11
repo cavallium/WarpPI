@@ -1,5 +1,6 @@
 package it.cavallium.warppi.gui.screens;
 
+import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.device.HardwareDevice;
 import it.cavallium.warppi.event.KeyPressedEvent;
@@ -24,12 +25,12 @@ public class SolveForXScreen extends Screen {
 
 	@Override
 	public void render() {
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor4i(0, 0, 0, 64);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2 + 1, StaticVars.screenSize[1] / 4, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, StaticVars.screenSize[1] / 4 + 1, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2 + 1, StaticVars.screenSize[1] / 4 + 1, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor3i(255, 0, 0);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, StaticVars.screenSize[1] / 4, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor4i(0, 0, 0, 64);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2 + 1, StaticVars.screenSize[1] / 4, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, StaticVars.screenSize[1] / 4 + 1, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2 + 1, StaticVars.screenSize[1] / 4 + 1, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor3i(255, 0, 0);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, StaticVars.screenSize[1] / 4, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
 	}
 
 	@Override
@@ -47,11 +48,11 @@ public class SolveForXScreen extends Screen {
 		switch (k.getKey()) {
 			case LETTER_X:
 				//TODO: far funzionare questa parte
-				/*HardwareDevice.INSTANCE.getDisplayManager().goBack();
+				/*Engine.INSTANCE.getHardwareDevice().getDisplayManager().goBack();
 				try {
 					es.calc.solveExpression('X');
 				} catch (final Error e) {
-					final Screen scr = HardwareDevice.INSTANCE.getDisplayManager().getScreen();
+					final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 					if (scr instanceof MathInputScreen) {
 						final MathInputScreen escr = (MathInputScreen) scr;
 						escr.errorLevel = 1;

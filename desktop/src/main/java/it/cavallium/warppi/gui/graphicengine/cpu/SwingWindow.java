@@ -1,11 +1,18 @@
 package it.cavallium.warppi.gui.graphicengine.cpu;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
@@ -15,13 +22,18 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
+import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.Utils;
+import it.cavallium.warppi.deps.Platform.PngUtils.PngReader;
 import it.cavallium.warppi.device.HardwareDevice;
 import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.event.TouchEndEvent;
@@ -30,7 +42,9 @@ import it.cavallium.warppi.event.TouchPoint;
 import it.cavallium.warppi.event.TouchStartEvent;
 import it.cavallium.warppi.flow.BehaviorSubject;
 import it.cavallium.warppi.flow.Observable;
+import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
+import it.cavallium.warppi.gui.graphicengine.common.PngSkin;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class SwingWindow extends JFrame {
@@ -41,12 +55,22 @@ public class SwingWindow extends JFrame {
 	private int mult = 1;
 	private BehaviorSubject<Integer[]> onResize;
 	private Observable<Integer[]> onResize$;
+	public JPanel buttonsPanel;
+	private JAdvancedButton[][] buttons;
+	private int BTN_SIZE;
 
 	public SwingWindow(CPUEngine disp) {
 		display = disp;
+		this.setLayout(new BorderLayout());
+		this.setBackground(Color.BLACK);
 		c = new CustomCanvas();
 		c.setDoubleBuffered(false);
-		this.add(c);
+		this.add(c, BorderLayout.CENTER);
+		try {
+			setupButtonsPanel();
+		} catch (IOException | URISyntaxException e1) {
+			e1.printStackTrace();
+		}
 //		this.setExtendedState(Frame.MAXIMIZED_BOTH);
 		Toolkit.getDefaultToolkit().setDynamicLayout(false);
 		// Transparent 16 x 16 pixel cursor image.
@@ -82,7 +106,7 @@ public class SwingWindow extends JFrame {
 		addComponentListener(new ComponentListener() {
 			@Override
 			public void componentHidden(ComponentEvent e) {
-				HardwareDevice.INSTANCE.getDisplayManager().engine.destroy();
+				Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.destroy();
 			}
 
 			@Override
@@ -100,7 +124,9 @@ public class SwingWindow extends JFrame {
 				}
 			}
 		});
-		addKeyListener(new KeyListener() {
+		c.setFocusable(true);
+		c.grabFocus();
+		c.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent arg0) {
 				Keyboard.debugKeyCode = arg0.getKeyCode();
@@ -117,7 +143,7 @@ public class SwingWindow extends JFrame {
 
 			}
 		});
-		addMouseMotionListener(new MouseMotionListener() {
+		c.addMouseMotionListener(new MouseMotionListener() {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				final Insets wp = SwingWindow.this.getInsets();
@@ -127,13 +153,13 @@ public class SwingWindow extends JFrame {
 				touches.add(p);
 				changedTouches.add(p);
 				TouchMoveEvent tse = new TouchMoveEvent(changedTouches, touches);
-				HardwareDevice.INSTANCE.getInputManager().getTouchDevice().onTouchMove(tse);
+				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchMove(tse);
 			}
 
 			@Override
 			public void mouseMoved(MouseEvent e) {}
 		});
-		addMouseListener(new MouseListener() {
+		c.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseClicked(MouseEvent e) {}
 
@@ -146,7 +172,7 @@ public class SwingWindow extends JFrame {
 				touches.add(p);
 				changedTouches.add(p);
 				TouchStartEvent tse = new TouchStartEvent(changedTouches, touches);
-				HardwareDevice.INSTANCE.getInputManager().getTouchDevice().onTouchStart(tse);
+				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchStart(tse);
 			}
 
 			@Override
@@ -157,7 +183,7 @@ public class SwingWindow extends JFrame {
 				ObjectArrayList<TouchPoint> changedTouches = new ObjectArrayList<>();
 				changedTouches.add(p);
 				TouchEndEvent tse = new TouchEndEvent(changedTouches, touches);
-				HardwareDevice.INSTANCE.getInputManager().getTouchDevice().onTouchEnd(tse);
+				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchEnd(tse);
 			}
 
 			@Override
@@ -169,12 +195,126 @@ public class SwingWindow extends JFrame {
 		StaticVars.windowZoom$.subscribe((newZoomValue) -> {
 			if (newZoomValue != mult) {
 				mult = (int) newZoomValue.floatValue();
-				this.onResize.onNext(new Integer[] { getWidth(), getHeight() });
+				this.onResize.onNext(new Integer[] { getWWidth(), getWHeight() });
 				Engine.getPlatform().getConsoleUtils().out().println(3, "Engine", "CPU", "Zoom changed");
 			}
 		});
 	}
 
+	private void setupButtonsPanel() throws IOException, URISyntaxException {
+		BTN_SIZE = 32;
+		if (StaticVars.debugWindow2x) {
+			BTN_SIZE *= 2;
+		}
+		
+		buttons = new JAdvancedButton[8][8];
+		JPanel buttonsPanelContainer = new JPanel();
+		buttonsPanelContainer.setLayout(new FlowLayout());
+		buttonsPanelContainer.setBackground(Color.BLACK);
+		this.add(buttonsPanelContainer, BorderLayout.PAGE_END);
+		buttonsPanel = new JPanel();
+		buttonsPanelContainer.add(buttonsPanel, BorderLayout.CENTER);
+		buttonsPanel.setLayout(new GridLayout(9, 7));
+		buttonsPanel.setBackground(Color.GRAY);
+		buttonsPanel.setDoubleBuffered(false);
+		buttonsPanel.setVisible(true);
+		for (int row = 0; row < 5; row++) {
+			for (int col = 0; col < 7; col++) {
+				createBtn(row, col);
+			}
+		}
+		for (int row = 5; row < 8; row++) {
+			createBlankBox();
+			for (int col = 0; col < 5; col++) {
+				createBtn(row, col);
+			}
+			createBlankBox();
+		}
+		int b = 7;
+		createBlankBox();
+		for (int a = 4; a >= 0; a--) {
+			createBtn(a, b);
+		}
+		createBlankBox();
+	}
+
+	private void createBlankBox() {
+		JPanel l = new JPanel();
+		l.setPreferredSize(new Dimension((int)(BTN_SIZE * 1.5), BTN_SIZE));
+		l.setBackground(Color.BLACK);
+		buttonsPanel.add(l);
+	}
+	
+	private void createBtn(final int row, final int col) throws IOException, URISyntaxException {
+		BufferedImage img = ImageIO.read(Engine.getPlatform().getStorageUtils().getResourceStream("/desktop-buttons.png"));
+		final JAdvancedButton b = new JAdvancedButton(img, new Dimension((int)(BTN_SIZE * 1.5), BTN_SIZE));
+		b.drawDefaultComponent = false;
+		b.setText(Keyboard.getKeyName(row, col));
+		b.setForeground(Color.BLACK);
+		Font f = b.getFont();
+		f = f.deriveFont(Font.BOLD, BTN_SIZE / 3);
+		b.setFont(f);
+		b.setBackground(new Color(200, 200, 200));
+		b.setFocusable(true);
+		b.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Keyboard.keyPressedRaw(row, col);
+				Keyboard.keyReleasedRaw(row, col);
+				c.grabFocus();
+			}
+		});
+		buttons[row][col] = b;
+		buttonsPanel.add(b);
+	}
+	
+	public void setAlphaChanged(boolean val) {
+		for (int row = 0; row < buttons.length; row++) {
+			for (int col = 0; col < buttons[0].length; col++) {
+				JAdvancedButton btn = buttons[row][col];
+				if (btn != null) {
+					btn.setText(Keyboard.getKeyName(row, col));
+					if (row == 0 && col == 1) {
+						if (val) {
+							btn.state = 2;
+						} else {
+							btn.state = 0;
+						}
+					}
+					if (val && Keyboard.hasKeyName(row, col)) {
+						btn.setForeground(Color.RED);
+					} else {
+						btn.setForeground(Color.BLACK);
+					}
+				}
+			}
+		}
+	}
+	
+	public void setShiftChanged(boolean val) {
+		for (int row = 0; row < buttons.length; row++) {
+			for (int col = 0; col < buttons[0].length; col++) {
+				JAdvancedButton btn = buttons[row][col];
+				if (btn != null) {
+					btn.setText(Keyboard.getKeyName(row, col));
+					if (row == 0 && col == 0) {
+						if (val) {
+							btn.state = 2;
+						} else {
+							btn.state = 0;
+						}
+					}
+					if (val && Keyboard.hasKeyName(row, col)) {
+						btn.setForeground(new Color(255, 120, 0));
+					} else {
+						btn.setForeground(Color.BLACK);
+					}
+				}
+			}
+		}
+	}
+	
 	public Observable<Integer[]> onResize() {
 		return onResize$;
 	}
@@ -182,24 +322,19 @@ public class SwingWindow extends JFrame {
 	@Override
 	public void setSize(int width, int height) {
 		c.setSize(new Dimension(width * mult, height * mult));
-		c.setPreferredSize(new Dimension(width * mult, height * mult));
-		super.getContentPane().setSize(new Dimension(width * mult, height * mult));
-		super.getContentPane().setPreferredSize(new Dimension(width * mult, height * mult));
+		c.setPreferredSize(new Dimension(width * mult, height * mult ));
 		super.pack();
 	}
 
-	@Override
-	public Dimension getSize() {
-		return new Dimension(getWidth(), getHeight());
+	public Dimension getWSize() {
+		return new Dimension(getWWidth(), getWHeight());
 	}
 
-	@Override
-	public int getWidth() {
+	public int getWWidth() {
 		return c.getWidth() / mult;
 	}
 
-	@Override
-	public int getHeight() {
+	public int getWHeight() {
 		return c.getHeight() / mult;
 	}
 
@@ -245,4 +380,6 @@ public class SwingWindow extends JFrame {
 			}
 		}
 	}
+
+
 }

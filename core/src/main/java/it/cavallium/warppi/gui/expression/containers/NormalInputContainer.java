@@ -9,6 +9,7 @@ import it.cavallium.warppi.gui.expression.blocks.BlockLogarithm;
 import it.cavallium.warppi.gui.expression.blocks.BlockNumericChar;
 import it.cavallium.warppi.gui.expression.blocks.BlockParenthesis;
 import it.cavallium.warppi.gui.expression.blocks.BlockPower;
+import it.cavallium.warppi.gui.expression.blocks.BlockPower2;
 import it.cavallium.warppi.gui.expression.blocks.BlockReference;
 import it.cavallium.warppi.gui.expression.blocks.BlockSine;
 import it.cavallium.warppi.gui.expression.blocks.BlockSquareRoot;
@@ -51,8 +52,9 @@ public class NormalInputContainer extends InputContainer {
 			case MathematicalSymbols.PARENTHESIS_CLOSE:
 				return null;
 			case MathematicalSymbols.POWER:
-			case MathematicalSymbols.POWER_OF_TWO:
 				return new BlockPower();
+			case MathematicalSymbols.POWER_OF_TWO:
+				return new BlockPower2();
 			case MathematicalSymbols.MULTIPLICATION:
 			case MathematicalSymbols.SUM:
 			case MathematicalSymbols.SUM_SUBTRACTION:

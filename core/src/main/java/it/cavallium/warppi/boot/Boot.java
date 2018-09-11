@@ -22,7 +22,7 @@ public class Boot {
 
 	private static void loadCalculator(LoadingStatus loading) {
 		try {
-			HardwareDevice.INSTANCE.getDisplayManager().setBrightness(0.2f);
+			Engine.INSTANCE.getHardwareDevice().getDisplayManager().setBrightness(0.2f);
 			RulesManager.initialize();
 			RulesManager.warmUp();
 			loading.done();

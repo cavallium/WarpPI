@@ -4,12 +4,10 @@ import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.gui.DisplayManager;
 
 public class HardwareDevice {
-	public static HardwareDevice INSTANCE;
 	private final DisplayManager displayManager;
 	private final InputManager inputManager;
 
 	public HardwareDevice(DisplayManager m, InputManager im) {
-		INSTANCE = this;
 		displayManager = m;
 		inputManager = im;
 	}

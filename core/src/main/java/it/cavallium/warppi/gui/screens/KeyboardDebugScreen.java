@@ -1,5 +1,6 @@
 package it.cavallium.warppi.gui.screens;
 
+import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.device.HardwareDevice;
 import it.cavallium.warppi.event.KeyPressedEvent;
@@ -28,19 +29,19 @@ public class KeyboardDebugScreen extends Screen {
 
 	@Override
 	public void render() {
-		final Renderer renderer = HardwareDevice.INSTANCE.getDisplayManager().renderer;
-		HardwareDevice.INSTANCE.getDisplayManager().fonts[2].use(HardwareDevice.INSTANCE.getDisplayManager().engine);
+		final Renderer renderer = Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer;
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[2].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		renderer.glColor4f(0.75f, 0.0f, 0.0f, 1.0f);
 		renderer.glDrawStringRight(StaticVars.screenSize[0] - 10, 30, "-" + keyevent.toUpperCase() + "-");
 		if (keyevent != "NONE") {
-			HardwareDevice.INSTANCE.getDisplayManager().fonts[2].use(HardwareDevice.INSTANCE.getDisplayManager().engine);
+			Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[2].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 			renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 			renderer.glDrawStringLeft(10, 30, "Key position");
 			renderer.glDrawStringLeft(10, 45, "X: " + keyX + ", Y:" + keyY);
 			renderer.glDrawStringLeft(10, 65, "Key value");
 			renderer.glDrawStringLeft(10, 80, key);
 		}
-		HardwareDevice.INSTANCE.getDisplayManager().fonts[3].use(HardwareDevice.INSTANCE.getDisplayManager().engine);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[3].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 		for (int i = 0; i < 5; i++) {
 			if (log[i] != null) {
@@ -52,10 +53,10 @@ public class KeyboardDebugScreen extends Screen {
 		renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 		renderer.glFillColor(-80 + 100 + 200, 90, 5, 5);
 		renderer.glFillColor(-80 + 100, 100, 200, 70);
-		HardwareDevice.INSTANCE.getDisplayManager().fonts[2].use(HardwareDevice.INSTANCE.getDisplayManager().engine);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[2].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		renderer.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		renderer.glDrawStringCenter(-80 + 100 + 200 / 2, 100 + 70 / 2 - (renderer.getCurrentFont().getCharacterHeight() / 2), "FROM SERIAL");
-		HardwareDevice.INSTANCE.getDisplayManager().fonts[3].use(HardwareDevice.INSTANCE.getDisplayManager().engine);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[3].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		renderer.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 		for (int i = 0; i < 8; i++) {
 			if (pinsA[i] == 1) {
@@ -98,10 +99,10 @@ public class KeyboardDebugScreen extends Screen {
 		renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 		renderer.glFillColor(150 + 90, 200, 5, 5);
 		renderer.glFillColor(150 + 100, 100, 200, 70);
-		HardwareDevice.INSTANCE.getDisplayManager().fonts[2].use(HardwareDevice.INSTANCE.getDisplayManager().engine);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[2].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		renderer.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 		renderer.glDrawStringCenter(150 + 100 + 200 / 2, 100 + 70 / 2 - (renderer.getCurrentFont().getCharacterHeight() / 2), "TO SERIAL");
-		HardwareDevice.INSTANCE.getDisplayManager().fonts[3].use(HardwareDevice.INSTANCE.getDisplayManager().engine);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[3].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		renderer.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 		for (int i = 15; i >= 8; i--) {
 			if (pinsB[i] == 1) {

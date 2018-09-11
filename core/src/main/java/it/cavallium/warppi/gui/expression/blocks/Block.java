@@ -53,6 +53,10 @@ public abstract class Block implements GraphicalElement {
 	public int getLine() {
 		return line;
 	}
+	
+	public int getCaretDeltaPositionAfterCreation() {
+		return 1;
+	}
 
 	public boolean isSmall() {
 		return small;

@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
+import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.Utils;
 import it.cavallium.warppi.device.HardwareDevice;
@@ -71,12 +72,12 @@ public class CPUEngine implements GraphicEngine {
 
 	@Override
 	public int getWidth() {
-		return INSTANCE.getWidth() - StaticVars.screenPos[0];
+		return INSTANCE.getWWidth() - StaticVars.screenPos[0];
 	}
 
 	@Override
 	public int getHeight() {
-		return INSTANCE.getHeight() - StaticVars.screenPos[1];
+		return INSTANCE.getWHeight() - StaticVars.screenPos[1];
 	}
 
 	@Override
@@ -116,7 +117,7 @@ public class CPUEngine implements GraphicEngine {
 
 	@Deprecated()
 	public void refresh() {
-		if (HardwareDevice.INSTANCE.getDisplayManager().getScreen() == null || (HardwareDevice.INSTANCE.getDisplayManager().error != null && HardwareDevice.INSTANCE.getDisplayManager().error.length() > 0) || HardwareDevice.INSTANCE.getDisplayManager().getScreen() == null || HardwareDevice.INSTANCE.getDisplayManager().getScreen().mustBeRefreshed()) {
+		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || (Engine.INSTANCE.getHardwareDevice().getDisplayManager().error != null && Engine.INSTANCE.getHardwareDevice().getDisplayManager().error.length() > 0) || Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen().mustBeRefreshed()) {
 			INSTANCE.c.paintImmediately(0, 0, getWidth(), getHeight());
 		}
 	}
@@ -188,5 +189,13 @@ public class CPUEngine implements GraphicEngine {
 	@Override
 	public boolean doesRefreshPauses() {
 		return true;
+	}
+
+	public void setAlphaChanged(boolean val) {
+		this.INSTANCE.setAlphaChanged(val);
+	}
+
+	public void setShiftChanged(boolean val) {
+		this.INSTANCE.setShiftChanged(val);
 	}
 }

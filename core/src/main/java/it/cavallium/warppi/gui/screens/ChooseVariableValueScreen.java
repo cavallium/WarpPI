@@ -1,5 +1,6 @@
 package it.cavallium.warppi.gui.screens;
 
+import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.Utils;
 import it.cavallium.warppi.device.HardwareDevice;
@@ -28,21 +29,21 @@ public class ChooseVariableValueScreen extends Screen {
 
 	@Override
 	public void render() {
-		Utils.getFont(false, true).use(HardwareDevice.INSTANCE.getDisplayManager().engine);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor4i(0, 0, 0, 64);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2 + 1, StaticVars.screenSize[1] / 2 - 20, "WORK IN PROGRESS.");
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, StaticVars.screenSize[1] / 2 - 20 + 1, "WORK IN PROGRESS.");
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2 + 1, StaticVars.screenSize[1] / 2 - 20 + 1, "WORK IN PROGRESS.");
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor3i(255, 0, 0);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, StaticVars.screenSize[1] / 2 - 20, "WORK IN PROGRESS.");
+		Utils.getFont(false, true).use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor4i(0, 0, 0, 64);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2 + 1, StaticVars.screenSize[1] / 2 - 20, "WORK IN PROGRESS.");
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, StaticVars.screenSize[1] / 2 - 20 + 1, "WORK IN PROGRESS.");
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2 + 1, StaticVars.screenSize[1] / 2 - 20 + 1, "WORK IN PROGRESS.");
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor3i(255, 0, 0);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, StaticVars.screenSize[1] / 2 - 20, "WORK IN PROGRESS.");
 
-		Utils.getFont(false, false).use(HardwareDevice.INSTANCE.getDisplayManager().engine);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor4i(0, 0, 0, 64);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2 + 1, StaticVars.screenSize[1] / 2, "THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, StaticVars.screenSize[1] / 2 + 1, "THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2 + 1, StaticVars.screenSize[1] / 2 + 1, "THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor3i(255, 0, 0);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, StaticVars.screenSize[1] / 2, "THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
+		Utils.getFont(false, false).use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor4i(0, 0, 0, 64);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2 + 1, StaticVars.screenSize[1] / 2, "THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, StaticVars.screenSize[1] / 2 + 1, "THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2 + 1, StaticVars.screenSize[1] / 2 + 1, "THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor3i(255, 0, 0);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, StaticVars.screenSize[1] / 2, "THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
 	}
 
 	@Override

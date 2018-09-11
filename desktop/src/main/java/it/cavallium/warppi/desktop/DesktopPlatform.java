@@ -14,6 +14,7 @@ import it.cavallium.warppi.CacheUtils;
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Error;
 import it.cavallium.warppi.deps.Platform;
+import it.cavallium.warppi.gui.DisplayManager;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.cpu.CPUEngine;
 import it.cavallium.warppi.gui.graphicengine.gpu.GPUEngine;
@@ -104,11 +105,18 @@ public class DesktopPlatform implements Platform {
 
 	@Override
 	public void alphaChanged(boolean val) {
-		
+		final GraphicEngine currentEngine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
+		if (currentEngine instanceof CPUEngine) {
+			((CPUEngine) currentEngine).setAlphaChanged(val);
+		}
 	}
 
 	@Override
 	public void shiftChanged(boolean val) {
+		final GraphicEngine currentEngine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
+		if (currentEngine instanceof CPUEngine) {
+			((CPUEngine) currentEngine).setShiftChanged(val);
+		}
 	}
 
 	@Override

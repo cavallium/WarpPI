@@ -22,6 +22,7 @@ public class Engine {
 	private static boolean running = false;
 	private static BehaviorSubject<LoadingStatus> loadPhase = BehaviorSubject.create();
 	private BehaviorSubject<Boolean> loaded = BehaviorSubject.create(false);
+	private HardwareDevice hardwareDevice;
 
 	private Engine() {
 	}
@@ -65,8 +66,8 @@ public class Engine {
 		DisplayManager dm = new DisplayManager(disp, hud, screen, "WarpPI Calculator by Andrea Cavalli (@Cavallium)");
 		Keyboard k = new Keyboard();
 		InputManager im = new InputManager(k, touchdevice);
-		HardwareDevice hardwareDevice = new HardwareDevice(dm, im);
-
+		hardwareDevice = new HardwareDevice(dm, im);
+		
 		hardwareDevice.setup(() -> loadPhase.onNext(new LoadingStatus()));
 	}
 
@@ -113,6 +114,10 @@ public class Engine {
 		return loadPhase;
 	}
 	
+	public HardwareDevice getHardwareDevice() {
+		return hardwareDevice;
+	}
+	
 	public static Platform getPlatform() {
 		return platform;
 	}
@@ -124,7 +129,7 @@ public class Engine {
 
 		public void done() {
 			Engine.INSTANCE.loaded.onNext(true);
-			HardwareDevice.INSTANCE.getDisplayManager().waitForExit();
+			Engine.INSTANCE.hardwareDevice.getDisplayManager().waitForExit();
 			Engine.INSTANCE.onShutdown();
 		}
 

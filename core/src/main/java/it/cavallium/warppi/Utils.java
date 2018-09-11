@@ -391,12 +391,12 @@ public class Utils {
 //
 //		var.draw(x + wsegno, y + (hsegno - h1), null, null);
 //
-//		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawLine(x + 1, y + hsegno - 3, x + 1, y + hsegno - 3);
-//		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawLine(x + 2, y + hsegno - 2, x + 2, y + hsegno - 2);
-//		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawLine(x + 3, y + hsegno - 1, x + 3, y + hsegno - 1);
-//		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawLine(x + 3, y + (hsegno - 1) / 2 + 1, x + 3, y + hsegno - 1);
-//		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawLine(x + 4, y, x + 4, y + (hsegno - 1) / 2);
-//		HardwareDevice.INSTANCE.getDisplayManager().renderer.glDrawLine(x + 4, y, x + 4 + 1 + w1 + 1, y);
+//		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawLine(x + 1, y + hsegno - 3, x + 1, y + hsegno - 3);
+//		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawLine(x + 2, y + hsegno - 2, x + 2, y + hsegno - 2);
+//		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawLine(x + 3, y + hsegno - 1, x + 3, y + hsegno - 1);
+//		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawLine(x + 3, y + (hsegno - 1) / 2 + 1, x + 3, y + hsegno - 1);
+//		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawLine(x + 4, y, x + 4, y + (hsegno - 1) / 2);
+//		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawLine(x + 4, y, x + 4 + 1 + w1 + 1, y);
 	}
 
 	public static final int getFontHeight() {
@@ -408,7 +408,7 @@ public class Utils {
 	}
 
 	public static final BinaryFont getFont(boolean small, boolean zoomed) {
-		return HardwareDevice.INSTANCE.getDisplayManager().fonts[getFontIndex(small, zoomed)];
+		return Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[getFontIndex(small, zoomed)];
 	}
 
 	public static final int getFontIndex(boolean small, boolean zoomed) {
@@ -434,15 +434,15 @@ public class Utils {
 	public static final int getFontHeight(boolean small, boolean zoomed) {
 		if (small) {
 			if (zoomed) {
-				return HardwareDevice.INSTANCE.getDisplayManager().glyphsHeight[3];
+				return Engine.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[3];
 			} else {
-				return HardwareDevice.INSTANCE.getDisplayManager().glyphsHeight[1];
+				return Engine.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[1];
 			}
 		} else {
 			if (zoomed) {
-				return HardwareDevice.INSTANCE.getDisplayManager().glyphsHeight[2];
+				return Engine.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[2];
 			} else {
-				return HardwareDevice.INSTANCE.getDisplayManager().glyphsHeight[0];
+				return Engine.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[0];
 			}
 		}
 	}

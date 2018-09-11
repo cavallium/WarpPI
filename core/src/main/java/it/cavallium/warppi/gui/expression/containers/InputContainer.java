@@ -65,7 +65,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 		if (b != null) {
 			caret.resetRemaining();
 			if (root.putBlock(caret, b)) {
-				caret.setPosition(caret.getPosition() + 1);
+				caret.setPosition(caret.getPosition() + b.getCaretDeltaPositionAfterCreation());
 				maxPosition = root.computeCaretMaxBound();
 				root.recomputeDimensions();
 			}

@@ -39,20 +39,20 @@ public class LoadingScreen extends Screen {
 		endLoading += dt;
 		if (loaded && (StaticVars.debugOn || endLoading >= 3.5f)) {
 			StaticVars.windowZoom.onNext(previousZoomValue);
-			HardwareDevice.INSTANCE.getDisplayManager().setScreen(new MathInputScreen());
+			Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MathInputScreen());
 		}
 		mustRefresh = true;
 	}
 
 	@Override
 	public void render() {
-		HardwareDevice.INSTANCE.getDisplayManager().guiSkin.use(HardwareDevice.INSTANCE.getDisplayManager().engine);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glColor3i(255, 255, 255);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] / 2f - 80, StaticVars.screenSize[1] / 2f - 64, 160, 48, 0, 32, 160, 48);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] / 2f - 24, StaticVars.screenSize[1] / 2f - loadingTextTranslation, 48, 48, 160, 32, 48, 48);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor3i(255, 255, 255);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] / 2f - 80, StaticVars.screenSize[1] / 2f - 64, 160, 48, 0, 32, 160, 48);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] / 2f - 24, StaticVars.screenSize[1] / 2f - loadingTextTranslation, 48, 48, 160, 32, 48, 48);
 
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] - 224, StaticVars.screenSize[1] - 48, 224, 48, 0, 80, 224, 48);
-		HardwareDevice.INSTANCE.getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] - 160 - 24 - 224, StaticVars.screenSize[1] - 48, 160, 48, 224, 80, 160, 48);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] - 224, StaticVars.screenSize[1] - 48, 224, 48, 0, 80, 224, 48);
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] - 160 - 24 - 224, StaticVars.screenSize[1] - 48, 160, 48, 224, 80, 160, 48);
 
 	}
 
