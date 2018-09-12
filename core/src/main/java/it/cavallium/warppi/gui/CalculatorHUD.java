@@ -2,12 +2,11 @@ package it.cavallium.warppi.gui;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.Utils;
-import it.cavallium.warppi.device.HardwareDevice;
 import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.gui.graphicengine.Skin;
+import it.cavallium.warppi.util.Utils;
 
 public class CalculatorHUD extends HUD {
 
@@ -92,7 +91,7 @@ public class CalculatorHUD extends HUD {
 		final boolean canGoBack = Engine.INSTANCE.getHardwareDevice().getDisplayManager().canGoBack();
 		final boolean canGoForward = Engine.INSTANCE.getHardwareDevice().getDisplayManager().canGoForward();
 
-		if (StaticVars.haxMode) {
+		if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 			renderer.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 18, 16 * 0, 16, 16);
 			padding += 18 + 6;
 		}

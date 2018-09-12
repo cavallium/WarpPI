@@ -1,11 +1,11 @@
 package it.cavallium.warppi.math.parser.steps;
 
-import it.cavallium.warppi.Error;
-import it.cavallium.warppi.Errors;
-import it.cavallium.warppi.IntegerObj;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionSingle;
 import it.cavallium.warppi.math.parser.MathParserStep;
+import it.cavallium.warppi.util.Error;
+import it.cavallium.warppi.util.Errors;
+import it.cavallium.warppi.util.IntWrapper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
@@ -17,7 +17,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 public class FixSingleFunctionArgs implements MathParserStep {
 
 	@Override
-	public boolean eval(IntegerObj curIndex, Function lastFunction, Function currentFunction,
+	public boolean eval(IntWrapper curIndex, Function lastFunction, Function currentFunction,
 			ObjectArrayList<Function> functionsList) throws Error {
 		if (currentFunction instanceof FunctionSingle) {
 			if (((FunctionSingle) currentFunction).getParameter() == null) {

@@ -11,8 +11,8 @@ import java.util.concurrent.Semaphore;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.texture.Texture;
 
+import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.Utils;
 import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
@@ -80,7 +80,7 @@ public class GPUEngine implements GraphicEngine {
 		wnd = new NEWTWindow(this);
 		wnd.create();
 		setDisplayMode(StaticVars.screenSize[0], StaticVars.screenSize[1]);
-		setResizable(StaticVars.debugOn);
+		setResizable(Engine.getPlatform().getSettings().isDebugEnabled());
 		initialized = true;
 		wnd.onInitialized = onInitialized;
 	}

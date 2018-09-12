@@ -1,10 +1,10 @@
 package it.cavallium.warppi.math.parser.steps;
 
-import it.cavallium.warppi.IntegerObj;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Expression;
 import it.cavallium.warppi.math.parser.MathParserStep;
+import it.cavallium.warppi.util.IntWrapper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class RemoveParentheses implements MathParserStep {
@@ -17,7 +17,7 @@ public class RemoveParentheses implements MathParserStep {
 	}
 
 	@Override
-	public boolean eval(IntegerObj curIndex, Function lastFunction, Function currentFunction,
+	public boolean eval(IntWrapper curIndex, Function lastFunction, Function currentFunction,
 			ObjectArrayList<Function> functionsList) {
 		if (currentFunction instanceof Expression) {
 			if (((Expression) currentFunction).getParameter() == null) {

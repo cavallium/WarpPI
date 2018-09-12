@@ -3,12 +3,9 @@ package it.cavallium.warppi.gui.graphicengine.html;
 import java.io.IOException;
 
 import org.teavm.jso.JSBody;
-import org.teavm.jso.JSObject;
 import org.teavm.jso.browser.Window;
-import org.teavm.jso.canvas.CanvasGradient;
 import org.teavm.jso.canvas.CanvasRenderingContext2D;
 import org.teavm.jso.dom.events.Event;
-import org.teavm.jso.dom.events.EventListener;
 import org.teavm.jso.dom.events.EventTarget;
 import org.teavm.jso.dom.events.KeyboardEvent;
 import org.teavm.jso.dom.html.HTMLButtonElement;
@@ -17,19 +14,14 @@ import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.dom.html.HTMLInputElement;
 import org.teavm.jso.dom.xml.NodeList;
-import org.teavm.jso.json.JSON;
 
 import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.Utils;
-import it.cavallium.warppi.deps.Platform.Semaphore;
+import it.cavallium.warppi.Platform.Semaphore;
 import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.flow.BehaviorSubject;
 import it.cavallium.warppi.flow.Observable;
-import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
-import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
-import it.cavallium.warppi.gui.graphicengine.Skin;
 
 public class HtmlEngine implements GraphicEngine {
 

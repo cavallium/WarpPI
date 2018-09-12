@@ -2,7 +2,6 @@ package it.cavallium.warppi.gui.expression.containers;
 
 import java.io.Serializable;
 
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.event.KeyboardEventListener;
 import it.cavallium.warppi.gui.GraphicalElement;
 import it.cavallium.warppi.gui.expression.Caret;
@@ -17,6 +16,7 @@ import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
+import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public abstract class InputContainer implements GraphicalElement, InputLayout, Serializable {

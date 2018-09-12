@@ -16,7 +16,7 @@ import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import it.cavallium.warppi.Error;
+import it.cavallium.warppi.util.Error;
 
 /**
  * An interactive interface to the Wigner3j class. The GUI allows to preselect

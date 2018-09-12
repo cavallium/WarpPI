@@ -1,8 +1,8 @@
 package it.cavallium.warppi.math.parser.features;
 
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Logarithm;
+import it.cavallium.warppi.util.Error;
 
 public class FeatureLogarithm extends FeatureDoubleImpl {
 

@@ -1,4 +1,4 @@
-package it.cavallium.warppi;
+package it.cavallium.warppi.util;
 
 import java.math.BigInteger;
 import java.util.Iterator;

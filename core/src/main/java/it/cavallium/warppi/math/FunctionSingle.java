@@ -1,7 +1,7 @@
 package it.cavallium.warppi.math;
 
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.math.rules.Rule;
+import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public abstract class FunctionSingle implements Function {

@@ -4,24 +4,15 @@ SETTINGS: (please don't move this part)
  PATH=functions.NegativeRule
 */
 
-import it.cavallium.warppi.Error;
-import it.cavallium.warppi.Errors;
-import it.cavallium.warppi.ScriptUtils;
 import it.cavallium.warppi.math.Function;
-import it.cavallium.warppi.math.FunctionDynamic;
-import it.cavallium.warppi.math.FunctionOperator;
-import it.cavallium.warppi.math.FunctionSingle;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Negative;
 import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
-import it.cavallium.warppi.math.rules.RulesManager;
+import it.cavallium.warppi.util.Error;
+import it.cavallium.warppi.util.Errors;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
-import java.lang.NullPointerException;
-import java.lang.NumberFormatException;
-import java.lang.ArithmeticException;
 
 /**
  * Negative

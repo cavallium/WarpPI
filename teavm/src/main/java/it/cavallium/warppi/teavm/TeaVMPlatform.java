@@ -1,21 +1,18 @@
 package it.cavallium.warppi.teavm;
 
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLDocument;
 
-import ar.com.hjg.pngj.PngHelperInternal;
-import it.cavallium.warppi.Error;
-import it.cavallium.warppi.deps.Platform;
+import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.html.HtmlEngine;
 import it.cavallium.warppi.math.rules.RulesManager;
+import it.cavallium.warppi.util.Error;
 
 public class TeaVMPlatform implements Platform {
 
@@ -25,6 +22,7 @@ public class TeaVMPlatform implements Platform {
 	private final String on;
 	private final Map<String, GraphicEngine> el;
 	private final TeaVMPngUtils pu;
+	private final TeaVMSettings settings;
 
 	public TeaVMPlatform() {
 		cu = new TeaVMConsoleUtils();
@@ -34,6 +32,7 @@ public class TeaVMPlatform implements Platform {
 		on = "JavaScript";
 		el = new HashMap<>();
 		el.put("HTML5 engine", new HtmlEngine());
+		settings = new TeaVMSettings();
 	}
 	
 	@Override
@@ -54,6 +53,11 @@ public class TeaVMPlatform implements Platform {
 	@Override
 	public PngUtils getPngUtils() {
 		return pu;
+	}
+
+	@Override
+	public TeaVMSettings getSettings() {
+		return settings;
 	}
 
 	@Override

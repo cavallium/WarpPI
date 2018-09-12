@@ -2,11 +2,10 @@ package it.cavallium.warppi.gui.screens;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.Utils;
-import it.cavallium.warppi.device.HardwareDevice;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.functions.Variable.VariableValue;
+import it.cavallium.warppi.util.Utils;
 
 public class ChooseVariableValueScreen extends Screen {
 

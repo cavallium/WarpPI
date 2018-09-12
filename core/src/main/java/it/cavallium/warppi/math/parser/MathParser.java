@@ -1,11 +1,7 @@
 package it.cavallium.warppi.math.parser;
 
 import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.Error;
-import it.cavallium.warppi.Errors;
-import it.cavallium.warppi.IntegerObj;
-import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.deps.Platform.ConsoleUtils;
+import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.containers.InputContainer;
 import it.cavallium.warppi.math.Function;
@@ -30,6 +26,9 @@ import it.cavallium.warppi.math.parser.steps.FixSingleFunctionArgs;
 import it.cavallium.warppi.math.parser.steps.FixSumsAndSubtractions;
 import it.cavallium.warppi.math.parser.steps.JoinNumberAndVariables;
 import it.cavallium.warppi.math.parser.steps.RemoveParentheses;
+import it.cavallium.warppi.util.Error;
+import it.cavallium.warppi.util.Errors;
+import it.cavallium.warppi.util.IntWrapper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class MathParser {
@@ -84,7 +83,7 @@ public class MathParser {
 		boolean lastLoopDidSomething;
 		Function lastElement;
 
-		if (StaticVars.debugOn) {
+		if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 			Engine.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "\tStatus: ");
 			for (final Function f : functionsList) {
 				Engine.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, f.toString());
@@ -93,7 +92,7 @@ public class MathParser {
 		}
 
 		for (final MathParserStep step : steps) {
-			if (StaticVars.debugOn) {
+			if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 				Engine.getPlatform().getConsoleUtils().out().println(2, "Stack fixing step \"" + step.getStepName() + "\"");
 			}
 			final int stepQty = step.requiresReversedIteration() ? -1 : 1,
@@ -101,7 +100,7 @@ public class MathParser {
 			do {
 				lastLoopDidSomething = false;
 				lastElement = null;
-				final IntegerObj curIndex = new IntegerObj(initialIndex);
+				final IntWrapper curIndex = new IntWrapper(initialIndex);
 				while (curIndex.i >= 0 && curIndex.i < functionsList.size()) {
 					final int i = curIndex.i;
 					final Function f = functionsList.get(i);
@@ -115,7 +114,7 @@ public class MathParser {
 				}
 			} while (lastLoopDidSomething);
 
-			if (StaticVars.debugOn) {
+			if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 				Engine.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "\tStatus: ");
 				for (final Function f : functionsList) {
 					Engine.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, f.toString());

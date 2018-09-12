@@ -52,7 +52,6 @@ import com.jogamp.opengl.util.texture.Texture;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.device.HardwareDevice;
 import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.event.TouchEndEvent;
@@ -134,7 +133,7 @@ class NEWTWindow implements GLEventListener {
 			System.err.println("Le OpenGL non sono presenti su questo computer!");
 			return;
 		}
-		if (StaticVars.debugOn) {
+		if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 			System.setProperty("jnlp.newt.window.icons", "res/icons/calculator-016.png res/icons/calculator-018.png res/icons/calculator-256.png");
 		}
 		final GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2ES1));
@@ -459,7 +458,7 @@ class NEWTWindow implements GLEventListener {
 		final GL2ES1 gl = drawable.getGL().getGL2ES1();
 		onGLContext.onNext(gl);
 
-		if (StaticVars.debugOn) {
+		if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 			//Vsync
 			gl.setSwapInterval(1);
 		} else {

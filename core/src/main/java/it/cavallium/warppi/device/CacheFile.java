@@ -8,7 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.UUID;
 
-import it.cavallium.warppi.StaticVars;
+import it.cavallium.warppi.Engine;
 
 public class CacheFile {
 	private String path;
@@ -22,7 +22,7 @@ public class CacheFile {
 			path = UUID.randomUUID().toString() + ".ser";
 		} while (new File(path).exists());
 		try {
-			File.createTempFile(StaticVars.calculatorNameLOWER, "");
+			File.createTempFile(Engine.getPlatform().getSettings().getCalculatorNameLowercase(), "");
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}

@@ -2,9 +2,8 @@ package it.cavallium.warppi.teavm;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.Semaphore;
 
-public class TeaVMSemaphore implements it.cavallium.warppi.deps.Platform.Semaphore {
+public class TeaVMSemaphore implements it.cavallium.warppi.Platform.Semaphore {
 
 	private Queue<Object> q;
 	

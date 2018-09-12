@@ -6,16 +6,13 @@ import it.cavallium.warppi.boot.StartupArguments;
 import it.cavallium.warppi.flow.BehaviorSubject;
 import it.cavallium.warppi.flow.Observable;
 
+/*
+ * TODO: Move everything to Engine.Settings
+ */
 public class StaticVars {
-	public static final boolean enableVBO = true;
-	public static final String calculatorName = "WarpPI";
-	public static final String calculatorNameLOWER = calculatorName.toLowerCase();
-	public static final String calculatorNameUPPER = calculatorName.toUpperCase();
-	public static boolean haxMode = true;
 	public static final boolean zoomed = true;
 	public static int[] screenPos = new int[] { 0, 0 };
 	public static final int[] screenSize = new int[] { 480, 320 };
-	public static boolean debugOn;
 	public static int outputLevel = 0;
 	public static boolean debugWindow2x = false;
 	public static BehaviorSubject<Float> windowZoom = BehaviorSubject.create(2F);

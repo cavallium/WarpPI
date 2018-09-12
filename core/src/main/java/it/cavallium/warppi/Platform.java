@@ -1,4 +1,4 @@
-package it.cavallium.warppi.deps;
+package it.cavallium.warppi;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,9 +8,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
-import it.cavallium.warppi.Error;
+
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
-import it.cavallium.warppi.gui.graphicengine.Skin;
+import it.cavallium.warppi.util.Error;
 
 public interface Platform {
 
@@ -18,6 +18,7 @@ public interface Platform {
 	public Gpio getGpio();
 	public StorageUtils getStorageUtils();
 	public PngUtils getPngUtils();
+	public Settings getSettings();
 
 	public void setThreadName(Thread t, String name);
 	public void setThreadDaemon(Thread t);
@@ -159,4 +160,23 @@ public interface Platform {
 		}
 		
 	}
+	
+	public interface Settings {
+
+		public boolean isDebugEnabled();
+
+		public void setDebugEnabled(boolean debugOn);
+
+		public default String getCalculatorName() {
+			return "WarpPI";
+		}
+		public default String getCalculatorNameLowercase() {
+			return "warppi";
+		}
+		public default String getCalculatorNameUppercase() {
+			return "WARPPI";
+		}
+
+	}
+
 }

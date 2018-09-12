@@ -1,8 +1,8 @@
 package it.cavallium.warppi.math;
 
-import static it.cavallium.warppi.Utils.concat;
+import static it.cavallium.warppi.util.Utils.concat;
 
-import it.cavallium.warppi.Utils;
+import it.cavallium.warppi.util.Utils;
 
 public class MathematicalSymbols {
 	public static final char SUM = '+';

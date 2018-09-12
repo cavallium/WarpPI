@@ -4,7 +4,6 @@ SETTINGS: (please don't move this part)
  PATH=FractionsRule2
 */
 
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.functions.Division;
 import it.cavallium.warppi.math.functions.Number;

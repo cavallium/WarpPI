@@ -10,19 +10,18 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.ZipFile;
 
 import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.Error;
+import it.cavallium.warppi.Platform.ConsoleUtils;
+import it.cavallium.warppi.Platform.URLClassLoader;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.deps.Platform.ConsoleUtils;
-import it.cavallium.warppi.deps.Platform.URLClassLoader;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Expression;
 import it.cavallium.warppi.math.functions.Variable;
 import it.cavallium.warppi.math.functions.Variable.V_TYPE;
 import it.cavallium.warppi.math.solver.MathSolver;
+import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class RulesManager {

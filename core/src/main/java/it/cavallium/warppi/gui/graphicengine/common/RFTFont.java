@@ -13,10 +13,10 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.Utils;
-import it.cavallium.warppi.deps.Platform.ConsoleUtils;
+import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
+import it.cavallium.warppi.util.Utils;
 
 public abstract class RFTFont implements BinaryFont {
 

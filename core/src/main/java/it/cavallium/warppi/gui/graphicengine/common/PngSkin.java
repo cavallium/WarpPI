@@ -8,7 +8,7 @@ import java.net.URISyntaxException;
 import javax.imageio.ImageIO;
 
 import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.deps.Platform.PngUtils.PngReader;
+import it.cavallium.warppi.Platform.PngUtils.PngReader;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Skin;
 

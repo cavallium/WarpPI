@@ -1,8 +1,6 @@
 package it.cavallium.warppi.desktop;
 
-import it.cavallium.warppi.ClassUtils;
-
-public class DesktopGpio implements it.cavallium.warppi.deps.Platform.Gpio {
+public class DesktopGpio implements it.cavallium.warppi.Platform.Gpio {
 
 	@Override
 	public int valueOutput() {

@@ -4,12 +4,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionOperator;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.solver.SolveMethod;
+import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class Equation extends FunctionOperator {

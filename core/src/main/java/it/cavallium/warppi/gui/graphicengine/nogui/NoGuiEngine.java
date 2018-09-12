@@ -3,7 +3,7 @@ package it.cavallium.warppi.gui.graphicengine.nogui;
 import java.io.IOException;
 
 import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.deps.Platform.Semaphore;
+import it.cavallium.warppi.Platform.Semaphore;
 import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;

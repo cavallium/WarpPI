@@ -3,7 +3,7 @@ package it.cavallium.warppi.teavm;
 import java.io.InputStream;
 
 import ar.com.hjg.pngj.ImageLineInt;
-import it.cavallium.warppi.deps.Platform.PngUtils.PngReader;
+import it.cavallium.warppi.Platform.PngUtils.PngReader;
 
 public class TeaVMPngReader implements PngReader {
 

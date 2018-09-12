@@ -4,26 +4,18 @@ SETTINGS: (please don't move this part)
  PATH=functions.VariableRule
 */
 
-import it.cavallium.warppi.Error;
-import it.cavallium.warppi.ScriptUtils;
-import it.cavallium.warppi.Utils;
+import org.nevec.rjm.BigDecimalMath;
+
 import it.cavallium.warppi.math.Function;
-import it.cavallium.warppi.math.FunctionDynamic;
-import it.cavallium.warppi.math.FunctionOperator;
-import it.cavallium.warppi.math.FunctionSingle;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.MathematicalSymbols;
-import it.cavallium.warppi.math.functions.Multiplication;
 import it.cavallium.warppi.math.functions.Number;
-import it.cavallium.warppi.math.functions.Subtraction;
-import it.cavallium.warppi.math.functions.Sum;
 import it.cavallium.warppi.math.functions.Variable;
-import it.cavallium.warppi.math.functions.Variable.V_TYPE;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
-import it.cavallium.warppi.math.rules.RulesManager;
+import it.cavallium.warppi.util.Error;
+import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import org.nevec.rjm.BigDecimalMath;
 
 /**
  * Variable

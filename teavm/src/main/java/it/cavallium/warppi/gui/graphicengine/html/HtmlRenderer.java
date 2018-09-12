@@ -1,9 +1,6 @@
 package it.cavallium.warppi.gui.graphicengine.html;
 
-import org.teavm.jso.canvas.CanvasImageSource;
 import org.teavm.jso.canvas.CanvasRenderingContext2D;
-import org.teavm.jso.dom.html.HTMLImageElement;
-import org.teavm.jso.typedarrays.Uint8ClampedArray;
 
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.gui.graphicengine.Renderer;

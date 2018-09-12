@@ -4,22 +4,13 @@ SETTINGS: (please don't move this part)
  PATH=functions.PowerRule
 */
 
-import it.cavallium.warppi.ScriptUtils;
 import it.cavallium.warppi.math.Function;
-import it.cavallium.warppi.math.FunctionDynamic;
 import it.cavallium.warppi.math.FunctionOperator;
-import it.cavallium.warppi.math.FunctionSingle;
 import it.cavallium.warppi.math.MathContext;
-import it.cavallium.warppi.math.functions.Division;
-import it.cavallium.warppi.math.functions.Multiplication;
 import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.functions.Power;
-import it.cavallium.warppi.math.functions.Subtraction;
-import it.cavallium.warppi.math.functions.Sum;
-import it.cavallium.warppi.math.functions.SumSubtraction;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
-import it.cavallium.warppi.math.rules.RulesManager;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
@@ -48,7 +39,7 @@ public class PowerRule implements Rule {
 	     - An ObjectArrayList<Function> if it did something
 	*/
 	@Override
-	public ObjectArrayList<Function> execute(Function f) throws it.cavallium.warppi.Error, InterruptedException {
+	public ObjectArrayList<Function> execute(Function f) throws it.cavallium.warppi.util.Error, InterruptedException {
 		if (f instanceof Power) {
 			ObjectArrayList<Function> result = new ObjectArrayList<>();
 			Function variable1 = ((FunctionOperator) f).getParameter1();

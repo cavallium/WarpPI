@@ -4,7 +4,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 
 import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.deps.Platform.ConsoleUtils;
+import it.cavallium.warppi.Platform.ConsoleUtils;
 
 public final class SafeMathContext {
 

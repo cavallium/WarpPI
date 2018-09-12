@@ -19,7 +19,7 @@ import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.teavm.jso.browser.Window;
 
-import it.cavallium.warppi.deps.Platform.StorageUtils;
+import it.cavallium.warppi.Platform.StorageUtils;
 
 public class TeaVMStorageUtils implements StorageUtils {
 	public boolean exists(File f) {

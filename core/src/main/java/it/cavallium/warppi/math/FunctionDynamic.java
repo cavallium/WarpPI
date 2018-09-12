@@ -3,9 +3,9 @@ package it.cavallium.warppi.math;
 import java.util.Arrays;
 import java.util.List;
 
-import it.cavallium.warppi.Error;
-import it.cavallium.warppi.Utils;
 import it.cavallium.warppi.math.rules.Rule;
+import it.cavallium.warppi.util.Error;
+import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public abstract class FunctionDynamic implements Function {

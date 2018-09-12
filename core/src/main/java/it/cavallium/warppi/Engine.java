@@ -2,9 +2,8 @@ package it.cavallium.warppi;
 
 import java.io.IOException;
 
+import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.boot.StartupArguments;
-import it.cavallium.warppi.deps.Platform;
-import it.cavallium.warppi.deps.Platform.ConsoleUtils;
 import it.cavallium.warppi.device.HardwareDevice;
 import it.cavallium.warppi.device.HardwareTouchDevice;
 import it.cavallium.warppi.device.InputManager;
@@ -15,6 +14,7 @@ import it.cavallium.warppi.gui.DisplayManager;
 import it.cavallium.warppi.gui.HUD;
 import it.cavallium.warppi.gui.HardwareDisplay;
 import it.cavallium.warppi.gui.screens.Screen;
+import it.cavallium.warppi.util.ClassUtils;
 
 public class Engine {
 	public static final Engine INSTANCE = new Engine();
@@ -93,7 +93,7 @@ public class Engine {
 			Engine.getPlatform().getGpio().pinMode(12, Engine.getPlatform().getGpio().valuePwmOutput());
 		} else {
 			StaticVars.screenPos = new int[] { 0, 0 };
-			StaticVars.debugOn = true;
+			Engine.getPlatform().getSettings().setDebugEnabled(true);
 		}
 	}
 

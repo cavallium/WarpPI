@@ -2,9 +2,7 @@ package it.cavallium.warppi.hardware;
 
 import java.io.IOException;
 
-import it.cavallium.warppi.ClassUtils;
-
-public class HardwareGpio implements it.cavallium.warppi.deps.Platform.Gpio {
+public class HardwareGpio implements it.cavallium.warppi.Platform.Gpio {
 
 	@Override
 	public int valueOutput() {

@@ -2,7 +2,6 @@ package it.cavallium.warppi.gui.screens;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.device.HardwareDevice;
 import it.cavallium.warppi.gui.GraphicUtils;
 
 public class LoadingScreen extends Screen {
@@ -37,7 +36,7 @@ public class LoadingScreen extends Screen {
 		loadingTextTranslation = GraphicUtils.sinDeg(endLoading * 90f) * 10f;
 
 		endLoading += dt;
-		if (loaded && (StaticVars.debugOn || endLoading >= 3.5f)) {
+		if (loaded && (Engine.getPlatform().getSettings().isDebugEnabled() || endLoading >= 3.5f)) {
 			StaticVars.windowZoom.onNext(previousZoomValue);
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MathInputScreen());
 		}

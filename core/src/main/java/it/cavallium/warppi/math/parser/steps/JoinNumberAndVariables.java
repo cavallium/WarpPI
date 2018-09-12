@@ -1,6 +1,5 @@
 package it.cavallium.warppi.math.parser.steps;
 
-import it.cavallium.warppi.IntegerObj;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Division;
@@ -8,6 +7,7 @@ import it.cavallium.warppi.math.functions.Multiplication;
 import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.functions.Variable;
 import it.cavallium.warppi.math.parser.MathParserStep;
+import it.cavallium.warppi.util.IntWrapper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class JoinNumberAndVariables implements MathParserStep {
@@ -19,7 +19,7 @@ public class JoinNumberAndVariables implements MathParserStep {
 	}
 
 	@Override
-	public boolean eval(IntegerObj curIndex, Function lastFunction, Function currentFunction,
+	public boolean eval(IntWrapper curIndex, Function lastFunction, Function currentFunction,
 			ObjectArrayList<Function> functionsList) {
 		if (currentFunction instanceof Number | currentFunction instanceof Variable | currentFunction instanceof Division) {
 			if (lastFunction instanceof Variable | lastFunction instanceof Number | (lastFunction instanceof Multiplication && ((Multiplication) lastFunction).getParameter2() != null)) {

@@ -1,8 +1,8 @@
 package it.cavallium.warppi.math.parser;
 
-import it.cavallium.warppi.Error;
-import it.cavallium.warppi.IntegerObj;
 import it.cavallium.warppi.math.Function;
+import it.cavallium.warppi.util.Error;
+import it.cavallium.warppi.util.IntWrapper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
@@ -19,7 +19,7 @@ public interface MathParserStep {
 	 * @param process
 	 * @return true if something changed
 	 */
-	public boolean eval(IntegerObj curIndex, Function lastFunction, Function currentFunction,
+	public boolean eval(IntWrapper curIndex, Function lastFunction, Function currentFunction,
 			ObjectArrayList<Function> functionsfunctionsList) throws Error;
 
 	public boolean requiresReversedIteration();

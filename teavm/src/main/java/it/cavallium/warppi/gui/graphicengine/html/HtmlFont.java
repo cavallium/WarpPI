@@ -6,10 +6,7 @@ import org.teavm.jso.browser.Window;
 import org.teavm.jso.canvas.CanvasRenderingContext2D;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.dom.html.HTMLDocument;
-import org.teavm.jso.dom.html.HTMLImageElement;
-import org.teavm.jso.typedarrays.Uint8ClampedArray;
 
-import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.common.RFTFont;
 

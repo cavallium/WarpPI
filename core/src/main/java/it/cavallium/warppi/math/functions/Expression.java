@@ -1,6 +1,5 @@
 package it.cavallium.warppi.math.functions;
 
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
 import it.cavallium.warppi.gui.expression.blocks.BlockParenthesis;
@@ -13,6 +12,7 @@ import it.cavallium.warppi.math.functions.trigonometry.ArcTangent;
 import it.cavallium.warppi.math.functions.trigonometry.Cosine;
 import it.cavallium.warppi.math.functions.trigonometry.Sine;
 import it.cavallium.warppi.math.functions.trigonometry.Tangent;
+import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class Expression extends FunctionSingle {

@@ -1,11 +1,11 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.gui.expression.Caret;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.parser.features.interfaces.Feature;
+import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public abstract class BlockParenthesisAbstract extends Block {

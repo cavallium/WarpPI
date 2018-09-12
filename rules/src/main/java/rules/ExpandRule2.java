@@ -4,18 +4,14 @@ SETTINGS: (please don't move this part)
  PATH=ExpandRule2
 */
 
-import it.cavallium.warppi.Error;
-import it.cavallium.warppi.Errors;
 import it.cavallium.warppi.math.Function;
-import it.cavallium.warppi.math.FunctionOperator;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Multiplication;
-import it.cavallium.warppi.math.functions.Number;
-import it.cavallium.warppi.math.functions.Subtraction;
 import it.cavallium.warppi.math.functions.Sum;
-import it.cavallium.warppi.math.functions.SumSubtraction;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
+import it.cavallium.warppi.util.Error;
+import it.cavallium.warppi.util.Errors;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**

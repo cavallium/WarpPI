@@ -7,8 +7,6 @@ import java.util.concurrent.Semaphore;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.Utils;
-import it.cavallium.warppi.device.HardwareDevice;
 import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
@@ -56,7 +54,7 @@ public class CPUEngine implements GraphicEngine {
 		initialized = false;
 		exitSemaphore = new Semaphore(0);
 		INSTANCE = new SwingWindow(this);
-		setResizable(StaticVars.debugOn);
+		setResizable(Engine.getPlatform().getSettings().isDebugEnabled());
 		setDisplayMode(StaticVars.screenSize[0], StaticVars.screenSize[1]);
 		INSTANCE.setVisible(true);
 		initialized = true;

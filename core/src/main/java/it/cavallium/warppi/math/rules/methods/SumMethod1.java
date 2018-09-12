@@ -2,7 +2,6 @@ package it.cavallium.warppi.math.rules.methods;
 
 import java.math.BigDecimal;
 
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionOperator;
 import it.cavallium.warppi.math.MathContext;
@@ -10,6 +9,7 @@ import it.cavallium.warppi.math.functions.Negative;
 import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.functions.Subtraction;
 import it.cavallium.warppi.math.functions.Sum;
+import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**

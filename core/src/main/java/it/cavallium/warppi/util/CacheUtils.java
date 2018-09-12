@@ -1,4 +1,4 @@
-package it.cavallium.warppi;
+package it.cavallium.warppi.util;
 
 import java.util.Collections;
 import java.util.HashMap;

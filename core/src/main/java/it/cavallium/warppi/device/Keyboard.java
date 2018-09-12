@@ -3,9 +3,8 @@ package it.cavallium.warppi.device;
 import java.awt.event.KeyEvent;
 
 import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.deps.DJogamp;
-import it.cavallium.warppi.deps.Platform.ConsoleUtils;
 import it.cavallium.warppi.device.chip.ParallelToSerial;
 import it.cavallium.warppi.device.chip.SerialToParallel;
 import it.cavallium.warppi.event.Key;
@@ -42,7 +41,7 @@ public class Keyboard {
 
 	public synchronized void startKeyboard() {
 		final Thread kt = new Thread(() -> {
-			if (StaticVars.debugOn) {
+			if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 				try {
 					while (true) {
 						if (debugKeyCode != -1) {
@@ -215,7 +214,7 @@ public class Keyboard {
 					Keyboard.keyPressed(Key.LOGARITHM);
 				}
 				break;
-			case DJogamp.VK_ENTER:
+			case KeyboardJogampValues.VK_ENTER:
 			case KeyEvent.VK_ENTER:
 				if (Keyboard.shift) {
 					Keyboard.keyPressed(Key.STEP);
@@ -274,7 +273,7 @@ public class Keyboard {
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					Keyboard.keyPressed(Key.NUM7);
 				} else if (Keyboard.shift) {
-					if (StaticVars.debugOn) {
+					if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 						Keyboard.keyPressed(Key.DIVIDE);
 					}
 				}
@@ -315,7 +314,7 @@ public class Keyboard {
 					Keyboard.keyPressed(Key.LETTER_M);
 				}
 				break;
-			case DJogamp.VK_ADD:
+			case KeyboardJogampValues.VK_ADD:
 			case KeyEvent.VK_ADD:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					Keyboard.keyPressed(Key.PLUS);
@@ -325,7 +324,7 @@ public class Keyboard {
 					Keyboard.keyPressed(Key.NONE);
 				}
 				break;
-			case DJogamp.VK_SUBTRACT:
+			case KeyboardJogampValues.VK_SUBTRACT:
 			case KeyEvent.VK_SUBTRACT:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					Keyboard.keyPressed(Key.MINUS);
@@ -333,7 +332,7 @@ public class Keyboard {
 					Keyboard.keyPressed(Key.NONE);
 				}
 				break;
-			case DJogamp.VK_MULTIPLY:
+			case KeyboardJogampValues.VK_MULTIPLY:
 			case KeyEvent.VK_MULTIPLY:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					Keyboard.keyPressed(Key.MULTIPLY);
@@ -341,7 +340,7 @@ public class Keyboard {
 					Keyboard.keyPressed(Key.NONE);
 				}
 				break;
-			case DJogamp.VK_DIVIDE:
+			case KeyboardJogampValues.VK_DIVIDE:
 			case KeyEvent.VK_DIVIDE:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					Keyboard.keyPressed(Key.DIVIDE);
@@ -352,7 +351,7 @@ public class Keyboard {
 			case KeyEvent.VK_BACK_SPACE:
 				Keyboard.keyPressed(Key.DELETE);
 				break;
-			case DJogamp.VK_DELETE:
+			case KeyboardJogampValues.VK_DELETE:
 			case KeyEvent.VK_DELETE:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					Keyboard.keyPressed(Key.RESET);
@@ -360,7 +359,7 @@ public class Keyboard {
 					Keyboard.keyPressed(Key.NONE);
 				}
 				break;
-			case DJogamp.VK_LEFT:
+			case KeyboardJogampValues.VK_LEFT:
 			case KeyEvent.VK_LEFT:
 				//LEFT
 				row = 2;
@@ -372,7 +371,7 @@ public class Keyboard {
 					Keyboard.keyPressed(Key.NONE);
 				}
 				break;
-			case DJogamp.VK_RIGHT:
+			case KeyboardJogampValues.VK_RIGHT:
 			case KeyEvent.VK_RIGHT:
 				//RIGHT
 				row = 2;
@@ -384,7 +383,7 @@ public class Keyboard {
 					Keyboard.keyPressed(Key.NONE);
 				}
 				break;
-			case DJogamp.VK_UP:
+			case KeyboardJogampValues.VK_UP:
 			case KeyEvent.VK_UP:
 				//UP
 				row = 1;
@@ -396,7 +395,7 @@ public class Keyboard {
 					Keyboard.keyPressed(Key.NONE);
 				}
 				break;
-			case DJogamp.VK_DOWN:
+			case KeyboardJogampValues.VK_DOWN:
 			case KeyEvent.VK_DOWN:
 				//DOWN
 				row = 3;
@@ -419,7 +418,7 @@ public class Keyboard {
 					Keyboard.keyPressed(Key.NONE);
 				}
 				break;
-			case DJogamp.VK_NUMPAD4:
+			case KeyboardJogampValues.VK_NUMPAD4:
 			case KeyEvent.VK_NUMPAD4:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					Keyboard.keyPressed(Key.HISTORY_BACK);
@@ -427,7 +426,7 @@ public class Keyboard {
 					Keyboard.keyPressed(Key.NONE);
 				}
 				break;
-			case DJogamp.VK_NUMPAD6:
+			case KeyboardJogampValues.VK_NUMPAD6:
 			case KeyEvent.VK_NUMPAD6:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					Keyboard.keyPressed(Key.HISTORY_FORWARD);
@@ -585,26 +584,26 @@ public class Keyboard {
 					Keyboard.keyPressed(Key.NONE);
 				}
 				break;
-			case DJogamp.VK_SHIFT:
+			case KeyboardJogampValues.VK_SHIFT:
 			case KeyEvent.VK_SHIFT:
 				Keyboard.keyPressed(Key.SHIFT);
 				break;
 			case KeyEvent.VK_CONTROL:
 				Keyboard.keyPressed(Key.ALPHA);
 				break;
-			case DJogamp.VK_NUMPAD1:
+			case KeyboardJogampValues.VK_NUMPAD1:
 			case KeyEvent.VK_NUMPAD1:
 				Keyboard.keyPressed(Key.SQRT);
 				break;
-			case DJogamp.VK_NUMPAD2:
+			case KeyboardJogampValues.VK_NUMPAD2:
 			case KeyEvent.VK_NUMPAD2:
 				Keyboard.keyPressed(Key.ROOT);
 				break;
-			case DJogamp.VK_NUMPAD3:
+			case KeyboardJogampValues.VK_NUMPAD3:
 			case KeyEvent.VK_NUMPAD3:
 				Keyboard.keyPressed(Key.POWER_OF_2);
 				break;
-			case DJogamp.VK_NUMPAD5:
+			case KeyboardJogampValues.VK_NUMPAD5:
 			case KeyEvent.VK_NUMPAD5:
 				Keyboard.keyPressed(Key.POWER_OF_x);
 				break;
@@ -618,14 +617,14 @@ public class Keyboard {
 				int col = 1;
 				Keyboard.debugKeysDown[row - 1][col - 1] = false;
 				break;
-			case DJogamp.VK_LEFT:
+			case KeyboardJogampValues.VK_LEFT:
 			case KeyEvent.VK_LEFT:
 				//LEFT
 				row = 2;
 				col = 3;
 				Keyboard.debugKeysDown[row - 1][col - 1] = false;
 				break;
-			case DJogamp.VK_RIGHT:
+			case KeyboardJogampValues.VK_RIGHT:
 			case KeyEvent.VK_RIGHT:
 				//RIGHT
 				row = 2;
@@ -633,14 +632,14 @@ public class Keyboard {
 				Keyboard.debugKeysDown[row - 1][col - 1] = false;
 				System.out.println("RELEASE");
 				break;
-			case DJogamp.VK_UP:
+			case KeyboardJogampValues.VK_UP:
 			case KeyEvent.VK_UP:
 				//UP
 				row = 1;
 				col = 4;
 				Keyboard.debugKeysDown[row - 1][col - 1] = false;
 				break;
-			case DJogamp.VK_DOWN:
+			case KeyboardJogampValues.VK_DOWN:
 			case KeyEvent.VK_DOWN:
 				//DOWN
 				row = 3;
@@ -657,7 +656,7 @@ public class Keyboard {
 	}
 
 	public static boolean isKeyDown(int row, int col) {
-		if (StaticVars.debugOn == false) {
+		if (Engine.getPlatform().getSettings().isDebugEnabled() == false) {
 			return precedentStates[row - 1][col - 1];
 		} else {
 			return debugKeysDown[row - 1][col - 1];
@@ -863,7 +862,7 @@ public class Keyboard {
 	}
 
 	public static void stopKeyboard() {
-		if (StaticVars.debugOn == false) {
+		if (Engine.getPlatform().getSettings().isDebugEnabled() == false) {
 			Engine.getPlatform().getGpio().digitalWrite(33, false);
 			Engine.getPlatform().getGpio().digitalWrite(35, false);
 			Engine.getPlatform().getGpio().digitalWrite(36, false);

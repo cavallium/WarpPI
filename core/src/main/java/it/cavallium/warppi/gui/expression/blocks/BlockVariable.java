@@ -1,8 +1,6 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
 import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.Error;
-import it.cavallium.warppi.device.HardwareDevice;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.gui.expression.Caret;
@@ -15,6 +13,7 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Variable.V_TYPE;
 import it.cavallium.warppi.math.parser.features.FeatureVariable;
 import it.cavallium.warppi.math.parser.features.interfaces.Feature;
+import it.cavallium.warppi.util.Error;
 
 public class BlockVariable extends Block {
 

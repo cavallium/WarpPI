@@ -4,20 +4,15 @@ SETTINGS: (please don't move this part)
  PATH=functions.NumberRule
 */
 
-import it.cavallium.warppi.ScriptUtils;
+import java.math.BigInteger;
+
 import it.cavallium.warppi.math.Function;
-import it.cavallium.warppi.math.FunctionDynamic;
-import it.cavallium.warppi.math.FunctionOperator;
-import it.cavallium.warppi.math.FunctionSingle;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Division;
 import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
-import it.cavallium.warppi.math.rules.RulesManager;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
-import java.math.BigInteger;
 
 /**
  * Number

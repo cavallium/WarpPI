@@ -6,13 +6,14 @@ import java.util.logging.ConsoleHandler;
 import org.fusesource.jansi.AnsiConsole;
 import org.fusesource.jansi.internal.WindowsSupport;
 
+import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.Utils;
 import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
+import it.cavallium.warppi.util.Utils;
 
 public class Headless24bitEngine implements it.cavallium.warppi.gui.graphicengine.GraphicEngine {
 
@@ -23,10 +24,13 @@ public class Headless24bitEngine implements it.cavallium.warppi.gui.graphicengin
 	public static final int C_MUL_Y = 8;//8;
 	protected static int C_WIDTH;
 	protected static int C_HEIGHT;
-	private String title = StaticVars.calculatorName;
+	private String title;
 	private boolean win = false;
 	private Key precKey = null;
 
+	public Headless24bitEngine() {
+	}
+	
 	@Override
 	public int[] getSize() {
 		new ConsoleHandler();
@@ -65,6 +69,7 @@ public class Headless24bitEngine implements it.cavallium.warppi.gui.graphicengin
 
 	@Override
 	public void create(Runnable onInitialized) {
+		title = Engine.getPlatform().getSettings().getCalculatorName();
 		r = new Headless24bitRenderer();
 		C_WIDTH = StaticVars.screenSize[0] / C_MUL_X;
 		C_HEIGHT = StaticVars.screenSize[1] / C_MUL_Y;

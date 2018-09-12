@@ -4,12 +4,11 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.Error;
-import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.deps.Platform.ConsoleUtils;
+import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
+import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class MathSolver {
@@ -76,10 +75,10 @@ public class MathSolver {
 			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, "Step result: " + stepResult);
 			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, "Step result details: Consecutive steps that did nothing: " + consecutiveNullSteps + ", this step did " + stepStateRepetitions + " simplifications.");
 			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, "Next step state: " + stepStates[endStepState]);
-			if (StaticVars.debugOn) {
+			if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 				Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, currFnc + " is " + (checkEquals(currFnc, lastFunctions[0][endStepState]) ? "" : "not ") + "equals to [0]:" + lastFunctions[0][endStepState]);
 			}
-			if (StaticVars.debugOn) {
+			if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 				Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, currFnc + " is " + (checkEquals(currFnc, lastFunctions[1][endStepState]) ? "" : "not ") + "equals to [1]:" + lastFunctions[1][endStepState]);
 			}
 		} while (consecutiveNullSteps < stepStates.length && !checkEquals(currFnc, lastFunctions[0][endStepState]) && !checkEquals(currFnc, lastFunctions[1][endStepState]));

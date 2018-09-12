@@ -2,7 +2,6 @@ package it.cavallium.warppi.gui.screens;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.device.HardwareDevice;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.gui.graphicengine.Renderer;

@@ -1,12 +1,12 @@
 package it.cavallium.warppi.math.functions;
 
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
 import it.cavallium.warppi.gui.expression.blocks.BlockLogarithm;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionOperator;
 import it.cavallium.warppi.math.MathContext;
+import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class Logarithm extends FunctionOperator {

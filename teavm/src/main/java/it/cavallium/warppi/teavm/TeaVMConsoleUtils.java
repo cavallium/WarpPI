@@ -5,7 +5,7 @@ import java.io.PrintStream;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.math.MathematicalSymbols;
 
-public class TeaVMConsoleUtils implements it.cavallium.warppi.deps.Platform.ConsoleUtils {
+public class TeaVMConsoleUtils implements it.cavallium.warppi.Platform.ConsoleUtils {
 
 	private AdvancedOutputStream os;
 

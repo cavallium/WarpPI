@@ -1,7 +1,6 @@
 package it.cavallium.warppi.device;
 
 import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.gui.HardwareDisplay;
 
 public class PIHardwareDisplay implements HardwareDisplay {
@@ -14,7 +13,7 @@ public class PIHardwareDisplay implements HardwareDisplay {
 
 	@Override
 	public void setBrightness(double value) {
-		if (StaticVars.debugOn == false) {
+		if (Engine.getPlatform().getSettings().isDebugEnabled() == false) {
 			Engine.getPlatform().getGpio().pwmWrite(12, (int) Math.ceil(value * 1024f));
 //			SoftPwm.softPwmWrite(12, (int)(Math.ceil(brightness*10)));
 		} else {

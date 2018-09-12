@@ -1,8 +1,6 @@
 package it.cavallium.warppi.teavm;
 
-import it.cavallium.warppi.ClassUtils;
-
-public class TeaVMGpio implements it.cavallium.warppi.deps.Platform.Gpio {
+public class TeaVMGpio implements it.cavallium.warppi.Platform.Gpio {
 
 	@Override
 	public int valueOutput() {

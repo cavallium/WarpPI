@@ -4,14 +4,13 @@ import java.util.Arrays;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Engine.LoadingStatus;
-import it.cavallium.warppi.Error;
-import it.cavallium.warppi.deps.Platform;
-import it.cavallium.warppi.device.HardwareDevice;
+import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.device.PIHardwareDisplay;
 import it.cavallium.warppi.device.PIHardwareTouchDevice;
 import it.cavallium.warppi.gui.CalculatorHUD;
 import it.cavallium.warppi.gui.screens.LoadingScreen;
 import it.cavallium.warppi.math.rules.RulesManager;
+import it.cavallium.warppi.util.Error;
 
 public class Boot {
 	

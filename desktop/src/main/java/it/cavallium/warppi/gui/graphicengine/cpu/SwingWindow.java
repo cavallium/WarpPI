@@ -26,15 +26,11 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 
 import javax.imageio.ImageIO;
-import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.Utils;
-import it.cavallium.warppi.deps.Platform.PngUtils.PngReader;
-import it.cavallium.warppi.device.HardwareDevice;
 import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.event.TouchEndEvent;
 import it.cavallium.warppi.event.TouchMoveEvent;
@@ -42,9 +38,7 @@ import it.cavallium.warppi.event.TouchPoint;
 import it.cavallium.warppi.event.TouchStartEvent;
 import it.cavallium.warppi.flow.BehaviorSubject;
 import it.cavallium.warppi.flow.Observable;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
-import it.cavallium.warppi.gui.graphicengine.common.PngSkin;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class SwingWindow extends JFrame {
@@ -78,7 +72,7 @@ public class SwingWindow extends JFrame {
 
 		mult = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue()).intValue();
 
-		if (!StaticVars.debugOn) {
+		if (!Engine.getPlatform().getSettings().isDebugEnabled()) {
 			// Create a new blank cursor.
 			final Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
 
@@ -119,7 +113,7 @@ public class SwingWindow extends JFrame {
 
 			@Override
 			public void componentShown(ComponentEvent e) {
-				if (StaticVars.debugOn) {
+				if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 					SwingWindow.this.centerWindow();
 				}
 			}

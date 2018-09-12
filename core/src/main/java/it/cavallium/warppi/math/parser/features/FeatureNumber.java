@@ -1,10 +1,10 @@
 package it.cavallium.warppi.math.parser.features;
 
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.MathematicalSymbols;
 import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.parser.features.interfaces.FeatureBasic;
+import it.cavallium.warppi.util.Error;
 
 public class FeatureNumber implements FeatureBasic {
 	private String numberString;

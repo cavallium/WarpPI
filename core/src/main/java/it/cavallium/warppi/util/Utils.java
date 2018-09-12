@@ -1,4 +1,4 @@
-package it.cavallium.warppi;
+package it.cavallium.warppi.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -12,19 +12,17 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.nevec.rjm.BigDecimalMath;
 import org.nevec.rjm.Rational;
 
-import it.cavallium.warppi.device.HardwareDevice;
+import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionOperator;
 import it.cavallium.warppi.math.FunctionSingle;

@@ -1,6 +1,6 @@
-package it.cavallium.warppi.deps;
+package it.cavallium.warppi.device;
 
-public interface DJogamp {
+public interface KeyboardJogampValues {
 
 	//
 	// Unicode: Non printable controls: [0x00 - 0x1F]

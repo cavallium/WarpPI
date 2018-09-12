@@ -10,17 +10,16 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
-import it.cavallium.warppi.CacheUtils;
 import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.Error;
-import it.cavallium.warppi.deps.Platform;
-import it.cavallium.warppi.gui.DisplayManager;
+import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.cpu.CPUEngine;
 import it.cavallium.warppi.gui.graphicengine.gpu.GPUEngine;
 import it.cavallium.warppi.gui.graphicengine.headless24bit.Headless24bitEngine;
 import it.cavallium.warppi.gui.graphicengine.headless256.Headless256Engine;
 import it.cavallium.warppi.gui.graphicengine.headless8.Headless8Engine;
+import it.cavallium.warppi.util.CacheUtils;
+import it.cavallium.warppi.util.Error;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
@@ -33,6 +32,7 @@ public class DesktopPlatform implements Platform {
 	private final PngUtils pu;
 	private final String on;
 	private final Map<String, GraphicEngine> el;
+	private final DesktopSettings settings;
 
 	public DesktopPlatform() {
 		cu = new DesktopConsoleUtils();
@@ -46,6 +46,7 @@ public class DesktopPlatform implements Platform {
 		el.put("headless 24 bit engine", new Headless24bitEngine());
 		el.put("headless 256 colors engine", new Headless256Engine());
 		el.put("headless 8 colors engine", new Headless8Engine());
+		settings = new DesktopSettings();
 	}
 	
 	@Override
@@ -66,6 +67,11 @@ public class DesktopPlatform implements Platform {
 	@Override
 	public PngUtils getPngUtils() {
 		return pu;
+	}
+
+	@Override
+	public DesktopSettings getSettings() {
+		return settings;
 	}
 
 	@Override

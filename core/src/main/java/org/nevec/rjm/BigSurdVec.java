@@ -5,8 +5,8 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.util.Vector;
 
-import it.cavallium.warppi.Error;
-import it.cavallium.warppi.Utils;
+import it.cavallium.warppi.util.Error;
+import it.cavallium.warppi.util.Utils;
 
 /**
  * A BigSurdVec represents an algebraic sum or differences of values which each

@@ -1,8 +1,8 @@
 package it.cavallium.warppi.gui;
 
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
+import it.cavallium.warppi.util.Error;
 
 public class GUIErrorMessage {
 

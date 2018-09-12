@@ -3,7 +3,7 @@ package org.nevec.rjm;
 import java.math.BigInteger;
 import java.util.Scanner;
 
-import it.cavallium.warppi.Error;
+import it.cavallium.warppi.util.Error;
 
 /**
  * Exact representations of Wigner 3jm and 3nj values of half-integer arguments.

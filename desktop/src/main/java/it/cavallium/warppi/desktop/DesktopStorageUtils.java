@@ -26,8 +26,8 @@ import java.util.stream.Stream;
 
 import org.apache.commons.io.IOUtils;
 
-import it.cavallium.warppi.ClassUtils;
-import it.cavallium.warppi.deps.Platform.StorageUtils;
+import it.cavallium.warppi.Platform.StorageUtils;
+import it.cavallium.warppi.util.ClassUtils;
 
 public class DesktopStorageUtils implements StorageUtils {
 	public boolean exists(File f) {

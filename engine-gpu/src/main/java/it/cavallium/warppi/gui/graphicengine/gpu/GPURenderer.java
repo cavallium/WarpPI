@@ -4,7 +4,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 
@@ -19,7 +18,6 @@ import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
 
 import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 
@@ -27,7 +25,7 @@ public class GPURenderer implements Renderer {
 
 	public static GL2ES1 gl;
 
-	private static final int ELEMENTS_MAX_COUNT_PER_BUFFER = StaticVars.enableVBO ? 128 : 1;
+	private static final int ELEMENTS_MAX_COUNT_PER_BUFFER = 128;
 	private static final int ELEMENT_VERTICES_COUNT = 6;
 
 	private static final int vertSize = 3;
@@ -306,7 +304,7 @@ public class GPURenderer implements Renderer {
 		final Texture tex = TextureIO.newTexture(f, false);
 		if (deleteOnExit && f.exists()) {
 			try {
-				if (StaticVars.debugOn) {
+				if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 					throw new IOException("Delete on exit!");
 				}
 				f.delete();

@@ -2,7 +2,7 @@ package it.cavallium.warppi.desktop;
 
 import java.util.concurrent.Semaphore;
 
-public class DesktopSemaphore extends Semaphore implements it.cavallium.warppi.deps.Platform.Semaphore {
+public class DesktopSemaphore extends Semaphore implements it.cavallium.warppi.Platform.Semaphore {
 
 	private static final long serialVersionUID = -2362314723921013871L;
 

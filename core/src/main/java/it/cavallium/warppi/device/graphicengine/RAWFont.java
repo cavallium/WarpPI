@@ -11,9 +11,9 @@ import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
-import it.cavallium.warppi.ClassUtils;
 import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.Utils;
+import it.cavallium.warppi.util.ClassUtils;
+import it.cavallium.warppi.util.Utils;
 
 /**
  *

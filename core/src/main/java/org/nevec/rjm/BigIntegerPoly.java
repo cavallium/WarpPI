@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import java.util.Scanner;
 import java.util.Vector;
 
-import it.cavallium.warppi.Error;
+import it.cavallium.warppi.util.Error;
 
 /**
  * Polynomial with integer coefficients.

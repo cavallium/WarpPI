@@ -1,4 +1,4 @@
-package it.cavallium.warppi;
+package it.cavallium.warppi.util;
 
 public class Error extends java.lang.Throwable {
 

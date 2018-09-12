@@ -1,9 +1,9 @@
 package it.cavallium.warppi.math.parser.features;
 
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Expression;
+import it.cavallium.warppi.util.Error;
 
 public class FeatureParenthesis extends FeatureSingleImpl {
 

@@ -7,7 +7,7 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.Vector;
 
-import it.cavallium.warppi.Error;
+import it.cavallium.warppi.util.Error;
 
 /**
  * A one-parameter polynomial with rational coefficients.

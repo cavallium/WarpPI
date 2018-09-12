@@ -1,22 +1,17 @@
 package it.cavallium.warppi.hardware;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
-
-import it.cavallium.warppi.CacheUtils;
-import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.Error;
-import it.cavallium.warppi.deps.Platform;
+import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.framebuffer.FBEngine;
 import it.cavallium.warppi.gui.graphicengine.gpu.GPUEngine;
+import it.cavallium.warppi.util.Error;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
@@ -29,6 +24,7 @@ public class HardwarePlatform implements Platform {
 	private final PngUtils pu;
 	private final String on;
 	private final Map<String, GraphicEngine> el;
+	private final HardwareSettings settings;
 
 	public HardwarePlatform() {
 		cu = new HardwareConsoleUtils();
@@ -39,6 +35,7 @@ public class HardwarePlatform implements Platform {
 		el = new HashMap<>();
 		el.put("GPU engine", new GPUEngine());
 		el.put("framebuffer engine", new FBEngine());
+		settings = new HardwareSettings();
 	}
 	
 	@Override
@@ -59,6 +56,11 @@ public class HardwarePlatform implements Platform {
 	@Override
 	public PngUtils getPngUtils() {
 		return pu;
+	}
+
+	@Override
+	public HardwareSettings getSettings() {
+		return settings;
 	}
 
 	@Override

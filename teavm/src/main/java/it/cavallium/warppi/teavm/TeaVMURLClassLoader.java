@@ -3,7 +3,7 @@ package it.cavallium.warppi.teavm;
 import java.io.IOException;
 import java.net.URL;
 
-import it.cavallium.warppi.deps.Platform.URLClassLoader;
+import it.cavallium.warppi.Platform.URLClassLoader;
 
 public class TeaVMURLClassLoader implements URLClassLoader {
 

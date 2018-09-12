@@ -4,18 +4,10 @@ SETTINGS: (please don't move this part)
  PATH=FractionsRule9
 */
 
-import java.math.BigDecimal;
-
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.math.Function;
-import it.cavallium.warppi.math.FunctionDynamic;
-import it.cavallium.warppi.math.FunctionOperator;
-import it.cavallium.warppi.math.FunctionSingle;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Division;
 import it.cavallium.warppi.math.functions.Multiplication;
-import it.cavallium.warppi.math.functions.Number;
-import it.cavallium.warppi.math.functions.Power;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;

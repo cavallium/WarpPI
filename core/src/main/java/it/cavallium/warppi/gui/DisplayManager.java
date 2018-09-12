@@ -7,10 +7,9 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 
 import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.Platform.ConsoleUtils;
+import it.cavallium.warppi.Platform.Semaphore;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.Utils;
-import it.cavallium.warppi.deps.Platform.ConsoleUtils;
-import it.cavallium.warppi.deps.Platform.Semaphore;
 import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
@@ -20,6 +19,7 @@ import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
 import it.cavallium.warppi.gui.graphicengine.Skin;
 import it.cavallium.warppi.gui.graphicengine.nogui.NoGuiEngine;
 import it.cavallium.warppi.gui.screens.Screen;
+import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public final class DisplayManager implements RenderingLoop {
@@ -327,7 +327,7 @@ public final class DisplayManager implements RenderingLoop {
 				fnt.use(engine);
 			}
 			renderer.glColor3i(129, 28, 22);
-			renderer.glDrawStringRight(StaticVars.screenSize[0] - 2, StaticVars.screenSize[1] - (fnt.getCharacterHeight() + 2), StaticVars.calculatorNameUPPER + " CALCULATOR");
+			renderer.glDrawStringRight(StaticVars.screenSize[0] - 2, StaticVars.screenSize[1] - (fnt.getCharacterHeight() + 2), Engine.getPlatform().getSettings().getCalculatorNameUppercase() + " CALCULATOR");
 			renderer.glColor3i(149, 32, 26);
 			renderer.glDrawStringCenter((StaticVars.screenSize[0] / 2), 22, error);
 			renderer.glColor3i(164, 34, 28);

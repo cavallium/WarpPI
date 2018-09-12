@@ -3,12 +3,7 @@ package it.cavallium.warppi.gui.screens;
 import java.io.IOException;
 
 import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.Error;
-import it.cavallium.warppi.Errors;
-import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.Utils;
-import it.cavallium.warppi.deps.Platform.ConsoleUtils;
-import it.cavallium.warppi.device.HardwareDevice;
+import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.event.KeyPressedEvent;
@@ -35,6 +30,9 @@ import it.cavallium.warppi.math.functions.Variable;
 import it.cavallium.warppi.math.functions.Variable.VariableValue;
 import it.cavallium.warppi.math.parser.MathParser;
 import it.cavallium.warppi.math.solver.MathSolver;
+import it.cavallium.warppi.util.Error;
+import it.cavallium.warppi.util.Errors;
+import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class MathInputScreen extends Screen {
@@ -241,7 +239,7 @@ public class MathInputScreen extends Screen {
 												} catch (final InterruptedException ex) {
 													Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Computing thread stopped.");
 												} catch (final Exception ex) {
-													if (StaticVars.debugOn) {
+													if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 														ex.printStackTrace();
 													}
 													throw new Error(Errors.SYNTAX_ERROR);

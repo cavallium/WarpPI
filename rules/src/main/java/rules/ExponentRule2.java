@@ -4,12 +4,8 @@ SETTINGS: (please don't move this part)
  PATH=ExponentRule2
 */
 
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.math.Function;
-import it.cavallium.warppi.math.FunctionDynamic;
 import it.cavallium.warppi.math.FunctionOperator;
-import it.cavallium.warppi.math.FunctionSingle;
-import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.functions.Power;
 import it.cavallium.warppi.math.rules.Rule;

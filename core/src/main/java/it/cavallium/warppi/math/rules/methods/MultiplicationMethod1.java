@@ -1,9 +1,9 @@
 package it.cavallium.warppi.math.rules.methods;
 
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Multiplication;
+import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**

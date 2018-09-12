@@ -1,10 +1,10 @@
 package it.cavallium.warppi.math.functions.trigonometry;
 
-import it.cavallium.warppi.Error;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionSingle;
 import it.cavallium.warppi.math.MathContext;
+import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class Tangent extends FunctionSingle {
