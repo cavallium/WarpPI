@@ -730,8 +730,8 @@ public class Keyboard {
 			{"4", null, null }, /* 6,0 */
 			{"5", null, null }, /* 6,1 */
 			{"6", null, null }, /* 6,2 */
-			{"/", null, null }, /* 6,3 */
-			{"*", null, null }, /* 6,4 */
+			{"*", null, null }, /* 6,3 */
+			{"/", null, null }, /* 6,4 */
 			{"", null, null }, /* 6,5 */
 			{"", null, null }, /* 6,6 */
 			{"", null, null } /* 6,7 */
