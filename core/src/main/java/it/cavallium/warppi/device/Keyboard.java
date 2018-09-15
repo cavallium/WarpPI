@@ -766,13 +766,13 @@ public class Keyboard {
 					{ Key.HISTORY_FORWARD, Key.NONE, Key.NONE }, /* 1,6 */
 					{ Key.NONE, Key.PI, Key.DRG_CYCLE } /* 1,7 */
 			}, { /* ROW 2 */
-					{ Key.F3, Key.F4, Key.F4 }, /* 2,0 */
+					{ Key.F3, Key.F3, Key.F3 }, /* 2,0 */
 					{ Key.SQRT, Key.ROOT, Key.NONE }, /* 2,1 */
 					{ Key.NONE, Key.NONE, Key.NONE }, /* 2,2 */
 					{ Key.DOWN, Key.NONE, Key.NONE }, /* 2,3 */
 					{ Key.BACK, Key.NONE, Key.NONE }, /* 2,4 */
-					{ Key.HISTORY_BACK, Key.NONE, Key.NONE }, /* 2,5 */
-					{ Key.HISTORY_FORWARD, Key.NONE, Key.NONE }, /* 2,6 */
+					{ Key.NONE, Key.NONE, Key.NONE }, /* 2,5 */
+					{ Key.NONE, Key.NONE, Key.NONE }, /* 2,6 */
 					{ Key.NONE, Key.NONE, Key.LETTER_Z } /* 2,7 */
 			}, { /* ROW 3 */
 					{ Key.F2, Key.F2, Key.F2 }, /* 3,0 */
