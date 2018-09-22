@@ -183,6 +183,12 @@ public class MathInputScreen extends Screen {
 						mustRefresh = true;
 						return true;
 					}
+				case BACK:
+					if (userInput.isExtraOpened()) {
+						userInput.closeExtra();
+						mustRefresh = true;
+						return true;
+					}
 				default:
 					if (userInput.isExtraOpened() && userInput.getExtraKeyboardEventListener().onKeyPressed(k)) {
 						currentStep = 0;

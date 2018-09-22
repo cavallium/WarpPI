@@ -17,7 +17,7 @@ import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
 import it.cavallium.warppi.gui.graphicengine.Skin;
-import it.cavallium.warppi.gui.graphicengine.nogui.NoGuiEngine;
+import it.cavallium.warppi.gui.graphicengine.impl.nogui.NoGuiEngine;
 import it.cavallium.warppi.gui.screens.Screen;
 import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;

@@ -695,7 +695,7 @@ public class Keyboard {
 			{"√", null, null }, /* 2,1 */
 			{"", null, null }, /* 2,2 */
 			{"⇩", null, null }, /* 2,3 */
-			{"", null, null }, /* 2,4 */
+			{"↶", null, null }, /* 2,4 */
 			{"", null, null }, /* 2,5 */
 			{"", null, null }, /* 2,6 */
 			{"", null, null } /* 2,7 */

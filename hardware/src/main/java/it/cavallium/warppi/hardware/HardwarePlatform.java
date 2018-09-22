@@ -9,8 +9,8 @@ import java.util.Map;
 
 import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
-import it.cavallium.warppi.gui.graphicengine.framebuffer.FBEngine;
-import it.cavallium.warppi.gui.graphicengine.gpu.GPUEngine;
+import it.cavallium.warppi.gui.graphicengine.impl.framebuffer.FBEngine;
+import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
 import it.cavallium.warppi.util.Error;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.model.ZipParameters;
@@ -33,7 +33,7 @@ public class HardwarePlatform implements Platform {
 		pu = new HardwarePngUtils();
 		on = System.getProperty("os.name").toLowerCase();
 		el = new HashMap<>();
-		el.put("GPU engine", new GPUEngine());
+		el.put("GPU engine", new JOGLEngine());
 		el.put("framebuffer engine", new FBEngine());
 		settings = new HardwareSettings();
 	}

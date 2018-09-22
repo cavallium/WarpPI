@@ -13,11 +13,11 @@ import org.apache.commons.io.FileUtils;
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
-import it.cavallium.warppi.gui.graphicengine.cpu.CPUEngine;
-import it.cavallium.warppi.gui.graphicengine.gpu.GPUEngine;
-import it.cavallium.warppi.gui.graphicengine.headless24bit.Headless24bitEngine;
-import it.cavallium.warppi.gui.graphicengine.headless256.Headless256Engine;
-import it.cavallium.warppi.gui.graphicengine.headless8.Headless8Engine;
+import it.cavallium.warppi.gui.graphicengine.impl.jansi24bitcolors.JAnsi24bitEngine;
+import it.cavallium.warppi.gui.graphicengine.impl.jansi256colors.JAnsi256Engine;
+import it.cavallium.warppi.gui.graphicengine.impl.jansi8colors.JAnsi8Engine;
+import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
+import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingEngine;
 import it.cavallium.warppi.util.CacheUtils;
 import it.cavallium.warppi.util.Error;
 import net.lingala.zip4j.core.ZipFile;
@@ -41,11 +41,11 @@ public class DesktopPlatform implements Platform {
 		pu = new DesktopPngUtils();
 		on = System.getProperty("os.name").toLowerCase();
 		el = new HashMap<>();
-		el.put("CPU engine", new CPUEngine());
-		el.put("GPU engine", new GPUEngine());
-		el.put("headless 24 bit engine", new Headless24bitEngine());
-		el.put("headless 256 colors engine", new Headless256Engine());
-		el.put("headless 8 colors engine", new Headless8Engine());
+		el.put("CPU engine", new SwingEngine());
+		el.put("GPU engine", new JOGLEngine());
+		el.put("headless 24 bit engine", new JAnsi24bitEngine());
+		el.put("headless 256 colors engine", new JAnsi256Engine());
+		el.put("headless 8 colors engine", new JAnsi8Engine());
 		settings = new DesktopSettings();
 	}
 	
@@ -112,16 +112,16 @@ public class DesktopPlatform implements Platform {
 	@Override
 	public void alphaChanged(boolean val) {
 		final GraphicEngine currentEngine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
-		if (currentEngine instanceof CPUEngine) {
-			((CPUEngine) currentEngine).setAlphaChanged(val);
+		if (currentEngine instanceof SwingEngine) {
+			((SwingEngine) currentEngine).setAlphaChanged(val);
 		}
 	}
 
 	@Override
 	public void shiftChanged(boolean val) {
 		final GraphicEngine currentEngine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
-		if (currentEngine instanceof CPUEngine) {
-			((CPUEngine) currentEngine).setShiftChanged(val);
+		if (currentEngine instanceof SwingEngine) {
+			((SwingEngine) currentEngine).setShiftChanged(val);
 		}
 	}
 

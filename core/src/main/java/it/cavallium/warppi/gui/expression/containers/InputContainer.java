@@ -232,7 +232,9 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 			final BlockReference<?> selectedBlock = getSelectedBlock();
 			if (selectedBlock != null) {
 				extra = selectedBlock.get().getExtraMenu();
-				extra.open();
+				if (extra != null) {
+					extra.open();
+				}
 			}
 		} else {
 			extra.close();

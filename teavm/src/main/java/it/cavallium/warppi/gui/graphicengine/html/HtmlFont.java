@@ -8,7 +8,7 @@ import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.dom.html.HTMLDocument;
 
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
-import it.cavallium.warppi.gui.graphicengine.common.RFTFont;
+import it.cavallium.warppi.gui.graphicengine.impl.common.RFTFont;
 
 public class HtmlFont extends RFTFont {
 

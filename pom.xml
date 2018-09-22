@@ -43,7 +43,7 @@
 		<module>hardware</module>
 		<module>desktop</module>
 		<module>teavm</module>
-		<module>engine-gpu</module>
+		<module>engine-jogl</module>
 	</modules>
 
 	<repositories>

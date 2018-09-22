@@ -22,7 +22,7 @@
 		</dependency>
 		<dependency>
 			<groupId>it.cavallium</groupId>
-			<artifactId>warppi-engine-gpu</artifactId>
+			<artifactId>warppi-engine-jogl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
