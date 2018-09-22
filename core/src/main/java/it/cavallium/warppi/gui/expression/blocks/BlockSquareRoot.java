@@ -16,7 +16,7 @@ public class BlockSquareRoot extends Block {
 	private int h1;
 
 	public BlockSquareRoot() {
-		containerNumber = new BlockContainer(false);
+		containerNumber = new BlockContainer(this, false);
 		recomputeDimensions();
 	}
 

@@ -14,7 +14,7 @@ public class BlockPower extends Block {
 	private final BlockContainer containerExponent;
 
 	public BlockPower() {
-		containerExponent = new BlockContainer(true);
+		containerExponent = new BlockContainer(this, true);
 		recomputeDimensions();
 	}
 

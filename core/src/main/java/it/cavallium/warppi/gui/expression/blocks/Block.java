@@ -9,12 +9,13 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.parser.features.interfaces.Feature;
 import it.cavallium.warppi.util.Error;
 
-public abstract class Block implements GraphicalElement {
+public abstract class Block implements TreeBlock, GraphicalElement {
 
 	protected boolean small;
 	protected int width;
 	protected int height;
 	protected int line;
+	protected TreeContainer parent;
 
 	/**
 	 *
@@ -69,4 +70,18 @@ public abstract class Block implements GraphicalElement {
 	}
 
 	public abstract Feature toFeature(MathContext context) throws Error;
+	
+	@Override
+	public TreeContainer getParentContainer() {
+		return parent;
+	}
+	
+	@Override
+	public boolean hasParent() {
+		return parent != null;
+	}
+
+	public void setParent(TreeContainer parent) {
+		this.parent = parent;
+	}
 }

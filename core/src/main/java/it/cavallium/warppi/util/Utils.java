@@ -47,6 +47,7 @@ public class Utils {
 
 	public static final int scaleMode = BigDecimal.ROUND_HALF_UP;
 	public static final RoundingMode scaleMode2 = RoundingMode.HALF_UP;
+	public static final int maxAutoFractionDigits = 5;
 
 	public static boolean newtMode = true;
 

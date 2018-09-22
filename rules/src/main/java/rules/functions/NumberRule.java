@@ -12,6 +12,7 @@ import it.cavallium.warppi.math.functions.Division;
 import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
+import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
@@ -46,11 +47,15 @@ public class NumberRule implements Rule {
 			final MathContext mathContext = f.getMathContext();
 			if (mathContext.exactMode)
 				if (((Number) f).isInteger() == false) {
-					final Number divisor = new Number(mathContext, BigInteger.TEN.pow(((Number) f).getNumberOfDecimalPlaces()));
-					final Function number = new Number(mathContext, ((Number) f).getTerm().multiply(divisor.getTerm()));
-					final Function div = new Division(mathContext, number, divisor);
-					result.add(div);
-					return result;
+					final int decimalPlaces = ((Number) f).getNumberOfDecimalPlaces();
+					final int decimalDigits = decimalPlaces + 1;
+					if (decimalDigits < Utils.maxAutoFractionDigits) {
+						final Number divisor = new Number(mathContext, BigInteger.TEN.pow(decimalPlaces));
+						final Function number = new Number(mathContext, ((Number) f).getTerm().multiply(divisor.getTerm()));
+						final Function div = new Division(mathContext, number, divisor);
+						result.add(div);
+						return result;
+					}
 				}
 		}
 		return null;

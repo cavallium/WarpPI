@@ -19,8 +19,8 @@ public class BlockDivision extends Block {
 	private int h1;
 
 	public BlockDivision() {
-		containerUp = new BlockContainer(false);
-		containerDown = new BlockContainer(false);
+		containerUp = new BlockContainer(this, false);
+		containerDown = new BlockContainer(this, false);
 		recomputeDimensions();
 	}
 

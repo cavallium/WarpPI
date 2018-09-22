@@ -9,7 +9,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class BlockParenthesis extends BlockParenthesisAbstract {
 	public BlockParenthesis() {
-		super();
 	}
 
 	public BlockParenthesis(final ObjectArrayList<Block> blocks) {

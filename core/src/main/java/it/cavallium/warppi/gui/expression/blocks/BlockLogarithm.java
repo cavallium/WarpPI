@@ -10,7 +10,7 @@ import it.cavallium.warppi.math.parser.features.interfaces.Feature;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-public class BlockLogarithm extends Block {
+public class BlockLogarithm extends Block implements IParenthesis {
 
 	private final BlockContainer containerBase;
 	private final BlockContainer containerNumber;
@@ -28,14 +28,14 @@ public class BlockLogarithm extends Block {
 	private int toph;
 
 	public BlockLogarithm() {
-		containerBase = new BlockContainer(true);
-		containerNumber = new BlockContainer(false);
+		containerBase = new BlockContainer(this, true);
+		containerNumber = new BlockContainer(this, false);
 		recomputeDimensions();
 	}
 
 	public BlockLogarithm(final ObjectArrayList<Block> blocks) {
-		containerBase = new BlockContainer(true);
-		containerNumber = new BlockContainer(false, blocks);
+		containerBase = new BlockContainer(this, true);
+		containerNumber = new BlockContainer(this, false, blocks);
 		recomputeDimensions();
 	}
 

@@ -11,6 +11,8 @@ import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
 import it.cavallium.warppi.gui.expression.blocks.BlockReference;
+import it.cavallium.warppi.gui.expression.blocks.TreeContainer;
+import it.cavallium.warppi.gui.expression.blocks.TreeBlock;
 import it.cavallium.warppi.gui.expression.layouts.InputLayout;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
@@ -21,8 +23,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public abstract class InputContainer implements GraphicalElement, InputLayout, Serializable {
 	private static final long serialVersionUID = 923589369317765667L;
-	private final BlockContainer root;
-	private Caret caret;
+	protected final BlockContainer root;
+	protected Caret caret;
 	private static final float CARET_DURATION = 0.5f;
 	private float caretTime;
 	private int maxPosition = 0;
@@ -53,7 +55,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 	public InputContainer(final InputContext ic, final boolean small, final int minWidth, final int minHeight) {
 		inputContext = ic;
 		caret = new Caret(CaretState.VISIBLE_ON, 0);
-		root = new BlockContainer(small, false);
+		root = new BlockContainer(null, small, false);
 	}
 
 	public void typeChar(final char c) {
@@ -69,10 +71,10 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 				maxPosition = root.computeCaretMaxBound();
 				root.recomputeDimensions();
 			}
+			closeExtra();
 		}
 		caretTime = 0;
 		caret.turnOn();
-		closeExtra();
 	}
 
 	public void typeChar(final String c) {
@@ -98,6 +100,11 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 		return selectedBlock;
 	}
 
+	public BlockReference<?> getBlockAtCaretPosition(int i) {
+		final BlockReference<?> selectedBlock = root.getBlock(new Caret(CaretState.HIDDEN, i));
+		return selectedBlock;
+	}
+
 	public void moveLeft() {
 		final int curPos = caret.getPosition();
 		if (curPos > 0)
@@ -109,15 +116,29 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 		closeExtra();
 	}
 
-	public void moveRight() {
+	public void moveRight(int delta) {
 		final int curPos = caret.getPosition();
-		if (curPos + 1 < maxPosition)
-			caret.setPosition(curPos + 1);
+		if (curPos + delta < maxPosition)
+			caret.setPosition(curPos + delta);
 		else
 			caret.setPosition(0);
 		caret.turnOn();
 		caretTime = 0;
 		closeExtra();
+	}
+
+	public void moveTo(int position) {
+		if (position < maxPosition)
+			caret.setPosition(position);
+		else
+			caret.setPosition(0);
+		caret.turnOn();
+		caretTime = 0;
+		closeExtra();
+	}
+
+	public void moveRight() {
+		moveRight(1);
 	}
 
 	@Override

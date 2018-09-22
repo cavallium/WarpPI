@@ -15,7 +15,7 @@ import it.cavallium.warppi.util.Error;
 import it.cavallium.warppi.util.Errors;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-public class BlockContainer implements GraphicalElement {
+public class BlockContainer implements TreeContainer, GraphicalElement {
 
 	private static boolean initialized = false;
 
@@ -28,33 +28,35 @@ public class BlockContainer implements GraphicalElement {
 	private int line;
 	public final boolean withBorder;
 	private boolean autoMinimums;
+	private TreeBlock parent;
 
-	public BlockContainer() {
-		this(false, BlockContainer.getDefaultCharWidth(false), BlockContainer.getDefaultCharHeight(false), true);
+	public BlockContainer(TreeBlock parent) {
+		this(parent, false, BlockContainer.getDefaultCharWidth(false), BlockContainer.getDefaultCharHeight(false), true);
 		autoMinimums = true;
 	}
 
-	public BlockContainer(final boolean small) {
-		this(small, BlockContainer.getDefaultCharWidth(small), BlockContainer.getDefaultCharHeight(small), true);
+	public BlockContainer(TreeBlock parent, final boolean small) {
+		this(parent, small, BlockContainer.getDefaultCharWidth(small), BlockContainer.getDefaultCharHeight(small), true);
 		autoMinimums = true;
 	}
 
-	public BlockContainer(final boolean small, final ObjectArrayList<Block> content) {
-		this(small, BlockContainer.getDefaultCharWidth(small), BlockContainer.getDefaultCharHeight(small), content, true);
+	public BlockContainer(TreeBlock parent, final boolean small, final ObjectArrayList<Block> content) {
+		this(parent, small, BlockContainer.getDefaultCharWidth(small), BlockContainer.getDefaultCharHeight(small), content, true);
 		autoMinimums = true;
 	}
 
-	public BlockContainer(final boolean small, final boolean withBorder) {
-		this(small, BlockContainer.getDefaultCharWidth(small), BlockContainer.getDefaultCharHeight(small), withBorder);
+	public BlockContainer(TreeBlock parent, final boolean small, final boolean withBorder) {
+		this(parent, small, BlockContainer.getDefaultCharWidth(small), BlockContainer.getDefaultCharHeight(small), withBorder);
 		autoMinimums = true;
 	}
 
-	public BlockContainer(final boolean small, final int minWidth, final int minHeight, final boolean withBorder) {
-		this(small, minWidth, minHeight, new ObjectArrayList<>(), withBorder);
+	public BlockContainer(TreeBlock parent, final boolean small, final int minWidth, final int minHeight, final boolean withBorder) {
+		this(parent, small, minWidth, minHeight, new ObjectArrayList<>(), withBorder);
 		autoMinimums = false;
 	}
 
-	public BlockContainer(final boolean small, final int minWidth, final int minHeight, final ObjectArrayList<Block> content, final boolean withBorder) {
+	public BlockContainer(TreeBlock parent, final boolean small, final int minWidth, final int minHeight, final ObjectArrayList<Block> content, final boolean withBorder) {
+		this.parent = parent;
 		this.small = small;
 		this.minWidth = minWidth;
 		this.minHeight = minHeight;
@@ -65,6 +67,16 @@ public class BlockContainer implements GraphicalElement {
 		this.content = content;
 		recomputeDimensions();
 	}
+	
+	@Override
+	public TreeBlock getParentBlock() {
+		return parent;
+	}
+
+	@Override
+	public boolean hasParent() {
+		return parent != null;
+	}
 
 	public void addBlock(final int position, final Block b) {
 		addBlockUnsafe(position, b);
@@ -72,6 +84,7 @@ public class BlockContainer implements GraphicalElement {
 	}
 
 	public void addBlockUnsafe(final int position, final Block b) {
+		b.setParent(this);
 		if (b.isSmall() != small)
 			b.setSmall(small);
 		if (position >= content.size())
@@ -86,6 +99,7 @@ public class BlockContainer implements GraphicalElement {
 	}
 
 	public void appendBlockUnsafe(final Block b) {
+		b.setParent(this);
 		if (b.isSmall() != small)
 			b.setSmall(small);
 		content.add(b);
@@ -97,11 +111,12 @@ public class BlockContainer implements GraphicalElement {
 	}
 
 	public void removeBlockUnsafe(final Block b) {
+		b.setParent(null);
 		content.remove(b);
 	}
 
 	public void removeAt(final int i) {
-		content.remove(i);
+		content.remove(i).setParent(null);
 		recomputeDimensions();
 	}
 

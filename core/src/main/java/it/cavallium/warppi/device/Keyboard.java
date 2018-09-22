@@ -639,7 +639,7 @@ public class Keyboard {
 					{ "", null, null } /* 1,7 */
 			}, { /* ROW 2 */
 					{ "", null, null }, /* 2,0 */
-					{ "√", null, null }, /* 2,1 */
+					{ "√▯", null, null }, /* 2,1 */
 					{ "", null, null }, /* 2,2 */
 					{ "⇩", null, null }, /* 2,3 */
 					{ "↶", null, null }, /* 2,4 */
@@ -649,8 +649,8 @@ public class Keyboard {
 			}, { /* ROW 3 */
 					{ "", null, null }, /* 3,0 */
 					{ "", null, null }, /* 3,1 */
-					{ "^x", null, null }, /* 3,2 */
-					{ "^2", null, null }, /* 3,3 */
+					{ "▯^▯", null, null }, /* 3,2 */
+					{ "▯^2", null, null }, /* 3,3 */
 					{ "", null, null }, /* 3,4 */
 					{ "", null, null }, /* 3,5 */
 					{ "", null, null }, /* 3,6 */
@@ -658,7 +658,7 @@ public class Keyboard {
 			}, { /* ROW 4 */
 					{ "", null, null }, /* 4,0 */
 					{ "", null, null }, /* 4,1 */
-					{ "(", null, null }, /* 4,2 */
+					{ "(▯)", null, null }, /* 4,2 */
 					{ ")", null, null }, /* 4,3 */
 					{ "", null, null }, /* 4,4 */
 					{ "S⇔D", null, null }, /* 4,5 */

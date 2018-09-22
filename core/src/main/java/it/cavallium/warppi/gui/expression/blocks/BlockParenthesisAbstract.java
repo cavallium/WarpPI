@@ -8,7 +8,7 @@ import it.cavallium.warppi.math.parser.features.interfaces.Feature;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-public abstract class BlockParenthesisAbstract extends Block {
+public abstract class BlockParenthesisAbstract extends Block implements IParenthesis {
 
 	private final BlockContainer containerNumber;
 
@@ -18,20 +18,20 @@ public abstract class BlockParenthesisAbstract extends Block {
 	private int chh;
 
 	protected BlockParenthesisAbstract(final String prefix) {
-		containerNumber = new BlockContainer(false);
+		containerNumber = new BlockContainer(this, false);
 		this.prefix = prefix;
 
 		recomputeDimensions();
 	}
 
 	public BlockParenthesisAbstract() {
-		containerNumber = new BlockContainer(false);
+		containerNumber = new BlockContainer(this, false);
 		prefix = null;
 		recomputeDimensions();
 	}
 
 	public BlockParenthesisAbstract(final ObjectArrayList<Block> blocks) {
-		containerNumber = new BlockContainer(false, blocks);
+		containerNumber = new BlockContainer(this, false, blocks);
 		prefix = null;
 		recomputeDimensions();
 	}

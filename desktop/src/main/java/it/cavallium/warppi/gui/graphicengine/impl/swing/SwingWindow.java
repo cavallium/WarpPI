@@ -203,12 +203,16 @@ public class SwingWindow extends JFrame {
 		buttonsPanel = new JPanel();
 		buttonsPanelContainer.add(buttonsPanel, BorderLayout.CENTER);
 		buttonsPanel.setLayout(new GridLayout(9, 7));
-		buttonsPanel.setBackground(Color.GRAY);
+		buttonsPanel.setBackground(Color.BLACK);
 		buttonsPanel.setDoubleBuffered(false);
 		buttonsPanel.setVisible(true);
 		for (int row = 0; row < 5; row++)
 			for (int col = 0; col < 7; col++)
-				createBtn(row, col);
+				if (row == 0 && col == 2 || row == 0 && col == 4 || row == 2 && col == 2) {
+					createBlankBox();
+				} else {
+					createBtn(row, col);
+				}
 		for (int row = 5; row < 8; row++) {
 			createBlankBox();
 			for (int col = 0; col < 5; col++)
@@ -234,7 +238,7 @@ public class SwingWindow extends JFrame {
 		final SwingAdvancedButton b = new SwingAdvancedButton(img, new Dimension((int) (BTN_SIZE * 1.5), BTN_SIZE));
 		b.drawDefaultComponent = false;
 		b.setText(Keyboard.getKeyName(row, col));
-		b.setForeground(Color.BLACK);
+		b.setBasicForeground(Color.BLACK);
 		Font f = b.getFont();
 		f = f.deriveFont(Font.BOLD, BTN_SIZE / 3);
 		b.setFont(f);
@@ -244,6 +248,43 @@ public class SwingWindow extends JFrame {
 			Keyboard.keyPressedRaw(row, col);
 			Keyboard.keyReleasedRaw(row, col);
 			c.grabFocus();
+		});
+		b.addMouseListener(new MouseListener() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				if (b.state == 2) {
+					b.setForeground(b.basicForeground.darker());
+				} else {
+					b.setForeground(b.basicForeground);
+				}
+				b.hover = false;
+				b.repaint();
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				if (b.state == 2) {
+					b.setForeground(b.basicForeground);
+				} else {
+					b.setForeground(b.basicForeground.brighter());
+				}
+				b.hover = true;
+				b.repaint();
+			}
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
 		});
 		buttons[row][col] = b;
 		buttonsPanel.add(b);
@@ -261,9 +302,9 @@ public class SwingWindow extends JFrame {
 						else
 							btn.state = 0;
 					if (val && Keyboard.hasKeyName(row, col))
-						btn.setForeground(Color.RED);
+						btn.setBasicForeground(Color.RED);
 					else
-						btn.setForeground(Color.BLACK);
+						btn.setBasicForeground(Color.BLACK);
 				}
 			}
 	}
@@ -280,9 +321,9 @@ public class SwingWindow extends JFrame {
 						else
 							btn.state = 0;
 					if (val && Keyboard.hasKeyName(row, col))
-						btn.setForeground(new Color(255, 120, 0));
+						btn.setBasicForeground(new Color(255, 120, 0));
 					else
-						btn.setForeground(Color.BLACK);
+						btn.setBasicForeground(Color.BLACK);
 				}
 			}
 	}

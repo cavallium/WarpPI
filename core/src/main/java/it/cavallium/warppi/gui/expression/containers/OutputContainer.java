@@ -19,22 +19,22 @@ public abstract class OutputContainer implements GraphicalElement, OutputLayout,
 
 	public OutputContainer() {
 		roots = new ObjectArrayList<>();
-		roots.add(new BlockContainer());
+		roots.add(new BlockContainer(null));
 	}
 
 	public OutputContainer(final boolean small) {
 		roots = new ObjectArrayList<>();
-		roots.add(new BlockContainer(small));
+		roots.add(new BlockContainer(null, small));
 	}
 
 	public OutputContainer(final boolean small, final int minWidth, final int minHeight) {
 		roots = new ObjectArrayList<>();
-		roots.add(new BlockContainer(small));
+		roots.add(new BlockContainer(null, small));
 	}
 
 	public void setContentAsSingleGroup(final ObjectArrayList<Block> blocks) {
 		roots.clear();
-		final BlockContainer bcnt = new BlockContainer();
+		final BlockContainer bcnt = new BlockContainer(null);
 		for (final Block block : blocks)
 			bcnt.appendBlockUnsafe(block);
 		roots.add(bcnt);
@@ -44,7 +44,7 @@ public abstract class OutputContainer implements GraphicalElement, OutputLayout,
 	public void setContentAsMultipleGroups(final ObjectArrayList<ObjectArrayList<Block>> roots) {
 		this.roots.clear();
 		for (final ObjectArrayList<Block> blocks : roots) {
-			final BlockContainer bcnt = new BlockContainer();
+			final BlockContainer bcnt = new BlockContainer(null);
 			for (final Block block : blocks)
 				bcnt.appendBlockUnsafe(block);
 			this.roots.add(bcnt);
@@ -55,7 +55,7 @@ public abstract class OutputContainer implements GraphicalElement, OutputLayout,
 	public void setContentAsMultipleElements(final ObjectArrayList<Block> elems) {
 		roots.clear();
 		for (final Block block : elems) {
-			final BlockContainer bcnt = new BlockContainer();
+			final BlockContainer bcnt = new BlockContainer(null);
 			bcnt.appendBlockUnsafe(block);
 			roots.add(bcnt);
 		}
@@ -125,7 +125,7 @@ public abstract class OutputContainer implements GraphicalElement, OutputLayout,
 
 	public void clear() {
 		roots.clear();
-		roots.add(new BlockContainer());
+		roots.add(new BlockContainer(null));
 		recomputeDimensions();
 	}
 

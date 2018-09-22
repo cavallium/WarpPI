@@ -5,6 +5,7 @@
 package it.cavallium.warppi.gui.graphicengine.impl.swing;
 
 import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -26,6 +27,8 @@ public class SwingAdvancedButton extends JButton {
 	public boolean drawColor = false;
 	public boolean drawDefaultComponent = false;
 	public int state;
+	protected boolean hover;
+	public Color basicForeground;
 
 	public SwingAdvancedButton() {
 		setOpaque(false);
@@ -69,10 +72,14 @@ public class SwingAdvancedButton extends JButton {
 			final AlphaComposite acomp = AlphaComposite.getInstance(3, 1.0f);
 			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 			g2d.setComposite(acomp);
-			g2d.drawImage(backgroundImage, 0, (int) backgroundSize.getHeight() * -state, (int) backgroundSize.getWidth(), (int) (backgroundSize.getHeight() * 3), null);
+			g2d.drawImage(backgroundImage, 0, (int) backgroundSize.getHeight() * -(hover ? state+1 : state), (int) backgroundSize.getWidth(), (int) (backgroundSize.getHeight() * 4), null);
 			g2d.setFont(g.getFont());
 			g2d.setColor(super.getForeground());
-			g2d.drawString(getText(), super.getWidth() / 2 - g.getFontMetrics().stringWidth(getText()) / 2, super.getHeight() / 2 + g.getFontMetrics().getHeight() / 4);
+			int y = super.getHeight() / 2 + g.getFontMetrics().getHeight() / 4;
+			if (state == 2) {
+				y += 8;
+			}
+			g2d.drawString(getText(), super.getWidth() / 2 - g.getFontMetrics().stringWidth(getText()) / 2, y);
 			g2d.dispose();
 		}
 		if (drawDefaultComponent)
@@ -101,5 +108,10 @@ public class SwingAdvancedButton extends JButton {
 
 	public boolean getCanClick() {
 		return canclick;
+	}
+
+	public void setBasicForeground(Color color) {
+		basicForeground = color;
+		super.setForeground(basicForeground);
 	}
 }
