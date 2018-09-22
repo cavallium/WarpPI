@@ -48,43 +48,22 @@ public class CalculatorHUD extends HUD {
 		renderer.glDrawLine(0, 20, engine.getWidth() - 1, 20);
 		renderer.glColor3i(255, 255, 255);
 		guiSkin.use(engine);
-		if (Keyboard.shift) {
+		if (Keyboard.shift)
 			renderer.glFillRect(2 + 18 * 0, 2, 16, 16, 16 * 2, 16 * 0, 16, 16);
-		} else {
+		else
 			renderer.glFillRect(2 + 18 * 0, 2, 16, 16, 16 * 3, 16 * 0, 16, 16);
-		}
-		if (Keyboard.alpha) {
+		if (Keyboard.alpha)
 			renderer.glFillRect(2 + 18 * 1, 2, 16, 16, 16 * 0, 16 * 0, 16, 16);
-		} else {
+		else
 			renderer.glFillRect(2 + 18 * 1, 2, 16, 16, 16 * 1, 16 * 0, 16, 16);
-		}
-		/*
-		if (Calculator.angleMode == AngleMode.DEG) {
-			drawSkinPart(8 + 18 * 2, 2, 16 * 4, 16 * 0, 16 + 16 * 4, 16 + 16 * 0);
-			drawSkinPart(8 + 18 * 3, 2, 16 * 7, 16 * 0, 16 + 16 * 7, 16 + 16 * 0);
-			drawSkinPart(8 + 18 * 4, 2, 16 * 9, 16 * 0, 16 + 16 * 9, 16 + 16 * 0);
-		} else if (Calculator.angleMode == AngleMode.RAD) {
-			drawSkinPart(8 + 18 * 2, 2, 16 * 5, 16 * 0, 16 + 16 * 5, 16 + 16 * 0);
-			drawSkinPart(8 + 18 * 3, 2, 16 * 6, 16 * 0, 16 + 16 * 6, 16 + 16 * 0);
-			drawSkinPart(8 + 18 * 4, 2, 16 * 9, 16 * 0, 16 + 16 * 9, 16 + 16 * 0);
-		} else if (Calculator.angleMode == AngleMode.GRA) {
-			drawSkinPart(8 + 18 * 2, 2, 16 * 5, 16 * 0, 16 + 16 * 5, 16 + 16 * 0);
-			drawSkinPart(8 + 18 * 3, 2, 16 * 7, 16 * 0, 16 + 16 * 7, 16 + 16 * 0);
-			drawSkinPart(8 + 18 * 4, 2, 16 * 8, 16 * 0, 16 + 16 * 8, 16 + 16 * 0);
-		} else {
-			drawSkinPart(8 + 18 * 2, 2, 16 * 5, 16 * 0, 16 + 16 * 5, 16 + 16 * 0);
-			drawSkinPart(8 + 18 * 3, 2, 16 * 7, 16 * 0, 16 + 16 * 7, 16 + 16 * 0);
-			drawSkinPart(8 + 18 * 4, 2, 16 * 9, 16 * 0, 16 + 16 * 9, 16 + 16 * 0);
-		}*/
 
 		int padding = 2;
 
-		final int brightness = (int) (Math.ceil(Engine.INSTANCE.getHardwareDevice().getDisplayManager().getBrightness() * 9));
-		if (brightness <= 10) {
+		final int brightness = (int) Math.ceil(Engine.INSTANCE.getHardwareDevice().getDisplayManager().getBrightness() * 9);
+		if (brightness <= 10)
 			renderer.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * brightness, 16 * 1, 16, 16);
-		} else {
+		else
 			Engine.getPlatform().getConsoleUtils().out().println(1, "Brightness error");
-		}
 
 		padding += 18 + 6;
 
@@ -96,15 +75,14 @@ public class CalculatorHUD extends HUD {
 			padding += 18 + 6;
 		}
 
-		if (canGoBack && canGoForward) {
+		if (canGoBack && canGoForward)
 			renderer.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 14, 16 * 0, 16, 16);
-		} else if (canGoBack) {
+		else if (canGoBack)
 			renderer.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 15, 16 * 0, 16, 16);
-		} else if (canGoForward) {
+		else if (canGoForward)
 			renderer.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 16, 16 * 0, 16, 16);
-		} else {
+		else
 			renderer.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 17, 16 * 0, 16, 16);
-		}
 
 		padding += 18;
 
@@ -123,7 +101,7 @@ public class CalculatorHUD extends HUD {
 	}
 
 	@Override
-	public void beforeRender(float dt) {
+	public void beforeRender(final float dt) {
 		// TODO Auto-generated method stub
 
 	}

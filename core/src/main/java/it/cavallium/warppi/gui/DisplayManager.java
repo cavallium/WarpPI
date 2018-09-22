@@ -51,12 +51,12 @@ public final class DisplayManager implements RenderingLoop {
 	 */
 	public boolean forceRefresh;
 
-	public DisplayManager(HardwareDisplay monitor, HUD hud, Screen screen, String title) {
+	public DisplayManager(final HardwareDisplay monitor, final HUD hud, final Screen screen, final String title) {
 		this.monitor = monitor;
 		this.hud = hud;
-		this.initialTitle = title;
-		this.initialScreen = screen;
-		
+		initialTitle = title;
+		initialScreen = screen;
+
 		screenChange = Engine.getPlatform().newSemaphore();
 		engine = chooseGraphicEngine();
 		supportsPauses = engine.doesRefreshPauses();
@@ -72,9 +72,8 @@ public final class DisplayManager implements RenderingLoop {
 		try {
 			hud.d = this;
 			hud.create();
-			if (!hud.initialized) {
+			if (!hud.initialized)
 				hud.initialize();
-			}
 		} catch (final Exception e) {
 			e.printStackTrace();
 			Engine.getPlatform().exit(0);
@@ -97,18 +96,18 @@ public final class DisplayManager implements RenderingLoop {
 	 * skin_tex = glGenTextures();
 	 * glBindTexture(GL_TEXTURE_2D, skin_tex);
 	 * glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-	 * 
+	 *
 	 * InputStream in = new FileInputStream("skin.png");
 	 * PNGDecoder decoder = new PNGDecoder(in);
-	 * 
+	 *
 	 * System.out.println("width="+decoder.getWidth());
 	 * System.out.println("height="+decoder.getHeight());
-	 * 
+	 *
 	 * ByteBuffer buf =
 	 * ByteBuffer.allocateDirect(4*decoder.getWidth()*decoder.getHeight());
 	 * decoder.decode(buf, decoder.getWidth()*4, Format.RGBA);
 	 * buf.flip();
-	 * 
+	 *
 	 * skin = buf;
 	 * skin_w = decoder.getWidth();
 	 * skin_h = decoder.getHeight();
@@ -165,55 +164,48 @@ public final class DisplayManager implements RenderingLoop {
 		throw new UnsupportedOperationException("No graphic engines available.");
 	}
 
-	public void setScreen(Screen screen) {
-		if (screen.initialized == false) {
+	public void setScreen(final Screen screen) {
+		if (screen.initialized == false)
 			if (screen.canBeInHistory) {
-				if (this.currentSession > 0) {
-					final int sl = this.sessions.length + 5; //TODO: I don't know why if i don't add +5 or more some items disappear
-					this.sessions = Arrays.copyOfRange(this.sessions, this.currentSession, sl);
+				if (currentSession > 0) {
+					final int sl = sessions.length + 5; //TODO: I don't know why if i don't add +5 or more some items disappear
+					sessions = Arrays.copyOfRange(sessions, currentSession, sl);
 				}
-				this.currentSession = 0;
-				for (int i = this.sessions.length - 1; i >= 1; i--) {
-					this.sessions[i] = this.sessions[i - 1];
-				}
-				this.sessions[0] = screen;
-			} else {
-				this.currentSession = -1;
-			}
-		}
+				currentSession = 0;
+				for (int i = sessions.length - 1; i >= 1; i--)
+					sessions[i] = sessions[i - 1];
+				sessions[0] = screen;
+			} else
+				currentSession = -1;
 		screen.d = this;
 		try {
 			screen.create();
 			this.screen = screen;
 			screenChange.release();
-			if (screen.initialized == false) {
+			if (screen.initialized == false)
 				screen.initialize();
-			}
 		} catch (final Exception e) {
 			e.printStackTrace();
 			Engine.getPlatform().exit(0);
 		}
 	}
 
-	public void replaceScreen(Screen screen) {
-		if (screen.initialized == false) {
-			if (screen.canBeInHistory) {
-				this.sessions[this.currentSession] = screen;
-			} else {
-				this.currentSession = -1;
-				for (int i = 0; i < this.sessions.length - 2; i++) {
-					this.sessions[i] = this.sessions[i + 1];
-				}
+	public void replaceScreen(final Screen screen) {
+		if (screen.initialized == false)
+			if (screen.canBeInHistory)
+				sessions[currentSession] = screen;
+			else {
+				currentSession = -1;
+				for (int i = 0; i < sessions.length - 2; i++)
+					sessions[i] = sessions[i + 1];
 			}
-		}
 		screen.d = this;
 		try {
 			screen.create();
 			this.screen = screen;
 			screenChange.release();
-			if (screen.initialized == false) {
+			if (screen.initialized == false)
 				screen.initialize();
-			}
 		} catch (final Exception e) {
 			e.printStackTrace();
 			Engine.getPlatform().exit(0);
@@ -221,65 +213,55 @@ public final class DisplayManager implements RenderingLoop {
 	}
 
 	public boolean canGoBack() {
-		if (this.currentSession == -1) {
-			return this.sessions[0] != null;
-		}
-		if (this.screen != this.sessions[this.currentSession]) {
+		if (currentSession == -1)
+			return sessions[0] != null;
+		if (screen != sessions[currentSession]) {
 
-		} else if (this.currentSession + 1 < this.sessions.length) {
-			if (this.sessions[this.currentSession + 1] != null) {
+		} else if (currentSession + 1 < sessions.length) {
+			if (sessions[currentSession + 1] != null) {
 
-			} else {
+			} else
 				return false;
-			}
-		} else {
+		} else
 			return false;
-		}
-		if (this.sessions[this.currentSession] != null) {
+		if (sessions[currentSession] != null)
 			return true;
-		}
 		return false;
 	}
 
 	public void goBack() {
 		if (canGoBack()) {
-			if (this.currentSession >= 0 && this.screen != this.sessions[this.currentSession]) {} else {
-				this.currentSession += 1;
-			}
-			this.screen = this.sessions[this.currentSession];
+			if (currentSession >= 0 && screen != sessions[currentSession]) {} else
+				currentSession += 1;
+			screen = sessions[currentSession];
 			screenChange.release();
 		}
 	}
 
 	public boolean canGoForward() {
-		if (this.currentSession <= 0) { // -1 e 0
+		if (currentSession <= 0)
 			return false;
-		}
-		if (this.screen != this.sessions[this.currentSession]) {
+		if (screen != sessions[currentSession]) {
 
-		} else if (this.currentSession > 0) {
-			if (this.sessions[this.currentSession - 1] != null) {
+		} else if (currentSession > 0) {
+			if (sessions[currentSession - 1] != null) {
 
-			} else {
+			} else
 				return false;
-			}
-		} else {
+		} else
 			return false;
-		}
-		if (this.sessions[this.currentSession] != null) {
+		if (sessions[currentSession] != null)
 			return true;
-		}
 		return false;
 	}
 
 	public void goForward() {
 		if (canGoForward()) {
-			if (this.screen != this.sessions[this.currentSession]) {
+			if (screen != sessions[currentSession]) {
 
-			} else {
-				this.currentSession -= 1;
-			}
-			this.screen = this.sessions[this.currentSession];
+			} else
+				currentSession -= 1;
+			screen = sessions[currentSession];
 			screenChange.release();
 		}
 	}
@@ -309,11 +291,9 @@ public final class DisplayManager implements RenderingLoop {
 	private void draw_init() {
 		if (engine.supportsFontRegistering()) {
 			final List<BinaryFont> fontsIterator = engine.getRegisteredFonts();
-			for (final BinaryFont f : fontsIterator) {
-				if (!f.isInitialized()) {
+			for (final BinaryFont f : fontsIterator)
+				if (!f.isInitialized())
 					f.initialize(engine);
-				}
-			}
 		}
 		renderer.glClear(engine.getWidth(), engine.getHeight());
 	}
@@ -323,28 +303,25 @@ public final class DisplayManager implements RenderingLoop {
 
 		if (error != null) {
 			final BinaryFont fnt = Utils.getFont(false, false);
-			if (fnt != null && fnt != engine.getRenderer().getCurrentFont()) {
+			if (fnt != null && fnt != engine.getRenderer().getCurrentFont())
 				fnt.use(engine);
-			}
 			renderer.glColor3i(129, 28, 22);
 			renderer.glDrawStringRight(StaticVars.screenSize[0] - 2, StaticVars.screenSize[1] - (fnt.getCharacterHeight() + 2), Engine.getPlatform().getSettings().getCalculatorNameUppercase() + " CALCULATOR");
 			renderer.glColor3i(149, 32, 26);
-			renderer.glDrawStringCenter((StaticVars.screenSize[0] / 2), 22, error);
+			renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, 22, error);
 			renderer.glColor3i(164, 34, 28);
 			int i = 22;
 			for (final String stackPart : errorStackTrace) {
 				renderer.glDrawStringLeft(2, 22 + i, stackPart);
 				i += 11;
 			}
-			if (fonts[0] != null && fonts[0] != engine.getRenderer().getCurrentFont()) {
+			if (fonts[0] != null && fonts[0] != engine.getRenderer().getCurrentFont())
 				fonts[0].use(engine);
-			}
 			renderer.glColor3i(129, 28, 22);
-			renderer.glDrawStringCenter((StaticVars.screenSize[0] / 2), 11, "UNEXPECTED EXCEPTION");
+			renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, 11, "UNEXPECTED EXCEPTION");
 		} else {
-			if (fonts[0] != null && fonts[0] != engine.getRenderer().getCurrentFont()) {
+			if (fonts[0] != null && fonts[0] != engine.getRenderer().getCurrentFont())
 				fonts[0].use(engine);
-			}
 			hud.renderBackground();
 			screen.render();
 			hud.render();
@@ -363,7 +340,7 @@ public final class DisplayManager implements RenderingLoop {
 
 	@Override
 	public void refresh() {
-		if (supportsPauses == false || (Keyboard.popRefreshRequest() || forceRefresh || screen.mustBeRefreshed())) {
+		if (supportsPauses == false || Keyboard.popRefreshRequest() || forceRefresh || screen.mustBeRefreshed()) {
 			forceRefresh = false;
 			draw();
 		}
@@ -386,28 +363,26 @@ public final class DisplayManager implements RenderingLoop {
 				Engine.getPlatform().exit(0);
 			}
 
-			Observable<Long> workTimer = Observable.interval(tickDuration);
+			final Observable<Long> workTimer = Observable.interval(DisplayManager.tickDuration);
 
-			Observable<Integer[]> onResizeObservable = engine.onResize();
+			final Observable<Integer[]> onResizeObservable = engine.onResize();
 			Observable<Pair<Long, Integer[]>> refreshObservable;
-			if (onResizeObservable == null) {
+			if (onResizeObservable == null)
 				refreshObservable = workTimer.map((l) -> Pair.of(l, null));
-			} else {
+			else
 				refreshObservable = Observable.combineChanged(workTimer, engine.onResize());
-			}
 
 			refreshObservable.subscribe((pair) -> {
 				double dt = 0;
 				final long newtime = System.nanoTime();
-				if (precTime == -1) {
-					dt = tickDuration;
-				} else {
+				if (precTime == -1)
+					dt = DisplayManager.tickDuration;
+				else
 					dt = (newtime - precTime) / 1000d / 1000d;
-				}
 				precTime = newtime;
 
 				if (pair.getRight() != null) {
-					Integer[] windowSize = pair.getRight();
+					final Integer[] windowSize = pair.getRight();
 					StaticVars.screenSize[0] = windowSize[0];
 					StaticVars.screenSize[1] = windowSize[1];
 				}
@@ -421,26 +396,25 @@ public final class DisplayManager implements RenderingLoop {
 		} finally {}
 	}
 
-	public void changeBrightness(float change) {
+	public void changeBrightness(final float change) {
 		setBrightness(brightness + change);
 	}
 
-	public void setBrightness(float newval) {
+	public void setBrightness(final float newval) {
 		if (newval >= 0 && newval <= 1) {
 			brightness = newval;
 			monitor.setBrightness(brightness);
 		}
 	}
 
-	public void cycleBrightness(boolean reverse) {
+	public void cycleBrightness(final boolean reverse) {
 		final float step = reverse ? -0.1f : 0.1f;
-		if (brightness + step > 1f) {
+		if (brightness + step > 1f)
 			setBrightness(0f);
-		} else if (brightness + step <= 0f) {
+		else if (brightness + step <= 0f)
 			setBrightness(1.0f);
-		} else {
+		else
 			changeBrightness(step);
-		}
 	}
 
 	public float getBrightness() {
@@ -451,7 +425,7 @@ public final class DisplayManager implements RenderingLoop {
 	public Screen[] sessions = new Screen[5];
 
 	@Deprecated
-	public void colore(float f1, float f2, float f3, float f4) {
+	public void colore(final float f1, final float f2, final float f3, final float f4) {
 		renderer.glColor4f(f1, f2, f3, f4);
 	}
 
@@ -460,7 +434,7 @@ public final class DisplayManager implements RenderingLoop {
 	}
 
 	@Deprecated
-	public void drawSkinPart(int x, int y, int uvX, int uvY, int uvX2, int uvY2) {
+	public void drawSkinPart(final int x, final int y, final int uvX, final int uvY, final int uvX2, final int uvY2) {
 		renderer.glFillRect(x, y, uvX2 - uvX, uvY2 - uvY, uvX, uvY, uvX2 - uvX, uvY2 - uvY);
 	}
 

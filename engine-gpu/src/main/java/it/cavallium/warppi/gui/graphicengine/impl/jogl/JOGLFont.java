@@ -35,27 +35,26 @@ public class JOGLFont implements BinaryFont {
 	private boolean initialized = false;
 	private File tmpFont;
 
-	JOGLFont(GraphicEngine g, String name) throws IOException {
+	JOGLFont(final GraphicEngine g, final String name) throws IOException {
 		this(g, null, name);
 	}
 
-	public JOGLFont(GraphicEngine g, String path, String name) throws IOException {
+	public JOGLFont(final GraphicEngine g, final String path, final String name) throws IOException {
 		load(path, name);
 		((JOGLEngine) g).registerFont(this);
 	}
 
 	@Override
-	public void load(String name) throws IOException {
+	public void load(final String name) throws IOException {
 		load(null, name);
 	}
 
-	public void load(String path, String name) throws IOException {
+	public void load(final String path, final String name) throws IOException {
 		RFTFont font;
-		if (path == null) {
+		if (path == null)
 			font = RFTFont.loadTemporaryFont(name);
-		} else {
+		else
 			font = RFTFont.loadTemporaryFont(path, name);
-		}
 		charW = font.charW;
 		charH = font.charH;
 		minCharIndex = font.minBound;
@@ -70,7 +69,7 @@ public class JOGLFont implements BinaryFont {
 		Engine.getPlatform().gc();
 	}
 
-	public int[] getCharIndexes(String txt) {
+	public int[] getCharIndexes(final String txt) {
 		final int[] indexes = new int[txt.length()];
 		int i = 0;
 		for (final char c : txt.toCharArray()) {
@@ -80,57 +79,54 @@ public class JOGLFont implements BinaryFont {
 		return indexes;
 	}
 
-	public int getCharIndex(char c) {
+	public int getCharIndex(final char c) {
 		final int originalIndex = c & 0xFFFF;
 		return compressIndex(originalIndex);
 	}
 
-	private int compressIndex(int originalIndex) {
+	private int compressIndex(final int originalIndex) {
 		int compressedIndex = 0;
-		for (int i = 0; i < intervals.length; i += 3) {
-			if (intervals[i] > originalIndex) {
+		for (int i = 0; i < intervals.length; i += 3)
+			if (intervals[i] > originalIndex)
 				break;
-			} else if (originalIndex <= intervals[i + 1]) {
-				compressedIndex += (originalIndex - intervals[i]);
+			else if (originalIndex <= intervals[i + 1]) {
+				compressedIndex += originalIndex - intervals[i];
 				break;
-			} else {
+			} else
 				compressedIndex += intervals[i + 2];
-			}
-		}
 		return compressedIndex;
 	}
 
 	@SuppressWarnings("unused")
-	private int decompressIndex(int compressedIndex) {
+	private int decompressIndex(final int compressedIndex) {
 		final int originalIndex = 0;
 		int i = 0;
 		for (final int intvl = 0; i < intervals.length; i += 3) {
 			i += intervals[intvl + 2];
-			if (i >= compressedIndex) {
+			if (i >= compressedIndex)
 				return intervals[intvl + 1] - (i - compressedIndex);
-			}
 		}
 		return originalIndex;
 	}
 
 	private void pregenTexture(boolean[][] chars) throws IOException {
 		final int totalChars = intervalsTotalSize;
-		int w = powerOf2((int) (Math.ceil(Math.sqrt(totalChars) * charW)));
-		int h = powerOf2((int) (Math.ceil(Math.sqrt(totalChars) * charH)));
-		int maxIndexW = (int) Math.floor(((double) w) / ((double) charW)) - 1;
-		int maxIndexH = (int) Math.floor(((double) h) / ((double) charH)) - 1;
+		int w = powerOf2((int) Math.ceil(Math.sqrt(totalChars) * charW));
+		int h = powerOf2((int) Math.ceil(Math.sqrt(totalChars) * charH));
+		int maxIndexW = (int) Math.floor((double) w / (double) charW) - 1;
+		int maxIndexH = (int) Math.floor((double) h / (double) charH) - 1;
 		if (w > h) {
 			System.out.println("w > h");
-			h = powerOf2((int) (Math.ceil((((double) totalChars) / ((double) (maxIndexW))) * charH)));
-			maxIndexH = (int) Math.floor(((double) h) / ((double) charH)) - 1;
+			h = powerOf2((int) Math.ceil((double) totalChars / (double) maxIndexW * charH));
+			maxIndexH = (int) Math.floor((double) h / (double) charH) - 1;
 		} else {
 			System.out.println("w <= h");
-			w = powerOf2((int) (Math.ceil((((double) totalChars) / ((double) (maxIndexH))) * charW)));
-			maxIndexW = (int) Math.floor(((double) w) / ((double) charW)) - 1;
+			w = powerOf2((int) Math.ceil((double) totalChars / (double) maxIndexH * charW));
+			maxIndexW = (int) Math.floor((double) w / (double) charW) - 1;
 		}
 //		final int h = powerOf2((int) (Math.ceil(Math.sqrt(totalChars) * charH)));
 
-		System.out.println(((int) Math.ceil(Math.sqrt(totalChars) * charW)) + " * " + ((int) Math.ceil(Math.sqrt(totalChars) * charH)) + " --> " + w + " * " + h);
+		System.out.println((int) Math.ceil(Math.sqrt(totalChars) * charW) + " * " + (int) Math.ceil(Math.sqrt(totalChars) * charH) + " --> " + w + " * " + h);
 
 		final File f = Files.createTempFile("texture-font-", ".png").toFile();
 		f.deleteOnExit();
@@ -142,23 +138,18 @@ public class JOGLFont implements BinaryFont {
 			final ImageLineInt iline = new ImageLineInt(imi);
 			final int[] xValues = new int[imi.cols];
 			for (int indexX = 0; indexX <= maxIndexW; indexX++) {// this line will be written to all rows
-				final int charY = (y % charH);
+				final int charY = y % charH;
 				final int indexY = (y - charY) / charH;
 				final int i = indexY * (maxIndexW + 1) + indexX - minCharIndex;
 				boolean[] currentChar;
-				if (i < totalChars && (currentChar = chars[i]) != null) {
-					for (int charX = 0; charX < charW; charX++) {
-						if (i >= 0 & i < totalChars && currentChar != null && currentChar[charX + charY * charW]) {
+				if (i < totalChars && (currentChar = chars[i]) != null)
+					for (int charX = 0; charX < charW; charX++)
+						if (i >= 0 & i < totalChars && currentChar != null && currentChar[charX + charY * charW])
 							xValues[indexX * charW + charX] = 0xFFFFFFFF;
-						}
-//						ImageLineHelper.setPixelRGBA8(iline, x, color, color, color, color);
-					}
-				}
 			}
 			ImageLineHelper.setPixelsRGBA8(iline, xValues);
-			if (y % 10 == 0) {
+			if (y % 10 == 0)
 				System.out.println(y + "/" + png.imgInfo.rows);
-			}
 			png.writeRow(iline);
 		}
 		chars = null;
@@ -189,35 +180,33 @@ public class JOGLFont implements BinaryFont {
 		}
 	}
 
-	private int powerOf2(int i) {
+	private int powerOf2(final int i) {
 		return i > 1 ? Integer.highestOneBit(i - 1) << 1 : 1;
 	}
 
 	@Override
-	public void initialize(GraphicEngine d) {
+	public void initialize(final GraphicEngine d) {
 		genTexture();
 		tmpFont = null;
 		initialized = true;
 	}
 
 	@Override
-	public void use(GraphicEngine d) {
-		if (!initialized) {
+	public void use(final GraphicEngine d) {
+		if (!initialized)
 			initialize(d);
-		}
 		final JOGLRenderer r = (JOGLRenderer) d.getRenderer();
 		r.currentFont = this;
 		r.useTexture(texture, textureW, textureH);
 	}
 
 	@Override
-	public int getStringWidth(String text) {
-		final int w = (charW) * text.length();
-		if (text.length() > 0) {
+	public int getStringWidth(final String text) {
+		final int w = charW * text.length();
+		if (text.length() > 0)
 			return w;
-		} else {
+		else
 			return 0;
-		}
 	}
 
 	@Override

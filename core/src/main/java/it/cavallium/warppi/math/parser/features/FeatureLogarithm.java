@@ -6,12 +6,12 @@ import it.cavallium.warppi.util.Error;
 
 public class FeatureLogarithm extends FeatureDoubleImpl {
 
-	public FeatureLogarithm(Object child1, Object child2) {
+	public FeatureLogarithm(final Object child1, final Object child2) {
 		super(child1, child2);
 	}
 
 	@Override
-	public Logarithm toFunction(MathContext context) throws Error {
+	public Logarithm toFunction(final MathContext context) throws Error {
 		return new Logarithm(context, getFunction1(), getFunction2());
 	}
 

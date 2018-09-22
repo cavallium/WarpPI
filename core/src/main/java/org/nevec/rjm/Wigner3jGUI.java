@@ -24,7 +24,7 @@ import it.cavallium.warppi.util.Error;
  * enter any other connectivity for the triads of j-values. The actual j-values
  * are entered as integers (2j+1) and the computation of one value (in exact
  * square root representation) is started manually.
- * 
+ *
  * @since 2011-02-15
  */
 public class Wigner3jGUI implements ActionListener, ListSelectionListener {
@@ -146,18 +146,16 @@ public class Wigner3jGUI implements ActionListener, ListSelectionListener {
 		 * lines that start with a hash mark.
 		 */
 		Scanner s = new Scanner(tr);
-		for (int l = 0; l < 3;) {
+		for (int l = 0; l < 3;)
 			try {
 				trias[l] = s.nextLine().trim();
-				if (!trias[l].startsWith("#")) {
+				if (!trias[l].startsWith("#"))
 					l++;
-				}
 			} catch (final Exception e) {
 				s.close();
 				outG.setText("ERROR: less than 3 lines in the triad definition");
 				return;
 			}
-		}
 
 		s.close();
 
@@ -196,13 +194,13 @@ public class Wigner3jGUI implements ActionListener, ListSelectionListener {
 
 	/**
 	 * Interpreter parser loop.
-	 * 
+	 *
 	 * @param e
 	 *            the information on which button had been pressed in the GUI
 	 * @since 2011-02-15
 	 */
 	@Override
-	public void actionPerformed(ActionEvent e) {
+	public void actionPerformed(final ActionEvent e) {
 		final String lin = e.getActionCommand();
 		/*
 		 * debugging System.out.println("Ac"+e.paramString()) ;
@@ -221,14 +219,14 @@ public class Wigner3jGUI implements ActionListener, ListSelectionListener {
 
 	/**
 	 * Interpreter parser loop.
-	 * 
+	 *
 	 * @param e
 	 *            the information on which of the 3jn templates had been
 	 *            selected in the Menu
 	 * @since 2011-02-18
 	 */
 	@Override
-	public void valueChanged(ListSelectionEvent e) {
+	public void valueChanged(final ListSelectionEvent e) {
 		switch (searJ.getMinSelectionIndex()) {
 			case 0:
 				inpGtria.setText("6\n");
@@ -323,11 +321,11 @@ public class Wigner3jGUI implements ActionListener, ListSelectionListener {
 	/**
 	 * Main entry point. not taking any command line options:<br>
 	 * java -jar Wigner3jGUI.jar<br>
-	 * 
+	 *
 	 * @since 2012-02-16
 	 * @author Richard J. Mathar
 	 */
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		final Wigner3jGUI g = new Wigner3jGUI();
 		g.init();
 	} /* main */

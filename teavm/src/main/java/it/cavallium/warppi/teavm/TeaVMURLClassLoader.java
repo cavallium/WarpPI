@@ -7,18 +7,18 @@ import it.cavallium.warppi.Platform.URLClassLoader;
 
 public class TeaVMURLClassLoader implements URLClassLoader {
 
-	public TeaVMURLClassLoader(URL[] urls) {
-		
+	public TeaVMURLClassLoader(final URL[] urls) {
+
 	}
 
 	@Override
-	public Class<?> loadClass(String name) throws ClassNotFoundException {
+	public Class<?> loadClass(final String name) throws ClassNotFoundException {
 		return null;
 	}
 
 	@Override
 	public void close() throws IOException {
-		
+
 	}
 
 }

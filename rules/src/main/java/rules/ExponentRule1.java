@@ -15,7 +15,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Exponent rule
  * 1^a=1
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -38,22 +38,19 @@ public class ExponentRule1 implements Rule {
 	     - An ObjectArrayList<Function> if it did something
 	*/
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
-		MathContext root = f.getMathContext();
-		if (f instanceof Power) {
-			if (((Power)f).getParameter1().equals(new Number(root, 1))) {
+		final MathContext root = f.getMathContext();
+		if (f instanceof Power)
+			if (((Power) f).getParameter1().equals(new Number(root, 1)))
 				isExecutable = true;
-			}
-		}
-	
+
 		if (isExecutable) {
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
 			result.add(new Number(root, 1));
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 
 }

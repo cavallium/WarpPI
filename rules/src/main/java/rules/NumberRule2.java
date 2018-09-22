@@ -15,7 +15,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Number rule
  * a * 1 = a
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -39,40 +39,38 @@ public class NumberRule2 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
 		if (f instanceof Multiplication) {
-			MathContext root = f.getMathContext();
-			Multiplication mult = (Multiplication) f;
+			final MathContext root = f.getMathContext();
+			final Multiplication mult = (Multiplication) f;
 			if (mult.getParameter1() instanceof Number) {
-				Function numb = mult.getParameter1();
-				if (numb.equals(new Number(root, 1))) {
+				final Function numb = mult.getParameter1();
+				if (numb.equals(new Number(root, 1)))
 					isExecutable = true;
-				}
 			}
 			if (mult.getParameter2() instanceof Number) {
-				Function numb = mult.getParameter2();
-				if (numb.equals(new Number(root, 1))) {
+				final Function numb = mult.getParameter2();
+				if (numb.equals(new Number(root, 1)))
 					isExecutable = true;
-				}
 			}
 		}
 
 		if (isExecutable) {
-			MathContext root = f.getMathContext();
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final MathContext root = f.getMathContext();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
 			Function a = null;
 			boolean aFound = false;
-			Multiplication mult = (Multiplication) f;
+			final Multiplication mult = (Multiplication) f;
 			if (aFound == false & mult.getParameter1() instanceof Number) {
-				Function numb = mult.getParameter1();
+				final Function numb = mult.getParameter1();
 				if (numb.equals(new Number(root, 1))) {
 					a = mult.getParameter2();
 					aFound = true;
 				}
 			}
 			if (aFound == false && mult.getParameter2() instanceof Number) {
-				Function numb = mult.getParameter2();
+				final Function numb = mult.getParameter2();
 				if (numb.equals(new Number(root, 1))) {
 					a = mult.getParameter1();
 					aFound = true;
@@ -81,8 +79,7 @@ public class NumberRule2 implements Rule {
 
 			result.add(a);
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 }

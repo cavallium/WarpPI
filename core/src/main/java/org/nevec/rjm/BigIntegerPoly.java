@@ -12,7 +12,7 @@ import it.cavallium.warppi.util.Error;
  * Alternatively to be interpreted as a sequence which has the polynomial as an
  * (approximate)
  * generating function.
- * 
+ *
  * @since 2010-08-27
  * @author Richard J. Mathar
  */
@@ -33,7 +33,7 @@ public class BigIntegerPoly implements Cloneable {
 
 	/**
 	 * Ctor with a comma-separated list as the list of coefficients.
-	 * 
+	 *
 	 * @param L
 	 *            the string of the form a0,a1,a2,a3 with the coefficients
 	 */
@@ -41,16 +41,15 @@ public class BigIntegerPoly implements Cloneable {
 		a = new Vector<>();
 		final Scanner sc = new Scanner(L);
 		sc.useDelimiter(",");
-		while (sc.hasNextBigInteger()) {
+		while (sc.hasNextBigInteger())
 			a.add(sc.nextBigInteger());
-		}
 		simplify();
 		sc.close();
 	} /* ctor */
 
 	/**
 	 * Ctor with a list of coefficients.
-	 * 
+	 *
 	 * @param c
 	 *            The coefficients a0, a1, a2 etc in a0+a1*x+a2*x^2+...
 	 */
@@ -62,20 +61,19 @@ public class BigIntegerPoly implements Cloneable {
 
 	/**
 	 * Ctor with a list of coefficients.
-	 * 
+	 *
 	 * @param c
 	 *            The coefficients a0, a1, a2 etc in a0+a1*x+a2*x^2+...
 	 */
 	public BigIntegerPoly(final BigInteger[] c) {
-		for (final BigInteger element : c) {
+		for (final BigInteger element : c)
 			a.add(element.add(BigInteger.ZERO));
-		}
 		simplify();
 	} /* ctor */
 
 	/**
 	 * Create a copy of this.
-	 * 
+	 *
 	 * @since 2010-08-27
 	 */
 	@Override
@@ -85,36 +83,34 @@ public class BigIntegerPoly implements Cloneable {
 
 	/**
 	 * Translate into a RatPoly copy.
-	 * 
+	 *
 	 * @since 2012-03-02
 	 */
 	public RatPoly toRatPoly() {
 		final RatPoly bd = new RatPoly();
-		for (int i = 0; i < a.size(); i++) {
+		for (int i = 0; i < a.size(); i++)
 			bd.set(i, a.elementAt(i));
-		}
 		return bd;
 	} /* toRatPoly */
 
 	/**
 	 * Retrieve a polynomial coefficient.
-	 * 
+	 *
 	 * @param n
 	 *            the zero-based index of the coefficient. n=0 for the constant
 	 *            term.
 	 * @return the polynomial coefficient in front of x^n.
 	 */
 	public BigInteger at(final int n) {
-		if (n < a.size()) {
-			return (a.elementAt(n));
-		} else {
-			return (BigInteger.ZERO);
-		}
+		if (n < a.size())
+			return a.elementAt(n);
+		else
+			return BigInteger.ZERO;
 	} /* at */
 
 	/**
 	 * Evaluate at some integer argument.
-	 * 
+	 *
 	 * @param x
 	 *            The abscissa point of the evaluation
 	 * @return The polynomial value.
@@ -122,34 +118,32 @@ public class BigIntegerPoly implements Cloneable {
 	 * @author Richard J. Mathar
 	 */
 	public BigInteger valueOf(final BigInteger x) {
-		if (a.size() == 0) {
+		if (a.size() == 0)
 			return BigInteger.ZERO;
-		}
 		BigInteger res = a.lastElement();
 		/*
 		 * Heron casted form
 		 */
-		for (int i = a.size() - 2; i >= 0; i--) {
+		for (int i = a.size() - 2; i >= 0; i--)
 			res = res.multiply(x).add(a.elementAt(i));
-		}
 		return res;
 	} /* valueOf */
 
 	/**
 	 * Horner scheme to find the function value at the argument x
-	 * 
+	 *
 	 * @param x
 	 *            The argument x.
 	 * @return Value of the polynomial at x.
 	 * @since 2008-11-13
 	 */
-	public BigInteger valueOf(int x) {
+	public BigInteger valueOf(final int x) {
 		return valueOf(new BigInteger("" + x));
 	} /* valueOf */
 
 	/**
 	 * Set a polynomial coefficient.
-	 * 
+	 *
 	 * @param n
 	 *            the zero-based index of the coefficient. n=0 for the constant
 	 *            term.
@@ -160,22 +154,21 @@ public class BigIntegerPoly implements Cloneable {
 	 *            the new value of the coefficient.
 	 */
 	public void set(final int n, final BigInteger value) {
-		if (n < a.size()) {
+		if (n < a.size())
 			a.set(n, value);
-		} else {
+		else {
 			/*
 			 * fill intermediate powers with coefficients of zero
 			 */
-			while (a.size() < n) {
+			while (a.size() < n)
 				a.add(BigInteger.ZERO);
-			}
 			a.add(value);
 		}
 	} /* set */
 
 	/**
 	 * Set a polynomial coefficient.
-	 * 
+	 *
 	 * @param n
 	 *            the zero-based index of the coefficient. n=0 for the constant
 	 *            term.
@@ -192,7 +185,7 @@ public class BigIntegerPoly implements Cloneable {
 
 	/**
 	 * Count of coefficients.
-	 * 
+	 *
 	 * @return the number of polynomial coefficients.
 	 *         Differs from the polynomial degree by one.
 	 */
@@ -202,7 +195,7 @@ public class BigIntegerPoly implements Cloneable {
 
 	/**
 	 * Polynomial degree.
-	 * 
+	 *
 	 * @return the polynomial degree.
 	 */
 	public int degree() {
@@ -211,22 +204,20 @@ public class BigIntegerPoly implements Cloneable {
 
 	/**
 	 * Polynomial lower degree.
-	 * 
+	 *
 	 * @return power of the smallest non-zero coefficient.
 	 *         If the polynomial is identical to 0, 0 is returned.
 	 */
 	public int ldegree() {
-		for (int n = 0; n < a.size(); n++) {
-			if (a.elementAt(n).compareTo(BigInteger.ZERO) != 0) {
+		for (int n = 0; n < a.size(); n++)
+			if (a.elementAt(n).compareTo(BigInteger.ZERO) != 0)
 				return n;
-			}
-		}
 		return 0;
 	} /* ldegree */
 
 	/**
 	 * Multiply by a constant factor.
-	 * 
+	 *
 	 * @param val
 	 *            the factor
 	 * @return the product of this with the factor.
@@ -236,17 +227,15 @@ public class BigIntegerPoly implements Cloneable {
 	 */
 	public BigIntegerPoly multiply(final BigInteger val) {
 		final BigIntegerPoly resul = new BigIntegerPoly();
-		if (val.compareTo(BigInteger.ZERO) != 0) {
-			for (int n = 0; n < a.size(); n++) {
+		if (val.compareTo(BigInteger.ZERO) != 0)
+			for (int n = 0; n < a.size(); n++)
 				resul.set(n, a.elementAt(n).multiply(val));
-			}
-		}
 		return resul;
 	} /* multiply */
 
 	/**
 	 * Multiply by another polynomial
-	 * 
+	 *
 	 * @param val
 	 *            the other polynomial
 	 * @return the product of this with the other polynomial
@@ -259,9 +248,8 @@ public class BigIntegerPoly implements Cloneable {
 		final int nmax = degree() + val.degree();
 		for (int n = 0; n <= nmax; n++) {
 			BigInteger coef = BigInteger.ZERO;
-			for (int nleft = 0; nleft <= n; nleft++) {
+			for (int nleft = 0; nleft <= n; nleft++)
 				coef = coef.add(at(nleft).multiply(val.at(n - nleft)));
-			}
 			resul.set(n, coef);
 		}
 		resul.simplify();
@@ -270,19 +258,18 @@ public class BigIntegerPoly implements Cloneable {
 
 	/**
 	 * Raise to a positive power.
-	 * 
+	 *
 	 * @param n
 	 *            the exponent of the power
 	 * @return the n-th power of this.
 	 */
 	public BigIntegerPoly pow(final int n) throws ArithmeticException {
 		BigIntegerPoly resul = new BigIntegerPoly("1");
-		if (n < 0) {
+		if (n < 0)
 			throw new ArithmeticException("negative polynomial power " + n);
-		} else {
-			for (int i = 1; i <= n; i++) {
+		else {
+			for (int i = 1; i <= n; i++)
 				resul = resul.multiply(this);
-			}
 			resul.simplify();
 			return resul;
 		}
@@ -290,7 +277,7 @@ public class BigIntegerPoly implements Cloneable {
 
 	/**
 	 * Add another polynomial
-	 * 
+	 *
 	 * @param val
 	 *            the other polynomial
 	 * @return the sum of this with the other polynomial
@@ -302,7 +289,7 @@ public class BigIntegerPoly implements Cloneable {
 		 * the degree of the result is the larger of the two degrees (before
 		 * simplify() at least).
 		 */
-		final int nmax = (degree() > val.degree()) ? degree() : val.degree();
+		final int nmax = degree() > val.degree() ? degree() : val.degree();
 		for (int n = 0; n <= nmax; n++) {
 			final BigInteger coef = at(n).add(val.at(n));
 			resul.set(n, coef);
@@ -313,7 +300,7 @@ public class BigIntegerPoly implements Cloneable {
 
 	/**
 	 * Subtract another polynomial
-	 * 
+	 *
 	 * @param val
 	 *            the other polynomial
 	 * @return the difference between this and the other polynomial
@@ -325,7 +312,7 @@ public class BigIntegerPoly implements Cloneable {
 		 * the degree of the result is the larger of the two degrees (before
 		 * simplify() at least).
 		 */
-		final int nmax = (degree() > val.degree()) ? degree() : val.degree();
+		final int nmax = degree() > val.degree() ? degree() : val.degree();
 		for (int n = 0; n <= nmax; n++) {
 			final BigInteger coef = at(n).subtract(val.at(n));
 			resul.set(n, coef);
@@ -336,7 +323,7 @@ public class BigIntegerPoly implements Cloneable {
 
 	/**
 	 * Divide by another polynomial.
-	 * 
+	 *
 	 * @param val
 	 *            the other polynomial
 	 * @return A vector with [0] containg the polynomial of degree which is the
@@ -357,9 +344,8 @@ public class BigIntegerPoly implements Cloneable {
 		/*
 		 * catch the case with val equal to zero
 		 */
-		if (valSimpl.degree() == 0 && valSimpl.a.firstElement().compareTo(BigInteger.ZERO) == 0) {
+		if (valSimpl.degree() == 0 && valSimpl.a.firstElement().compareTo(BigInteger.ZERO) == 0)
 			throw new ArithmeticException("Division through zero polynomial");
-		}
 		/*
 		 * degree of this smaller than degree of val: remainder is this
 		 */
@@ -377,9 +363,8 @@ public class BigIntegerPoly implements Cloneable {
 			 */
 			ret[0] = new BigIntegerPoly();
 			final BigInteger[] newc = thisSimpl.a.lastElement().divideAndRemainder(valSimpl.a.lastElement());
-			if (newc[1].compareTo(BigInteger.ZERO) != 0) {
+			if (newc[1].compareTo(BigInteger.ZERO) != 0)
 				throw new ArithmeticException("Incompatible leading term in " + this + " / " + val);
-			}
 			ret[0].set(thisSimpl.degree() - valSimpl.degree(), newc[0]);
 
 			/*
@@ -392,9 +377,9 @@ public class BigIntegerPoly implements Cloneable {
 			/*
 			 * any remainder left ?
 			 */
-			if (ret[1].degree() < valSimpl.degree()) {
+			if (ret[1].degree() < valSimpl.degree())
 				;
-			} else {
+			else {
 				final BigIntegerPoly rem[] = ret[1].divideAndRemainder(val);
 				ret[0] = ret[0].add(rem[0]);
 				ret[1] = rem[1];
@@ -405,29 +390,26 @@ public class BigIntegerPoly implements Cloneable {
 
 	/**
 	 * Print as a comma-separated list of coefficients.
-	 * 
+	 *
 	 * @return the representation a0,a1,a2,a3,...
 	 * @since 2010-08-27
 	 */
 	@Override
 	public String toString() {
 		String str = new String();
-		for (int n = 0; n < a.size(); n++) {
-			if (n == 0) {
+		for (int n = 0; n < a.size(); n++)
+			if (n == 0)
 				str += a.elementAt(n).toString();
-			} else {
+			else
 				str += "," + a.elementAt(n).toString();
-			}
-		}
-		if (str.length() == 0) {
+		if (str.length() == 0)
 			str = "0";
-		}
 		return str;
 	} /* toString */
 
 	/**
 	 * Print as a polyomial in x.
-	 * 
+	 *
 	 * @return The representation a0+a1*x+a2*x^2+...
 	 *         The terms with zero coefficients are not mentioned.
 	 * @since 2008-10-26
@@ -438,21 +420,18 @@ public class BigIntegerPoly implements Cloneable {
 			final BigInteger num = a.elementAt(n);
 			if (num.compareTo(BigInteger.ZERO) != 0) {
 				str += " ";
-				if (num.compareTo(BigInteger.ZERO) > 0 && n > 0) {
+				if (num.compareTo(BigInteger.ZERO) > 0 && n > 0)
 					str += "+";
-				}
 				str += a.elementAt(n).toString();
 				if (n > 0) {
 					str += "*x";
-					if (n > 1) {
+					if (n > 1)
 						str += "^" + n;
-					}
 				}
 			}
 		}
-		if (str.length() == 0) {
+		if (str.length() == 0)
 			str = "0";
-		}
 		return str;
 	} /* toPString */
 
@@ -462,29 +441,27 @@ public class BigIntegerPoly implements Cloneable {
 	 */
 	protected void simplify() {
 		int n = a.size() - 1;
-		if (n >= 0) {
+		if (n >= 0)
 			while (a.elementAt(n).compareTo(BigInteger.ZERO) == 0) {
 				a.removeElementAt(n);
-				if (--n < 0) {
+				if (--n < 0)
 					break;
-				}
 			}
-		}
 	} /* simplify */
 
 	/**
 	 * First derivative.
-	 * 
+	 *
 	 * @return The first derivative with respect to the indeterminate variable.
 	 * @since 2008-10-26
 	 */
 	public BigIntegerPoly derive() {
-		if (a.size() <= 1) {
+		if (a.size() <= 1)
 			/*
 			 * derivative of the constant is just zero
 			 */
 			return new BigIntegerPoly();
-		} else {
+		else {
 			final BigIntegerPoly d = new BigIntegerPoly();
 			for (int i = 1; i <= degree(); i++) {
 				final BigInteger c = a.elementAt(i).multiply(new BigInteger("" + i));
@@ -496,39 +473,36 @@ public class BigIntegerPoly implements Cloneable {
 
 	/**
 	 * Truncate polynomial degree.
-	 * 
+	 *
 	 * @return The polynomial with all coefficients beyond deg set to zero.
 	 * @since 2010-08-27
 	 */
-	public BigIntegerPoly trunc(int newdeg) {
+	public BigIntegerPoly trunc(final int newdeg) {
 		final BigIntegerPoly t = new BigIntegerPoly();
-		for (int i = 0; i <= newdeg; i++) {
+		for (int i = 0; i <= newdeg; i++)
 			t.set(i, at(i));
-		}
 		t.simplify();
 		return t;
 	} /* trunc */
 
 	/**
 	 * Inverse Binomial transform.
-	 * 
+	 *
 	 * @param maxdeg
 	 *            the maximum polynomial degree of the result
 	 * @return the sequence of coefficients is the inverse binomial transform of
 	 *         the original sequence.
 	 * @since 2010-08-29
 	 */
-	public BigIntegerPoly binomialTInv(int maxdeg) {
+	public BigIntegerPoly binomialTInv(final int maxdeg) {
 		final BigIntegerPoly r = new BigIntegerPoly();
 		for (int i = 0; i <= maxdeg; i++) {
 			BigInteger c = BigInteger.ZERO;
-			for (int j = 0; j <= i && j < a.size(); j++) {
-				if ((j + i) % 2 != 0) {
+			for (int j = 0; j <= i && j < a.size(); j++)
+				if ((j + i) % 2 != 0)
 					c = c.subtract(a.elementAt(j).multiply(BigIntegerMath.binomial(i, j)));
-				} else {
+				else
 					c = c.add(a.elementAt(j).multiply(BigIntegerMath.binomial(i, j)));
-				}
-			}
 			r.set(i, c);
 		}
 		r.simplify();
@@ -537,7 +511,7 @@ public class BigIntegerPoly implements Cloneable {
 
 	/**
 	 * Compute the order of the root r.
-	 * 
+	 *
 	 * @return 1 for simple roots, 2 for order 2 etc., 0 if not a root
 	 * @since 2010-08-27
 	 */
@@ -555,7 +529,7 @@ public class BigIntegerPoly implements Cloneable {
 
 	/**
 	 * Generate the integer roots of the polynomial.
-	 * 
+	 *
 	 * @return The vector of integer roots, without their multiplicity.
 	 * @since 2010-08-27
 	 */
@@ -566,9 +540,8 @@ public class BigIntegerPoly implements Cloneable {
 		/*
 		 * collect the zero
 		 */
-		if (a.firstElement().compareTo(BigInteger.ZERO) == 0) {
+		if (a.firstElement().compareTo(BigInteger.ZERO) == 0)
 			res.add(BigInteger.ZERO);
-		}
 
 		/*
 		 * collect the divisors of the constant element (or the reduced
@@ -582,14 +555,12 @@ public class BigIntegerPoly implements Cloneable {
 			/* check the divisors (both signs) */
 			for (int i = 0; i < cand.size(); i++) {
 				BigInteger roo = valueOf(cand.elementAt(i));
-				if (roo.compareTo(BigInteger.ZERO) == 0) {
+				if (roo.compareTo(BigInteger.ZERO) == 0)
 					/* found a root cand[i] */
 					res.add(cand.elementAt(i));
-				}
 				roo = valueOf(cand.elementAt(i).negate());
-				if (roo.compareTo(BigInteger.ZERO) == 0) {
+				if (roo.compareTo(BigInteger.ZERO) == 0)
 					res.add(cand.elementAt(i).negate());
-				}
 			}
 		}
 		return res;
@@ -597,7 +568,7 @@ public class BigIntegerPoly implements Cloneable {
 
 	/**
 	 * Generate the factors which are 2nd degree polynomials.
-	 * 
+	 *
 	 * @return A (potentially empty) vector of factors, without multiplicity.
 	 *         Only factors with non-zero absolute coefficient are generated.
 	 *         This means the factors are of the form x^2+a*x+b=0 with nonzero
@@ -611,9 +582,8 @@ public class BigIntegerPoly implements Cloneable {
 		 */
 		final Vector<BigIntegerPoly> res = new Vector<>();
 
-		if (degree() < 2) {
+		if (degree() < 2)
 			return res;
-		}
 
 		final BigInteger bsco = a.firstElement().abs();
 		@SuppressWarnings("deprecation")
@@ -644,18 +614,18 @@ public class BigIntegerPoly implements Cloneable {
 		 * coefficient.
 		 * Solve z*(c*z+a)=-b or c*z+a = -b/z or -b/z-c*z = some integer a.
 		 */
-		for (final BigComplex z : roo) {
-			for (final BigInteger bco : b) {
-				for (final BigInteger cco : c) {
+		for (final BigComplex z : roo)
+			for (final BigInteger bco : b)
+				for (final BigInteger cco : c)
 					/*
 					 * the major reason to avoid the case b=0 is that this would
 					 * require precaution of double counting below. Note that
 					 * this
 					 * case is already covered by using iroots().
 					 */
-					if (bco.signum() != 0) {
+					if (bco.signum() != 0)
 						for (int sig = -1; sig <= 1; sig += 2) {
-							final BigInteger bcosig = (sig > 0) ? bco : bco.negate();
+							final BigInteger bcosig = sig > 0 ? bco : bco.negate();
 							/*
 							 * -a = b/z+c*z has real part b*Re(z)/|z|^2+c*Re(z)
 							 * = Re z *( b/|z|^2+c)
@@ -675,34 +645,29 @@ public class BigIntegerPoly implements Cloneable {
 							final BigIntegerPoly dtst = new BigIntegerPoly("" + bcosig + "," + a + "," + cco);
 							try {
 								final BigIntegerPoly[] rm = divideAndRemainder(dtst);
-								if (rm[1].isZero()) {
+								if (rm[1].isZero())
 									res.add(dtst);
-								}
 							} catch (final ArithmeticException ex) {}
 						}
-					}
-				}
-			}
-		}
 
 		return res;
 	} /* i2roots */
 
 	/**
 	 * Test whether this polynomial value is zero.
-	 * 
+	 *
 	 * @return If this is a polynomial p(x)=0 for all x.
 	 */
 	public boolean isZero() {
 		simplify();
-		return (a.size() == 0);
+		return a.size() == 0;
 	}
 
 	/**
 	 * Factorization into integer polynomials.
 	 * The current factorization detects only factors which are polynomials of
 	 * order up to 2.
-	 * 
+	 *
 	 * @return The vector of factors. Factors with higher multiplicity are
 	 *         represented by repetition.
 	 * @throws Error
@@ -732,32 +697,28 @@ public class BigIntegerPoly implements Cloneable {
 		 * collect factors which are polynomials of degree 2
 		 */
 		final Vector<BigIntegerPoly> pol2 = i2roots();
-		for (final BigIntegerPoly i : pol2) {
+		for (final BigIntegerPoly i : pol2)
 			/*
 			 * the internal loop catches cases with higher
 			 * powers of individual polynomials (of actual degree 2 or 4...)
 			 */
-			while (res[0].degree() >= 2) {
+			while (res[0].degree() >= 2)
 				try {
 					final BigIntegerPoly[] dtst = res[0].divideAndRemainder(i);
 					if (dtst[1].isZero()) {
 						fac.add(i);
 						res = dtst;
-					} else {
+					} else
 						break;
-					}
 				} catch (final ArithmeticException ex) {
 					break;
 				}
-			}
-		}
 
 		/*
 		 * add remaining factor, if not equal to 1
 		 */
-		if (res[0].degree() > 0 || res[0].a.firstElement().compareTo(BigInteger.ONE) != 0) {
+		if (res[0].degree() > 0 || res[0].a.firstElement().compareTo(BigInteger.ONE) != 0)
 			fac.add(res[0]);
-		}
 		return fac;
 	} /* ifactor */
 

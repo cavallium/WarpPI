@@ -17,7 +17,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Negative
  * -a = b
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -40,23 +40,22 @@ public class NegativeRule implements Rule {
 	     - An ObjectArrayList<Function> if it did something
 	*/
 	@Override
-	public ObjectArrayList<Function> execute(Function f) throws Error {
+	public ObjectArrayList<Function> execute(final Function f) throws Error {
 		if (f instanceof Negative) {
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			Function variable = ((Negative) f).getParameter();
-			MathContext mathContext = f.getMathContext();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final Function variable = ((Negative) f).getParameter();
+			final MathContext mathContext = f.getMathContext();
 			if (variable instanceof Number) {
 				//-a = a*-1 = b
 				try {
 					result.add(((Number) variable).multiply(new Number(mathContext, -1)));
-				} catch (Exception ex) {
-					if (ex instanceof NullPointerException) {
+				} catch (final Exception ex) {
+					if (ex instanceof NullPointerException)
 						throw new Error(Errors.ERROR);
-					} else if (ex instanceof NumberFormatException) {
+					else if (ex instanceof NumberFormatException)
 						throw new Error(Errors.SYNTAX_ERROR);
-					} else if (ex instanceof ArithmeticException) {
+					else if (ex instanceof ArithmeticException)
 						throw new Error(Errors.NUMBER_TOO_SMALL);
-					}
 				}
 				return result;
 			}

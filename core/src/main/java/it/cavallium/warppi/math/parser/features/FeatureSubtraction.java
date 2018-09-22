@@ -7,12 +7,12 @@ import it.cavallium.warppi.util.Error;
 
 public class FeatureSubtraction extends FeatureDoubleImpl {
 
-	public FeatureSubtraction(Object child1, Object child2) {
+	public FeatureSubtraction(final Object child1, final Object child2) {
 		super(child1, child2);
 	}
 
 	@Override
-	public Function toFunction(MathContext context) throws Error {
+	public Function toFunction(final MathContext context) throws Error {
 		return new Subtraction(context, getFunction1(), getFunction2());
 	}
 

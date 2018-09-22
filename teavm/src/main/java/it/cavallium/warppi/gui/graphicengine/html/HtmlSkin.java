@@ -23,11 +23,12 @@ public class HtmlSkin implements Skin {
 
 	private HTMLImageElement imgEl;
 
-	public HtmlSkin(String file) throws IOException {
+	public HtmlSkin(final String file) throws IOException {
 		load(file);
 	}
 
-	public void use(GraphicEngine d) {
+	@Override
+	public void use(final GraphicEngine d) {
 		if (d instanceof HtmlEngine) {
 			if (!initd)
 				initialize(d);
@@ -37,24 +38,24 @@ public class HtmlSkin implements Skin {
 
 	@Override
 	public void load(String file) throws IOException {
-		if (!file.startsWith("/")) 
-			file = "/"+file;
-			url = Engine.getPlatform().getStorageUtils().getBasePath()+file;
+		if (!file.startsWith("/"))
+			file = "/" + file;
+		url = Engine.getPlatform().getStorageUtils().getBasePath() + file;
 		try {
-			InputStream stream = Engine.getPlatform().getStorageUtils().getResourceStream(file);
-			PngReader r = new PngReader(stream);
+			final InputStream stream = Engine.getPlatform().getStorageUtils().getResourceStream(file);
+			final PngReader r = new PngReader(stream);
 			skinSize = new int[] { r.imgInfo.cols, r.imgInfo.rows };
 			r.close();
-		} catch (URISyntaxException e) {
-			IOException ex = new IOException();
+		} catch (final URISyntaxException e) {
+			final IOException ex = new IOException();
 			ex.initCause(e);
 			throw ex;
 		}
 	}
 
 	@Override
-	public void initialize(GraphicEngine d) {
-		HTMLDocument doc = Window.current().getDocument();
+	public void initialize(final GraphicEngine d) {
+		final HTMLDocument doc = Window.current().getDocument();
 		imgEl = doc.createElement("img").cast();
 		imgEl.setSrc(url);
 		imgEl.setClassName("hidden");
@@ -76,11 +77,11 @@ public class HtmlSkin implements Skin {
 	public int getSkinHeight() {
 		return skinSize[1];
 	}
-	
+
 	public final String getUrl() {
 		return url;
-	}	
-	
+	}
+
 	public final HTMLImageElement getImgElement() {
 		return imgEl;
 	}

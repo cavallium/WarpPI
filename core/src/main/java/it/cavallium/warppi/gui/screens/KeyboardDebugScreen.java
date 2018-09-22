@@ -36,17 +36,15 @@ public class KeyboardDebugScreen extends Screen {
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[2].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 			renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 			renderer.glDrawStringLeft(10, 30, "Key position");
-			renderer.glDrawStringLeft(10, 45, "X: " + keyX + ", Y:" + keyY);
+			renderer.glDrawStringLeft(10, 45, "X: " + KeyboardDebugScreen.keyX + ", Y:" + KeyboardDebugScreen.keyY);
 			renderer.glDrawStringLeft(10, 65, "Key value");
 			renderer.glDrawStringLeft(10, 80, key);
 		}
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[3].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-		for (int i = 0; i < 5; i++) {
-			if (log[i] != null) {
-				renderer.glDrawStringLeft(10, 230 + 15 * (i + 1), log[i].toUpperCase());
-			}
-		}
+		for (int i = 0; i < 5; i++)
+			if (KeyboardDebugScreen.log[i] != null)
+				renderer.glDrawStringLeft(10, 230 + 15 * (i + 1), KeyboardDebugScreen.log[i].toUpperCase());
 
 		//FROM SERIAL
 		renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
@@ -54,44 +52,41 @@ public class KeyboardDebugScreen extends Screen {
 		renderer.glFillColor(-80 + 100, 100, 200, 70);
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[2].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		renderer.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		renderer.glDrawStringCenter(-80 + 100 + 200 / 2, 100 + 70 / 2 - (renderer.getCurrentFont().getCharacterHeight() / 2), "FROM SERIAL");
+		renderer.glDrawStringCenter(-80 + 100 + 200 / 2, 100 + 70 / 2 - renderer.getCurrentFont().getCharacterHeight() / 2, "FROM SERIAL");
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[3].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		renderer.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 		for (int i = 0; i < 8; i++) {
-			if (pinsA[i] == 1) {
+			if (KeyboardDebugScreen.pinsA[i] == 1)
 				renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			} else if (pinsA[i] == 2) {
+			else if (KeyboardDebugScreen.pinsA[i] == 2)
 				renderer.glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
-			} else if (pinsA[i] == -1) {
+			else if (KeyboardDebugScreen.pinsA[i] == -1)
 				renderer.glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
-			} else if (pinsA[i] == 0) {
+			else if (KeyboardDebugScreen.pinsA[i] == 0)
 				renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-			}
 			renderer.glFillColor(-80 + 103 + 25 * (7 - i), 80, 20, 20);
 			renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-			renderer.glDrawStringCenter(-80 + 113 + 25 * (7 - i), 90 - (renderer.getCurrentFont().getCharacterHeight() / 2), "" + (i + 1));
+			renderer.glDrawStringCenter(-80 + 113 + 25 * (7 - i), 90 - renderer.getCurrentFont().getCharacterHeight() / 2, "" + (i + 1));
 		}
 		for (int i = 15; i >= 8; i--) {
-			if (pinsA[i] == 1) {
+			if (KeyboardDebugScreen.pinsA[i] == 1)
 				renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			} else if (pinsA[i] == 2) {
+			else if (KeyboardDebugScreen.pinsA[i] == 2)
 				renderer.glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
-			} else if (pinsA[i] == -1) {
+			else if (KeyboardDebugScreen.pinsA[i] == -1)
 				renderer.glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
-			} else if (pinsA[i] == 0) {
+			else if (KeyboardDebugScreen.pinsA[i] == 0)
 				renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-			}
 			renderer.glFillColor(-80 + 103 + 25 * (i - 8), 170, 20, 20);
 			renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-			renderer.glDrawStringCenter(-80 + 113 + 25 * (i - 8), 180 - (renderer.getCurrentFont().getCharacterHeight() / 2), "" + (i + 1));
+			renderer.glDrawStringCenter(-80 + 113 + 25 * (i - 8), 180 - renderer.getCurrentFont().getCharacterHeight() / 2, "" + (i + 1));
 		}
 		for (int i = 0; i < 8; i++) {
-			if (dataA[i]) {
+			if (KeyboardDebugScreen.dataA[i])
 				renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			} else {
+			else
 				renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-			}
-			renderer.glFillColor(-80 + 160 + 10 * (i), 150, 8, 8);
+			renderer.glFillColor(-80 + 160 + 10 * i, 150, 8, 8);
 		}
 
 		//TO SERIAL
@@ -100,57 +95,53 @@ public class KeyboardDebugScreen extends Screen {
 		renderer.glFillColor(150 + 100, 100, 200, 70);
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[2].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		renderer.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-		renderer.glDrawStringCenter(150 + 100 + 200 / 2, 100 + 70 / 2 - (renderer.getCurrentFont().getCharacterHeight() / 2), "TO SERIAL");
+		renderer.glDrawStringCenter(150 + 100 + 200 / 2, 100 + 70 / 2 - renderer.getCurrentFont().getCharacterHeight() / 2, "TO SERIAL");
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[3].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		renderer.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 		for (int i = 15; i >= 8; i--) {
-			if (pinsB[i] == 1) {
+			if (KeyboardDebugScreen.pinsB[i] == 1)
 				renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			} else if (pinsB[i] == 2) {
+			else if (KeyboardDebugScreen.pinsB[i] == 2)
 				renderer.glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
-			} else if (pinsB[i] == -1) {
+			else if (KeyboardDebugScreen.pinsB[i] == -1)
 				renderer.glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
-			} else if (pinsB[i] == 0) {
+			else if (KeyboardDebugScreen.pinsB[i] == 0)
 				renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-			}
 			renderer.glFillColor(150 + 103 + 25 * (15 - i), 80, 20, 20);
 			renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-			renderer.glDrawStringCenter(150 + 113 + 25 * (15 - i), 90 - (renderer.getCurrentFont().getCharacterHeight() / 2), "" + (i + 1));
+			renderer.glDrawStringCenter(150 + 113 + 25 * (15 - i), 90 - renderer.getCurrentFont().getCharacterHeight() / 2, "" + (i + 1));
 		}
 		for (int i = 7; i >= 0; i--) {
-			if (pinsB[i] == 1) {
+			if (KeyboardDebugScreen.pinsB[i] == 1)
 				renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			} else if (pinsB[i] == 2) {
+			else if (KeyboardDebugScreen.pinsB[i] == 2)
 				renderer.glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
-			} else if (pinsB[i] == -1) {
+			else if (KeyboardDebugScreen.pinsB[i] == -1)
 				renderer.glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
-			} else if (pinsB[i] == 0) {
+			else if (KeyboardDebugScreen.pinsB[i] == 0)
 				renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-			}
-			renderer.glFillColor(150 + 103 + 25 * (i), 170, 20, 20);
+			renderer.glFillColor(150 + 103 + 25 * i, 170, 20, 20);
 			renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-			renderer.glDrawStringCenter(150 + 113 + 25 * (i), 180 - (renderer.getCurrentFont().getCharacterHeight() / 2), "" + (i + 1));
+			renderer.glDrawStringCenter(150 + 113 + 25 * i, 180 - renderer.getCurrentFont().getCharacterHeight() / 2, "" + (i + 1));
 		}
 		for (int i = 0; i < 8; i++) {
-			if (dataB[i]) {
+			if (KeyboardDebugScreen.dataB[i])
 				renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			} else {
+			else
 				renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-			}
-			renderer.glFillColor(150 + 160 + 10 * (i), 150, 8, 8);
+			renderer.glFillColor(150 + 160 + 10 * i, 150, 8, 8);
 		}
 
 		//GPIO
 		for (int i = 0; i < 40; i++) {
-			if (gpio[i] == true) {
+			if (KeyboardDebugScreen.gpio[i] == true)
 				renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			} else {
+			else
 				renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-			}
 			if (i % 2 == 0) {
-				renderer.glFillColor(53 + 15 * ((i) / 2), 50, 5, 5);
+				renderer.glFillColor(53 + 15 * (i / 2), 50, 5, 5);
 				renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-				renderer.glDrawStringCenter(55 + 15 * ((i) / 2), 60, "" + (i + 1));
+				renderer.glDrawStringCenter(55 + 15 * (i / 2), 60, "" + (i + 1));
 			} else {
 				renderer.glFillColor(53 + 15 * ((i - 1) / 2), 40, 5, 5);
 				renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
@@ -159,24 +150,22 @@ public class KeyboardDebugScreen extends Screen {
 		}
 
 		//KEYS
-		for (int c = 0; c < 8; c++) {
+		for (int c = 0; c < 8; c++)
 			for (int r = 0; r < 8; r++) {
-				if (ks[c][r]) {
+				if (KeyboardDebugScreen.ks[c][r])
 					renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-				} else {
+				else
 					renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
-				}
 				renderer.glFillColor(250 + 6 * c, 250 + 6 * r, 5, 5);
 			}
-		}
 	}
 
 	@Override
-	public void beforeRender(float dt) {
+	public void beforeRender(final float dt) {
 		if (System.currentTimeMillis() - beforetime >= 1000) {
 			keyevent = "NONE";
-			keyX = 0;
-			keyY = 0;
+			KeyboardDebugScreen.keyX = 0;
+			KeyboardDebugScreen.keyY = 0;
 			key = "";
 		}
 	}
@@ -187,21 +176,21 @@ public class KeyboardDebugScreen extends Screen {
 	}
 
 	@Override
-	public boolean onKeyPressed(KeyPressedEvent k) {
+	public boolean onKeyPressed(final KeyPressedEvent k) {
 		beforetime = System.currentTimeMillis();
 		keyevent = "PRESSED";
-		keyX = 0;
-		keyY = 0;
+		KeyboardDebugScreen.keyX = 0;
+		KeyboardDebugScreen.keyY = 0;
 		key = k.toString();
 		return false;
 	}
 
 	@Override
-	public boolean onKeyReleased(KeyReleasedEvent k) {
+	public boolean onKeyReleased(final KeyReleasedEvent k) {
 		beforetime = System.currentTimeMillis();
 		keyevent = "RELEASED";
-		keyX = 0;
-		keyY = 0;
+		KeyboardDebugScreen.keyX = 0;
+		KeyboardDebugScreen.keyY = 0;
 		key = k.toString();
 		return false;
 	}
@@ -213,13 +202,12 @@ public class KeyboardDebugScreen extends Screen {
 	public static boolean[][] ks = new boolean[8][8];
 	public static boolean[] gpio = new boolean[40];
 
-	public static void log(String str) {
-		final String[] newlog = log;
-		for (int i = 1; i < 5; i++) {
+	public static void log(final String str) {
+		final String[] newlog = KeyboardDebugScreen.log;
+		for (int i = 1; i < 5; i++)
 			newlog[i - 1] = newlog[i];
-		}
 		newlog[4] = "[" + System.currentTimeMillis() + "]" + str;
-		log = newlog;
+		KeyboardDebugScreen.log = newlog;
 	}
 
 }

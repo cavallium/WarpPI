@@ -1,19 +1,19 @@
 package it.cavallium.warppi.event;
 
 public interface TouchEventListener {
-	public default boolean onTouchStart(TouchStartEvent k) {
+	default boolean onTouchStart(final TouchStartEvent k) {
 		return false;
 	}
 
-	public default boolean onTouchEnd(TouchEndEvent k) {
+	default boolean onTouchEnd(final TouchEndEvent k) {
 		return false;
 	}
 
-	public default boolean onTouchCancel(TouchCancelEvent k) {
+	default boolean onTouchCancel(final TouchCancelEvent k) {
 		return false;
 	}
 
-	public default boolean onTouchMove(TouchMoveEvent k) {
+	default boolean onTouchMove(final TouchMoveEvent k) {
 		return false;
 	}
 }

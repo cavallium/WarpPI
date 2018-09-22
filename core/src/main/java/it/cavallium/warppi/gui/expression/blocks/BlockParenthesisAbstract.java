@@ -17,7 +17,7 @@ public abstract class BlockParenthesisAbstract extends Block {
 	private int chw;
 	private int chh;
 
-	protected BlockParenthesisAbstract(String prefix) {
+	protected BlockParenthesisAbstract(final String prefix) {
 		containerNumber = new BlockContainer(false);
 		this.prefix = prefix;
 
@@ -30,19 +30,18 @@ public abstract class BlockParenthesisAbstract extends Block {
 		recomputeDimensions();
 	}
 
-	public BlockParenthesisAbstract(ObjectArrayList<Block> blocks) {
+	public BlockParenthesisAbstract(final ObjectArrayList<Block> blocks) {
 		containerNumber = new BlockContainer(false, blocks);
 		prefix = null;
 		recomputeDimensions();
 	}
 
 	@Override
-	public void draw(GraphicEngine ge, Renderer r, int x, int y, Caret caret) {
+	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y, final Caret caret) {
 		BlockContainer.getDefaultFont(small).use(ge);
 		r.glColor(BlockContainer.getDefaultColor());
-		if (prefix != null) {
+		if (prefix != null)
 			r.glDrawStringLeft(x + 1, y + line - chh / 2, prefix);
-		}
 		r.glDrawCharLeft(x + prw, y, '╭');
 		r.glDrawCharLeft(x + prw, y + height - chh, '╰');
 		if (small) {
@@ -58,37 +57,34 @@ public abstract class BlockParenthesisAbstract extends Block {
 	}
 
 	@Override
-	public boolean putBlock(Caret caret, Block newBlock) {
+	public boolean putBlock(final Caret caret, final Block newBlock) {
 		boolean added = false;
 		added = added | containerNumber.putBlock(caret, newBlock);
-		if (added) {
+		if (added)
 			recomputeDimensions();
-		}
 		return added;
 	}
 
 	@Override
-	public boolean delBlock(Caret caret) {
+	public boolean delBlock(final Caret caret) {
 		boolean removed = false;
 		removed = removed | containerNumber.delBlock(caret);
-		if (removed) {
+		if (removed)
 			recomputeDimensions();
-		}
 		return removed;
 	}
 
 	@Override
-	public BlockReference<?> getBlock(Caret caret) {
+	public BlockReference<?> getBlock(final Caret caret) {
 		return containerNumber.getBlock(caret);
 	}
 
 	@Override
 	public void recomputeDimensions() {
-		if (prefix == null) {
+		if (prefix == null)
 			prw = 0;
-		} else {
+		else
 			prw = 1 + BlockContainer.getDefaultCharWidth(small) * prefix.length() + 2;
-		}
 		chw = BlockContainer.getDefaultCharWidth(small);
 		chh = BlockContainer.getDefaultCharHeight(small);
 		width = prw + chw + containerNumber.getWidth() + chw + 3;
@@ -97,7 +93,7 @@ public abstract class BlockParenthesisAbstract extends Block {
 	}
 
 	@Override
-	public void setSmall(boolean small) {
+	public void setSmall(final boolean small) {
 		this.small = small;
 		containerNumber.setSmall(small);
 		recomputeDimensions();

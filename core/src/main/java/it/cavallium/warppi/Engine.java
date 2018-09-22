@@ -21,15 +21,14 @@ public class Engine {
 	private static Platform platform;
 	private static boolean running = false;
 	private static BehaviorSubject<LoadingStatus> loadPhase = BehaviorSubject.create();
-	private BehaviorSubject<Boolean> loaded = BehaviorSubject.create(false);
+	private final BehaviorSubject<Boolean> loaded = BehaviorSubject.create(false);
 	private HardwareDevice hardwareDevice;
 
-	private Engine() {
-	}
+	private Engine() {}
 
 	/**
 	 * Start an instance of the calculator.
-	 * 
+	 *
 	 * @param platform
 	 *            Platform implementation
 	 * @param screen
@@ -43,32 +42,34 @@ public class Engine {
 	 * @throws InterruptedException
 	 * @throws IOException
 	 */
-	public static void start(Platform platform, Screen screen, HardwareDisplay disp, HardwareTouchDevice touchdevice, HUD hud,
-			StartupArguments args) throws InterruptedException, IOException {
-		if (running) {
+	public static void start(final Platform platform, final Screen screen, final HardwareDisplay disp,
+			final HardwareTouchDevice touchdevice, final HUD hud, final StartupArguments args)
+			throws InterruptedException, IOException {
+		if (Engine.running)
 			throw new RuntimeException("Already running!");
-		} else {
-			running = true;
-			INSTANCE.startInstance(platform, screen, disp, touchdevice, hud, args);
+		else {
+			Engine.running = true;
+			Engine.INSTANCE.startInstance(platform, screen, disp, touchdevice, hud, args);
 		}
 	}
 
-	private void startInstance(final Platform platform, Screen screen, HardwareDisplay disp, HardwareTouchDevice touchdevice, HUD hud,
-			StartupArguments args) throws InterruptedException, IOException {
+	private void startInstance(final Platform platform, final Screen screen, final HardwareDisplay disp,
+			final HardwareTouchDevice touchdevice, final HUD hud, final StartupArguments args)
+			throws InterruptedException, IOException {
 		Engine.platform = platform;
 		platform.getConsoleUtils().out().println("WarpPI Calculator");
 		initializeEnvironment(args);
 
-		Thread currentThread = Thread.currentThread();
+		final Thread currentThread = Thread.currentThread();
 		currentThread.setPriority(Thread.MAX_PRIORITY);
 		Engine.getPlatform().setThreadName(currentThread, "Main thread");
 
-		DisplayManager dm = new DisplayManager(disp, hud, screen, "WarpPI Calculator by Andrea Cavalli (@Cavallium)");
-		Keyboard k = new Keyboard();
-		InputManager im = new InputManager(k, touchdevice);
+		final DisplayManager dm = new DisplayManager(disp, hud, screen, "WarpPI Calculator by Andrea Cavalli (@Cavallium)");
+		final Keyboard k = new Keyboard();
+		final InputManager im = new InputManager(k, touchdevice);
 		hardwareDevice = new HardwareDevice(dm, im);
-		
-		hardwareDevice.setup(() -> loadPhase.onNext(new LoadingStatus()));
+
+		hardwareDevice.setup(() -> Engine.loadPhase.onNext(new LoadingStatus()));
 	}
 
 	private void onShutdown() {
@@ -79,13 +80,12 @@ public class Engine {
 		Engine.getPlatform().exit(0);
 	}
 
-	private void initializeEnvironment(StartupArguments args) throws IOException {
+	private void initializeEnvironment(final StartupArguments args) throws IOException {
 		ClassUtils.classLoader = this.getClass();
 		StaticVars.startupArguments = args;
 		StaticVars.debugWindow2x = args.isZoomed();
-		if (args.isVerboseLoggingEnabled() || args.isDebugEnabled()) {
+		if (args.isVerboseLoggingEnabled() || args.isDebugEnabled())
 			StaticVars.outputLevel = ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE;
-		}
 		Engine.platform.getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, args);
 		checkDeviceType();
 		if (Engine.getPlatform().isRunningOnRaspberry() && args.isRaspberryModeAllowed()) {
@@ -111,15 +111,15 @@ public class Engine {
 	}
 
 	public Observable<LoadingStatus> getLoadPhase() {
-		return loadPhase;
+		return Engine.loadPhase;
 	}
-	
+
 	public HardwareDevice getHardwareDevice() {
 		return hardwareDevice;
 	}
-	
+
 	public static Platform getPlatform() {
-		return platform;
+		return Engine.platform;
 	}
 
 	public static class LoadingStatus {

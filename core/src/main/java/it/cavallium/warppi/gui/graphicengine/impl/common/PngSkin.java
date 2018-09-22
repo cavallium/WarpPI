@@ -19,25 +19,24 @@ public abstract class PngSkin implements Skin {
 	@SuppressWarnings("unused")
 	private final boolean isResource;
 
-	public PngSkin(String file) throws IOException {
+	public PngSkin(final String file) throws IOException {
 		isResource = !new File(file).exists();
 		load(file);
 	}
 
-	@SuppressWarnings("unused")
 	@Override
 	public void load(String file) throws IOException {
 		if (!file.startsWith("/"))
 			file = "/" + file;
 		try {
 			if (!file.endsWith(".png")) {
-				File f = File.createTempFile("picalculator-png", ".png");
+				final File f = File.createTempFile("picalculator-png", ".png");
 				f.deleteOnExit();
-				BufferedImage img = ImageIO.read(Engine.getPlatform().getStorageUtils().getResourceStream(file));
+				final BufferedImage img = ImageIO.read(Engine.getPlatform().getStorageUtils().getResourceStream(file));
 				ImageIO.write(img, "PNG", f);
 				file = f.toString();
 			}
-			PngReader r = Engine.getPlatform().getPngUtils().load(Engine.getPlatform().getStorageUtils().getResourceStream(file));
+			final PngReader r = Engine.getPlatform().getPngUtils().load(Engine.getPlatform().getStorageUtils().getResourceStream(file));
 			if (r == null) {
 				skinData = new int[0];
 				skinSize = new int[] { 0, 0 };
@@ -46,15 +45,15 @@ public abstract class PngSkin implements Skin {
 				skinData = r.getImageMatrix();
 				skinSize = r.getSize();
 			}
-		} catch (URISyntaxException e) {
-			IOException ex = new IOException();
+		} catch (final URISyntaxException e) {
+			final IOException ex = new IOException();
 			ex.initCause(e);
 			throw ex;
 		}
 	}
 
 	@Override
-	public void initialize(GraphicEngine d) {
+	public void initialize(final GraphicEngine d) {
 		// TODO Auto-generated method stub
 
 	}

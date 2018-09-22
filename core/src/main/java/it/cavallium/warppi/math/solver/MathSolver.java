@@ -26,7 +26,7 @@ public class MathSolver {
 	@SuppressWarnings("unchecked")
 	private final ObjectArrayList<Function>[][] lastFunctions = new ObjectArrayList[2][stepStates.length];
 
-	public MathSolver(Function initialFunction) {
+	public MathSolver(final Function initialFunction) {
 		this.initialFunction = initialFunction;
 	}
 
@@ -43,17 +43,13 @@ public class MathSolver {
 			final ObjectArrayList<Function>[] currFncHistory = new ObjectArrayList[stepStates.length];
 			final String stepName = "Step " + stepNumber;
 			if (initStepState > endStepState) {
-				for (int i = initStepState; i < stepStates.length; i++) {
+				for (int i = initStepState; i < stepStates.length; i++)
 					currFncHistory[i] = currFnc;
-				}
-				for (int i = 0; i <= initStepState; i++) {
+				for (int i = 0; i <= initStepState; i++)
 					currFncHistory[i] = currFnc;
-				}
-			} else {
-				for (int i = initStepState; i <= endStepState; i++) {
+			} else
+				for (int i = initStepState; i <= endStepState; i++)
 					currFncHistory[i] = currFnc;
-				}
-			}
 			if (currFnc != null) {
 				lastFunctions[1] = lastFunctions[0];
 				lastFunctions[0] = currFncHistory;
@@ -63,9 +59,8 @@ public class MathSolver {
 			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, "Starting step " + stepStates[initStepState] + ". Input: " + currFnc);
 			final ObjectArrayList<Function> stepResult = solveStep(lastFnc, stepState);
 			if (stepResult != null) {
-				for (final Function result : stepResult) {
+				for (final Function result : stepResult)
 					Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, result.toString());
-				}
 				currFnc = stepResult;
 				steps.add(currFnc);
 			}
@@ -75,53 +70,47 @@ public class MathSolver {
 			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, "Step result: " + stepResult);
 			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, "Step result details: Consecutive steps that did nothing: " + consecutiveNullSteps + ", this step did " + stepStateRepetitions + " simplifications.");
 			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, "Next step state: " + stepStates[endStepState]);
-			if (Engine.getPlatform().getSettings().isDebugEnabled()) {
+			if (Engine.getPlatform().getSettings().isDebugEnabled())
 				Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, currFnc + " is " + (checkEquals(currFnc, lastFunctions[0][endStepState]) ? "" : "not ") + "equals to [0]:" + lastFunctions[0][endStepState]);
-			}
-			if (Engine.getPlatform().getSettings().isDebugEnabled()) {
+			if (Engine.getPlatform().getSettings().isDebugEnabled())
 				Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, currFnc + " is " + (checkEquals(currFnc, lastFunctions[1][endStepState]) ? "" : "not ") + "equals to [1]:" + lastFunctions[1][endStepState]);
-			}
 		} while (consecutiveNullSteps < stepStates.length && !checkEquals(currFnc, lastFunctions[0][endStepState]) && !checkEquals(currFnc, lastFunctions[1][endStepState]));
-		if (consecutiveNullSteps >= stepStates.length) {
+		if (consecutiveNullSteps >= stepStates.length)
 			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", "Loop ended because " + consecutiveNullSteps + " >= " + stepStates.length);
-		} else if (checkEquals(currFnc, lastFunctions[0][endStepState])) {
+		else if (checkEquals(currFnc, lastFunctions[0][endStepState]))
 			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", "Loop ended because " + currFnc + " is equals to [0]:" + lastFunctions[0][endStepState]);
-		} else {
+		else
 			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", "Loop ended because " + currFnc + " is equals to [1]:" + lastFunctions[1][endStepState]);
-		}
 		return steps;
 	}
 
-	private boolean checkEquals(ObjectArrayList<Function> a, ObjectArrayList<Function> b) {
-		if (a == null && b == null) {
+	private boolean checkEquals(final ObjectArrayList<Function> a, final ObjectArrayList<Function> b) {
+		if (a == null && b == null)
 			return true;
-		} else if (a != null && b != null) {
+		else if (a != null && b != null)
 			if (a.isEmpty() == b.isEmpty()) {
 				int size;
 				if ((size = a.size()) == b.size()) {
-					for (int i = 0; i < size; i++) {
-						if (a.get(i).equals(b.get(i)) == false) {
+					for (int i = 0; i < size; i++)
+						if (a.get(i).equals(b.get(i)) == false)
 							return false;
-						}
-					}
 					return true;
 				}
 			}
-		}
 		return false;
 	}
 
 	@SuppressWarnings("unused")
-	private ObjectArrayList<Function> solveStep(ObjectArrayList<Function> fncs) throws InterruptedException, Error {
+	private ObjectArrayList<Function> solveStep(final ObjectArrayList<Function> fncs)
+			throws InterruptedException, Error {
 		return solveStep(fncs, stepState);
 	}
 
-	private ObjectArrayList<Function> solveStep(ObjectArrayList<Function> fncs, AtomicInteger stepState)
+	private ObjectArrayList<Function> solveStep(ObjectArrayList<Function> fncs, final AtomicInteger stepState)
 			throws InterruptedException, Error {
 		final ObjectArrayList<Function> processedFncs = applyRules(fncs, RuleType.EXISTENCE); // Apply existence rules before everything
-		if (processedFncs != null) {
+		if (processedFncs != null)
 			fncs = processedFncs;
-		}
 		RuleType currentAcceptedRules;
 		switch (stepStates[stepState.get()]) {
 			case _1_CALCULATION: {
@@ -205,19 +194,18 @@ public class MathSolver {
 		return null;
 	}
 
-	private ObjectArrayList<Function> applyRules(ObjectArrayList<Function> fncs, RuleType currentAcceptedRules)
-			throws InterruptedException, Error {
+	private ObjectArrayList<Function> applyRules(final ObjectArrayList<Function> fncs,
+			final RuleType currentAcceptedRules) throws InterruptedException, Error {
 		final ObjectArrayList<Rule> rules = initialFunction.getMathContext().getAcceptableRules(currentAcceptedRules);
 		ObjectArrayList<Function> results = null;
-		ObjectArrayList<Rule> appliedRules = new ObjectArrayList<>();
+		final ObjectArrayList<Rule> appliedRules = new ObjectArrayList<>();
 		for (final Function fnc : fncs) {
 			boolean didSomething = false;
 			for (final Rule rule : rules) {
-				List<Function> ruleResults = fnc.simplify(rule);
-				if ((ruleResults != null && !ruleResults.isEmpty())) {
-					if (results == null) {
+				final List<Function> ruleResults = fnc.simplify(rule);
+				if (ruleResults != null && !ruleResults.isEmpty()) {
+					if (results == null)
 						results = new ObjectArrayList<>();
-					}
 					results.addAll(ruleResults);
 					appliedRules.add(rule);
 					didSomething = true;
@@ -225,23 +213,21 @@ public class MathSolver {
 				}
 			}
 			if (!didSomething && fncs.size() > 1) {
-				if (results == null) {
+				if (results == null)
 					results = new ObjectArrayList<>();
-				}
 				results.add(fnc);
 			}
 		}
 		if (appliedRules.isEmpty())
 			results = null;
-		if ((Engine.getPlatform().getConsoleUtils().getOutputLevel() >= ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN) & results != null && !appliedRules.isEmpty()) {
-			StringBuilder rulesStr = new StringBuilder();
-			for (Rule r : appliedRules) {
+		if (Engine.getPlatform().getConsoleUtils().getOutputLevel() >= ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN & results != null && !appliedRules.isEmpty()) {
+			final StringBuilder rulesStr = new StringBuilder();
+			for (final Rule r : appliedRules) {
 				rulesStr.append(r.getRuleName());
 				rulesStr.append(',');
 			}
-			if (rulesStr.length() > 0) {
+			if (rulesStr.length() > 0)
 				rulesStr.setLength(rulesStr.length() - 1);
-			}
 			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", currentAcceptedRules.toString(), "Applied rules: " + rulesStr);
 		}
 		return results;

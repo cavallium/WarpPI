@@ -48,7 +48,7 @@ public class DesktopPlatform implements Platform {
 		el.put("headless 8 colors engine", new JAnsi8Engine());
 		settings = new DesktopSettings();
 	}
-	
+
 	@Override
 	public ConsoleUtils getConsoleUtils() {
 		return cu;
@@ -75,22 +75,22 @@ public class DesktopPlatform implements Platform {
 	}
 
 	@Override
-	public void setThreadName(Thread t, String name) {
+	public void setThreadName(final Thread t, final String name) {
 		t.setName(name);
 	}
 
 	@Override
-	public void setThreadDaemon(Thread t) {
+	public void setThreadDaemon(final Thread t) {
 		t.setDaemon(true);
 	}
 
 	@Override
-	public void setThreadDaemon(Thread t, boolean value) {
+	public void setThreadDaemon(final Thread t, final boolean value) {
 		t.setDaemon(value);
 	}
 
 	@Override
-	public void exit(int value) {
+	public void exit(final int value) {
 		System.exit(value);
 	}
 
@@ -110,19 +110,17 @@ public class DesktopPlatform implements Platform {
 	}
 
 	@Override
-	public void alphaChanged(boolean val) {
+	public void alphaChanged(final boolean val) {
 		final GraphicEngine currentEngine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
-		if (currentEngine instanceof SwingEngine) {
+		if (currentEngine instanceof SwingEngine)
 			((SwingEngine) currentEngine).setAlphaChanged(val);
-		}
 	}
 
 	@Override
-	public void shiftChanged(boolean val) {
+	public void shiftChanged(final boolean val) {
 		final GraphicEngine currentEngine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
-		if (currentEngine instanceof SwingEngine) {
+		if (currentEngine instanceof SwingEngine)
 			((SwingEngine) currentEngine).setShiftChanged(val);
-		}
 	}
 
 	@Override
@@ -131,12 +129,12 @@ public class DesktopPlatform implements Platform {
 	}
 
 	@Override
-	public Semaphore newSemaphore(int i) {
+	public Semaphore newSemaphore(final int i) {
 		return new DesktopSemaphore(i);
 	}
 
 	@Override
-	public URLClassLoader newURLClassLoader(URL[] urls) {
+	public URLClassLoader newURLClassLoader(final URL[] urls) {
 		return new DesktopURLClassLoader(urls);
 	}
 
@@ -146,17 +144,17 @@ public class DesktopPlatform implements Platform {
 	}
 
 	@Override
-	public GraphicEngine getEngine(String string) throws NullPointerException {
+	public GraphicEngine getEngine(final String string) throws NullPointerException {
 		return el.get(string);
 	}
 
 	@Override
-	public void throwNewExceptionInInitializerError(String text) {
+	public void throwNewExceptionInInitializerError(final String text) {
 		throw new ExceptionInInitializerError();
 	}
 
 	@Override
-	public String[] stacktraceToString(Error e) {
+	public String[] stacktraceToString(final Error e) {
 		final StringWriter sw = new StringWriter();
 		final PrintWriter pw = new PrintWriter(sw);
 		e.printStackTrace(pw);
@@ -165,11 +163,11 @@ public class DesktopPlatform implements Platform {
 
 	@Override
 	public void loadPlatformRules() {
-		
+
 	}
 
 	@Override
-	public void zip(String targetPath, String destinationFilePath, String password) {
+	public void zip(final String targetPath, final String destinationFilePath, final String password) {
 		try {
 			final ZipParameters parameters = new ZipParameters();
 			parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
@@ -185,11 +183,10 @@ public class DesktopPlatform implements Platform {
 			final ZipFile zipFile = new ZipFile(destinationFilePath);
 
 			final File targetFile = new File(targetPath);
-			if (targetFile.isFile()) {
+			if (targetFile.isFile())
 				zipFile.addFile(targetFile, parameters);
-			} else if (targetFile.isDirectory()) {
+			else if (targetFile.isDirectory())
 				zipFile.addFolder(targetFile, parameters);
-			}
 
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -197,12 +194,11 @@ public class DesktopPlatform implements Platform {
 	}
 
 	@Override
-	public void unzip(String targetZipFilePath, String destinationFolderPath, String password) {
+	public void unzip(final String targetZipFilePath, final String destinationFolderPath, final String password) {
 		try {
 			final ZipFile zipFile = new ZipFile(targetZipFilePath);
-			if (zipFile.isEncrypted()) {
+			if (zipFile.isEncrypted())
 				zipFile.setPassword(password);
-			}
 			zipFile.extractAll(destinationFolderPath);
 
 		} catch (final Exception e) {
@@ -211,7 +207,7 @@ public class DesktopPlatform implements Platform {
 	}
 
 	@Override
-	public boolean compile(String[] command, PrintWriter printWriter, PrintWriter errors) {
+	public boolean compile(final String[] command, final PrintWriter printWriter, final PrintWriter errors) {
 		return org.eclipse.jdt.internal.compiler.batch.Main.compile(command, printWriter, errors, null);
 	}
 
@@ -220,17 +216,15 @@ public class DesktopPlatform implements Platform {
 		return CacheUtils.get("isRunningOnRaspberry", 24 * 60 * 60 * 1000, () -> {
 			if (Engine.getPlatform().isJavascript())
 				return false;
-			if (Engine.getPlatform().getOsName().equals("Linux")) {
+			if (Engine.getPlatform().getOsName().equals("Linux"))
 				try {
 					final File osRelease = new File("/etc", "os-release");
 					return FileUtils.readLines(osRelease, "UTF-8").stream().map(String::toLowerCase).anyMatch(line -> line.contains("raspbian") && line.contains("name"));
-				} catch (IOException readException) {
+				} catch (final IOException readException) {
 					return false;
 				}
-
-			} else {
+			else
 				return false;
-			}
 		});
 	}
 

@@ -8,11 +8,11 @@ public class NormalOutputContainer extends OutputContainer {
 		super();
 	}
 
-	public NormalOutputContainer(boolean small) {
+	public NormalOutputContainer(final boolean small) {
 		super(small);
 	}
 
-	public NormalOutputContainer(boolean small, int minWidth, int minHeight) {
+	public NormalOutputContainer(final boolean small, final int minWidth, final int minHeight) {
 		super(small, minWidth, minHeight);
 	}
 }

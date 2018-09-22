@@ -4,18 +4,18 @@ import it.cavallium.warppi.event.TouchEventListener;
 import it.cavallium.warppi.event.TouchPoint;
 
 public interface HardwareTouchDevice extends TouchEventListener {
-	public boolean getInvertedXY();
+	boolean getInvertedXY();
 
-	public boolean getInvertedX();
+	boolean getInvertedX();
 
-	public boolean getInvertedY();
+	boolean getInvertedY();
 
-	public default void setInvertedXY() {}
+	default void setInvertedXY() {}
 
-	public default void setInvertedX() {}
+	default void setInvertedX() {}
 
-	public default void setInvertedY() {}
+	default void setInvertedY() {}
 
-	public TouchPoint makePoint(long id, float x, float y, int maxX, int maxY, float radiusX, float radiusY,
-			float force, float rotationAngle);
+	TouchPoint makePoint(long id, float x, float y, int maxX, int maxY, float radiusX, float radiusY, float force,
+			float rotationAngle);
 }

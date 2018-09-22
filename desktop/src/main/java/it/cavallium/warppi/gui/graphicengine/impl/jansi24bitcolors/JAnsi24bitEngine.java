@@ -28,9 +28,8 @@ public class JAnsi24bitEngine implements it.cavallium.warppi.gui.graphicengine.G
 	private boolean win = false;
 	private Key precKey = null;
 
-	public JAnsi24bitEngine() {
-	}
-	
+	public JAnsi24bitEngine() {}
+
 	@Override
 	public int[] getSize() {
 		new ConsoleHandler();
@@ -43,18 +42,18 @@ public class JAnsi24bitEngine implements it.cavallium.warppi.gui.graphicengine.G
 	}
 
 	@Override
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		this.title = title;
 	}
 
 	@Override
-	public void setResizable(boolean r) {
+	public void setResizable(final boolean r) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setDisplayMode(int ww, int wh) {
+	public void setDisplayMode(final int ww, final int wh) {
 		// TODO Auto-generated method stub
 
 	}
@@ -68,11 +67,11 @@ public class JAnsi24bitEngine implements it.cavallium.warppi.gui.graphicengine.G
 	}
 
 	@Override
-	public void create(Runnable onInitialized) {
+	public void create(final Runnable onInitialized) {
 		title = Engine.getPlatform().getSettings().getCalculatorName();
 		r = new JAnsi24bitRenderer();
-		C_WIDTH = StaticVars.screenSize[0] / C_MUL_X;
-		C_HEIGHT = StaticVars.screenSize[1] / C_MUL_Y;
+		JAnsi24bitEngine.C_WIDTH = StaticVars.screenSize[0] / JAnsi24bitEngine.C_MUL_X;
+		JAnsi24bitEngine.C_HEIGHT = StaticVars.screenSize[1] / JAnsi24bitEngine.C_MUL_Y;
 		StaticVars.outputLevel = -1;
 		AnsiConsole.systemInstall();
 		if (Utils.isWindows() && !StaticVars.startupArguments.isMSDOSModeEnabled()) {
@@ -133,9 +132,8 @@ public class JAnsi24bitEngine implements it.cavallium.warppi.gui.graphicengine.G
 							break;
 						}
 					}
-					if (key != null) {
+					if (key != null)
 						Keyboard.keyPressed(key);
-					}
 
 				}
 			});
@@ -143,9 +141,8 @@ public class JAnsi24bitEngine implements it.cavallium.warppi.gui.graphicengine.G
 			t.start();
 		}
 		stopped = false;
-		if (onInitialized != null) {
+		if (onInitialized != null)
 			onInitialized.run();
-		}
 	}
 
 	@Override
@@ -169,7 +166,7 @@ public class JAnsi24bitEngine implements it.cavallium.warppi.gui.graphicengine.G
 	}
 
 	@Override
-	public void start(RenderingLoop d) {
+	public void start(final RenderingLoop d) {
 		renderLoop = d;
 		final Thread th = new Thread(() -> {
 			try {
@@ -184,9 +181,8 @@ public class JAnsi24bitEngine implements it.cavallium.warppi.gui.graphicengine.G
 					if (extraTimeInt + deltaInt < 200) {
 						Thread.sleep(200 - (extraTimeInt + deltaInt));
 						extratime = 0;
-					} else {
+					} else
 						extratime += delta - 200d;
-					}
 				}
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
@@ -201,7 +197,7 @@ public class JAnsi24bitEngine implements it.cavallium.warppi.gui.graphicengine.G
 	public void repaint() {
 		renderLoop.refresh();
 		r.curColor = new int[] { 0x00, 0x87, 0x00 };
-		r.glDrawStringCenter((C_WIDTH * C_MUL_X) / 2, 0, title);
+		r.glDrawStringCenter(JAnsi24bitEngine.C_WIDTH * JAnsi24bitEngine.C_MUL_X / 2, 0, title);
 		if (win) {
 			WindowsSupport.writeConsole(JAnsi24bitRenderer.ANSI_PREFIX + "0;0f");
 			WindowsSupport.writeConsole(JAnsi24bitRenderer.ANSI_PREFIX + "?12l");
@@ -217,15 +213,13 @@ public class JAnsi24bitEngine implements it.cavallium.warppi.gui.graphicengine.G
 		int[] curFgColor = new int[] { -1, -1, -1 };
 		String out = "";
 		char outchar = ' ';
-		for (int y = 0; y < C_HEIGHT; y++) {
-			for (int x = 0; x < C_WIDTH; x++) {
+		for (int y = 0; y < JAnsi24bitEngine.C_HEIGHT; y++)
+			for (int x = 0; x < JAnsi24bitEngine.C_WIDTH; x++) {
 				//BG color
-				int[][] pixs = new int[C_MUL_X * C_MUL_Y][];
-				for (int paddY = 0; paddY < C_MUL_Y; paddY++) {
-					for (int paddX = 0; paddX < C_MUL_X; paddX++) {
-						pixs[paddX + paddY * C_MUL_X] = r.bgColorMatrixSs[(x * C_MUL_X + paddX) + (y * C_MUL_Y + paddY) * r.size[0]];
-					}
-				}
+				int[][] pixs = new int[JAnsi24bitEngine.C_MUL_X * JAnsi24bitEngine.C_MUL_Y][];
+				for (int paddY = 0; paddY < JAnsi24bitEngine.C_MUL_Y; paddY++)
+					for (int paddX = 0; paddX < JAnsi24bitEngine.C_MUL_X; paddX++)
+						pixs[paddX + paddY * JAnsi24bitEngine.C_MUL_X] = r.bgColorMatrixSs[x * JAnsi24bitEngine.C_MUL_X + paddX + (y * JAnsi24bitEngine.C_MUL_Y + paddY) * r.size[0]];
 				int[] newpix = new int[3];
 				for (final int[] pix : pixs) {
 					newpix[0] += pix[0];
@@ -235,15 +229,13 @@ public class JAnsi24bitEngine implements it.cavallium.warppi.gui.graphicengine.G
 				newpix[0] /= pixs.length;
 				newpix[1] /= pixs.length;
 				newpix[2] /= pixs.length;
-				r.bgColorMatrix[x + y * C_WIDTH] = newpix;
+				r.bgColorMatrix[x + y * JAnsi24bitEngine.C_WIDTH] = newpix;
 
 				//FG color
-				pixs = new int[C_MUL_X * C_MUL_Y][];
-				for (int paddY = 0; paddY < C_MUL_Y; paddY++) {
-					for (int paddX = 0; paddX < C_MUL_X; paddX++) {
-						pixs[paddX + paddY * C_MUL_X] = r.fgColorMatrixSs[(x * C_MUL_X + paddX) + (y * C_MUL_Y + paddY) * r.size[0]];
-					}
-				}
+				pixs = new int[JAnsi24bitEngine.C_MUL_X * JAnsi24bitEngine.C_MUL_Y][];
+				for (int paddY = 0; paddY < JAnsi24bitEngine.C_MUL_Y; paddY++)
+					for (int paddX = 0; paddX < JAnsi24bitEngine.C_MUL_X; paddX++)
+						pixs[paddX + paddY * JAnsi24bitEngine.C_MUL_X] = r.fgColorMatrixSs[x * JAnsi24bitEngine.C_MUL_X + paddX + (y * JAnsi24bitEngine.C_MUL_Y + paddY) * r.size[0]];
 				newpix = new int[3];
 				for (final int[] pix : pixs) {
 					newpix[0] += pix[0];
@@ -253,47 +245,42 @@ public class JAnsi24bitEngine implements it.cavallium.warppi.gui.graphicengine.G
 				newpix[0] /= pixs.length;
 				newpix[1] /= pixs.length;
 				newpix[2] /= pixs.length;
-				r.fgColorMatrix[x + y * C_WIDTH] = newpix;
+				r.fgColorMatrix[x + y * JAnsi24bitEngine.C_WIDTH] = newpix;
 			}
-		}
-		for (int y = 0; y < C_HEIGHT; y++) {
-			for (int x = 0; x < C_WIDTH; x++) {
-				curBgColor = r.bgColorMatrix[x + y * C_WIDTH];
-				curFgColor = r.fgColorMatrix[x + y * C_WIDTH];
+		for (int y = 0; y < JAnsi24bitEngine.C_HEIGHT; y++) {
+			for (int x = 0; x < JAnsi24bitEngine.C_WIDTH; x++) {
+				curBgColor = r.bgColorMatrix[x + y * JAnsi24bitEngine.C_WIDTH];
+				curFgColor = r.fgColorMatrix[x + y * JAnsi24bitEngine.C_WIDTH];
 				if (precBgColor != curBgColor) {
 					out = JAnsi24bitRenderer.ANSI_PREFIX + JAnsi24bitRenderer.ansiBgColorPrefix + curBgColor[0] + ";" + curBgColor[1] + ";" + curBgColor[2] + JAnsi24bitRenderer.ansiColorSuffix;
-					if (win) {
+					if (win)
 						WindowsSupport.writeConsole(out);
-					} else {
+					else
 						AnsiConsole.out.print(out);
-					}
 				}
 				if (precFgColor != curFgColor) {
 					out = JAnsi24bitRenderer.ANSI_PREFIX + JAnsi24bitRenderer.ansiFgColorPrefix + curFgColor[0] + ";" + curFgColor[1] + ";" + curFgColor[2] + JAnsi24bitRenderer.ansiColorSuffix;
-					if (win) {
+					if (win)
 						WindowsSupport.writeConsole(out);
-					} else {
+					else
 						AnsiConsole.out.print(out);
-					}
 				}
 
-				outchar = r.charmatrix[x + y * C_WIDTH];
-				if (win) {
+				outchar = r.charmatrix[x + y * JAnsi24bitEngine.C_WIDTH];
+				if (win)
 					WindowsSupport.writeConsole(outchar + "");
-				} else {
+				else
 					AnsiConsole.out.print(outchar);
-				}
 
 				precBgColor = curBgColor;
 				precFgColor = curFgColor;
 			}
 
-			if (win) {
+			if (win)
 				//System.out.println(ch);
 				WindowsSupport.writeConsole("\r\n");
-			} else {
+			else
 				AnsiConsole.out.println();
-			}
 		}
 	}
 
@@ -303,26 +290,26 @@ public class JAnsi24bitEngine implements it.cavallium.warppi.gui.graphicengine.G
 	}
 
 	@Override
-	public JAnsi24bitFont loadFont(String file) throws IOException {
+	public JAnsi24bitFont loadFont(final String file) throws IOException {
 		return new JAnsi24bitFont();
 	}
 
 	@Override
-	public JAnsi24bitFont loadFont(String path, String file) throws IOException {
+	public JAnsi24bitFont loadFont(final String path, final String file) throws IOException {
 		return new JAnsi24bitFont();
 	}
 
 	@Override
-	public JAnsi24bitSkin loadSkin(String file) throws IOException {
+	public JAnsi24bitSkin loadSkin(final String file) throws IOException {
 		return new JAnsi24bitSkin(file);
 	}
 
 	@Override
 	public void waitForExit() {
 		try {
-			do {
+			do
 				Thread.sleep(500);
-			} while (stopped == false);
+			while (stopped == false);
 		} catch (final InterruptedException e) {
 
 		}
@@ -330,9 +317,8 @@ public class JAnsi24bitEngine implements it.cavallium.warppi.gui.graphicengine.G
 
 	@Override
 	public boolean isSupported() {
-		if (StaticVars.startupArguments.isMSDOSModeEnabled() || (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isHeadless24bitEngineForced() == false)) {
+		if (StaticVars.startupArguments.isMSDOSModeEnabled() || StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isHeadless24bitEngineForced() == false)
 			return false;
-		}
 		return true;
 	}
 

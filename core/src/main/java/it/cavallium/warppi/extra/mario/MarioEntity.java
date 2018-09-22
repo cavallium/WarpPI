@@ -11,7 +11,7 @@ public class MarioEntity {
 	public boolean collisionRight;
 	public boolean subjectToGravity;
 
-	public MarioEntity(double x, double y, double forceX, double forceY, boolean onGround, boolean subjectToGravity) {
+	public MarioEntity(final double x, final double y, final double forceX, final double forceY, final boolean onGround, final boolean subjectToGravity) {
 		this.x = x;
 		this.y = y;
 		this.forceX = forceX;
@@ -20,12 +20,12 @@ public class MarioEntity {
 		this.subjectToGravity = subjectToGravity;
 	}
 
-	public void setPosition(double x, double y) {
+	public void setPosition(final double x, final double y) {
 		this.x = x;
 		this.y = y;
 	}
 
-	public void setPosition(double x, double y, boolean onGround) {
+	public void setPosition(final double x, final double y, final boolean onGround) {
 		this.x = x;
 		this.y = y;
 		collisionDown = onGround;
@@ -43,43 +43,41 @@ public class MarioEntity {
 		return collisionDown;
 	}
 
-	public void setOnGround(boolean onGround) {
+	public void setOnGround(final boolean onGround) {
 		collisionDown = onGround;
 	}
 
-	public void gameTick(double dt) {
+	public void gameTick(final double dt) {
 		x = computeFutureDX(dt);
 		y = computeFutureDY(dt);
 		forceX = computeFutureForceDX(dt);
 		forceY = computeFutureForceDY(dt);
 	}
 
-	public double computeFutureDX(double dt) {
-		return (x + dt * forceX) - x;
+	public double computeFutureDX(final double dt) {
+		return x + dt * forceX - x;
 	}
 
-	public double computeFutureDY(double dt) {
+	public double computeFutureDY(final double dt) {
 		final double forceY = this.forceY;
 		double y = this.y;
-		if (!collisionDown) {
+		if (!collisionDown)
 			y += dt * forceY;
-		}
 		return y - this.y;
 	}
 
-	public double computeFutureForceDX(double dt) {
+	public double computeFutureForceDX(final double dt) {
 		double forceX = this.forceX;
 		forceX *= 0.75;
 		return forceX - this.forceX;
 	}
 
-	public double computeFutureForceDY(double dt) {
+	public double computeFutureForceDY(final double dt) {
 		double forceY = this.forceY;
-		if (subjectToGravity && !collisionDown) {
+		if (subjectToGravity && !collisionDown)
 			forceY -= dt * 1569.6 / 16f;
-		} else {
+		else
 			forceY *= 0.75;
-		}
 		return forceY - this.forceY;
 	}
 }

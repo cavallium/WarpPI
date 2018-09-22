@@ -44,22 +44,21 @@ public class JOGLEngine implements GraphicEngine {
 	}
 
 	@Override
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		wnd.window.setTitle(title);
 	}
 
 	@Override
-	public void setResizable(boolean r) {
-		if (!r) {
+	public void setResizable(final boolean r) {
+		if (!r)
 			wnd.window.setPosition(0, 0);
-		}
 		wnd.window.setResizable(r);
 		wnd.window.setUndecorated(!r);
 		wnd.window.setPointerVisible(r);
 	}
 
 	@Override
-	public void setDisplayMode(int ww, int wh) {
+	public void setDisplayMode(final int ww, final int wh) {
 		wnd.setSize(ww, wh);
 	}
 
@@ -69,7 +68,7 @@ public class JOGLEngine implements GraphicEngine {
 	}
 
 	@Override
-	public void create(Runnable onInitialized) {
+	public void create(final Runnable onInitialized) {
 		initialized = false;
 		created = false;
 		size = new int[] { StaticVars.screenSize[0], StaticVars.screenSize[1] };
@@ -111,16 +110,15 @@ public class JOGLEngine implements GraphicEngine {
 	}
 
 	@Override
-	public void start(RenderingLoop d) {
+	public void start(final RenderingLoop d) {
 		this.d = d;
 		wnd.window.setVisible(true);
 	}
 
 	@Override
 	public void repaint() {
-		if (d != null & r != null && JOGLRenderer.gl != null) {
+		if (d != null & r != null && JOGLRenderer.gl != null)
 			d.refresh();
-		}
 	}
 
 	@Override
@@ -129,31 +127,27 @@ public class JOGLEngine implements GraphicEngine {
 	}
 
 	@Override
-	public BinaryFont loadFont(String name) throws IOException {
-		for (final Entry<String, JOGLFont> entry : fontCache.entrySet()) {
-			if (entry.getKey().equals(name)) {
+	public BinaryFont loadFont(final String name) throws IOException {
+		for (final Entry<String, JOGLFont> entry : fontCache.entrySet())
+			if (entry.getKey().equals(name))
 				return entry.getValue();
-			}
-		}
 		final JOGLFont font = new JOGLFont(this, name);
 		fontCache.put(name, font);
 		return font;
 	}
 
 	@Override
-	public BinaryFont loadFont(String path, String name) throws IOException {
-		for (final Entry<String, JOGLFont> entry : fontCache.entrySet()) {
-			if (entry.getKey().equals(name)) {
+	public BinaryFont loadFont(final String path, final String name) throws IOException {
+		for (final Entry<String, JOGLFont> entry : fontCache.entrySet())
+			if (entry.getKey().equals(name))
 				return entry.getValue();
-			}
-		}
 		final JOGLFont font = new JOGLFont(this, path, name);
 		fontCache.put(name, font);
 		return font;
 	}
 
 	@Override
-	public Skin loadSkin(String file) throws IOException {
+	public Skin loadSkin(final String file) throws IOException {
 		return new JOGLSkin(this, file);
 	}
 
@@ -166,12 +160,10 @@ public class JOGLEngine implements GraphicEngine {
 
 	@Override
 	public boolean isSupported() {
-		if (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isGPUEngineForced() == false) {
+		if (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isGPUEngineForced() == false)
 			return false;
-		}
-		if (StaticVars.startupArguments.isHeadlessEngineForced()) {
+		if (StaticVars.startupArguments.isHeadlessEngineForced())
 			return false;
-		}
 		boolean available = false;
 		boolean errored = false;
 		try {
@@ -180,9 +172,8 @@ public class JOGLEngine implements GraphicEngine {
 			errored = true;
 			System.err.println("OpenGL Error: " + ex.getMessage());
 		}
-		if (!available && !errored) {
+		if (!available && !errored)
 			System.err.println(GLProfile.glAvailabilityToString());
-		}
 		return available;
 	}
 
@@ -191,7 +182,7 @@ public class JOGLEngine implements GraphicEngine {
 		return false;
 	}
 
-	public void registerFont(JOGLFont gpuFont) {
+	public void registerFont(final JOGLFont gpuFont) {
 		registeredFonts.add(gpuFont);
 	}
 
@@ -205,7 +196,7 @@ public class JOGLEngine implements GraphicEngine {
 		return registeredFonts;
 	}
 
-	public void registerTexture(Texture t) {
+	public void registerTexture(final Texture t) {
 		unregisteredTextures.addLast(t);
 	}
 

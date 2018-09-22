@@ -50,75 +50,64 @@ public class Utils {
 
 	public static boolean newtMode = true;
 
-	public static <T> boolean isInArray(T ch, T[] a) {
+	public static <T> boolean isInArray(final T ch, final T[] a) {
 		return Arrays.stream(a).anyMatch(item -> ch.equals(item));
 	}
 
-	public static boolean isInArray(char ch, char[] a) {
-		for (final char c : a) {
+	public static boolean isInArray(final char ch, final char[] a) {
+		for (final char c : a)
 			if (c == ch)
 				return true;
-		}
 		return false;
 	}
 
 	private static final String[] regexNormalSymbols = new String[] { "\\", ".", "[", "]", "{", "}", "(", ")", "*", "+", "-", "?", "^", "$", "|" };
 
-	public static String ArrayToRegex(String[] array) {
+	public static String ArrayToRegex(final String[] array) {
 		String regex = null;
 		for (final String symbol : array) {
 			boolean contained = false;
-			for (final String smb : regexNormalSymbols) {
+			for (final String smb : Utils.regexNormalSymbols)
 				if (smb.equals(symbol)) {
 					contained = true;
 					break;
 				}
-			}
 			if (contained) {
-				if (regex != null) {
+				if (regex != null)
 					regex += "|\\" + symbol;
-				} else {
+				else
 					regex = "\\" + symbol;
-				}
-			} else {
-				if (regex != null) {
-					regex += "|" + symbol;
-				} else {
-					regex = symbol;
-				}
-			}
+			} else if (regex != null)
+				regex += "|" + symbol;
+			else
+				regex = symbol;
 		}
 		return regex;
 	}
 
-	public static String ArrayToRegex(char[] array) {
+	public static String ArrayToRegex(final char[] array) {
 		String regex = null;
 		for (final char symbol : array) {
 			boolean contained = false;
-			for (final String smb : regexNormalSymbols) {
-				if ((smb).equals(symbol + "")) {
+			for (final String smb : Utils.regexNormalSymbols)
+				if (smb.equals(symbol + "")) {
 					contained = true;
 					break;
 				}
-			}
 			if (contained) {
-				if (regex != null) {
+				if (regex != null)
 					regex += "|\\" + symbol;
-				} else {
+				else
 					regex = "\\" + symbol;
-				}
-			} else {
-				if (regex != null) {
-					regex += "|" + symbol;
-				} else {
-					regex = symbol + "";
-				}
-			}
+			} else if (regex != null)
+				regex += "|" + symbol;
+			else
+				regex = symbol + "";
 		}
 		return regex;
 	}
 
-	public static String[] concat(String[] a, String[] b) {
+	public static String[] concat(final String[] a, final String[] b) {
 		final int aLen = a.length;
 		final int bLen = b.length;
 		final String[] c = new String[aLen + bLen];
@@ -127,7 +116,7 @@ public class Utils {
 		return c;
 	}
 
-	public static char[] concat(char[] a, char[] b) {
+	public static char[] concat(final char[] a, final char[] b) {
 		final int aLen = a.length;
 		final int bLen = b.length;
 		final char[] c = new char[aLen + bLen];
@@ -136,7 +125,7 @@ public class Utils {
 		return c;
 	}
 
-	public static String[] add(String[] a, String b) {
+	public static String[] add(final String[] a, final String b) {
 		final int aLen = a.length;
 		final String[] c = new String[aLen + 1];
 		System.arraycopy(a, 0, c, 0, aLen);
@@ -144,7 +133,7 @@ public class Utils {
 		return c;
 	}
 
-	public static char[] add(char[] a, char b) {
+	public static char[] add(final char[] a, final char b) {
 		final int aLen = a.length;
 		final char[] c = new char[aLen + 1];
 		System.arraycopy(a, 0, c, 0, aLen);
@@ -152,159 +141,119 @@ public class Utils {
 		return c;
 	}
 
-	public static boolean areThereOnlySettedUpFunctionsSumsEquationsAndSystems(List<Function> fl) {
-		for (int i = 0; i < fl.size(); i++) {
-			if (!(fl.get(i) instanceof Number || fl.get(i) instanceof Variable || fl.get(i) instanceof Sum || fl.get(i) instanceof SumSubtraction || fl.get(i) instanceof Subtraction || fl.get(i) instanceof Equation || fl.get(i) instanceof EquationsSystemPart || fl.get(i) instanceof Expression)) {
+	public static boolean areThereOnlySettedUpFunctionsSumsEquationsAndSystems(final List<Function> fl) {
+		for (int i = 0; i < fl.size(); i++)
+			if (!(fl.get(i) instanceof Number || fl.get(i) instanceof Variable || fl.get(i) instanceof Sum || fl.get(i) instanceof SumSubtraction || fl.get(i) instanceof Subtraction || fl.get(i) instanceof Equation || fl.get(i) instanceof EquationsSystemPart || fl.get(i) instanceof Expression))
 				if (fl.get(i) instanceof FunctionSingle) {
-					if (((FunctionSingle) fl.get(i)).getParameter() == null) {
+					if (((FunctionSingle) fl.get(i)).getParameter() == null)
 						return false;
-					}
 				} else if (fl.get(i) instanceof FunctionOperator) {
-					if (((FunctionOperator) fl.get(i)).getParameter1() == null || ((FunctionOperator) fl.get(i)).getParameter2() == null) {
+					if (((FunctionOperator) fl.get(i)).getParameter1() == null || ((FunctionOperator) fl.get(i)).getParameter2() == null)
 						return false;
-					}
-				} else {
+				} else
 					return false;
-				}
-			}
-		}
 		return true;
 	}
 
-	public static boolean areThereOnlySettedUpFunctionsSumsMultiplicationsEquationsAndSystems(List<Function> fl) {
-		for (int i = 0; i < fl.size(); i++) {
-			if (!(fl.get(i) instanceof Number || fl.get(i) instanceof Variable || fl.get(i) instanceof Multiplication || fl.get(i) instanceof Sum || fl.get(i) instanceof SumSubtraction || fl.get(i) instanceof Subtraction || fl.get(i) instanceof Equation || fl.get(i) instanceof EquationsSystemPart || fl.get(i) instanceof Expression)) {
+	public static boolean areThereOnlySettedUpFunctionsSumsMultiplicationsEquationsAndSystems(final List<Function> fl) {
+		for (int i = 0; i < fl.size(); i++)
+			if (!(fl.get(i) instanceof Number || fl.get(i) instanceof Variable || fl.get(i) instanceof Multiplication || fl.get(i) instanceof Sum || fl.get(i) instanceof SumSubtraction || fl.get(i) instanceof Subtraction || fl.get(i) instanceof Equation || fl.get(i) instanceof EquationsSystemPart || fl.get(i) instanceof Expression))
 				if (fl.get(i) instanceof FunctionSingle) {
-					if (((FunctionSingle) fl.get(i)).getParameter() == null) {
+					if (((FunctionSingle) fl.get(i)).getParameter() == null)
 						return false;
-					}
 				} else if (fl.get(i) instanceof FunctionOperator) {
-					if (((FunctionOperator) fl.get(i)).getParameter1() == null || ((FunctionOperator) fl.get(i)).getParameter2() == null) {
+					if (((FunctionOperator) fl.get(i)).getParameter1() == null || ((FunctionOperator) fl.get(i)).getParameter2() == null)
 						return false;
-					}
-				} else {
+				} else
 					return false;
-				}
-			}
-		}
 		return true;
 	}
 
-	public static boolean areThereOnlySettedUpFunctionsEquationsAndSystems(List<Function> fl) {
-		for (int i = 0; i < fl.size(); i++) {
-			if (!(fl.get(i) instanceof Number || fl.get(i) instanceof Variable || fl.get(i) instanceof Equation || fl.get(i) instanceof EquationsSystemPart || fl.get(i) instanceof Expression)) {
+	public static boolean areThereOnlySettedUpFunctionsEquationsAndSystems(final List<Function> fl) {
+		for (int i = 0; i < fl.size(); i++)
+			if (!(fl.get(i) instanceof Number || fl.get(i) instanceof Variable || fl.get(i) instanceof Equation || fl.get(i) instanceof EquationsSystemPart || fl.get(i) instanceof Expression))
 				if (fl.get(i) instanceof FunctionSingle) {
-					if (((FunctionSingle) fl.get(i)).getParameter() == null) {
+					if (((FunctionSingle) fl.get(i)).getParameter() == null)
 						return false;
-					}
 				} else if (fl.get(i) instanceof FunctionOperator) {
-					if (((FunctionOperator) fl.get(i)).getParameter1() == null || ((FunctionOperator) fl.get(i)).getParameter2() == null) {
+					if (((FunctionOperator) fl.get(i)).getParameter1() == null || ((FunctionOperator) fl.get(i)).getParameter2() == null)
 						return false;
-					}
-				} else {
+				} else
 					return false;
-				}
-			}
-		}
 		return true;
 	}
 
-	public static boolean areThereOnlySettedUpFunctionsAndSystems(List<Function> fl) {
-		for (int i = 0; i < fl.size(); i++) {
-			if (!(fl.get(i) instanceof Number || fl.get(i) instanceof Variable || fl.get(i) instanceof Equation || fl.get(i) instanceof EquationsSystemPart || fl.get(i) instanceof Expression)) {
+	public static boolean areThereOnlySettedUpFunctionsAndSystems(final List<Function> fl) {
+		for (int i = 0; i < fl.size(); i++)
+			if (!(fl.get(i) instanceof Number || fl.get(i) instanceof Variable || fl.get(i) instanceof Equation || fl.get(i) instanceof EquationsSystemPart || fl.get(i) instanceof Expression))
 				if (fl.get(i) instanceof FunctionSingle) {
-					if (((FunctionSingle) fl.get(i)).getParameter() == null) {
+					if (((FunctionSingle) fl.get(i)).getParameter() == null)
 						return false;
-					}
 				} else if (fl.get(i) instanceof FunctionOperator) {
-					if (((FunctionOperator) fl.get(i)).getParameter1() == null || ((FunctionOperator) fl.get(i)).getParameter2() == null) {
+					if (((FunctionOperator) fl.get(i)).getParameter1() == null || ((FunctionOperator) fl.get(i)).getParameter2() == null)
 						return false;
-					}
-				} else {
+				} else
 					return false;
-				}
-			}
-		}
 		return true;
 	}
 
-	public static boolean areThereOnlyEmptySNFunctions(List<Function> fl) {
-		for (int i = 0; i < fl.size(); i++) {
-			if (fl.get(i) instanceof FunctionSingle) {
-				if (((FunctionSingle) fl.get(i)).getParameter() == null) {
+	public static boolean areThereOnlyEmptySNFunctions(final List<Function> fl) {
+		for (int i = 0; i < fl.size(); i++)
+			if (fl.get(i) instanceof FunctionSingle)
+				if (((FunctionSingle) fl.get(i)).getParameter() == null)
 					return true;
-				}
-			}
-		}
 		return false;
 	}
 
-	public static boolean areThereOnlyEmptyNSNFunctions(List<Function> fl) {
-		for (int i = 0; i < fl.size(); i++) {
-			if (fl.get(i) instanceof FunctionOperator && !(fl.get(i) instanceof Sum) && !(fl.get(i) instanceof SumSubtraction) && !(fl.get(i) instanceof Subtraction) && !(fl.get(i) instanceof Multiplication) && !(fl.get(i) instanceof Division)) {
-				if (((FunctionOperator) fl.get(i)).getParameter1() == null && ((FunctionOperator) fl.get(i)).getParameter2() == null) {
+	public static boolean areThereOnlyEmptyNSNFunctions(final List<Function> fl) {
+		for (int i = 0; i < fl.size(); i++)
+			if (fl.get(i) instanceof FunctionOperator && !(fl.get(i) instanceof Sum) && !(fl.get(i) instanceof SumSubtraction) && !(fl.get(i) instanceof Subtraction) && !(fl.get(i) instanceof Multiplication) && !(fl.get(i) instanceof Division))
+				if (((FunctionOperator) fl.get(i)).getParameter1() == null && ((FunctionOperator) fl.get(i)).getParameter2() == null)
 					return true;
-				}
-			}
-		}
 		return false;
 	}
 
-	public static boolean areThereEmptyMultiplications(List<Function> fl) {
-		for (int i = 0; i < fl.size(); i++) {
-			if (fl.get(i) instanceof Multiplication || fl.get(i) instanceof Division) {
-				if (((FunctionOperator) fl.get(i)).getParameter1() == null && ((FunctionOperator) fl.get(i)).getParameter2() == null) {
+	public static boolean areThereEmptyMultiplications(final List<Function> fl) {
+		for (int i = 0; i < fl.size(); i++)
+			if (fl.get(i) instanceof Multiplication || fl.get(i) instanceof Division)
+				if (((FunctionOperator) fl.get(i)).getParameter1() == null && ((FunctionOperator) fl.get(i)).getParameter2() == null)
 					return true;
-				}
-			}
-		}
 		return false;
 	}
 
-	public static boolean areThereEmptySums(List<Function> fl) {
-		for (int i = 0; i < fl.size(); i++) {
-			if (fl.get(i) instanceof Sum || fl.get(i) instanceof SumSubtraction || fl.get(i) instanceof Subtraction) {
-				if (((FunctionOperator) fl.get(i)).getParameter1() == null && ((FunctionOperator) fl.get(i)).getParameter2() == null) {
+	public static boolean areThereEmptySums(final List<Function> fl) {
+		for (int i = 0; i < fl.size(); i++)
+			if (fl.get(i) instanceof Sum || fl.get(i) instanceof SumSubtraction || fl.get(i) instanceof Subtraction)
+				if (((FunctionOperator) fl.get(i)).getParameter1() == null && ((FunctionOperator) fl.get(i)).getParameter2() == null)
 					return true;
-				}
-			}
-		}
 		return false;
 	}
 
-	public static boolean areThereEmptySystems(List<Function> fl) {
-		for (int i = 0; i < fl.size(); i++) {
-			if (fl.get(i) instanceof EquationsSystemPart) {
-				if (((EquationsSystemPart) fl.get(i)).getParameter() == null) {
+	public static boolean areThereEmptySystems(final List<Function> fl) {
+		for (int i = 0; i < fl.size(); i++)
+			if (fl.get(i) instanceof EquationsSystemPart)
+				if (((EquationsSystemPart) fl.get(i)).getParameter() == null)
 					return true;
-				}
-			}
-		}
 		return false;
 	}
 
-	public static boolean areThereOtherSettedUpFunctions(List<Function> fl) {
-		for (int i = 0; i < fl.size(); i++) {
-			if (!(fl.get(i) instanceof Number || fl.get(i) instanceof Variable || fl.get(i) instanceof Sum || fl.get(i) instanceof SumSubtraction || fl.get(i) instanceof Expression || fl.get(i) instanceof FunctionSingle || fl.get(i) instanceof Multiplication || fl.get(i) instanceof Division)) {
+	public static boolean areThereOtherSettedUpFunctions(final List<Function> fl) {
+		for (int i = 0; i < fl.size(); i++)
+			if (!(fl.get(i) instanceof Number || fl.get(i) instanceof Variable || fl.get(i) instanceof Sum || fl.get(i) instanceof SumSubtraction || fl.get(i) instanceof Expression || fl.get(i) instanceof FunctionSingle || fl.get(i) instanceof Multiplication || fl.get(i) instanceof Division))
 				if (fl.get(i) instanceof FunctionSingle) {
-					if (((FunctionSingle) fl.get(i)).getParameter() == null) {
+					if (((FunctionSingle) fl.get(i)).getParameter() == null)
 						return true;
-					}
 				} else if (fl.get(i) instanceof FunctionOperator) {
-					if (((FunctionOperator) fl.get(i)).getParameter1() == null || ((FunctionOperator) fl.get(i)).getParameter2() == null) {
+					if (((FunctionOperator) fl.get(i)).getParameter1() == null || ((FunctionOperator) fl.get(i)).getParameter2() == null)
 						return true;
-					}
-				} else {
+				} else
 					return true;
-				}
-			}
-		}
 		return false;
 	}
 
-	public static Rational getRational(BigDecimal str) {
+	public static Rational getRational(final BigDecimal str) {
 		try {
-			return getRational(str.toString());
+			return Utils.getRational(str.toString());
 		} catch (final Error e) {
 			//E' IMPOSSIBILE CHE VENGA THROWATO UN ERRORE
 			return new Rational("0");
@@ -316,13 +265,12 @@ public class Utils {
 			return new Rational(str);
 		} catch (final NumberFormatException ex) {
 			if (new BigDecimal(str).compareTo(new BigDecimal(8000.0)) < 0 && new BigDecimal(str).compareTo(new BigDecimal(-8000.0)) > 0) {
-				if (str.equals("-")) {
+				if (str.equals("-"))
 					str = "-1";
-				}
 				final long bits = Double.doubleToLongBits(Double.parseDouble(str));
 
 				final long sign = bits >>> 63;
-				final long exponent = ((bits >>> 52) ^ (sign << 11)) - 1023;
+				final long exponent = (bits >>> 52 ^ sign << 11) - 1023;
 				final long fraction = bits << 12; // bits are "reversed" but that's
 				// not a problem
 
@@ -330,19 +278,17 @@ public class Utils {
 				long b = 1L;
 
 				for (int i = 63; i >= 12; i--) {
-					a = a * 2 + ((fraction >>> i) & 1);
+					a = a * 2 + (fraction >>> i & 1);
 					b *= 2;
 				}
 
-				if (exponent > 0) {
+				if (exponent > 0)
 					a *= 1 << exponent;
-				} else {
+				else
 					b *= 1 << -exponent;
-				}
 
-				if (sign == 1) {
+				if (sign == 1)
 					a *= -1;
-				}
 
 				if (b == 0) {
 					a = 0;
@@ -362,25 +308,23 @@ public class Utils {
 		}
 	}
 
-	public static BigDecimal rationalToIrrationalString(Rational r) {
+	public static BigDecimal rationalToIrrationalString(final Rational r) {
 		return BigDecimalMath.divideRound(new BigDecimal(r.numer()).setScale(Utils.scale, Utils.scaleMode), new BigDecimal(r.denom()).setScale(Utils.scale, Utils.scaleMode));
 	}
 
-	public static boolean equalsVariables(List<Variable> variables, List<Variable> variables2) {
-		if (variables.size() != variables2.size()) {
+	public static boolean equalsVariables(final List<Variable> variables, final List<Variable> variables2) {
+		if (variables.size() != variables2.size())
 			return false;
-		} else {
-			for (final Variable v : variables) {
-				if (!variables2.contains(v)) {
+		else {
+			for (final Variable v : variables)
+				if (!variables2.contains(v))
 					return false;
-				}
-			}
 			return true;
 		}
 	}
 
 	@Deprecated
-	public static void writeSquareRoot(Function var, int x, int y, boolean small) {
+	public static void writeSquareRoot(final Function var, final int x, final int y, final boolean small) {
 //		var.setSmall(small);
 //		final int w1 = var.getWidth();
 //		final int h1 = var.getHeight();
@@ -398,85 +342,74 @@ public class Utils {
 	}
 
 	public static final int getFontHeight() {
-		return getFontHeight(false);
+		return Utils.getFontHeight(false);
 	}
 
-	public static final BinaryFont getFont(boolean small) {
-		return getFont(small, StaticVars.zoomed);
+	public static final BinaryFont getFont(final boolean small) {
+		return Utils.getFont(small, StaticVars.zoomed);
 	}
 
-	public static final BinaryFont getFont(boolean small, boolean zoomed) {
-		return Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[getFontIndex(small, zoomed)];
+	public static final BinaryFont getFont(final boolean small, final boolean zoomed) {
+		return Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[Utils.getFontIndex(small, zoomed)];
 	}
 
-	public static final int getFontIndex(boolean small, boolean zoomed) {
+	public static final int getFontIndex(final boolean small, final boolean zoomed) {
 		if (small) {
-			if (zoomed) {
+			if (zoomed)
 				return 3;
-			} else {
+			else
 				return 1;
-			}
-		} else {
-			if (zoomed) {
-				return 2;
-			} else {
-				return 0;
-			}
-		}
+		} else if (zoomed)
+			return 2;
+		else
+			return 0;
 	}
 
-	public static final int getFontHeight(boolean small) {
-		return getFontHeight(small, StaticVars.zoomed);
+	public static final int getFontHeight(final boolean small) {
+		return Utils.getFontHeight(small, StaticVars.zoomed);
 	}
 
-	public static final int getFontHeight(boolean small, boolean zoomed) {
+	public static final int getFontHeight(final boolean small, final boolean zoomed) {
 		if (small) {
-			if (zoomed) {
+			if (zoomed)
 				return Engine.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[3];
-			} else {
+			else
 				return Engine.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[1];
-			}
-		} else {
-			if (zoomed) {
-				return Engine.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[2];
-			} else {
-				return Engine.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[0];
-			}
-		}
+		} else if (zoomed)
+			return Engine.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[2];
+		else
+			return Engine.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[0];
 	}
 
-	public static byte[] convertStreamToByteArray(InputStream stream, long size) throws IOException {
+	public static byte[] convertStreamToByteArray(final InputStream stream, final long size) throws IOException {
 
 		// check to ensure that file size is not larger than Integer.MAX_VALUE.
-		if (size > Integer.MAX_VALUE) {
+		if (size > Integer.MAX_VALUE)
 			return new byte[0];
-		}
 
 		final byte[] buffer = new byte[(int) size];
 		final ByteArrayOutputStream os = new ByteArrayOutputStream();
 
 		int line = 0;
 		// read bytes from stream, and store them in buffer
-		while ((line = stream.read(buffer)) != -1) {
+		while ((line = stream.read(buffer)) != -1)
 			// Writes bytes from byte array (buffer) into output stream.
 			os.write(buffer, 0, line);
-		}
 		stream.close();
 		os.flush();
 		os.close();
 		return os.toByteArray();
 	}
 
-	public static int[] realBytes(byte[] bytes) {
+	public static int[] realBytes(final byte[] bytes) {
 		final int len = bytes.length;
 		final int[] realbytes = new int[len];
-		for (int i = 0; i < len; i++) {
+		for (int i = 0; i < len; i++)
 			realbytes[i] = bytes[i] & 0xFF;
-		}
 		return realbytes;
 	}
 
-	public static Function[][] joinFunctionsResults(List<Function> l1, List<Function> l2) {
+	public static Function[][] joinFunctionsResults(final List<Function> l1, final List<Function> l2) {
 		final int size1 = l1.size();
 		final int size2 = l2.size();
 		int cur1 = 0;
@@ -485,95 +418,77 @@ public class Utils {
 		final Function[][] results = new Function[total][2];
 		for (int i = 0; i < total; i++) {
 			results[i] = new Function[] { l1.get(cur1), l2.get(cur2) };
-			if (i % size2 == 0) {
+			if (i % size2 == 0)
 				cur1 += 1;
-			}
-			if (i % size1 == 0) {
+			if (i % size1 == 0)
 				cur2 += 1;
-			}
-			if (cur1 >= size1) {
+			if (cur1 >= size1)
 				cur1 = 0;
-			}
-			if (cur2 >= size2) {
+			if (cur2 >= size2)
 				cur2 = 0;
-			}
 		}
 		return results;
 	}
 
-	public static Function[][] joinFunctionsResults(ObjectArrayList<ObjectArrayList<Function>> ln) {
+	public static Function[][] joinFunctionsResults(final ObjectArrayList<ObjectArrayList<Function>> ln) {
 		final int[] sizes = new int[ln.size()];
-		for (int i = 0; i < ln.size(); i++) {
+		for (int i = 0; i < ln.size(); i++)
 			sizes[i] = ln.get(i).size();
-		}
 		final int[] curs = new int[sizes.length];
 		int total = 0;
-		for (int i = 0; i < ln.size(); i++) {
-			if (i == 0) {
+		for (int i = 0; i < ln.size(); i++)
+			if (i == 0)
 				total = sizes[i];
-			} else {
+			else
 				total *= sizes[i];
-			}
-		}
 		final Function[][] results = new Function[total][sizes.length];
 		for (int i = 0; i < total; i++) {
 			results[i] = new Function[sizes.length];
-			for (int j = 0; j < sizes.length; j++) {
+			for (int j = 0; j < sizes.length; j++)
 				results[i][j] = ln.get(j).get(curs[j]);
-			}
-			for (int k = 0; k < sizes.length; k++) {
-				if (i % sizes[k] == 0) {
-					for (int l = 0; l < sizes.length; l++) {
-						if (l != k) {
+			for (int k = 0; k < sizes.length; k++)
+				if (i % sizes[k] == 0)
+					for (int l = 0; l < sizes.length; l++)
+						if (l != k)
 							curs[l] += 1;
-						}
-					}
-				}
-			}
-			for (int k = 0; k < sizes.length; k++) {
-				if (curs[k] >= sizes[k]) {
+			for (int k = 0; k < sizes.length; k++)
+				if (curs[k] >= sizes[k])
 					curs[k] = 0;
-				}
-			}
 		}
 		return results;
 	}
 
-	public static boolean isNegative(Function b) {
-		if (b instanceof Negative) {
+	public static boolean isNegative(final Function b) {
+		if (b instanceof Negative)
 			return true;
-		} else if (b instanceof Number && ((Number) b).getTerm().compareTo(BigDecimal.ZERO) < 0) {
+		else if (b instanceof Number && ((Number) b).getTerm().compareTo(BigDecimal.ZERO) < 0)
 			return true;
-		}
 		return false;
 	}
 
-	public static CharSequence multipleChars(String string, int i) {
+	public static CharSequence multipleChars(final String string, final int i) {
 		String result = "";
-		for (int j = 0; j < i; j++) {
+		for (int j = 0; j < i; j++)
 			result += string;
-		}
 		return result;
 	}
 
-	public static boolean isIntegerValue(BigDecimal bd) {
+	public static boolean isIntegerValue(final BigDecimal bd) {
 		return bd.signum() == 0 || bd.scale() <= 0 || bd.stripTrailingZeros().scale() <= 0;
 	}
 
 	@SafeVarargs
-	public static <T> String arrayToString(T... data) {
+	public static <T> String arrayToString(final T... data) {
 		String sdata = "";
-		for (final T o : data) {
+		for (final T o : data)
 			sdata += "," + o;
-		}
 		return sdata.substring(1);
 	}
 
-	public static String arrayToString(boolean... data) {
+	public static String arrayToString(final boolean... data) {
 		String sdata = "";
-		for (final boolean o : data) {
-			sdata += (o) ? 1 : 0;
-		}
+		for (final boolean o : data)
+			sdata += o ? 1 : 0;
 		return sdata;
 	}
 
@@ -593,50 +508,46 @@ public class Utils {
 				boolean mb = false;
 				final String displayName = method.getName();
 				final String displayValue = value.toString();
-				if (displayName.endsWith("CpuLoad")) {
+				if (displayName.endsWith("CpuLoad"))
 					percent = true;
-				}
-				if (displayName.endsWith("MemorySize")) {
+				if (displayName.endsWith("MemorySize"))
 					mb = true;
-				}
 				final List<String> arr = new ArrayList<>();
 				arr.add("getFreePhysicalMemorySize");
 				arr.add("getProcessCpuLoad");
 				arr.add("getSystemCpuLoad");
 				arr.add("getTotalPhysicalMemorySize");
-				if (arr.contains(displayName)) {
-					if (percent) {
+				if (arr.contains(displayName))
+					if (percent)
 						try {
-							System.out.println(displayName + " = " + (((int) (Float.parseFloat(displayValue) * 10000f)) / 100f) + "%");
+							System.out.println(displayName + " = " + (int) (Float.parseFloat(displayValue) * 10000f) / 100f + "%");
 						} catch (final Exception ex) {
 							System.out.println(displayName + " = " + displayValue);
 						}
-					} else if (mb) {
+					else if (mb)
 						try {
-							System.out.println(displayName + " = " + (Long.parseLong(displayValue) / 1024L / 1024L) + " MB");
+							System.out.println(displayName + " = " + Long.parseLong(displayValue) / 1024L / 1024L + " MB");
 						} catch (final Exception ex) {
 							System.out.println(displayName + " = " + displayValue);
 						}
-					} else {
+					else
 						System.out.println(displayName + " = " + displayValue);
-					}
-				}
 			} // if
 		} // for
 		System.out.println("============");
 	}
 
 	public static boolean isWindows() {
-		return (Engine.getPlatform().getOsName().indexOf("win") >= 0);
+		return Engine.getPlatform().getOsName().indexOf("win") >= 0;
 	}
 
-	public static <T> ObjectArrayList<T> newArrayList(T o) {
+	public static <T> ObjectArrayList<T> newArrayList(final T o) {
 		final ObjectArrayList<T> t = new ObjectArrayList<>();
 		t.add(o);
 		return t;
 	}
 
-	public static InputStream getResourceStreamSafe(String string) throws IOException, URISyntaxException {
+	public static InputStream getResourceStreamSafe(final String string) throws IOException, URISyntaxException {
 		try {
 			return Engine.getPlatform().getStorageUtils().getResourceStream(string);
 		} catch (final Exception ex) {
@@ -648,11 +559,10 @@ public class Utils {
 		return new File("").getAbsoluteFile();
 	}
 
-	public static <T,U> U getOrDefault(Map<T, U> enginesList, T key, U object) {
-		if (enginesList.containsKey(key)) {
+	public static <T, U> U getOrDefault(final Map<T, U> enginesList, final T key, final U object) {
+		if (enginesList.containsKey(key))
 			return enginesList.get(key);
-		} else {
+		else
 			return object;
-		}
 	}
 }

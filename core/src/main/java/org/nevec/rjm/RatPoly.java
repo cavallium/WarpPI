@@ -14,7 +14,7 @@ import it.cavallium.warppi.util.Error;
  * Alternatively to be interpreted as a sequence which has the polynomial as an
  * (approximate)
  * generating function.
- * 
+ *
  * @since 2006-06-25
  * @author Richard J. Mathar
  */
@@ -36,22 +36,21 @@ class RatPoly {
 
 	/**
 	 * Constructor with an explicit list of coefficients.
-	 * 
+	 *
 	 * @param L
 	 *            the coefficients a0, a1, a2, a3,.., A deep copy of the these
 	 *            is created.
 	 */
 	public RatPoly(final Vector<Rational> L) {
 		a = new Vector<>();
-		for (int i = 0; i < L.size(); i++) {
+		for (int i = 0; i < L.size(); i++)
 			a.add(L.elementAt(i).clone());
-		}
 		simplify();
 	} /* ctor */
 
 	/**
 	 * Constructor with a comma-separated list as the list of coefficients.
-	 * 
+	 *
 	 * @param L
 	 *            the string of the form a0,a1,a2,a3 with the coefficients
 	 */
@@ -69,7 +68,7 @@ class RatPoly {
 
 	/**
 	 * Constructor from a hypergeometric series.
-	 * 
+	 *
 	 * @param A
 	 *            the list of values in the numerator of AFB
 	 * @param B
@@ -79,7 +78,7 @@ class RatPoly {
 	 * @throws Error
 	 * @since 2008-11-13
 	 */
-	public RatPoly(final Vector<BigInteger> A, final Vector<BigInteger> B, int nmax) throws Error {
+	public RatPoly(final Vector<BigInteger> A, final Vector<BigInteger> B, final int nmax) throws Error {
 		/*
 		 * To allow common initialization with the signature below,
 		 * the main body is assembled in a separate function.
@@ -89,7 +88,7 @@ class RatPoly {
 
 	/**
 	 * Constructor from a hypergeometric series.
-	 * 
+	 *
 	 * @param A
 	 *            the list of values in the numerator of AFB.
 	 *            At least one of these values must be a negative integer, which
@@ -102,18 +101,14 @@ class RatPoly {
 	 */
 	public RatPoly(final Vector<BigInteger> A, final Vector<BigInteger> B) throws Error {
 		BigInteger Nmax = BigInteger.ONE.negate();
-		for (int j = 0; j < A.size(); j++) {
-			if (A.elementAt(j).compareTo(BigInteger.ZERO) <= 0) {
-				if (Nmax.compareTo(BigInteger.ZERO) < 0) {
+		for (int j = 0; j < A.size(); j++)
+			if (A.elementAt(j).compareTo(BigInteger.ZERO) <= 0)
+				if (Nmax.compareTo(BigInteger.ZERO) < 0)
 					Nmax = A.elementAt(j).negate();
-				} else {
+				else
 					Nmax = Nmax.min(A.elementAt(j).negate());
-				}
-			}
-		}
-		if (Nmax.compareTo(BigInteger.ZERO) < 0) {
+		if (Nmax.compareTo(BigInteger.ZERO) < 0)
 			throw new ArithmeticException("Infinite Number of Terms in Series " + Nmax.toString());
-		}
 
 		final int nmax = Nmax.intValue() - 1;
 		init(A, B, nmax);
@@ -121,7 +116,7 @@ class RatPoly {
 
 	/**
 	 * Constructor from a hypergeometric series.
-	 * 
+	 *
 	 * @param A
 	 *            the list of values in the numerator of AFB
 	 * @param B
@@ -131,7 +126,7 @@ class RatPoly {
 	 * @throws Error
 	 * @since 2008-11-13
 	 */
-	protected void init(final Vector<BigInteger> A, final Vector<BigInteger> B, int nmax) throws Error {
+	protected void init(final Vector<BigInteger> A, final Vector<BigInteger> B, final int nmax) throws Error {
 		a = new Vector<>();
 		final Factorial f = new Factorial();
 		for (int n = 0; n <= nmax; n++) {
@@ -152,7 +147,7 @@ class RatPoly {
 
 	/**
 	 * Create a copy of this.
-	 * 
+	 *
 	 * @since 2008-11-07
 	 */
 	@Override
@@ -165,103 +160,99 @@ class RatPoly {
 
 	/**
 	 * Retrieve a polynomial coefficient.
-	 * 
+	 *
 	 * @param n
 	 *            the zero-based index of the coefficient. n=0 for the constant
 	 *            term.
 	 * @return the polynomial coefficient in front of x^n.
 	 */
 	public Rational at(final int n) {
-		if (n < a.size()) {
-			return (a.elementAt(n));
-		} else {
-			return (new Rational(0, 1));
-		}
+		if (n < a.size())
+			return a.elementAt(n);
+		else
+			return new Rational(0, 1);
 	} /* at */
 
 	/**
 	 * Horner scheme to find the function value at the argument x
-	 * 
+	 *
 	 * @param x
 	 *            The argument of the polynomial
 	 * @param mc
 	 *            The context determining the precision of the value returned.
 	 * @since 2008-10-26
 	 */
-	public BigComplex valueOf(BigComplex x, MathContext mc) {
+	public BigComplex valueOf(final BigComplex x, final MathContext mc) {
 		/* result is initialized to zero */
 		BigComplex f = new BigComplex();
-		for (int i = degree(); i >= 0; i--) {
+		for (int i = degree(); i >= 0; i--)
 			f = f.multiply(x, mc).add(a.elementAt(i).BigDecimalValue(mc));
-		}
 		return f;
 	} /* valueOf */
 
 	/**
 	 * Horner scheme to find the function value at the argument x
-	 * 
+	 *
 	 * @param x
 	 *            The argument of the polynomial
 	 * @since 2008-11-13
 	 */
-	public Rational valueOf(Rational x) {
+	public Rational valueOf(final Rational x) {
 		/* result is initialized to zero */
 		Rational f = new Rational(0, 1);
-		for (int i = degree(); i >= 0; i--) {
+		for (int i = degree(); i >= 0; i--)
 			f = f.multiply(x).add(a.elementAt(i));
-		}
 		return f;
 	} /* valueOf */
 
 	/**
 	 * Horner scheme to find the function value at the argument x
-	 * 
+	 *
 	 * @param x
 	 *            The argument of the polynomial
 	 * @since 2008-11-13
 	 */
-	public Rational valueOf(int x) {
+	public Rational valueOf(final int x) {
 		return valueOf(new Rational(x, 1));
 	} /* valueOf */
 
 	/**
 	 * Horner scheme to evaluate the function at the argument x
-	 * 
+	 *
 	 * @param x
 	 *            The argument of the polynomial
 	 * @since 2010-08-27
 	 */
-	public Rational valueOf(BigInteger x) {
+	public Rational valueOf(final BigInteger x) {
 		return valueOf(new Rational(x));
 	} /* valueOf */
 
 	/*
 	 * Set a polynomial coefficient.
-	 * 
+	 *
 	 * @param n the zero-based index of the coefficient. n=0 for the constant
 	 * term.
 	 * If the polynomial has not yet the degree to need this coefficient,
 	 * the intermediate coefficients are implicitly set to zero.
-	 * 
+	 *
 	 * @param value the new value of the coefficient.
 	 */
 	public void set(final int n, final Rational value) {
-		if (n < a.size()) {
+		if (n < a.size())
 			a.set(n, value);
-		} else {
+		else {
 			/*
 			 * fill intermediate powers with coefficients of zero
 			 */
-			while (a.size() < n) {
+			while (a.size() < n)
 				a.add(new Rational(0, 1));
-			}
 			a.add(value);
 		}
 	} /* set */
 
 	/**
 	 * Set a polynomial coefficient.
-	 * 
+	 *
 	 * @param n
 	 *            the zero-based index of the coefficient. n=0 for the constant
 	 *            term.
@@ -278,7 +269,7 @@ class RatPoly {
 
 	/**
 	 * Set a polynomial coefficient.
-	 * 
+	 *
 	 * @param n
 	 *            the zero-based index of the coefficient. n=0 for the constant
 	 *            term.
@@ -295,15 +286,14 @@ class RatPoly {
 
 	/*
 	 * Set to the taylor series of exp(x) up to degree nmax.
-	 * 
+	 *
 	 * @param nmax the maximum polynomial degree
 	 */
 	public void setExp(final int nmax) {
 		a.clear();
 		final Factorial factorial = new Factorial();
-		for (int n = 0; n <= nmax; n++) {
+		for (int n = 0; n <= nmax; n++)
 			set(n, new Rational(BigInteger.ONE, factorial.at(n)));
-		}
 	} /* setExp */
 
 	/**
@@ -319,7 +309,7 @@ class RatPoly {
 
 	/**
 	 * Count of coefficients. One more than the degree of the polynomial.
-	 * 
+	 *
 	 * @return the number of polynomial coefficients.
 	 */
 	public int size() {
@@ -328,7 +318,7 @@ class RatPoly {
 
 	/**
 	 * Polynomial degree.
-	 * 
+	 *
 	 * @return the polynomial degree.
 	 */
 	public int degree() {
@@ -337,24 +327,22 @@ class RatPoly {
 
 	/**
 	 * Lower Polynomial degree.
-	 * 
+	 *
 	 * @return The smallest exponent n such that [x^n] of the polynomial is
 	 *         nonzero.
 	 *         If the polynmial is identical zero, the result is (still) 0.
 	 * @since 2010-08-27
 	 */
 	public int ldegree() {
-		for (int n = 0; n < a.size(); n++) {
-			if (a.elementAt(n).compareTo(BigInteger.ZERO) != 0) {
+		for (int n = 0; n < a.size(); n++)
+			if (a.elementAt(n).compareTo(BigInteger.ZERO) != 0)
 				return n;
-			}
-		}
 		return 0;
 	} /* ldegree */
 
 	/**
 	 * Multiply by a constant factor.
-	 * 
+	 *
 	 * @param val
 	 *            the factor
 	 * @return the product of this with the factor.
@@ -363,17 +351,15 @@ class RatPoly {
 	 */
 	public RatPoly multiply(final Rational val) {
 		final RatPoly resul = new RatPoly();
-		if (val.compareTo(BigInteger.ZERO) != 0) {
-			for (int n = 0; n < a.size(); n++) {
+		if (val.compareTo(BigInteger.ZERO) != 0)
+			for (int n = 0; n < a.size(); n++)
 				resul.set(n, a.elementAt(n).multiply(val));
-			}
-		}
 		return resul;
 	} /* multiply */
 
 	/**
 	 * Multiply by a constant factor.
-	 * 
+	 *
 	 * @param val
 	 *            the factor
 	 * @return the product of this with the factor.
@@ -383,17 +369,15 @@ class RatPoly {
 	 */
 	public RatPoly multiply(final BigInteger val) {
 		final RatPoly resul = new RatPoly();
-		if (val.compareTo(BigInteger.ZERO) != 0) {
-			for (int n = 0; n < a.size(); n++) {
+		if (val.compareTo(BigInteger.ZERO) != 0)
+			for (int n = 0; n < a.size(); n++)
 				resul.set(n, a.elementAt(n).multiply(val));
-			}
-		}
 		return resul;
 	} /* multiply */
 
 	/**
 	 * Multiply by another polynomial
-	 * 
+	 *
 	 * @param val
 	 *            the other polynomial
 	 * @return the product of this with the other polynomial
@@ -406,9 +390,8 @@ class RatPoly {
 		final int nmax = degree() + val.degree();
 		for (int n = 0; n <= nmax; n++) {
 			Rational coef = new Rational(0, 1);
-			for (int nleft = 0; nleft <= n; nleft++) {
+			for (int nleft = 0; nleft <= n; nleft++)
 				coef = coef.add(at(nleft).multiply(val.at(n - nleft)));
-			}
 			resul.set(n, coef);
 		}
 		resul.simplify();
@@ -417,23 +400,22 @@ class RatPoly {
 
 	/**
 	 * Raise to a positive power.
-	 * 
+	 *
 	 * @param n
 	 *            The non-negative exponent of the power
 	 * @return The n-th power of this.
 	 */
 	public RatPoly pow(final int n) throws ArithmeticException {
 		RatPoly resul = new RatPoly("1");
-		if (n < 0) {
+		if (n < 0)
 			throw new ArithmeticException("negative polynomial power " + n);
-		} else {
+		else {
 			/*
 			 * this ought probably be done with some binary representation
 			 * of the power and a smaller number of multiplications.
 			 */
-			for (int i = 1; i <= n; i++) {
+			for (int i = 1; i <= n; i++)
 				resul = resul.multiply(this);
-			}
 			resul.simplify();
 			return resul;
 		}
@@ -444,7 +426,7 @@ class RatPoly {
 	 * The result is the taylor expansion of this, truncated at the first
 	 * term that remains undetermined based on the current number of
 	 * coefficients.
-	 * 
+	 *
 	 * @param r
 	 *            the exponent of the power
 	 * @return This^r .
@@ -485,7 +467,7 @@ class RatPoly {
 
 	/**
 	 * Add another polynomial
-	 * 
+	 *
 	 * @param val
 	 *            The other polynomial
 	 * @return The sum of this and the other polynomial
@@ -497,7 +479,7 @@ class RatPoly {
 		 * the degree of the result is the larger of the two degrees (before
 		 * simplify() at least).
 		 */
-		final int nmax = (degree() > val.degree()) ? degree() : val.degree();
+		final int nmax = degree() > val.degree() ? degree() : val.degree();
 		for (int n = 0; n <= nmax; n++) {
 			final Rational coef = at(n).add(val.at(n));
 			resul.set(n, coef);
@@ -508,7 +490,7 @@ class RatPoly {
 
 	/**
 	 * Subtract another polynomial
-	 * 
+	 *
 	 * @param val
 	 *            The other polynomial
 	 * @return The difference between this and the other polynomial
@@ -520,7 +502,7 @@ class RatPoly {
 		 * the degree of the result is the larger of the two degrees (before
 		 * simplify() at least).
 		 */
-		final int nmax = (degree() > val.degree()) ? degree() : val.degree();
+		final int nmax = degree() > val.degree() ? degree() : val.degree();
 		for (int n = 0; n <= nmax; n++) {
 			final Rational coef = at(n).subtract(val.at(n));
 			resul.set(n, coef);
@@ -531,7 +513,7 @@ class RatPoly {
 
 	/**
 	 * Divide by a constant.
-	 * 
+	 *
 	 * @param val
 	 *            the constant through which the coefficients will be divided.
 	 * @return the Taylor expansion of this/val .
@@ -541,18 +523,16 @@ class RatPoly {
 	public RatPoly divide(final Rational val) throws Error {
 		if (val.compareTo(Rational.ZERO) != 0) {
 			final RatPoly resul = new RatPoly();
-			for (int n = 0; n < a.size(); n++) {
+			for (int n = 0; n < a.size(); n++)
 				resul.set(n, a.elementAt(n).divide(val));
-			}
 			return resul;
-		} else {
+		} else
 			throw new ArithmeticException("Cannot divide " + toPString() + " through zero.");
-		}
 	} /* divide */
 
 	/**
 	 * Divide by another polynomial.
-	 * 
+	 *
 	 * @param val
 	 *            the other polynomial
 	 * @param nmax
@@ -560,7 +540,7 @@ class RatPoly {
 	 * @return the Taylor expansion of this/val up to degree nmax.
 	 * @throws Error
 	 */
-	public RatPoly divide(final RatPoly val, int nmax) throws Error {
+	public RatPoly divide(final RatPoly val, final int nmax) throws Error {
 		final RatPoly num = this;
 		final RatPoly denom = val;
 
@@ -570,9 +550,8 @@ class RatPoly {
 		while (num.at(0).compareTo(BigInteger.ZERO) == 0 && denom.at(0).compareTo(BigInteger.ZERO) == 0) {
 			num.a.remove(0);
 			denom.a.remove(0);
-			if (num.size() <= 1 || denom.size() <= 1) {
+			if (num.size() <= 1 || denom.size() <= 1)
 				break;
-			}
 		}
 
 		final RatPoly resul = new RatPoly();
@@ -582,19 +561,18 @@ class RatPoly {
 		 */
 		for (int n = 0; n <= nmax; n++) {
 			Rational coef = num.at(n);
-			for (int nres = 0; nres < n; nres++) {
+			for (int nres = 0; nres < n; nres++)
 				coef = coef.subtract(resul.at(nres).multiply(denom.at(n - nres)));
-			}
 			coef = coef.divide(denom.at(0));
 			resul.set(n, coef);
 		}
 		resul.simplify();
-		return (resul);
+		return resul;
 	} /* divide */
 
 	/**
 	 * Divide by another polynomial.
-	 * 
+	 *
 	 * @param val
 	 *            the other polynomial
 	 * @return A vector with [0] containg the polynomial of degree which is the
@@ -617,9 +595,8 @@ class RatPoly {
 		/*
 		 * catch the case with val equal to zero
 		 */
-		if (valSimpl.degree() == 0 && valSimpl.a.firstElement().compareTo(Rational.ZERO) == 0) {
+		if (valSimpl.degree() == 0 && valSimpl.a.firstElement().compareTo(Rational.ZERO) == 0)
 			throw new ArithmeticException("Division through zero polynomial");
-		}
 		/*
 		 * degree of this smaller than degree of val: remainder is this
 		 */
@@ -647,9 +624,9 @@ class RatPoly {
 			/*
 			 * any remainder left ?
 			 */
-			if (ret[1].degree() < valSimpl.degree()) {
+			if (ret[1].degree() < valSimpl.degree())
 				;
-			} else {
+			else {
 				final RatPoly rem[] = ret[1].divideAndRemainder(val);
 				ret[0] = ret[0].add(rem[0]);
 				ret[1] = rem[1];
@@ -660,7 +637,7 @@ class RatPoly {
 
 	/**
 	 * Print as a comma-separated list of coefficients.
-	 * 
+	 *
 	 * @return The representation a0,a1,a2,a3,...
 	 *         This is a sort of opposite of the ctor that takes a string as an
 	 *         argument.
@@ -669,25 +646,22 @@ class RatPoly {
 	@Override
 	public String toString() {
 		String str = new String();
-		for (int n = 0; n < a.size(); n++) {
-			if (n == 0) {
+		for (int n = 0; n < a.size(); n++)
+			if (n == 0)
 				str += a.elementAt(n).toString();
-			} else {
+			else
 				str += "," + a.elementAt(n).toString();
-			}
-		}
 		/*
 		 * print at least a sole zero
 		 */
-		if (str.length() == 0) {
+		if (str.length() == 0)
 			str = "0";
-		}
 		return str;
 	} /* toString */
 
 	/**
 	 * Print as a polyomial in x.
-	 * 
+	 *
 	 * @return To representation a0+a1*x+a2*x^2+...
 	 *         This does not print the terms with coefficients equal to zero.
 	 * @since 2008-10-26
@@ -698,24 +672,21 @@ class RatPoly {
 			final BigInteger num = a.elementAt(n).a;
 			if (num.compareTo(BigInteger.ZERO) != 0) {
 				str += " ";
-				if (num.compareTo(BigInteger.ZERO) > 0) {
+				if (num.compareTo(BigInteger.ZERO) > 0)
 					str += "+";
-				}
 				str += a.elementAt(n).toString();
 				if (n > 0) {
 					str += "*x";
-					if (n > 1) {
+					if (n > 1)
 						str += "^" + n;
-					}
 				}
 			}
 		}
 		/*
 		 * print at least a sole zero
 		 */
-		if (str.length() == 0) {
+		if (str.length() == 0)
 			str = "0";
-		}
 		return str;
 	} /* toPString */
 
@@ -727,29 +698,27 @@ class RatPoly {
 	 */
 	private void simplify() {
 		int n = a.size() - 1;
-		if (n >= 0) {
+		if (n >= 0)
 			while (a.elementAt(n).compareTo(BigInteger.ZERO) == 0) {
 				a.remove(n);
-				if (--n < 0) {
+				if (--n < 0)
 					break;
-				}
 			}
-		}
 	} /* simplify */
 
 	/**
 	 * First derivative.
-	 * 
+	 *
 	 * @return The first derivative with respect to the indeterminate variable.
 	 * @since 2008-10-26
 	 */
 	public RatPoly derive() {
-		if (a.size() <= 1) {
+		if (a.size() <= 1)
 			/*
 			 * derivative of the constant is just zero
 			 */
 			return new RatPoly();
-		} else {
+		else {
 			final RatPoly d = new RatPoly();
 			for (int i = 1; i <= degree(); i++) {
 				final Rational c = a.elementAt(i).multiply(i);
@@ -762,7 +731,7 @@ class RatPoly {
 	/**
 	 * Scale coefficients such that the coefficient in front of the maximum
 	 * degree is unity.
-	 * 
+	 *
 	 * @return The scaled polynomial
 	 * @throws Error
 	 * @since 2008-10-26
@@ -779,26 +748,25 @@ class RatPoly {
 
 	/**
 	 * Mobius transform.
-	 * 
+	 *
 	 * @param maxdeg
 	 *            the maximum polynomial degree of the result
 	 * @return the sequence of coefficients is the Mobius transform of the
 	 *         original sequence.
 	 * @since 2008-12-02
 	 */
-	public RatPoly mobiusT(int maxdeg) {
+	public RatPoly mobiusT(final int maxdeg) {
 		/*
 		 * Start with the polynomial 0
 		 */
 		final RatPoly r = new RatPoly();
 		for (int i = 1; i <= maxdeg; i++) {
 			Rational c = new Rational();
-			for (int d = 1; d <= i && d < a.size(); d++) {
+			for (int d = 1; d <= i && d < a.size(); d++)
 				if (i % d == 0) {
 					final Ifactor m = new Ifactor(i / d);
 					c = c.add(a.elementAt(d).multiply(m.moebius()));
 				}
-			}
 			r.set(i, c);
 		}
 		r.simplify();
@@ -807,25 +775,23 @@ class RatPoly {
 
 	/**
 	 * Inverse Mobius transform.
-	 * 
+	 *
 	 * @param maxdeg
 	 *            the maximum polynomial degree of the result
 	 * @return the sequence of coefficients is the inverse Mobius transform of
 	 *         the original sequence.
 	 * @since 2008-12-02
 	 */
-	public RatPoly mobiusTInv(int maxdeg) {
+	public RatPoly mobiusTInv(final int maxdeg) {
 		/*
 		 * Start with the polynomial 0
 		 */
 		final RatPoly r = new RatPoly();
 		for (int i = 1; i <= maxdeg; i++) {
 			Rational c = new Rational();
-			for (int d = 1; d <= i && d < a.size(); d++) {
-				if (i % d == 0) {
+			for (int d = 1; d <= i && d < a.size(); d++)
+				if (i % d == 0)
 					c = c.add(a.elementAt(d));
-				}
-			}
 			r.set(i, c);
 		}
 		r.simplify();
@@ -834,20 +800,19 @@ class RatPoly {
 
 	/**
 	 * Binomial transform.
-	 * 
+	 *
 	 * @param maxdeg
 	 *            the maximum polynomial degree of the result
 	 * @return the sequence of coefficients is the binomial transform of the
 	 *         original sequence.
 	 * @since 2008-10-26
 	 */
-	public RatPoly binomialT(int maxdeg) {
+	public RatPoly binomialT(final int maxdeg) {
 		final RatPoly r = new RatPoly();
 		for (int i = 0; i <= maxdeg; i++) {
 			Rational c = new Rational(0, 1);
-			for (int j = 0; j <= i && j < a.size(); j++) {
+			for (int j = 0; j <= i && j < a.size(); j++)
 				c = c.add(a.elementAt(j).multiply(BigIntegerMath.binomial(i, j)));
-			}
 			r.set(i, c);
 		}
 		r.simplify();
@@ -856,24 +821,22 @@ class RatPoly {
 
 	/**
 	 * Inverse Binomial transform.
-	 * 
+	 *
 	 * @param maxdeg
 	 *            the maximum polynomial degree of the result
 	 * @return the sequence of coefficients is the inverse binomial transform of
 	 *         the original sequence.
 	 * @since 2008-10-26
 	 */
-	public RatPoly binomialTInv(int maxdeg) {
+	public RatPoly binomialTInv(final int maxdeg) {
 		final RatPoly r = new RatPoly();
 		for (int i = 0; i <= maxdeg; i++) {
 			Rational c = new Rational(0, 1);
-			for (int j = 0; j <= i && j < a.size(); j++) {
-				if ((j + i) % 2 != 0) {
+			for (int j = 0; j <= i && j < a.size(); j++)
+				if ((j + i) % 2 != 0)
 					c = c.subtract(a.elementAt(j).multiply(BigIntegerMath.binomial(i, j)));
-				} else {
+				else
 					c = c.add(a.elementAt(j).multiply(BigIntegerMath.binomial(i, j)));
-				}
-			}
 			r.set(i, c);
 		}
 		r.simplify();
@@ -882,7 +845,7 @@ class RatPoly {
 
 	/**
 	 * Truncate polynomial degree.
-	 * 
+	 *
 	 * @param newdeg
 	 *            The maximum degree of the result.
 	 * @return The polynomial with all coefficients beyond deg set to zero.
@@ -894,18 +857,17 @@ class RatPoly {
 	 *         than this.
 	 * @since 2008-10-26
 	 */
-	public RatPoly trunc(int newdeg) {
+	public RatPoly trunc(final int newdeg) {
 		final RatPoly t = new RatPoly();
-		for (int i = 0; i <= newdeg; i++) {
+		for (int i = 0; i <= newdeg; i++)
 			t.set(i, at(i));
-		}
 		t.simplify();
 		return t;
 	} /* trunc */
 
 	/**
 	 * Generate the roots of the polynomial in floating point arithmetic.
-	 * 
+	 *
 	 * @see <a href="http://en.wikipedia.org/wiki/Durand-Kerner_method">Durand
 	 *      Kerner method</a>
 	 * @param the
@@ -913,7 +875,7 @@ class RatPoly {
 	 * @throws Error
 	 * @since 2008-10-26
 	 */
-	public Vector<BigComplex> roots(int digits) throws Error {
+	public Vector<BigComplex> roots(final int digits) throws Error {
 		final RatPoly mon = monic();
 
 		final Random rand = new Random();
@@ -926,9 +888,8 @@ class RatPoly {
 		for (int i = 0; i <= d; i++) {
 			/* scale coefficient at maximum degree */
 			final double absi = Math.abs(mon.at(i).doubleValue());
-			if (absi > randRad) {
+			if (absi > randRad)
 				randRad = absi;
-			}
 		}
 		randRad += 1.0;
 
@@ -958,23 +919,19 @@ class RatPoly {
 				 */
 				BigComplex thisx = res.elementAt(v);
 				BigComplex nv = mon.valueOf(thisx, mc);
-				for (int j = 0; j < d; j++) {
-					if (j != v) {
+				for (int j = 0; j < d; j++)
+					if (j != v)
 						nv = nv.divide(thisx.subtract(res.elementAt(j)), mc);
-					}
-				}
 
 				/* is this value converged ? */
-				if (nv.abs(mc).doubleValue() > thisx.abs(mc).doubleValue() * Math.pow(10.0, -digits)) {
+				if (nv.abs(mc).doubleValue() > thisx.abs(mc).doubleValue() * Math.pow(10.0, -digits))
 					convr = false;
-				}
 
 				thisx = thisx.subtract(nv);
 
 				/* If unstable, start over */
-				if (thisx.abs(MathContext.DECIMAL32).doubleValue() > randRad) {
+				if (thisx.abs(MathContext.DECIMAL32).doubleValue() > randRad)
 					return roots(digits);
-				}
 
 				resPlus.add(thisx);
 			}
@@ -986,7 +943,7 @@ class RatPoly {
 
 	/**
 	 * Generate the integer roots of the polynomial.
-	 * 
+	 *
 	 * @return The vector of integer roots, with multiplicity.
 	 *         The shows alternatingly first a root then its multiplicty, then
 	 *         another root and multiplicty etc.
@@ -1012,9 +969,8 @@ class RatPoly {
 		 * start with denominator of first non-zero coefficient.
 		 */
 		BigInteger lcmDeno = a.elementAt(lowd).b;
-		for (int i = lowd + 1; i < degree(); i++) {
+		for (int i = lowd + 1; i < degree(); i++)
 			lcmDeno = BigIntegerMath.lcm(lcmDeno, a.elementAt(i).b);
-		}
 
 		/*
 		 * and eventually get the integer polynomial by ignoring the

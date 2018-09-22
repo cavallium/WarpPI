@@ -12,7 +12,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class Multiplication extends FunctionOperator {
 
-	public Multiplication(MathContext root, Function value1, Function value2) {
+	public Multiplication(final MathContext root, final Function value1, final Function value2) {
 		super(root, value1, value2);
 		/*if (value1 instanceof Variable && value2 instanceof Variable == false) {
 			parameter1 = value2;
@@ -21,14 +21,13 @@ public class Multiplication extends FunctionOperator {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (o instanceof Multiplication) {
 			final FunctionOperator f = (FunctionOperator) o;
-			if (parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2())) {
+			if (parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2()))
 				return true;
-			} else if (parameter1.equals(f.getParameter2()) && parameter2.equals(f.getParameter1())) {
+			else if (parameter1.equals(f.getParameter2()) && parameter2.equals(f.getParameter1()))
 				return true;
-			}
 		}
 		return false;
 	}
@@ -39,7 +38,7 @@ public class Multiplication extends FunctionOperator {
 	}
 
 	@Override
-	public ObjectArrayList<Block> toBlock(MathContext context) throws Error {
+	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
 		final ObjectArrayList<Block> result = new ObjectArrayList<>();
 		final Function par1 = getParameter1();
 		final Function par2 = getParameter2();
@@ -54,30 +53,26 @@ public class Multiplication extends FunctionOperator {
 				final ObjectArrayList<Block> parBlocks = par2.toBlock(context);
 				final BlockParenthesis par = new BlockParenthesis(parBlocks);
 				result.add(par);
-			} else {
+			} else
 				result.addAll(sub2);
-			}
 			return result;
 		} else {
 			if (new Expression(context, par1).parenthesisNeeded()) {
 				final ObjectArrayList<Block> parBlocks = par1.toBlock(context);
 				final BlockParenthesis par = new BlockParenthesis(parBlocks);
 				result.add(par);
-			} else {
+			} else
 				result.addAll(sub1);
-			}
-			if ((nearLeft instanceof BlockChar && nearRight instanceof BlockChar) && !(par2 instanceof Negative) && !(par1 instanceof Number && par2 instanceof Number)) {
+			if (nearLeft instanceof BlockChar && nearRight instanceof BlockChar && !(par2 instanceof Negative) && !(par1 instanceof Number && par2 instanceof Number)) {
 
-			} else {
+			} else
 				result.add(new BlockChar(MathematicalSymbols.MULTIPLICATION));
-			}
 			if (new Expression(context, par2).parenthesisNeeded()) {
 				final ObjectArrayList<Block> parBlocks = par2.toBlock(context);
 				final BlockParenthesis par = new BlockParenthesis(parBlocks);
 				result.add(par);
-			} else {
+			} else
 				result.addAll(sub2);
-			}
 			return result;
 		}
 	}
@@ -87,16 +82,15 @@ public class Multiplication extends FunctionOperator {
 	}
 
 	public Function toPositive() {
-		if (parameter1.equals(new Number(getMathContext(), -1))) {
+		if (parameter1.equals(new Number(getMathContext(), -1)))
 			return parameter2;
-		} else if (parameter2.equals(new Number(getMathContext(), -1))) {
+		else if (parameter2.equals(new Number(getMathContext(), -1)))
 			return parameter2;
-		} else {
+		else
 			return null;
-		}
 	}
 
-	public static Multiplication newNegative(MathContext context, Function value2) {
+	public static Multiplication newNegative(final MathContext context, final Function value2) {
 		return new Multiplication(context, new Number(context, -1), value2);
 	}
 }

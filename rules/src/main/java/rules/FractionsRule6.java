@@ -16,7 +16,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Number rule
  * a ^ -1 = 1/a
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -40,27 +40,25 @@ public class FractionsRule6 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
 		if (f instanceof Power) {
-			MathContext root = f.getMathContext();
-			Power pow = (Power) f;
+			final MathContext root = f.getMathContext();
+			final Power pow = (Power) f;
 			if (pow.getParameter2() instanceof Number) {
-				Function numb = pow.getParameter2();
-				if (numb.equals(new Number(root, -1))) {
+				final Function numb = pow.getParameter2();
+				if (numb.equals(new Number(root, -1)))
 					isExecutable = true;
-				}
 			}
 		}
 
 		if (isExecutable) {
-			MathContext root = f.getMathContext();
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			Function a = new Division(root, new Number(root, 1), ((Power) f).getParameter1());
+			final MathContext root = f.getMathContext();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final Function a = new Division(root, new Number(root, 1), ((Power) f).getParameter1());
 			result.add(a);
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 }

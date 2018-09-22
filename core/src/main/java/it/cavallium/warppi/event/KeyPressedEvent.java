@@ -2,9 +2,9 @@ package it.cavallium.warppi.event;
 
 public class KeyPressedEvent implements KeyEvent {
 
-	private Key k;
+	private final Key k;
 
-	public KeyPressedEvent(Key k) {
+	public KeyPressedEvent(final Key k) {
 		this.k = k;
 	}
 

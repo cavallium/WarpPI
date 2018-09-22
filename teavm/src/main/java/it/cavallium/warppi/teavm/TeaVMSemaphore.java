@@ -5,34 +5,32 @@ import java.util.Queue;
 
 public class TeaVMSemaphore implements it.cavallium.warppi.Platform.Semaphore {
 
-	private Queue<Object> q;
-	
+	private final Queue<Object> q;
+
 	private int freePermits = 0;
-	
-	public TeaVMSemaphore(int i) {
-		q = new LinkedList<Object>();
+
+	public TeaVMSemaphore(final int i) {
+		q = new LinkedList<>();
 		freePermits = i;
 	}
-	
+
 	@Override
 	public void release() {
-		if (q.peek() == null) {
+		if (q.peek() == null)
 			q.poll();
-		} else {
+		else
 			freePermits++;
-		}
 	}
 
 	@Override
 	public void acquire() throws InterruptedException {
-		if (freePermits > 0) {
+		if (freePermits > 0)
 			freePermits--;
-		} else {
-			Object thiz = new Object();
+		else {
+			final Object thiz = new Object();
 			q.offer(thiz);
-			while(q.contains(thiz)) {
+			while (q.contains(thiz))
 				Thread.sleep(500);
-			}
 		}
 	}
 }

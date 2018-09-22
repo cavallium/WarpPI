@@ -30,39 +30,41 @@ import it.cavallium.warppi.Platform.StorageUtils;
 import it.cavallium.warppi.util.ClassUtils;
 
 public class HardwareStorageUtils implements StorageUtils {
-	public boolean exists(File f) {
+	@Override
+	public boolean exists(final File f) {
 		return f.exists();
 	}
 
-	public File get(String path) {
+	@Override
+	public File get(final String path) {
 		return Paths.get(path).toFile();
 	}
 
-	public File get(String... path) {
-		if (path.length <= 1) {
+	@Override
+	public File get(final String... path) {
+		if (path.length <= 1)
 			return Paths.get(path[0]).toFile();
-		} else {
+		else
 			return Paths.get(path[0], Arrays.copyOfRange(path, 1, path.length)).toFile();
-		}
 	}
 
-	private Map<String, File> resourcesCache = new HashMap<String, File>();
+	private final Map<String, File> resourcesCache = new HashMap<>();
 
+	@Override
 	@Deprecated()
-	public File getResource(String string) throws IOException, URISyntaxException {
+	public File getResource(final String string) throws IOException, URISyntaxException {
 		final URL res = ClassUtils.classLoader.getResource(string);
 		final boolean isResource = res != null;
-		if (isResource) {
+		if (isResource)
 			try {
 				final URI uri = res.toURI();
 				if (res.getProtocol().equalsIgnoreCase("jar")) {
 					if (resourcesCache.containsKey(string)) {
 						File f;
-						if ((f = resourcesCache.get(string)).exists()) {
+						if ((f = resourcesCache.get(string)).exists())
 							return f;
-						} else {
+						else
 							resourcesCache.remove(string);
-						}
 					}
 					try {
 						FileSystems.newFileSystem(uri, Collections.emptyMap());
@@ -71,7 +73,7 @@ public class HardwareStorageUtils implements StorageUtils {
 					}
 					final Path myFolderPath = Paths.get(uri);
 
-					InputStream is = Files.newInputStream(myFolderPath);
+					final InputStream is = Files.newInputStream(myFolderPath);
 					final File tempFile = File.createTempFile("picalcresource-", "");
 					tempFile.deleteOnExit();
 					try (FileOutputStream out = new FileOutputStream(tempFile)) {
@@ -80,21 +82,20 @@ public class HardwareStorageUtils implements StorageUtils {
 					resourcesCache.put(string, tempFile);
 
 					return tempFile;
-				} else {
+				} else
 					return Paths.get(uri).toFile();
-				}
 			} catch (final java.lang.IllegalArgumentException e) {
 				throw e;
 			}
-		} else {
+		else
 			return Paths.get(string.substring(1)).toFile();
-		}
 	}
 
+	@Override
 	public InputStream getResourceStream(String string) throws IOException, URISyntaxException {
 		final URL res = ClassUtils.classLoader.getResource(string);
 		final boolean isResource = res != null;
-		if (isResource) {
+		if (isResource)
 			try {
 				final URI uri = res.toURI();
 				if (res.getProtocol().equalsIgnoreCase("jar")) {
@@ -105,63 +106,69 @@ public class HardwareStorageUtils implements StorageUtils {
 					}
 					final Path myFolderPath = Paths.get(uri);
 					return Files.newInputStream(myFolderPath);
-				} else {
+				} else
 					return Files.newInputStream(Paths.get(uri));
-				}
 			} catch (final java.lang.IllegalArgumentException e) {
 				throw e;
 			}
-		} else {
+		else {
 			if (string.length() > 0) {
-				char ch = string.charAt(0);
-				if (ch == '/' || ch == File.separatorChar) {
+				final char ch = string.charAt(0);
+				if (ch == '/' || ch == File.separatorChar)
 					string = string.substring(1);
-				}
 			}
 			return Files.newInputStream(Paths.get(string));
 		}
 	}
 
-	public List<String> readAllLines(File file) throws IOException {
+	@Override
+	public List<String> readAllLines(final File file) throws IOException {
 		return Files.readAllLines(file.toPath());
 	}
 
-	public String read(InputStream input) throws IOException {
+	@Override
+	public String read(final InputStream input) throws IOException {
 		try (BufferedReader buffer = new BufferedReader(new InputStreamReader(input))) {
 			return buffer.lines().collect(Collectors.joining("\n"));
 		}
 	}
 
-	public List<File> walk(File dir) throws IOException {
-		List<File> out = new ArrayList<>();
+	@Override
+	public List<File> walk(final File dir) throws IOException {
+		final List<File> out = new ArrayList<>();
 		try (Stream<Path> paths = Files.walk(dir.toPath())) {
-			paths.filter(Files::isRegularFile).forEach((Path p) -> {
+			paths.filter(Files::isRegularFile).forEach((final Path p) -> {
 				out.add(p.toFile());
 			});
 		}
 		return out;
 	}
 
-	public File relativize(File rulesPath, File f) {
+	@Override
+	public File relativize(final File rulesPath, final File f) {
 		return rulesPath.toPath().relativize(f.toPath()).toFile();
 	}
 
-	public File resolve(File file, String string) {
+	@Override
+	public File resolve(final File file, final String string) {
 		return file.toPath().resolve(string).toFile();
 	}
 
-	public File getParent(File f) {
+	@Override
+	public File getParent(final File f) {
 		return f.toPath().getParent().toFile();
 	}
 
-	public void createDirectories(File dir) throws IOException {
+	@Override
+	public void createDirectories(final File dir) throws IOException {
 		Files.createDirectories(dir.toPath());
 	}
 
-	public void write(File f, byte[] bytes, int... options) throws IOException {
-		StandardOpenOption[] noptions = new StandardOpenOption[options.length];
+	@Override
+	public void write(final File f, final byte[] bytes, final int... options) throws IOException {
+		final StandardOpenOption[] noptions = new StandardOpenOption[options.length];
 		int i = 0;
-		for (int opt : options) {
+		for (final int opt : options) {
 			switch (opt) {
 				case StorageUtils.OpenOptionCreate: {
 					noptions[i] = StandardOpenOption.CREATE;
@@ -180,7 +187,8 @@ public class HardwareStorageUtils implements StorageUtils {
 		Files.write(f.toPath(), bytes, noptions);
 	}
 
-	public List<String> readAllLines(InputStream input) throws IOException {
+	@Override
+	public List<String> readAllLines(final InputStream input) throws IOException {
 		try (BufferedReader buffer = new BufferedReader(new InputStreamReader(input))) {
 			return buffer.lines().collect(Collectors.toList());
 		}

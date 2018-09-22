@@ -9,12 +9,12 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class Tangent extends FunctionSingle {
 
-	public Tangent(MathContext root, Function value) {
+	public Tangent(final MathContext root, final Function value) {
 		super(root, value);
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -26,7 +26,7 @@ public class Tangent extends FunctionSingle {
 	}
 
 	@Override
-	public ObjectArrayList<Block> toBlock(MathContext context) throws Error {
+	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
 		// TODO Auto-generated method stub
 		return null;
 	}

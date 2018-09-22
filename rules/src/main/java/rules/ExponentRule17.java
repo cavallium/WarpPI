@@ -17,7 +17,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Exponent rule
  * a√x=x^1/a
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -41,26 +41,24 @@ public class ExponentRule17 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
 		if (f instanceof Root) {
-			FunctionOperator fnc = (FunctionOperator) f;
-			if (fnc.getParameter1().equals(fnc.getParameter2())) {
+			final FunctionOperator fnc = (FunctionOperator) f;
+			if (fnc.getParameter1().equals(fnc.getParameter2()))
 				isExecutable = true;
-			}
 		}
-	
+
 		if (isExecutable) {
-			MathContext root = f.getMathContext();
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			FunctionOperator fnc = (FunctionOperator) f;
-			Function a = fnc.getParameter1();
-			Function two = new Number(root, 2);
-			Function p = new Power(root, a, two);
+			final MathContext root = f.getMathContext();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final FunctionOperator fnc = (FunctionOperator) f;
+			final Function a = fnc.getParameter1();
+			final Function two = new Number(root, 2);
+			final Function p = new Power(root, a, two);
 			result.add(p);
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 }

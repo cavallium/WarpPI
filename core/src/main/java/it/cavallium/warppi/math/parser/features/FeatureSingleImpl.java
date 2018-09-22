@@ -6,7 +6,7 @@ import it.cavallium.warppi.math.parser.features.interfaces.FeatureSingle;
 public abstract class FeatureSingleImpl implements FeatureSingle {
 	private Object child;
 
-	public FeatureSingleImpl(Object child) {
+	public FeatureSingleImpl(final Object child) {
 		this.child = child;
 	}
 
@@ -20,7 +20,7 @@ public abstract class FeatureSingleImpl implements FeatureSingle {
 	}
 
 	@Override
-	public void setChild(Object obj) {
+	public void setChild(final Object obj) {
 		child = obj;
 	}
 }

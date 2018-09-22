@@ -4,5 +4,5 @@ package ar.com.hjg.pngj;
  * Image Line factory.
  */
 public interface IImageLineFactory<T extends IImageLine> {
-  public T createImageLine(ImageInfo iminfo);
+	T createImageLine(ImageInfo iminfo);
 }

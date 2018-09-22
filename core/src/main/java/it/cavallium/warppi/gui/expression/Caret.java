@@ -8,11 +8,11 @@ public class Caret {
 	private final int[] lastSize;
 	private final int[] lastLocation;
 
-	public Caret(CaretState state, int pos) {
+	public Caret(final CaretState state, final int pos) {
 		this(state, pos, new int[] { 0, 0 }, new int[] { 2, 5 });
 	}
 
-	public Caret(CaretState state, int pos, int[] lastLocation, int[] lastSize) {
+	public Caret(final CaretState state, final int pos, final int[] lastLocation, final int[] lastSize) {
 		this.state = state;
 		this.pos = pos;
 		remaining = pos;
@@ -20,7 +20,7 @@ public class Caret {
 		this.lastSize = lastSize;
 	}
 
-	public void skip(int i) {
+	public void skip(final int i) {
 		remaining -= i;
 	}
 
@@ -37,20 +37,18 @@ public class Caret {
 	}
 
 	public void flipState() {
-		if (state == CaretState.VISIBLE_ON) {
+		if (state == CaretState.VISIBLE_ON)
 			state = CaretState.VISIBLE_OFF;
-		} else if (state == CaretState.VISIBLE_OFF) {
+		else if (state == CaretState.VISIBLE_OFF)
 			state = CaretState.VISIBLE_ON;
-		}
 	}
 
 	public void turnOn() {
-		if (state == CaretState.VISIBLE_OFF) {
+		if (state == CaretState.VISIBLE_OFF)
 			state = CaretState.VISIBLE_ON;
-		}
 	}
 
-	public void setPosition(int i) {
+	public void setPosition(final int i) {
 		pos = i;
 	}
 
@@ -58,7 +56,7 @@ public class Caret {
 		remaining = pos;
 	}
 
-	public void setLastLocation(int x, int y) {
+	public void setLastLocation(final int x, final int y) {
 		lastLocation[0] = x;
 		lastLocation[1] = y;
 	}
@@ -67,7 +65,7 @@ public class Caret {
 		return new int[] { lastLocation[0], lastLocation[1] };
 	}
 
-	public void setLastSize(int w, int h) {
+	public void setLastSize(final int w, final int h) {
 		lastSize[0] = w;
 		lastSize[1] = h;
 	}

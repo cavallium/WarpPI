@@ -7,53 +7,53 @@ import it.cavallium.warppi.flow.Observable;
 
 public interface GraphicEngine {
 
-	public int[] getSize();
+	int[] getSize();
 
-	public boolean isInitialized();
+	boolean isInitialized();
 
-	public void setTitle(String title);
+	void setTitle(String title);
 
-	public void setResizable(boolean r);
+	void setResizable(boolean r);
 
-	public void setDisplayMode(final int ww, final int wh);
+	void setDisplayMode(final int ww, final int wh);
 
-	public default void create() {
+	default void create() {
 		create(null);
 	};
 
-	public void create(Runnable object);
+	void create(Runnable object);
 
-	public Observable<Integer[]> onResize();
+	Observable<Integer[]> onResize();
 
-	public int getWidth();
+	int getWidth();
 
-	public int getHeight();
+	int getHeight();
 
-	public void destroy();
+	void destroy();
 
-	public void start(RenderingLoop d);
+	void start(RenderingLoop d);
 
-	public void repaint();
+	void repaint();
 
-	public Renderer getRenderer();
+	Renderer getRenderer();
 
-	public BinaryFont loadFont(String fontName) throws IOException;
+	BinaryFont loadFont(String fontName) throws IOException;
 
-	public BinaryFont loadFont(String path, String fontName) throws IOException;
+	BinaryFont loadFont(String path, String fontName) throws IOException;
 
-	public Skin loadSkin(String file) throws IOException;
+	Skin loadSkin(String file) throws IOException;
 
-	public void waitForExit();
+	void waitForExit();
 
-	public boolean isSupported();
+	boolean isSupported();
 
-	public boolean doesRefreshPauses();
+	boolean doesRefreshPauses();
 
-	public default boolean supportsFontRegistering() {
+	default boolean supportsFontRegistering() {
 		return false;
 	}
 
-	public default List<BinaryFont> getRegisteredFonts() {
+	default List<BinaryFont> getRegisteredFonts() {
 		return null;
 	}
 }

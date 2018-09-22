@@ -102,63 +102,63 @@ public class StartupArgumentsImpl implements StartupArguments {
 		return isCPUEngineForced || isFrameBufferEngineForced || isGPUEngineForced || isHeadless24bitEngineForced || isHeadless256EngineForced || isHeadless8EngineForced || isHTMLEngineForced || isNoGUIEngineForced;
 	}
 
-	void setRaspberryModeAllowed(boolean isRaspberryModeAllowed) {
+	void setRaspberryModeAllowed(final boolean isRaspberryModeAllowed) {
 		this.isRaspberryModeAllowed = isRaspberryModeAllowed;
 	}
 
-	void setZoomed(boolean isZoomed) {
+	void setZoomed(final boolean isZoomed) {
 		this.isZoomed = isZoomed;
 	}
 
-	void setHeadlessEngineForced(boolean isHeadlessEngineForced) {
+	void setHeadlessEngineForced(final boolean isHeadlessEngineForced) {
 		this.isHeadlessEngineForced = isHeadlessEngineForced;
 	}
 
-	void setHeadless8EngineForced(boolean isHeadless8EngineForced) {
+	void setHeadless8EngineForced(final boolean isHeadless8EngineForced) {
 		this.isHeadless8EngineForced = isHeadless8EngineForced;
 	}
 
-	void setHeadless256EngineForced(boolean isHeadless256EngineForced) {
+	void setHeadless256EngineForced(final boolean isHeadless256EngineForced) {
 		this.isHeadless256EngineForced = isHeadless256EngineForced;
 	}
 
-	void setHeadless24bitEngineForced(boolean isHeadless24bitEngineForced) {
+	void setHeadless24bitEngineForced(final boolean isHeadless24bitEngineForced) {
 		this.isHeadless24bitEngineForced = isHeadless24bitEngineForced;
 	}
 
-	void setCPUEngineForced(boolean isCPUEngineForced) {
+	void setCPUEngineForced(final boolean isCPUEngineForced) {
 		this.isCPUEngineForced = isCPUEngineForced;
 	}
 
-	void setGPUEngineForced(boolean isGPUEngineForced) {
+	void setGPUEngineForced(final boolean isGPUEngineForced) {
 		this.isGPUEngineForced = isGPUEngineForced;
 	}
 
-	void setFrameBufferEngineForced(boolean isFrameBufferEngineForced) {
+	void setFrameBufferEngineForced(final boolean isFrameBufferEngineForced) {
 		this.isFrameBufferEngineForced = isFrameBufferEngineForced;
 	}
 
-	void setNoGUIEngineForced(boolean isNoGUIEngineForced) {
+	void setNoGUIEngineForced(final boolean isNoGUIEngineForced) {
 		this.isNoGUIEngineForced = isNoGUIEngineForced;
 	}
 
-	void setHTMLEngineForced(boolean isHTMLEngineForced) {
+	void setHTMLEngineForced(final boolean isHTMLEngineForced) {
 		this.isHTMLEngineForced = isHTMLEngineForced;
 	}
 
-	void setMSDOSModeEnabled(boolean isMSDOSModeEnabled) {
+	void setMSDOSModeEnabled(final boolean isMSDOSModeEnabled) {
 		this.isMSDOSModeEnabled = isMSDOSModeEnabled;
 	}
 
-	void setVerboseLoggingEnabled(boolean isVerboseLoggingEnabled) {
+	void setVerboseLoggingEnabled(final boolean isVerboseLoggingEnabled) {
 		this.isVerboseLoggingEnabled = isVerboseLoggingEnabled;
 	}
 
-	void setDebugEnabled(boolean isDebugEnabled) {
+	void setDebugEnabled(final boolean isDebugEnabled) {
 		this.isDebugEnabled = isDebugEnabled;
 	}
 
-	void setUncached(boolean isUncached) {
+	void setUncached(final boolean isUncached) {
 		this.isUncached = isUncached;
 	}
 

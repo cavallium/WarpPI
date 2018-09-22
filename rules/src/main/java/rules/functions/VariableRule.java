@@ -20,7 +20,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Variable
  * a = n
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -43,18 +43,17 @@ public class VariableRule implements Rule {
 	     - An ObjectArrayList<Function> if it did something
 	*/
 	@Override
-	public ObjectArrayList<Function> execute(Function f) throws Error {
+	public ObjectArrayList<Function> execute(final Function f) throws Error {
 		if (f instanceof Variable) {
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			Character variable = ((Variable) f).getChar();
-			MathContext mathContext = f.getMathContext();
-			if (mathContext.exactMode == false) {
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final Character variable = ((Variable) f).getChar();
+			final MathContext mathContext = f.getMathContext();
+			if (mathContext.exactMode == false)
 				if (variable.equals(MathematicalSymbols.PI)) {
 					//a = n
 					result.add(new Number(mathContext, BigDecimalMath.pi(new java.math.MathContext(Utils.scale, Utils.scaleMode2))));
 					return result;
 				}
-			}
 		}
 		return null;
 	}

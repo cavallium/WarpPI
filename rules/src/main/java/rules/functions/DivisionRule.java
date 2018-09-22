@@ -21,7 +21,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Division
  * a/b = c
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -44,13 +44,13 @@ public class DivisionRule implements Rule {
 	     - An ObjectArrayList<Function> if it did something
 	*/
 	@Override
-	public ObjectArrayList<Function> execute(Function f) throws Error {
+	public ObjectArrayList<Function> execute(final Function f) throws Error {
 		if (f instanceof Division) {
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			Function variable1 = ((FunctionOperator) f).getParameter1();
-			Function variable2 = ((FunctionOperator) f).getParameter2();
-			MathContext mathContext = f.getMathContext();
-			if (variable1 instanceof Number && variable2 instanceof Number) {
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final Function variable1 = ((FunctionOperator) f).getParameter1();
+			final Function variable2 = ((FunctionOperator) f).getParameter2();
+			final MathContext mathContext = f.getMathContext();
+			if (variable1 instanceof Number && variable2 instanceof Number)
 				if (mathContext.exactMode) {
 					if (((Number) variable1).isInteger() && ((Number) variable2).isInteger()) {
 						LinkedList<BigInteger> factors1, factors2, mcm;
@@ -58,14 +58,14 @@ public class DivisionRule implements Rule {
 							factors1 = ((Number) variable1).getFactors();
 							factors2 = ((Number) variable2).getFactors();
 							mcm = ScriptUtils.mcm(factors1, factors2);
-						} catch (Exception ex) {
+						} catch (final Exception ex) {
 							return null;
 						}
 						if (mcm.size() > 0) { //true if there is at least one common factor
 							//divide by the common factor (ab/cb = a/c)
 							BigInteger nmb1 = ((Number) variable1).getTerm().toBigIntegerExact();
 							BigInteger nmb2 = ((Number) variable2).getTerm().toBigIntegerExact();
-							for (BigInteger integerNumber : mcm) {
+							for (final BigInteger integerNumber : mcm) {
 								nmb1 = nmb1.divide(integerNumber);
 								nmb2 = nmb2.divide(integerNumber);
 							}
@@ -78,7 +78,6 @@ public class DivisionRule implements Rule {
 					result.add(((Number) variable1).divide((Number) variable2));
 					return result;
 				}
-			}
 		}
 		return null;
 	}

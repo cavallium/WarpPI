@@ -17,7 +17,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Undefined rule
  * 0^0=undefined
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -41,23 +41,21 @@ public class UndefinedRule1 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
 		if (f instanceof Power) {
-			MathContext root = f.getMathContext();
-			FunctionOperator fnc = (FunctionOperator) f;
-			if (fnc.getParameter1().equals(new Number(root, 0)) && fnc.getParameter2().equals(new Number(root, 0))) {
+			final MathContext root = f.getMathContext();
+			final FunctionOperator fnc = (FunctionOperator) f;
+			if (fnc.getParameter1().equals(new Number(root, 0)) && fnc.getParameter2().equals(new Number(root, 0)))
 				isExecutable = true;
-			}
 		}
 
 		if (isExecutable) {
-			MathContext root = f.getMathContext();
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final MathContext root = f.getMathContext();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
 			result.add(new Undefined(root));
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 }

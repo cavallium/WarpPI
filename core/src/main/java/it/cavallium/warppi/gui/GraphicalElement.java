@@ -7,24 +7,24 @@ public interface GraphicalElement {
 	 * <strong>height</strong>, <strong>line</strong> or
 	 * <strong>length</strong>.
 	 */
-	public void recomputeDimensions();
+	void recomputeDimensions();
 
 	/**
-	 * 
+	 *
 	 * @return Width of the element.
 	 */
-	public int getWidth();
+	int getWidth();
 
 	/**
-	 * 
+	 *
 	 * @return Height of the element.
 	 */
-	public int getHeight();
+	int getHeight();
 
 	/**
-	 * 
+	 *
 	 * @return Position of the vertical alignment line of the element, relative
 	 *         to itself.
 	 */
-	public int getLine();
+	int getLine();
 }

@@ -5,12 +5,12 @@ import it.cavallium.warppi.math.functions.Division;
 
 public class FeatureDivision extends FeatureDoubleImpl {
 
-	public FeatureDivision(Object child1, Object child2) {
+	public FeatureDivision(final Object child1, final Object child2) {
 		super(child1, child2);
 	}
 
 	@Override
-	public Division toFunction(MathContext context) {
+	public Division toFunction(final MathContext context) {
 		return new Division(context, getFunction1(), getFunction2());
 	}
 

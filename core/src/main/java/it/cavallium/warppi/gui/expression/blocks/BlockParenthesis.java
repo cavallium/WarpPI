@@ -12,12 +12,12 @@ public class BlockParenthesis extends BlockParenthesisAbstract {
 		super();
 	}
 
-	public BlockParenthesis(ObjectArrayList<Block> blocks) {
+	public BlockParenthesis(final ObjectArrayList<Block> blocks) {
 		super(blocks);
 	}
 
 	@Override
-	public Feature toFeature(MathContext context) throws Error {
+	public Feature toFeature(final MathContext context) throws Error {
 		final Function cont = getNumberContainer().toFunction(context);
 		return new FeatureParenthesis(cont);
 	}

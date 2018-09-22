@@ -1,13 +1,13 @@
 package it.cavallium.warppi.flow;
 
 public class ObservableMerged<T> extends Observable<T> {
-	private Observable<T> originalObservableA;
-	private Observable<T> originalObservableB;
+	private final Observable<T> originalObservableA;
+	private final Observable<T> originalObservableB;
 	private volatile boolean initialized = false;
 	private Disposable mapDisposableA;
 	private Disposable mapDisposableB;
 
-	public ObservableMerged(Observable<T> originalObservableA, Observable<T> originalObservableB) {
+	public ObservableMerged(final Observable<T> originalObservableA, final Observable<T> originalObservableB) {
 		super();
 		this.originalObservableA = originalObservableA;
 		this.originalObservableB = originalObservableB;
@@ -15,30 +15,24 @@ public class ObservableMerged<T> extends Observable<T> {
 
 	private void initialize() {
 		this.mapDisposableA = originalObservableA.subscribe((t) -> {
-			for (Subscriber<? super T> sub : this.subscribers) {
-				sub.onNext(t);
-			} ;
+			for (final Subscriber<? super T> sub : subscribers)
+				sub.onNext(t);;
 		}, (e) -> {
-			for (Subscriber<? super T> sub : this.subscribers) {
-				sub.onError(e);
-			} ;
+			for (final Subscriber<? super T> sub : subscribers)
+				sub.onError(e);;
 		}, () -> {
-			for (Subscriber<? super T> sub : this.subscribers) {
-				sub.onComplete();
-			} ;
+			for (final Subscriber<? super T> sub : subscribers)
+				sub.onComplete();;
 		});
 		this.mapDisposableB = originalObservableB.subscribe((t) -> {
-			for (Subscriber<? super T> sub : this.subscribers) {
-				sub.onNext(t);
-			} ;
+			for (final Subscriber<? super T> sub : subscribers)
+				sub.onNext(t);;
 		}, (e) -> {
-			for (Subscriber<? super T> sub : this.subscribers) {
-				sub.onError(e);
-			} ;
+			for (final Subscriber<? super T> sub : subscribers)
+				sub.onError(e);;
 		}, () -> {
-			for (Subscriber<? super T> sub : this.subscribers) {
-				sub.onComplete();
-			} ;
+			for (final Subscriber<? super T> sub : subscribers)
+				sub.onComplete();;
 		});
 	}
 
@@ -50,14 +44,14 @@ public class ObservableMerged<T> extends Observable<T> {
 	}
 
 	@Override
-	public Disposable subscribe(Subscriber<? super T> sub) {
-		Disposable disp = super.subscribe(sub);
+	public Disposable subscribe(final Subscriber<? super T> sub) {
+		final Disposable disp = super.subscribe(sub);
 		chechInitialized();
 		return disp;
 	}
 
 	@Override
-	public void onDisposed(Subscriber<? super T> sub) {
+	public void onDisposed(final Subscriber<? super T> sub) {
 		super.onDisposed(sub);
 		this.mapDisposableA.dispose();
 		this.mapDisposableB.dispose();

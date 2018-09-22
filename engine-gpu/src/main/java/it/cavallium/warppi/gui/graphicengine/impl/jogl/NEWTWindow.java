@@ -83,10 +83,10 @@ class NEWTWindow implements GLEventListener {
 
 	final BehaviorSubject<Integer[]> onRealResize;
 	final BehaviorSubject<Integer[]> onResizeEvent = BehaviorSubject.create();
-	private BehaviorSubject<Float> onZoom = BehaviorSubject.create();
-	private Subject<GL2ES1> onGLContext = SimpleSubject.create();
+	private final BehaviorSubject<Float> onZoom = BehaviorSubject.create();
+	private final Subject<GL2ES1> onGLContext = SimpleSubject.create();
 
-	public NEWTWindow(JOGLEngine disp) {
+	public NEWTWindow(final JOGLEngine disp) {
 		this.disp = disp;
 		renderer = disp.getRenderer();
 		disp.size[0] = StaticVars.screenSize[0];
@@ -133,9 +133,8 @@ class NEWTWindow implements GLEventListener {
 			System.err.println("Le OpenGL non sono presenti su questo computer!");
 			return;
 		}
-		if (Engine.getPlatform().getSettings().isDebugEnabled()) {
+		if (Engine.getPlatform().getSettings().isDebugEnabled())
 			System.setProperty("jnlp.newt.window.icons", "res/icons/calculator-016.png res/icons/calculator-018.png res/icons/calculator-256.png");
-		}
 		final GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2ES1));
 		System.out.println("Loaded OpenGL");
 		// We may at this point tweak the caps and request a translucent drawable
@@ -152,57 +151,56 @@ class NEWTWindow implements GLEventListener {
 		glWindow.addWindowListener(new WindowListener() {
 
 			@Override
-			public void windowDestroyNotify(WindowEvent e) {
+			public void windowDestroyNotify(final WindowEvent e) {
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
-			public void windowDestroyed(WindowEvent e) {
-				GraphicEngine engine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
-				if (engine.isInitialized()) {
+			public void windowDestroyed(final WindowEvent e) {
+				final GraphicEngine engine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
+				if (engine.isInitialized())
 					engine.destroy();
-				}
 			}
 
 			@Override
-			public void windowGainedFocus(WindowEvent e) {
+			public void windowGainedFocus(final WindowEvent e) {
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
-			public void windowLostFocus(WindowEvent e) {
+			public void windowLostFocus(final WindowEvent e) {
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
-			public void windowMoved(WindowEvent e) {
+			public void windowMoved(final WindowEvent e) {
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
-			public void windowRepaint(WindowUpdateEvent e) {
+			public void windowRepaint(final WindowUpdateEvent e) {
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
-			public void windowResized(WindowEvent e) {
+			public void windowResized(final WindowEvent e) {
 
 			}
 
 		});
 		glWindow.addKeyListener(new KeyListener() {
 			@Override
-			public void keyPressed(KeyEvent arg0) {
+			public void keyPressed(final KeyEvent arg0) {
 				Keyboard.debugKeyCode = arg0.getKeyCode();
 			}
 
 			@Override
-			public void keyReleased(KeyEvent arg0) {
+			public void keyReleased(final KeyEvent arg0) {
 				switch (arg0.getKeyCode()) {
 					case KeyEvent.VK_ESCAPE:
 						Keyboard.keyReleased(Key.POWEROFF);
@@ -217,72 +215,63 @@ class NEWTWindow implements GLEventListener {
 						Keyboard.keyReleased(Key.debug_GRA);
 						break;
 					case KeyEvent.VK_X:
-						if (Keyboard.alpha) {
+						if (Keyboard.alpha)
 							Keyboard.keyReleased(Key.LETTER_X);
-						} else {
+						else
 							Keyboard.keyReleased(Key.NONE);
-						}
 						break;
 					case KeyEvent.VK_P:
-						if (Keyboard.alpha) {
+						if (Keyboard.alpha)
 							Keyboard.keyReleased(Key.PI);
-						} else {
+						else
 							Keyboard.keyReleased(Key.NONE);
-						}
 						break;
 					case KeyEvent.VK_B:
-						if (Keyboard.shift) {
+						if (Keyboard.shift)
 							Keyboard.keyReleased(Key.BRIGHTNESS_CYCLE_REVERSE);
-						} else if (!Keyboard.shift && !Keyboard.alpha) {
+						else if (!Keyboard.shift && !Keyboard.alpha)
 							Keyboard.keyReleased(Key.BRIGHTNESS_CYCLE);
-						} else {
+						else
 							Keyboard.keyReleased(Key.ZOOM_MODE);
-						}
 						break;
 					case KeyEvent.VK_ENTER:
-						if (!Keyboard.shift && !Keyboard.alpha) {
+						if (!Keyboard.shift && !Keyboard.alpha)
 							Keyboard.keyReleased(Key.SIMPLIFY);
-						} else {
+						else
 							Keyboard.keyReleased(Key.NONE);
-						}
 						int row = 2;
 						int col = 1;
 						Keyboard.debugKeysDown[row - 1][col - 1] = false;
 						break;
 					case KeyEvent.VK_1:
-						if (!Keyboard.shift && !Keyboard.alpha) {
+						if (!Keyboard.shift && !Keyboard.alpha)
 							Keyboard.keyReleased(Key.debug1);
-						} else {
+						else
 							Keyboard.keyReleased(Key.NONE);
-						}
 						break;
 					case KeyEvent.VK_2:
-						if (!Keyboard.shift && !Keyboard.alpha) {
+						if (!Keyboard.shift && !Keyboard.alpha)
 							Keyboard.keyReleased(Key.debug2);
-						} else {
+						else
 							Keyboard.keyReleased(Key.NONE);
-						}
 						break;
 					case KeyEvent.VK_3:
-						if (!Keyboard.shift && !Keyboard.alpha) {
+						if (!Keyboard.shift && !Keyboard.alpha)
 							Keyboard.keyReleased(Key.debug3);
-						} else {
+						else
 							Keyboard.keyReleased(Key.NONE);
-						}
 						break;
 					case KeyEvent.VK_4:
-						if (!Keyboard.shift && !Keyboard.alpha) {
+						if (!Keyboard.shift && !Keyboard.alpha)
 							Keyboard.keyReleased(Key.debug4);
-						} else {
+						else
 							Keyboard.keyReleased(Key.NONE);
-						}
 						break;
 					case KeyEvent.VK_5:
-						if (!Keyboard.shift && !Keyboard.alpha) {
+						if (!Keyboard.shift && !Keyboard.alpha)
 							Keyboard.keyReleased(Key.debug5);
-						} else {
+						else
 							Keyboard.keyReleased(Key.NONE);
-						}
 						break;
 					case 0x15:
 					case KeyEvent.VK_SHIFT:
@@ -338,7 +327,7 @@ class NEWTWindow implements GLEventListener {
 		glWindow.addMouseListener(new MouseListener() {
 
 			@Override
-			public void mouseClicked(MouseEvent e) {
+			public void mouseClicked(final MouseEvent e) {
 //				List<TouchPoint> newPoints = new ObjectArrayList<>();
 //				List<TouchPoint> changedPoints = new ObjectArrayList<>();
 //				List<TouchPoint> oldPoints = touches;
@@ -349,7 +338,7 @@ class NEWTWindow implements GLEventListener {
 //				for (int i = 0; i < e.getPointerCount(); i++) {
 //					newPoints.add(Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().makePoint(is[i], xs[i], ys[i], disp.getWidth(), disp.getHeight(), 5, 5, ps[i], 0));
 //				}
-//				
+//
 //				changedPoints.add(newPoints.get(0));
 //				newPoints.remove(0);
 //				touches = newPoints;
@@ -358,48 +347,46 @@ class NEWTWindow implements GLEventListener {
 			}
 
 			@Override
-			public void mouseEntered(MouseEvent e) {
+			public void mouseEntered(final MouseEvent e) {
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
-			public void mouseExited(MouseEvent e) {
+			public void mouseExited(final MouseEvent e) {
 				// TODO Auto-generated method stub
 
 			}
 
 			@Override
-			public void mousePressed(MouseEvent e) {
-				List<TouchPoint> newPoints = new ObjectArrayList<>();
-				List<TouchPoint> changedPoints = new ObjectArrayList<>();
+			public void mousePressed(final MouseEvent e) {
+				final List<TouchPoint> newPoints = new ObjectArrayList<>();
+				final List<TouchPoint> changedPoints = new ObjectArrayList<>();
 				@SuppressWarnings("unused")
-				List<TouchPoint> oldPoints = touches;
-				int[] xs = e.getAllX();
-				int[] ys = e.getAllY();
-				float[] ps = e.getAllPressures();
-				short[] is = e.getAllPointerIDs();
-				for (int i = 0; i < e.getPointerCount(); i++) {
+				final List<TouchPoint> oldPoints = touches;
+				final int[] xs = e.getAllX();
+				final int[] ys = e.getAllY();
+				final float[] ps = e.getAllPressures();
+				final short[] is = e.getAllPointerIDs();
+				for (int i = 0; i < e.getPointerCount(); i++)
 					newPoints.add(Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().makePoint(is[i], xs[i], ys[i], disp.getWidth(), disp.getHeight(), 5, 5, ps[i], 0));
-				}
 				changedPoints.add(newPoints.get(0));
 				touches = newPoints;
 				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchStart(new TouchStartEvent(changedPoints, touches));
 			}
 
 			@Override
-			public void mouseReleased(MouseEvent e) {
-				List<TouchPoint> newPoints = new ObjectArrayList<>();
-				List<TouchPoint> changedPoints = new ObjectArrayList<>();
+			public void mouseReleased(final MouseEvent e) {
+				final List<TouchPoint> newPoints = new ObjectArrayList<>();
+				final List<TouchPoint> changedPoints = new ObjectArrayList<>();
 				@SuppressWarnings("unused")
-				List<TouchPoint> oldPoints = touches;
-				int[] xs = e.getAllX();
-				int[] ys = e.getAllY();
-				float[] ps = e.getAllPressures();
-				short[] is = e.getAllPointerIDs();
-				for (int i = 0; i < e.getPointerCount(); i++) {
+				final List<TouchPoint> oldPoints = touches;
+				final int[] xs = e.getAllX();
+				final int[] ys = e.getAllY();
+				final float[] ps = e.getAllPressures();
+				final short[] is = e.getAllPointerIDs();
+				for (int i = 0; i < e.getPointerCount(); i++)
 					newPoints.add(Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().makePoint(is[i], xs[i], ys[i], disp.getWidth(), disp.getHeight(), 5, 5, ps[i], 0));
-				}
 				changedPoints.add(newPoints.get(0));
 				newPoints.remove(0);
 				touches = newPoints;
@@ -407,32 +394,29 @@ class NEWTWindow implements GLEventListener {
 			}
 
 			@Override
-			public void mouseMoved(MouseEvent e) {}
+			public void mouseMoved(final MouseEvent e) {}
 
 			private long lastDraggedTime = 0;
 
 			@Override
-			public void mouseDragged(MouseEvent e) {
-				long curTime = System.currentTimeMillis();
+			public void mouseDragged(final MouseEvent e) {
+				final long curTime = System.currentTimeMillis();
 				if (curTime - lastDraggedTime > 50) {
 					lastDraggedTime = curTime;
-					List<TouchPoint> newPoints = new ObjectArrayList<>();
-					List<TouchPoint> changedPoints = new ObjectArrayList<>();
-					List<TouchPoint> oldPoints = touches;
-					int[] xs = e.getAllX();
-					int[] ys = e.getAllY();
-					float[] ps = e.getAllPressures();
-					short[] is = e.getAllPointerIDs();
-					for (int i = 0; i < e.getPointerCount(); i++) {
+					final List<TouchPoint> newPoints = new ObjectArrayList<>();
+					final List<TouchPoint> changedPoints = new ObjectArrayList<>();
+					final List<TouchPoint> oldPoints = touches;
+					final int[] xs = e.getAllX();
+					final int[] ys = e.getAllY();
+					final float[] ps = e.getAllPressures();
+					final short[] is = e.getAllPointerIDs();
+					for (int i = 0; i < e.getPointerCount(); i++)
 						newPoints.add(Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().makePoint(is[i], xs[i], ys[i], disp.getWidth(), disp.getHeight(), 5, 5, ps[i], 0));
-					}
 					newPoints.forEach((newp) -> {
 						oldPoints.forEach((oldp) -> {
-							if (newp.getID() == oldp.getID()) {
-								if (newp.equals(oldp) == false) {
+							if (newp.getID() == oldp.getID())
+								if (newp.equals(oldp) == false)
 									changedPoints.add(newp);
-								}
-							}
 						});
 					});
 					touches = newPoints;
@@ -441,7 +425,7 @@ class NEWTWindow implements GLEventListener {
 			}
 
 			@Override
-			public void mouseWheelMoved(MouseEvent e) {
+			public void mouseWheelMoved(final MouseEvent e) {
 
 			}
 
@@ -454,17 +438,16 @@ class NEWTWindow implements GLEventListener {
 	}
 
 	@Override
-	public void init(GLAutoDrawable drawable) {
+	public void init(final GLAutoDrawable drawable) {
 		final GL2ES1 gl = drawable.getGL().getGL2ES1();
 		onGLContext.onNext(gl);
 
-		if (Engine.getPlatform().getSettings().isDebugEnabled()) {
+		if (Engine.getPlatform().getSettings().isDebugEnabled())
 			//Vsync
 			gl.setSwapInterval(1);
-		} else {
+		else
 			//Vsync
 			gl.setSwapInterval(2);
-		}
 
 		//Textures
 		gl.glEnable(GL.GL_TEXTURE_2D);
@@ -496,17 +479,17 @@ class NEWTWindow implements GLEventListener {
 	}
 
 	@Override
-	public void reshape(GLAutoDrawable glad, int x, int y, int width, int height) {
+	public void reshape(final GLAutoDrawable glad, final int x, final int y, final int width, final int height) {
 		onRealResize.onNext(new Integer[] { width, height });
 	}
 
 	@Override
-	public void display(GLAutoDrawable glad) {
+	public void display(final GLAutoDrawable glad) {
 		final GL2ES1 gl = glad.getGL().getGL2ES1();
 		JOGLRenderer.gl = gl;
 		onGLContext.onNext(gl);
 
-		boolean linear = (windowZoom % ((int) windowZoom)) != 0f;
+		final boolean linear = windowZoom % (int) windowZoom != 0f;
 		if (refreshViewport) {
 			System.err.println("[[[REFVP");
 			refreshViewport = false;
@@ -552,18 +535,16 @@ class NEWTWindow implements GLEventListener {
 
 	void setSize(final int width, final int height) {
 		int zoom = (int) windowZoom;
-		if (zoom == 0) {
+		if (zoom == 0)
 			zoom = onZoom.getLastValue().intValue();
-		}
-		if (zoom == 0) {
+		if (zoom == 0)
 			zoom = 1;
-		}
 		window.setSize(width * zoom, height * zoom);
 		onRealResize.onNext(new Integer[] { width * zoom, height * zoom });
 	}
 
 	@Override
-	public void dispose(GLAutoDrawable drawable) {
+	public void dispose(final GLAutoDrawable drawable) {
 		System.out.println("cleanup");
 //		final GL2ES1 gl = drawable.getGL().getGL2ES1();
 		System.exit(0);

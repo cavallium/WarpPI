@@ -26,15 +26,15 @@ public class MarioGame {
 		canMove = true;
 	}
 
-	public MarioBlock getBlockAt(int x, int y) {
+	public MarioBlock getBlockAt(final int x, final int y) {
 		return worlds[currentWorld].getBlockAt(x, y);
 	}
 
-	public MarioBlock getBlockAt(double x, double y) {
+	public MarioBlock getBlockAt(final double x, final double y) {
 		return getBlockAt((int) x, (int) y);
 	}
 
-	public void move(float dt, double deltaX, double deltaY) {
+	public void move(final float dt, final double deltaX, final double deltaY) {
 		final double curX = player.getX();
 		final double curY = player.getY();
 		final double futureX = curX + deltaX;
@@ -50,15 +50,14 @@ public class MarioGame {
 		return worlds[currentWorld];
 	}
 
-	public void gameTick(float dt, boolean upPressed, boolean downPressed, boolean leftPressed, boolean rightPressed,
-			boolean jumpPressed, boolean runPressed) {
+	public void gameTick(final float dt, final boolean upPressed, final boolean downPressed, final boolean leftPressed,
+			final boolean rightPressed, final boolean jumpPressed, final boolean runPressed) {
 		checkOnGround(getPlayer(), dt);
 		checkCollisionTop(getPlayer(), dt);
 		checkCollisionLeft(getPlayer(), dt);
 		checkCollisionRight(getPlayer(), dt);
-		if (canMove) {
+		if (canMove)
 			move(dt, (rightPressed ? 1 : 0) - (leftPressed ? 1 : 0), jumpPressed ? 1 : 0);
-		}
 		getPlayer().gameTick(dt);
 
 		final MarioWorld w = getCurrentWorld();
@@ -72,25 +71,24 @@ public class MarioGame {
 	}
 
 	@SuppressWarnings("unused")
-	private int nearest(double val, int a, int b) {
+	private int nearest(final double val, final int a, final int b) {
 		final double aa = Math.abs(val - a);
 		final double ab = Math.abs(val - b);
-		if (aa < ab) {
+		if (aa < ab)
 			return (int) aa;
-		} else {
+		else
 			return (int) ab;
-		}
 	}
 
-	private void checkOnGround(MarioEntity e, float dt) {
+	private void checkOnGround(final MarioEntity e, final float dt) {
 		if (e.subjectToGravity) {
 			final int xA = (int) Math.floor(e.getX());
 			final int xB = (int) Math.ceil(e.getX());
 			final int y0 = (int) Math.ceil(e.getY());
 			final int y1 = (int) Math.ceil(e.getY() + e.computeFutureDY(dt));
 			boolean onGround = false;
-			if (y1 < y0) {
-				for (int y = y0; y >= y1; y--) {
+			if (y1 < y0)
+				for (int y = y0; y >= y1; y--)
 					for (int x = xA; x <= xB; x++) {
 						final byte b = getCurrentWorld().getBlockIdAt(x, y - 1);
 						if (MarioBlock.isSolid(b)) {
@@ -103,8 +101,7 @@ public class MarioGame {
 							break;
 						}
 					}
-				}
-			} else {
+			else
 				for (int x = xA; x <= xB; x++) {
 					final byte b = getCurrentWorld().getBlockIdAt(x, y0 - 1);
 					if (MarioBlock.isSolid(b)) {
@@ -116,22 +113,20 @@ public class MarioGame {
 						}
 					}
 				}
-			}
-			if (!onGround) {
+			if (!onGround)
 				e.setOnGround(false);
-			}
 		}
 	}
 
-	private void checkCollisionTop(MarioEntity e, float dt) {
+	private void checkCollisionTop(final MarioEntity e, final float dt) {
 		if (e.subjectToGravity) {
 			final int xA = (int) Math.floor(e.getX());
 			final int xB = (int) Math.ceil(e.getX());
 			final int y0 = (int) Math.ceil(e.getY());
 			final int y1 = (int) Math.ceil(e.getY() + e.computeFutureDY(dt));
 			boolean collisionUp = false;
-			if (y1 > y0) {
-				for (int y = y0; y <= y1; y++) {
+			if (y1 > y0)
+				for (int y = y0; y <= y1; y++)
 					for (int x = xA; x <= xB; x++) {
 						final byte b = getCurrentWorld().getBlockIdAt(x, y + 1);
 						if (MarioBlock.isSolid(b)) {
@@ -144,8 +139,7 @@ public class MarioGame {
 							break;
 						}
 					}
-				}
-			} else {
+			else
 				for (int x = xA; x <= xB; x++) {
 					final byte b = getCurrentWorld().getBlockIdAt(x, y0 + 1);
 					if (MarioBlock.isSolid(b)) {
@@ -157,14 +151,12 @@ public class MarioGame {
 						}
 					}
 				}
-			}
-			if (!collisionUp) {
+			if (!collisionUp)
 				e.collisionUp = false;
-			}
 		}
 	}
 
-	private void checkCollisionRight(MarioEntity e, float dt) {
+	private void checkCollisionRight(final MarioEntity e, final float dt) {
 		if (e.subjectToGravity) {
 			final int yA = (int) Math.floor(e.getY());
 			final int yB = (int) Math.ceil(e.getY());
@@ -172,8 +164,8 @@ public class MarioGame {
 			final double x1double = e.getX() + e.computeFutureDX(dt);
 			final int x1 = (int) Math.floor(x1double);
 			boolean collisionRight = false;
-			if (x1 > x0) {
-				for (int x = x0; x <= x1; x++) {
+			if (x1 > x0)
+				for (int x = x0; x <= x1; x++)
 					for (int y = yA; y <= yB; y++) {
 						final byte b = getCurrentWorld().getBlockIdAt(x + 1, y);
 						if (MarioBlock.isSolid(b)) {
@@ -186,8 +178,7 @@ public class MarioGame {
 							break;
 						}
 					}
-				}
-			} else {
+			else
 				for (int y = yA; y <= yB; y++) {
 					final byte b = getCurrentWorld().getBlockIdAt(x0 + 1, y);
 					if (MarioBlock.isSolid(b)) {
@@ -199,14 +190,12 @@ public class MarioGame {
 						}
 					}
 				}
-			}
-			if (!collisionRight) {
+			if (!collisionRight)
 				e.collisionRight = false;
-			}
 		}
 	}
 
-	private void checkCollisionLeft(MarioEntity e, float dt) {
+	private void checkCollisionLeft(final MarioEntity e, final float dt) {
 		if (e.subjectToGravity) {
 			final int yA = (int) Math.floor(e.getY());
 			final int yB = (int) Math.ceil(e.getY());
@@ -220,39 +209,34 @@ public class MarioGame {
 					e.setPosition(0, e.getY());
 				}
 				e.collisionLeft = true;
-			} else {
-				if (x1 < x0) {
-					for (int x = x0; x >= x1; x--) {
-						for (int y = yA; y <= yB; y++) {
-							final byte b = getCurrentWorld().getBlockIdAt(x - 1, y);
-							if (MarioBlock.isSolid(b)) {
-								collisionLeft = true;
-								if (e.forceX < 0 && x1double <= x) {
-									e.forceX = 0;
-									e.setPosition(x, e.getY());
-									e.collisionLeft = true;
-								}
-								break;
-							}
-						}
-					}
-				} else {
+			} else if (x1 < x0)
+				for (int x = x0; x >= x1; x--)
 					for (int y = yA; y <= yB; y++) {
-						final byte b = getCurrentWorld().getBlockIdAt(x0 - 1, y);
+						final byte b = getCurrentWorld().getBlockIdAt(x - 1, y);
 						if (MarioBlock.isSolid(b)) {
 							collisionLeft = true;
-							if (e.forceX < 0 && x1double <= x0) {
+							if (e.forceX < 0 && x1double <= x) {
 								e.forceX = 0;
-								e.setPosition(x0, e.getY());
+								e.setPosition(x, e.getY());
 								e.collisionLeft = true;
 							}
+							break;
+						}
+					}
+			else
+				for (int y = yA; y <= yB; y++) {
+					final byte b = getCurrentWorld().getBlockIdAt(x0 - 1, y);
+					if (MarioBlock.isSolid(b)) {
+						collisionLeft = true;
+						if (e.forceX < 0 && x1double <= x0) {
+							e.forceX = 0;
+							e.setPosition(x0, e.getY());
+							e.collisionLeft = true;
 						}
 					}
 				}
-			}
-			if (!collisionLeft) {
+			if (!collisionLeft)
 				e.collisionLeft = false;
-			}
 		}
 	}
 

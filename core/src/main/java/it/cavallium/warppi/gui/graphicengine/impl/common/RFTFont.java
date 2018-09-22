@@ -34,49 +34,49 @@ public abstract class RFTFont implements BinaryFont {
 	@SuppressWarnings("unused")
 	private final boolean isResource;
 
-	public RFTFont(String fontName) throws IOException {
+	public RFTFont(final String fontName) throws IOException {
 		this(fontName, false);
 	}
 
-	RFTFont(String fontName, boolean onlyRaw) throws IOException {
+	RFTFont(final String fontName, final boolean onlyRaw) throws IOException {
 		isResource = true;
 		load("/font_" + fontName + ".rft", onlyRaw);
 	}
 
-	public RFTFont(String path, String fontName) throws IOException {
+	public RFTFont(final String path, final String fontName) throws IOException {
 		this(path, fontName, false);
 	}
 
-	RFTFont(String path, String fontName, boolean onlyRaw) throws IOException {
+	RFTFont(final String path, final String fontName, final boolean onlyRaw) throws IOException {
 		isResource = false;
 		load(path + "/font_" + fontName + ".rft", onlyRaw);
 	}
 
-	public static RFTFont loadTemporaryFont(String name) throws IOException {
+	public static RFTFont loadTemporaryFont(final String name) throws IOException {
 		return new BlankRFTFont(name, true);
 	}
 
-	public static RFTFont loadTemporaryFont(String path, String name) throws IOException {
+	public static RFTFont loadTemporaryFont(final String path, final String name) throws IOException {
 		return new BlankRFTFont(path, name, true);
 	}
 
 	@Override
-	public void load(String path) throws IOException {
+	public void load(final String path) throws IOException {
 		load(path, false);
 	}
 
-	private void load(String path, boolean onlyRaw) throws IOException {
+	private void load(final String path, final boolean onlyRaw) throws IOException {
 		Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN + 1, "Loading font " + path);
 		loadFont(path);
 		if (!onlyRaw) {
-			chars32 = new int[(intervalsTotalSize) * charIntCount];
+			chars32 = new int[intervalsTotalSize * charIntCount];
 			for (int charCompressedIndex = 0; charCompressedIndex < intervalsTotalSize; charCompressedIndex++) {
 				final boolean[] currentChar = rawchars[charCompressedIndex];
 				if (currentChar == null) {
 					int currentInt = 0;
 					int currentBit = 0;
 					for (int i = 0; i < charS; i++) {
-						if (currentInt * intBits + currentBit >= (currentInt + 1) * intBits) {
+						if (currentInt * RFTFont.intBits + currentBit >= (currentInt + 1) * RFTFont.intBits) {
 							currentInt += 1;
 							currentBit = 0;
 						}
@@ -87,11 +87,11 @@ public abstract class RFTFont implements BinaryFont {
 					int currentInt = 0;
 					int currentBit = 0;
 					for (int i = 0; i < charS; i++) {
-						if (currentBit >= intBits) {
+						if (currentBit >= RFTFont.intBits) {
 							currentInt += 1;
 							currentBit = 0;
 						}
-						chars32[charCompressedIndex * charIntCount + currentInt] = (chars32[charCompressedIndex * charIntCount + currentInt]) | ((currentChar[i] ? 1 : 0) << currentBit);
+						chars32[charCompressedIndex * charIntCount + currentInt] = chars32[charCompressedIndex * charIntCount + currentInt] | (currentChar[i] ? 1 : 0) << currentBit;
 						currentBit++;
 					}
 				}
@@ -107,8 +107,8 @@ public abstract class RFTFont implements BinaryFont {
 			if (!string.startsWith("/"))
 				string = "/" + string;
 			res = Engine.getPlatform().getStorageUtils().getResourceStream(string);
-		} catch (URISyntaxException e) {
-			IOException ex = new IOException();
+		} catch (final URISyntaxException e) {
+			final IOException ex = new IOException();
 			ex.initCause(e);
 			throw ex;
 		}
@@ -119,32 +119,28 @@ public abstract class RFTFont implements BinaryFont {
 				charW = file[0x4] << 8 | file[0x5];
 				charH = file[0x6] << 8 | file[0x7];
 				charS = charW * charH;
-				charIntCount = (int) Math.ceil(((double) charS) / ((double) intBits));
+				charIntCount = (int) Math.ceil((double) charS / (double) RFTFont.intBits);
 				minBound = file[0x9] << 24 | file[0xA] << 16 | file[0xB] << 8 | file[0xC];
 				maxBound = file[0xE] << 24 | file[0xF] << 16 | file[0x10] << 8 | file[0x11];
-				if (maxBound <= minBound) {
+				if (maxBound <= minBound)
 					maxBound = 66000; //TODO remove it: temp fix
-				}
 				rawchars = new boolean[maxBound - minBound][];
 				int index = 0x12;
-				while (index < filelength) {
+				while (index < filelength)
 					try {
 						final int charIndex = file[index] << 8 | file[index + 1];
 						final boolean[] rawchar = new boolean[charS];
 						int charbytescount = 0;
-						while (charbytescount * 8 < charS) {
+						while (charbytescount * 8 < charS)
 							charbytescount += 1;
-						}
 						int currentBit = 0;
-						for (int i = 0; i <= charbytescount; i++) {
+						for (int i = 0; i <= charbytescount; i++)
 							for (int bit = 0; bit < 8; bit++) {
-								if (currentBit >= charS) {
+								if (currentBit >= charS)
 									break;
-								}
-								rawchar[currentBit] = (((file[index + 2 + i] >> (8 - 1 - bit)) & 0x1) == 1) ? true : false;
+								rawchar[currentBit] = (file[index + 2 + i] >> 8 - 1 - bit & 0x1) == 1 ? true : false;
 								currentBit++;
 							}
-						}
 						rawchars[charIndex - minBound] = rawchar;
 						index += 2 + charbytescount;
 					} catch (final Exception ex) {
@@ -152,13 +148,10 @@ public abstract class RFTFont implements BinaryFont {
 						System.out.println(string);
 						Engine.getPlatform().exit(-1);
 					}
-				}
-			} else {
+			} else
 				throw new IOException();
-			}
-		} else {
+		} else
 			throw new IOException();
-		}
 		findIntervals();
 		/*int[] screen = new int[rawchars.length * charW * charH];
 		for (int i = 0; i < rawchars.length; i++) {
@@ -186,13 +179,12 @@ public abstract class RFTFont implements BinaryFont {
 		int intervalSize = 0;
 		@SuppressWarnings("unused")
 		final int holeSize = 0;
-		for (int i = 0; i < rawchars.length; i++) {
+		for (int i = 0; i < rawchars.length; i++)
 			if (rawchars[i] != null) {
 				beginIndex = i;
 				int firstNull = 0;
-				while (i + firstNull < rawchars.length && rawchars[i + firstNull] != null) {
+				while (i + firstNull < rawchars.length && rawchars[i + firstNull] != null)
 					firstNull++;
-				}
 				endIndex = beginIndex + firstNull - 1;
 				i = endIndex;
 				if (endIndex >= 0) {
@@ -202,13 +194,12 @@ public abstract class RFTFont implements BinaryFont {
 				}
 				beginIndex = -1;
 			}
-		}
 		int lastIndex = 0;
 		final boolean[][] newrawchars = new boolean[intervalsTotalSize][];
 		for (final int[] interval : intervals) {
-			if (rawchars.length - (interval[0]) - interval[2] < 0) {
+			if (rawchars.length - interval[0] - interval[2] < 0) {
 				System.err.println(interval[0] + "-" + interval[1] + "(" + interval[2] + ")");
-				System.err.println(rawchars.length - (interval[0]) - interval[2]);
+				System.err.println(rawchars.length - interval[0] - interval[2]);
 				throw new ArrayIndexOutOfBoundsException();
 			}
 			if (newrawchars.length - (lastIndex - 1) - interval[2] < 0) {
@@ -230,7 +221,7 @@ public abstract class RFTFont implements BinaryFont {
 	}
 
 	@SuppressWarnings("unused")
-	private void saveArray(int[] screen, int w, int h, String coutputpng) {
+	private void saveArray(final int[] screen, final int w, final int h, final String coutputpng) {
 		final BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 		final int[] a = ((DataBufferInt) bi.getRaster().getDataBuffer()).getData();
 		System.arraycopy(screen, 0, a, 0, screen.length);
@@ -241,7 +232,7 @@ public abstract class RFTFont implements BinaryFont {
 		}
 	}
 
-	public int[] getCharIndexes(String txt) {
+	public int[] getCharIndexes(final String txt) {
 		final int l = txt.length();
 		final int[] indexes = new int[l];
 		final char[] chars = txt.toCharArray();
@@ -252,52 +243,48 @@ public abstract class RFTFont implements BinaryFont {
 		return indexes;
 	}
 
-	public int getCharIndex(char c) {
+	public int getCharIndex(final char c) {
 		final int originalIndex = c & 0xFFFF;
 		return compressIndex(originalIndex);
 	}
 
-	protected int compressIndex(int originalIndex) {
+	protected int compressIndex(final int originalIndex) {
 		int compressedIndex = 0;
-		for (int i = 0; i < intervals.length; i += 3) {
-			if (intervals[i] > originalIndex) {
+		for (int i = 0; i < intervals.length; i += 3)
+			if (intervals[i] > originalIndex)
 				break;
-			} else if (originalIndex <= intervals[i + 1]) {
-				compressedIndex += (originalIndex - intervals[i]);
+			else if (originalIndex <= intervals[i + 1]) {
+				compressedIndex += originalIndex - intervals[i];
 				break;
-			} else {
+			} else
 				compressedIndex += intervals[i + 2];
-			}
-		}
 		return compressedIndex;
 	}
 
 	@SuppressWarnings("unused")
-	private int decompressIndex(int compressedIndex) {
+	private int decompressIndex(final int compressedIndex) {
 		final int originalIndex = 0;
 		int i = 0;
 		for (int intvl = 0; intvl < intervals.length; intvl += 3) {
 			i += intervals[intvl + 2];
-			if (i == compressedIndex) {
+			if (i == compressedIndex)
 				return intervals[intvl + 1];
-			} else if (i > compressedIndex) {
+			else if (i > compressedIndex)
 				return intervals[intvl + 1] - (i - compressedIndex);
-			}
 		}
 		return originalIndex;
 	}
 
 	@Override
-	public void initialize(GraphicEngine d) {}
+	public void initialize(final GraphicEngine d) {}
 
 	@Override
-	public int getStringWidth(String text) {
+	public int getStringWidth(final String text) {
 		final int w = charW * text.length();
-		if (text.length() > 0 && w > 0) {
+		if (text.length() > 0 && w > 0)
 			return w;
-		} else {
+		else
 			return 0;
-		}
 	}
 
 	@Override
@@ -324,22 +311,22 @@ public abstract class RFTFont implements BinaryFont {
 	public int getSkinHeight() {
 		return -1;
 	}
-	
+
 	private static class BlankRFTFont extends RFTFont {
 
-		BlankRFTFont(String fontName, boolean onlyRaw) throws IOException {
+		BlankRFTFont(final String fontName, final boolean onlyRaw) throws IOException {
 			super(fontName, onlyRaw);
 		}
 
-		public BlankRFTFont(String path, String name, boolean b) throws IOException {
+		public BlankRFTFont(final String path, final String name, final boolean b) throws IOException {
 			super(path, name, b);
 		}
 
 		@Override
-		public void use(GraphicEngine d) {
-			
+		public void use(final GraphicEngine d) {
+
 		}
-		
+
 	}
 
 }

@@ -9,13 +9,13 @@ public class FeatureVariable extends FeatureChar {
 
 	public V_TYPE varType;
 
-	public FeatureVariable(char ch, V_TYPE varType) {
+	public FeatureVariable(final char ch, final V_TYPE varType) {
 		super(ch);
 		this.varType = varType;
 	}
 
 	@Override
-	public Function toFunction(MathContext context) {
+	public Function toFunction(final MathContext context) {
 		return new Variable(context, ch, varType);
 	}
 }

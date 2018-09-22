@@ -7,7 +7,7 @@ import it.cavallium.warppi.Platform.PngUtils;
 public class DesktopPngUtils implements PngUtils {
 
 	@Override
-	public PngReader load(InputStream resourceStream) {
+	public PngReader load(final InputStream resourceStream) {
 		return new DesktopPngReader(resourceStream);
 	}
 

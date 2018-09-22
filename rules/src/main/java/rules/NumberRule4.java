@@ -17,7 +17,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Number rule
  * a ± b = {a+b, a-b}
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -41,21 +41,19 @@ public class NumberRule4 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
-		if (f instanceof SumSubtraction) {
+		if (f instanceof SumSubtraction)
 			isExecutable = true;
-		}
 
 		if (isExecutable) {
-			MathContext root = f.getMathContext();
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			FunctionOperator ss = (FunctionOperator) f;
+			final MathContext root = f.getMathContext();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final FunctionOperator ss = (FunctionOperator) f;
 			result.add(new Sum(root, ss.getParameter1(), ss.getParameter2()));
 			result.add(new Subtraction(root, ss.getParameter1(), ss.getParameter2()));
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 }

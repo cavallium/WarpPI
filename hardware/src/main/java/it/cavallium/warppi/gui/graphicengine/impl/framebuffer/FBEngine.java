@@ -25,7 +25,7 @@ public class FBEngine implements GraphicEngine {
 	private static final int FB_DISPLAY_BPP = 32;
 	private static final int WIDTH = 480;
 	private static final int HEIGHT = 320;
-	private static final int[] SIZE = new int[] { WIDTH, HEIGHT };
+	private static final int[] SIZE = new int[] { FBEngine.WIDTH, FBEngine.HEIGHT };
 	private BehaviorSubject<Integer[]> onResize;
 	private final TestJNI jni = new TestJNI();
 	public FBRenderer r;
@@ -37,7 +37,7 @@ public class FBEngine implements GraphicEngine {
 
 	@Override
 	public int[] getSize() {
-		return SIZE;
+		return FBEngine.SIZE;
 	}
 
 	@Override
@@ -46,17 +46,17 @@ public class FBEngine implements GraphicEngine {
 	}
 
 	@Override
-	public void setTitle(String title) {}
+	public void setTitle(final String title) {}
 
 	@Override
-	public void setResizable(boolean r) {}
+	public void setResizable(final boolean r) {}
 
 	@Override
-	public void setDisplayMode(int ww, int wh) {}
+	public void setDisplayMode(final int ww, final int wh) {}
 
 	@Override
-	public void create(Runnable onInitialized) {
-		onResize = BehaviorSubject.create(new Integer[] { SIZE[0], SIZE[1] });
+	public void create(final Runnable onInitialized) {
+		onResize = BehaviorSubject.create(new Integer[] { FBEngine.SIZE[0], FBEngine.SIZE[1] });
 		realFb = jni.retrieveBuffer();
 		final long fbLen = realFb.getLength();
 		fb = (MappedByteBuffer) ByteBuffer.allocateDirect((int) fbLen);
@@ -64,9 +64,8 @@ public class FBEngine implements GraphicEngine {
 		r = new FBRenderer(this, fb);
 
 		initialized = true;
-		if (onInitialized != null) {
+		if (onInitialized != null)
 			onInitialized.run();
-		}
 	}
 
 	@Override
@@ -76,12 +75,12 @@ public class FBEngine implements GraphicEngine {
 
 	@Override
 	public int getWidth() {
-		return WIDTH;
+		return FBEngine.WIDTH;
 	}
 
 	@Override
 	public int getHeight() {
-		return HEIGHT;
+		return FBEngine.HEIGHT;
 	}
 
 	@Override
@@ -94,7 +93,7 @@ public class FBEngine implements GraphicEngine {
 	}
 
 	@Override
-	public void start(RenderingLoop d) {
+	public void start(final RenderingLoop d) {
 		final Thread th = new Thread(() -> {
 			try {
 				double extratime = 0;
@@ -109,9 +108,8 @@ public class FBEngine implements GraphicEngine {
 					if (extraTimeInt + deltaInt < 50) {
 						Thread.sleep(50 - (extraTimeInt + deltaInt));
 						extratime = 0;
-					} else {
+					} else
 						extratime += delta - 50d;
-					}
 				}
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
@@ -133,12 +131,10 @@ public class FBEngine implements GraphicEngine {
 		_________________TMP++;
 		realFb.getBuffer().clear();
 		realFb.getBuffer().put(fb);
-		for (int i = 0; i < fb.capacity() / 2; i++) {
+		for (int i = 0; i < fb.capacity() / 2; i++)
 			realFb.getBuffer().put(i, (byte) (_________________TMP < 50 ? 0xFF : 0xF0));
-		}
-		for (int i = fb.capacity() / 2; i < fb.capacity(); i++) {
-			realFb.getBuffer().put(i, (byte) (0x18));
-		}
+		for (int i = fb.capacity() / 2; i < fb.capacity(); i++)
+			realFb.getBuffer().put(i, (byte) 0x18);
 	}
 
 	@Override
@@ -147,17 +143,17 @@ public class FBEngine implements GraphicEngine {
 	}
 
 	@Override
-	public FBFont loadFont(String fontName) throws IOException {
+	public FBFont loadFont(final String fontName) throws IOException {
 		return new FBFont(fontName);
 	}
 
 	@Override
-	public FBFont loadFont(String path, String fontName) throws IOException {
+	public FBFont loadFont(final String path, final String fontName) throws IOException {
 		return new FBFont(path, fontName);
 	}
 
 	@Override
-	public FBSkin loadSkin(String file) throws IOException {
+	public FBSkin loadSkin(final String file) throws IOException {
 		return new FBSkin(file);
 	}
 
@@ -170,12 +166,10 @@ public class FBEngine implements GraphicEngine {
 
 	@Override
 	public boolean isSupported() {
-		if (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isFrameBufferEngineForced() == false) {
+		if (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isFrameBufferEngineForced() == false)
 			return false;
-		}
-		if (StaticVars.startupArguments.isHeadlessEngineForced()) {
+		if (StaticVars.startupArguments.isHeadlessEngineForced())
 			return false;
-		}
 		/*
 		File fbFile = new File("/dev/fb1");
 		try {

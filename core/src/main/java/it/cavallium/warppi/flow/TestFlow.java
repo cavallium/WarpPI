@@ -3,12 +3,12 @@ package it.cavallium.warppi.flow;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class TestFlow {
-	public static void main(String[] args) {
+	public static void main(final String[] args) {
 		try {
 
-			BehaviorSubject<Float> subject0 = BehaviorSubject.create(0f);
+			final BehaviorSubject<Float> subject0 = BehaviorSubject.create(0f);
 
-			Disposable s00 = subject0.subscribe((val) -> {
+			final Disposable s00 = subject0.subscribe((val) -> {
 				System.out.println(val);
 			});
 			Thread.sleep(100);
@@ -25,9 +25,9 @@ public class TestFlow {
 			subject0.onComplete();
 			System.out.println("items sent.");
 
-			Subject<Float> subject1 = BehaviorSubject.create(0f);
+			final Subject<Float> subject1 = BehaviorSubject.create(0f);
 
-			Disposable s01 = subject1.map((val) -> val + 1).subscribe((val) -> {
+			final Disposable s01 = subject1.map((val) -> val + 1).subscribe((val) -> {
 				System.out.println(val);
 			});
 			Thread.sleep(100);
@@ -44,11 +44,11 @@ public class TestFlow {
 			subject1.onComplete();
 			System.out.println("items sent.");
 
-			BehaviorSubject<Float> subjectA = BehaviorSubject.create();
-			BehaviorSubject<Float> subjectB = BehaviorSubject.create();
-			Observable<Float> observable = Observable.merge(subjectA, subjectB);
+			final BehaviorSubject<Float> subjectA = BehaviorSubject.create();
+			final BehaviorSubject<Float> subjectB = BehaviorSubject.create();
+			final Observable<Float> observable = Observable.merge(subjectA, subjectB);
 
-			Disposable s1 = observable.subscribe((val) -> {
+			final Disposable s1 = observable.subscribe((val) -> {
 				System.out.println(val);
 			});
 			Thread.sleep(100);
@@ -67,11 +67,11 @@ public class TestFlow {
 			Thread.sleep(100);
 			System.out.println("no more news subscribers left, closing publisher..");
 
-			BehaviorSubject<Float> subjectC = BehaviorSubject.create();
-			BehaviorSubject<Float> subjectD = BehaviorSubject.create();
-			Observable<Pair<Float, Float>> observableCombined = Observable.combineLatest(subjectC, subjectD);
+			final BehaviorSubject<Float> subjectC = BehaviorSubject.create();
+			final BehaviorSubject<Float> subjectD = BehaviorSubject.create();
+			final Observable<Pair<Float, Float>> observableCombined = Observable.combineLatest(subjectC, subjectD);
 			System.out.println("Combined observable: " + observableCombined.toString());
-			Disposable s2 = observableCombined.subscribe((val) -> {
+			final Disposable s2 = observableCombined.subscribe((val) -> {
 				System.out.println(val);
 			});
 			Thread.sleep(100);
@@ -89,8 +89,8 @@ public class TestFlow {
 			subjectC.onComplete();
 			System.out.println("items sent.");
 
-			ObservableInterval timA = ObservableInterval.create(100L);
-			Disposable d = timA.subscribe((t) -> {
+			final ObservableInterval timA = ObservableInterval.create(100L);
+			final Disposable d = timA.subscribe((t) -> {
 				System.out.println(t);
 			});
 
@@ -98,11 +98,11 @@ public class TestFlow {
 			d.dispose();
 			System.out.println("items sent.");
 
-			ObservableInterval subjectE = ObservableInterval.create(100L);
-			BehaviorSubject<Float> subjectF = BehaviorSubject.create();
-			Observable<Pair<Long, Float>> observableZipped = Observable.zip(subjectE, subjectF);
+			final ObservableInterval subjectE = ObservableInterval.create(100L);
+			final BehaviorSubject<Float> subjectF = BehaviorSubject.create();
+			final Observable<Pair<Long, Float>> observableZipped = Observable.zip(subjectE, subjectF);
 			System.out.println("Zipped observable: " + observableZipped.toString());
-			Disposable s3 = observableZipped.subscribe((val) -> {
+			final Disposable s3 = observableZipped.subscribe((val) -> {
 				System.out.println(val);
 			});
 			Thread.sleep(100);
@@ -127,7 +127,7 @@ public class TestFlow {
 			subjectF.onComplete();
 			System.out.println("items sent.");
 
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 		}
 	}

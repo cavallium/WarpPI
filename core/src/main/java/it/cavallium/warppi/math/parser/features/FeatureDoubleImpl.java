@@ -7,7 +7,7 @@ public abstract class FeatureDoubleImpl implements FeatureDouble {
 	private Object child_1;
 	private Object child_2;
 
-	public FeatureDoubleImpl(Object child1, Object child2) {
+	public FeatureDoubleImpl(final Object child1, final Object child2) {
 		child_1 = child1;
 		child_2 = child2;
 	}
@@ -18,7 +18,7 @@ public abstract class FeatureDoubleImpl implements FeatureDouble {
 	}
 
 	@Override
-	public void setChild1(Object obj) {
+	public void setChild1(final Object obj) {
 		child_1 = obj;
 	}
 
@@ -28,7 +28,7 @@ public abstract class FeatureDoubleImpl implements FeatureDouble {
 	}
 
 	@Override
-	public void setChild2(Object obj) {
+	public void setChild2(final Object obj) {
 		child_2 = obj;
 	}
 

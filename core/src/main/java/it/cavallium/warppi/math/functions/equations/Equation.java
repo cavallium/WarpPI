@@ -14,11 +14,11 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class Equation extends FunctionOperator {
 
-	public Equation(MathContext root, Function value1, Function value2) {
+	public Equation(final MathContext root, final Function value1, final Function value2) {
 		super(root, value1, value2);
 	}
 
-	public List<Function> solve(char variableCharacter) {
+	public List<Function> solve(final char variableCharacter) {
 		@SuppressWarnings("unused")
 		final ObjectArrayList<Equation> e;
 		//TODO: WORK IN PROGRESS.
@@ -27,15 +27,14 @@ public class Equation extends FunctionOperator {
 	}
 
 	//WORK IN PROGRESS
-	public ObjectArrayList<Equation> solveStep(char charIncognita) {
+	public ObjectArrayList<Equation> solveStep(final char charIncognita) {
 		ObjectArrayList<Equation> result = new ObjectArrayList<>();
 		result.add(clone());
 		for (final SolveMethod t : SolveMethod.techniques) {
 			final ObjectArrayList<Equation> newResults = new ObjectArrayList<>();
 			final int sz = result.size();
-			for (int n = 0; n < sz; n++) {
+			for (int n = 0; n < sz; n++)
 				newResults.addAll(t.solve(result.get(n)));
-			}
 			final Set<Equation> hs = new HashSet<>();
 			hs.addAll(newResults);
 			newResults.clear();
@@ -52,13 +51,13 @@ public class Equation extends FunctionOperator {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public ObjectArrayList<Block> toBlock(MathContext context) throws Error {
+	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
 		// TODO Auto-generated method stub
 		return null;
 	}

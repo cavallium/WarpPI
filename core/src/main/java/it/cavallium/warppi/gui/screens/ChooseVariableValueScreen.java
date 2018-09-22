@@ -13,7 +13,7 @@ public class ChooseVariableValueScreen extends Screen {
 	private final MathInputScreen es;
 	public Function resultNumberValue;
 
-	public ChooseVariableValueScreen(MathInputScreen es, VariableValue variableValue) {
+	public ChooseVariableValueScreen(final MathInputScreen es, final VariableValue variableValue) {
 		super();
 		canBeInHistory = false;
 
@@ -46,7 +46,7 @@ public class ChooseVariableValueScreen extends Screen {
 	}
 
 	@Override
-	public void beforeRender(float dt) {
+	public void beforeRender(final float dt) {
 
 	}
 
@@ -56,7 +56,7 @@ public class ChooseVariableValueScreen extends Screen {
 	}
 
 	@Override
-	public boolean onKeyPressed(KeyPressedEvent k) {
+	public boolean onKeyPressed(final KeyPressedEvent k) {
 		switch (k.getKey()) {
 			case LETTER_X:
 //				PIDisplay.INSTANCE.goBack();

@@ -23,7 +23,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
  * a - 0 = a
  * 0 - a = -a
  * a ± 0 = a
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -47,34 +47,29 @@ public class NumberRule5 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
 		if (f instanceof Sum || f instanceof Subtraction || f instanceof SumSubtraction) {
-			MathContext root = f.getMathContext();
-			FunctionOperator fnc = (FunctionOperator) f;
-			if (fnc.getParameter1().equals(new Number(root, 0)) || fnc.getParameter2().equals(new Number(root, 0))) {
-				if (!(fnc.getParameter1().equals(new Number(root, 0)) && f instanceof SumSubtraction)) {
+			final MathContext root = f.getMathContext();
+			final FunctionOperator fnc = (FunctionOperator) f;
+			if (fnc.getParameter1().equals(new Number(root, 0)) || fnc.getParameter2().equals(new Number(root, 0)))
+				if (!(fnc.getParameter1().equals(new Number(root, 0)) && f instanceof SumSubtraction))
 					isExecutable = true;
-				}
-			}
 		}
 
 		if (isExecutable) {
-			MathContext root = f.getMathContext();
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			FunctionOperator fnc = (FunctionOperator) f;
+			final MathContext root = f.getMathContext();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final FunctionOperator fnc = (FunctionOperator) f;
 			Function a = fnc.getParameter1();
-			if (a.equals(new Number(root, 0))) {
-				if (f instanceof Subtraction) {
+			if (a.equals(new Number(root, 0)))
+				if (f instanceof Subtraction)
 					a = new Multiplication(root, new Number(root, -1), fnc.getParameter2());
-				} else {
+				else
 					a = fnc.getParameter2();
-				}
-			}
 			result.add(a);
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 }

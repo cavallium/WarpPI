@@ -4,8 +4,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 public class ObservableZipped<T, U> extends Observable<Pair<T, U>> {
 	private volatile boolean initialized = false;
-	private Observable<T> a;
-	private Observable<U> b;
+	private final Observable<T> a;
+	private final Observable<U> b;
 	private Disposable disposableA;
 	private Disposable disposableB;
 	private volatile T lastA;
@@ -13,7 +13,7 @@ public class ObservableZipped<T, U> extends Observable<Pair<T, U>> {
 	private volatile boolean didA;
 	private volatile boolean didB;
 
-	public ObservableZipped(Observable<T> a, Observable<U> b) {
+	public ObservableZipped(final Observable<T> a, final Observable<U> b) {
 		super();
 		this.a = a;
 		this.b = b;
@@ -25,26 +25,22 @@ public class ObservableZipped<T, U> extends Observable<Pair<T, U>> {
 			didA = true;
 			receivedNext();
 		}, (e) -> {
-			for (Subscriber<? super Pair<T, U>> sub : this.subscribers) {
-				sub.onError(e);
-			} ;
+			for (final Subscriber<? super Pair<T, U>> sub : subscribers)
+				sub.onError(e);;
 		}, () -> {
-			for (Subscriber<? super Pair<T, U>> sub : this.subscribers) {
-				sub.onComplete();
-			} ;
+			for (final Subscriber<? super Pair<T, U>> sub : subscribers)
+				sub.onComplete();;
 		});
 		this.disposableB = b.subscribe((t) -> {
 			lastB = t;
 			didB = true;
 			receivedNext();
 		}, (e) -> {
-			for (Subscriber<? super Pair<T, U>> sub : this.subscribers) {
-				sub.onError(e);
-			} ;
+			for (final Subscriber<? super Pair<T, U>> sub : subscribers)
+				sub.onError(e);;
 		}, () -> {
-			for (Subscriber<? super Pair<T, U>> sub : this.subscribers) {
-				sub.onComplete();
-			} ;
+			for (final Subscriber<? super Pair<T, U>> sub : subscribers)
+				sub.onComplete();;
 		});
 	}
 
@@ -52,9 +48,8 @@ public class ObservableZipped<T, U> extends Observable<Pair<T, U>> {
 		if (didA && didB) {
 			didA = false;
 			didB = false;
-			for (Subscriber<? super Pair<T, U>> sub : this.subscribers) {
-				sub.onNext(Pair.of(lastA, lastB));
-			} ;
+			for (final Subscriber<? super Pair<T, U>> sub : subscribers)
+				sub.onNext(Pair.of(lastA, lastB));;
 		}
 	}
 
@@ -66,14 +61,14 @@ public class ObservableZipped<T, U> extends Observable<Pair<T, U>> {
 	}
 
 	@Override
-	public Disposable subscribe(Subscriber<? super Pair<T, U>> sub) {
-		Disposable disp = super.subscribe(sub);
+	public Disposable subscribe(final Subscriber<? super Pair<T, U>> sub) {
+		final Disposable disp = super.subscribe(sub);
 		chechInitialized();
 		return disp;
 	}
 
 	@Override
-	public void onDisposed(Subscriber<? super Pair<T, U>> sub) {
+	public void onDisposed(final Subscriber<? super Pair<T, U>> sub) {
 		super.onDisposed(sub);
 		this.disposableA.dispose();
 		this.disposableB.dispose();

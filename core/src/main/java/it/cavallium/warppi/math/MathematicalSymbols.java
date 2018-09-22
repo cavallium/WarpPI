@@ -1,7 +1,5 @@
 package it.cavallium.warppi.math;
 
-import static it.cavallium.warppi.util.Utils.concat;
-
 import it.cavallium.warppi.util.Utils;
 
 public class MathematicalSymbols {
@@ -32,32 +30,31 @@ public class MathematicalSymbols {
 	public static final char X = 'ⓧ';
 	public static final char Y = 'Ⓨ';
 
-	public static final char[] functionsNSN = new char[] { NTH_ROOT, POWER };
+	public static final char[] functionsNSN = new char[] { MathematicalSymbols.NTH_ROOT, MathematicalSymbols.POWER };
 
-	public static final char[] functionsSN = new char[] { SQUARE_ROOT, POWER_OF_TWO, MINUS, SINE, COSINE, TANGENT, ARC_SINE, ARC_COSINE, ARC_TANGENT, LOGARITHM };
+	public static final char[] functionsSN = new char[] { MathematicalSymbols.SQUARE_ROOT, MathematicalSymbols.POWER_OF_TWO, MathematicalSymbols.MINUS, MathematicalSymbols.SINE, MathematicalSymbols.COSINE, MathematicalSymbols.TANGENT, MathematicalSymbols.ARC_SINE, MathematicalSymbols.ARC_COSINE, MathematicalSymbols.ARC_TANGENT, MathematicalSymbols.LOGARITHM };
 
-	public static final char[] functions = concat(functionsNSN, functionsSN);
+	public static final char[] functions = Utils.concat(MathematicalSymbols.functionsNSN, MathematicalSymbols.functionsSN);
 
-	private static final char[] signumsWithoutMultiplication = new char[] { SUM, SUM_SUBTRACTION, SUBTRACTION, DIVISION };
-	private static final char[] signumsWithMultiplication = Utils.add(signumsWithoutMultiplication, MULTIPLICATION);
+	private static final char[] signumsWithoutMultiplication = new char[] { MathematicalSymbols.SUM, MathematicalSymbols.SUM_SUBTRACTION, MathematicalSymbols.SUBTRACTION, MathematicalSymbols.DIVISION };
+	private static final char[] signumsWithMultiplication = Utils.add(MathematicalSymbols.signumsWithoutMultiplication, MathematicalSymbols.MULTIPLICATION);
 
-	public static final char[] functionsNSNAndSignums = concat(functionsNSN, signumsWithMultiplication);
-	public static final char[] functionsAndSignums = concat(functions, signumsWithMultiplication);
+	public static final char[] functionsNSNAndSignums = Utils.concat(MathematicalSymbols.functionsNSN, MathematicalSymbols.signumsWithMultiplication);
+	public static final char[] functionsAndSignums = Utils.concat(MathematicalSymbols.functions, MathematicalSymbols.signumsWithMultiplication);
 
-	public static final char[] signums(boolean withMultiplication) {
-		if (withMultiplication) {
-			return signumsWithMultiplication;
-		}
-		return signumsWithoutMultiplication;
+	public static final char[] signums(final boolean withMultiplication) {
+		if (withMultiplication)
+			return MathematicalSymbols.signumsWithMultiplication;
+		return MathematicalSymbols.signumsWithoutMultiplication;
 	}
 
-	public static final char[] parentheses = new char[] { PARENTHESIS_OPEN, PARENTHESIS_CLOSE };
+	public static final char[] parentheses = new char[] { MathematicalSymbols.PARENTHESIS_OPEN, MathematicalSymbols.PARENTHESIS_CLOSE };
 
-	public static final char[] variables = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', X, Y, 'Z', PI, EULER_NUMBER, UNDEFINED };
+	public static final char[] variables = new char[] { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', MathematicalSymbols.X, MathematicalSymbols.Y, 'Z', MathematicalSymbols.PI, MathematicalSymbols.EULER_NUMBER, MathematicalSymbols.UNDEFINED };
 
-	public static final char[] genericSyntax = new char[] { SYSTEM, EQUATION };
+	public static final char[] genericSyntax = new char[] { MathematicalSymbols.SYSTEM, MathematicalSymbols.EQUATION };
 
-	public static String getGraphicRepresentation(String string) {
+	public static String getGraphicRepresentation(final String string) {
 		return string.replace("Ⓑ", "^").replace("Ⓒ", "SIN").replace("Ⓓ", "COS").replace("Ⓔ", "TAN").replace("Ⓕ", "ASIN").replace("Ⓖ", "ACOS").replace("Ⓗ", "ATAN");
 	}
 

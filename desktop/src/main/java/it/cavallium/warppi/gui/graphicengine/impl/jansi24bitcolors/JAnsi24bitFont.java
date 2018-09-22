@@ -8,24 +8,24 @@ import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 public class JAnsi24bitFont implements BinaryFont {
 
 	@Override
-	public void load(String file) throws IOException {
+	public void load(final String file) throws IOException {
 
 	}
 
 	@Override
-	public void initialize(GraphicEngine d) {
+	public void initialize(final GraphicEngine d) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void use(GraphicEngine d) {
+	public void use(final GraphicEngine d) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public int getStringWidth(String text) {
+	public int getStringWidth(final String text) {
 		return 5 * text.length();
 	}
 

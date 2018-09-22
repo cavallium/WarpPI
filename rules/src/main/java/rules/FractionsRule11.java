@@ -15,7 +15,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Fractions rule
  * a / (b / c) = (a * c) / b
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -39,11 +39,13 @@ public class FractionsRule11 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
 		if (f instanceof Division) {
-			FunctionOperator fnc = (FunctionOperator) f;
+			final FunctionOperator fnc = (FunctionOperator) f;
+			@SuppressWarnings("unused")
 			Function a;
+			@SuppressWarnings("unused")
 			Function c;
 			FunctionOperator div2;
 			if (fnc.getParameter2() instanceof Division) {
@@ -51,27 +53,25 @@ public class FractionsRule11 implements Rule {
 				a = fnc.getParameter1();
 				c = div2.getParameter2();
 				isExecutable = true;
-			} else {
+			} else
 				isExecutable = false;
-			}
 		}
 		if (isExecutable) {
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			FunctionOperator fnc = (FunctionOperator) f;
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final FunctionOperator fnc = (FunctionOperator) f;
 			Function a;
 			Function b;
 			Function c;
-	
-			FunctionOperator div2 = (FunctionOperator) fnc.getParameter2();
-	
+
+			final FunctionOperator div2 = (FunctionOperator) fnc.getParameter2();
+
 			a = fnc.getParameter1();
 			b = div2.getParameter1();
 			c = div2.getParameter2();
 			result.add(new Division(fnc.getMathContext(), new Multiplication(fnc.getMathContext(), a, c), b));
-	
+
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 }

@@ -16,7 +16,7 @@ public final class SafeMathContext {
 		return new MathContext(precision);
 	}
 
-	public static MathContext newMathContext(int precision, RoundingMode roundingMode) {
+	public static MathContext newMathContext(int precision, final RoundingMode roundingMode) {
 		if (precision <= 0) {
 			Engine.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Warning! MathContext precision is <= 0 (" + precision + ")");
 			precision = 1;

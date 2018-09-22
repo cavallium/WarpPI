@@ -7,7 +7,7 @@ public class TouchStartEvent implements TouchEvent {
 	private final List<TouchPoint> changedTouches;
 	private final List<TouchPoint> touches;
 
-	public TouchStartEvent(List<TouchPoint> changedTouches, List<TouchPoint> touches) {
+	public TouchStartEvent(final List<TouchPoint> changedTouches, final List<TouchPoint> touches) {
 		super();
 		this.changedTouches = changedTouches;
 		this.touches = touches;
@@ -27,20 +27,20 @@ public class TouchStartEvent implements TouchEvent {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((changedTouches == null) ? 0 : changedTouches.hashCode());
-		result = prime * result + ((touches == null) ? 0 : touches.hashCode());
+		result = prime * result + (changedTouches == null ? 0 : changedTouches.hashCode());
+		result = prime * result + (touches == null ? 0 : touches.hashCode());
 		return result;
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TouchStartEvent other = (TouchStartEvent) obj;
+		final TouchStartEvent other = (TouchStartEvent) obj;
 		if (changedTouches == null) {
 			if (other.changedTouches != null)
 				return false;

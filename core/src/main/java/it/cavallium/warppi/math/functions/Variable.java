@@ -14,13 +14,13 @@ public class Variable implements Function {
 	protected final MathContext root;
 	protected V_TYPE type = V_TYPE.CONSTANT;
 
-	public Variable(MathContext root, char val, V_TYPE type) {
+	public Variable(final MathContext root, final char val, final V_TYPE type) {
 		this.root = root;
 		var = val;
 		this.type = type;
 	}
 
-	public Variable(MathContext root, String s, V_TYPE type) throws Error {
+	public Variable(final MathContext root, final String s, final V_TYPE type) throws Error {
 		this(root, s.charAt(0), type);
 	}
 
@@ -28,7 +28,7 @@ public class Variable implements Function {
 		return var;
 	}
 
-	public Variable setChar(char val) {
+	public Variable setChar(final char val) {
 		return new Variable(root, val, type);
 	}
 
@@ -36,7 +36,7 @@ public class Variable implements Function {
 		return type;
 	}
 
-	public Variable setType(V_TYPE typ) {
+	public Variable setType(final V_TYPE typ) {
 		return new Variable(root, var, typ);
 	}
 
@@ -49,14 +49,14 @@ public class Variable implements Function {
 		public final Variable v;
 		public final Number n;
 
-		public VariableValue(Variable v, Number n) {
+		public VariableValue(final Variable v, final Number n) {
 			this.v = v;
 			this.n = n;
 		}
 	}
 
 	@Override
-	public ObjectArrayList<Function> simplify(Rule rule) throws Error, InterruptedException {
+	public ObjectArrayList<Function> simplify(final Rule rule) throws Error, InterruptedException {
 		return rule.execute(this);
 	}
 
@@ -66,10 +66,9 @@ public class Variable implements Function {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (o instanceof Variable) {
+	public boolean equals(final Object o) {
+		if (o instanceof Variable)
 			return ((Variable) o).getChar() == var && ((Variable) o).getType() == type;
-		}
 		return false;
 	}
 
@@ -88,17 +87,17 @@ public class Variable implements Function {
 	}
 
 	@Override
-	public Function setParameter(int index, Function var) throws IndexOutOfBoundsException {
+	public Function setParameter(final int index, final Function var) throws IndexOutOfBoundsException {
 		throw new IndexOutOfBoundsException();
 	}
 
 	@Override
-	public Function getParameter(int index) throws IndexOutOfBoundsException {
+	public Function getParameter(final int index) throws IndexOutOfBoundsException {
 		throw new IndexOutOfBoundsException();
 	}
 
 	@Override
-	public ObjectArrayList<Block> toBlock(MathContext context) {
+	public ObjectArrayList<Block> toBlock(final MathContext context) {
 		final ObjectArrayList<Block> result = new ObjectArrayList<>();
 		//TODO: Temporary solution. In near future Variables will be distint objects and they will have a color. So they will be no longer a BlockChar/FeatureChar
 		result.add(new BlockChar(getChar()));

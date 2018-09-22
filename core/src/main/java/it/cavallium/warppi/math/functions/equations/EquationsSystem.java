@@ -10,15 +10,15 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 public class EquationsSystem extends FunctionDynamic {
 	static final int spacing = 2;
 
-	public EquationsSystem(MathContext root) {
+	public EquationsSystem(final MathContext root) {
 		super(root);
 	}
 
-	public EquationsSystem(MathContext root, Function value) {
+	public EquationsSystem(final MathContext root, final Function value) {
 		super(root, new Function[] { value });
 	}
 
-	public EquationsSystem(MathContext root, Function[] value) {
+	public EquationsSystem(final MathContext root, final Function[] value) {
 		super(root, value);
 	}
 
@@ -28,7 +28,7 @@ public class EquationsSystem extends FunctionDynamic {
 	}
 
 	@Override
-	public ObjectArrayList<Block> toBlock(MathContext context) throws Error {
+	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
 		// TODO Auto-generated method stub
 		return null;
 	}

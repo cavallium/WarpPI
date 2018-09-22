@@ -32,7 +32,7 @@ public class JAnsi256Engine implements it.cavallium.warppi.gui.graphicengine.Gra
 	@Override
 	public int[] getSize() {
 		new ConsoleHandler();
-		return new int[] { C_WIDTH, C_HEIGHT };
+		return new int[] { JAnsi256Engine.C_WIDTH, JAnsi256Engine.C_HEIGHT };
 	}
 
 	@Override
@@ -41,18 +41,18 @@ public class JAnsi256Engine implements it.cavallium.warppi.gui.graphicengine.Gra
 	}
 
 	@Override
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		this.title = title;
 	}
 
 	@Override
-	public void setResizable(boolean r) {
+	public void setResizable(final boolean r) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setDisplayMode(int ww, int wh) {
+	public void setDisplayMode(final int ww, final int wh) {
 		// TODO Auto-generated method stub
 
 	}
@@ -63,11 +63,11 @@ public class JAnsi256Engine implements it.cavallium.warppi.gui.graphicengine.Gra
 	}
 
 	@Override
-	public void create(Runnable onInitialized) {
+	public void create(final Runnable onInitialized) {
 		title = Engine.getPlatform().getSettings().getCalculatorName();
 		r = new JAnsi256Renderer();
-		C_WIDTH = StaticVars.screenSize[0] / C_MUL_X;//Main.screenSize[0]/2;//;60;
-		C_HEIGHT = StaticVars.screenSize[1] / C_MUL_Y;//Main.screenSize[1]/3;//;40;
+		JAnsi256Engine.C_WIDTH = StaticVars.screenSize[0] / JAnsi256Engine.C_MUL_X;//Main.screenSize[0]/2;//;60;
+		JAnsi256Engine.C_HEIGHT = StaticVars.screenSize[1] / JAnsi256Engine.C_MUL_Y;//Main.screenSize[1]/3;//;40;
 		StaticVars.outputLevel = -1;
 		AnsiConsole.systemInstall();
 		if (Utils.isWindows() && !StaticVars.startupArguments.isMSDOSModeEnabled()) {
@@ -128,9 +128,8 @@ public class JAnsi256Engine implements it.cavallium.warppi.gui.graphicengine.Gra
 							break;
 						}
 					}
-					if (key != null) {
+					if (key != null)
 						Keyboard.keyPressed(key);
-					}
 
 				}
 			});
@@ -138,9 +137,8 @@ public class JAnsi256Engine implements it.cavallium.warppi.gui.graphicengine.Gra
 			t.start();
 		}
 		stopped = false;
-		if (onInitialized != null) {
+		if (onInitialized != null)
 			onInitialized.run();
-		}
 	}
 
 	@Override
@@ -150,12 +148,12 @@ public class JAnsi256Engine implements it.cavallium.warppi.gui.graphicengine.Gra
 
 	@Override
 	public int getWidth() {
-		return C_WIDTH * C_MUL_X;
+		return JAnsi256Engine.C_WIDTH * JAnsi256Engine.C_MUL_X;
 	}
 
 	@Override
 	public int getHeight() {
-		return C_HEIGHT * C_MUL_Y;
+		return JAnsi256Engine.C_HEIGHT * JAnsi256Engine.C_MUL_Y;
 	}
 
 	@Override
@@ -164,7 +162,7 @@ public class JAnsi256Engine implements it.cavallium.warppi.gui.graphicengine.Gra
 	}
 
 	@Override
-	public void start(RenderingLoop d) {
+	public void start(final RenderingLoop d) {
 		renderLoop = d;
 		final Thread th = new Thread(() -> {
 			try {
@@ -179,9 +177,8 @@ public class JAnsi256Engine implements it.cavallium.warppi.gui.graphicengine.Gra
 					if (extraTimeInt + deltaInt < 200) {
 						Thread.sleep(200 - (extraTimeInt + deltaInt));
 						extratime = 0;
-					} else {
+					} else
 						extratime += delta - 200d;
-					}
 				}
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
@@ -196,7 +193,7 @@ public class JAnsi256Engine implements it.cavallium.warppi.gui.graphicengine.Gra
 	public void repaint() {
 		renderLoop.refresh();
 		r.curColor = 0x1C;
-		r.glDrawStringCenter((C_WIDTH * C_MUL_X) / 2, 0, title);
+		r.glDrawStringCenter(JAnsi256Engine.C_WIDTH * JAnsi256Engine.C_MUL_X / 2, 0, title);
 		if (win) {
 			WindowsSupport.writeConsole(JAnsi24bitRenderer.ANSI_PREFIX + "0;0f");
 			WindowsSupport.writeConsole(JAnsi24bitRenderer.ANSI_PREFIX + "?12l");
@@ -206,47 +203,43 @@ public class JAnsi256Engine implements it.cavallium.warppi.gui.graphicengine.Gra
 			AnsiConsole.out.print(JAnsi24bitRenderer.ANSI_PREFIX + "?12l");
 			AnsiConsole.out.print(JAnsi24bitRenderer.ANSI_PREFIX + "?25l");
 		}
-		for (int y = 0; y < C_HEIGHT; y++) {
+		for (int y = 0; y < JAnsi256Engine.C_HEIGHT; y++) {
 			int precBgColor = -1;
 			int precFgColor = -1;
 			int curBgColor = -1;
 			int curFgColor = -1;
-			for (int x = 0; x < C_WIDTH; x++) {
-				curBgColor = r.bgColorMatrix[x + y * C_WIDTH];
-				curFgColor = r.fgColorMatrix[x + y * C_WIDTH];
+			for (int x = 0; x < JAnsi256Engine.C_WIDTH; x++) {
+				curBgColor = r.bgColorMatrix[x + y * JAnsi256Engine.C_WIDTH];
+				curFgColor = r.fgColorMatrix[x + y * JAnsi256Engine.C_WIDTH];
 				if (precBgColor != curBgColor) {
 					final String str = JAnsi256Renderer.ANSI_PREFIX + JAnsi256Renderer.ansiBgColorPrefix + curBgColor + JAnsi256Renderer.ansiColorSuffix;
-					if (win) {
+					if (win)
 						WindowsSupport.writeConsole(str);
-					} else {
+					else
 						AnsiConsole.out.print(str);
-					}
 				}
 				if (precFgColor != curFgColor) {
 					final String str = JAnsi256Renderer.ANSI_PREFIX + JAnsi256Renderer.ansiFgColorPrefix + curFgColor + JAnsi256Renderer.ansiColorSuffix;
-					if (win) {
+					if (win)
 						WindowsSupport.writeConsole(str);
-					} else {
+					else
 						AnsiConsole.out.print(str);
-					}
 				}
 
-				final String stri = r.charmatrix[x + y * C_WIDTH] + "";
-				if (win) {
+				final String stri = r.charmatrix[x + y * JAnsi256Engine.C_WIDTH] + "";
+				if (win)
 					WindowsSupport.writeConsole(stri);
-				} else {
+				else
 					AnsiConsole.out.print(stri);
-				}
 
 				precBgColor = curBgColor;
 				precFgColor = curFgColor;
 			}
 
-			if (win) {
+			if (win)
 				WindowsSupport.writeConsole("\r\n");
-			} else {
+			else
 				AnsiConsole.out.println();
-			}
 		}
 	}
 
@@ -256,26 +249,26 @@ public class JAnsi256Engine implements it.cavallium.warppi.gui.graphicengine.Gra
 	}
 
 	@Override
-	public JAnsi256Font loadFont(String file) throws IOException {
+	public JAnsi256Font loadFont(final String file) throws IOException {
 		return new JAnsi256Font();
 	}
 
 	@Override
-	public JAnsi256Font loadFont(String path, String file) throws IOException {
+	public JAnsi256Font loadFont(final String path, final String file) throws IOException {
 		return new JAnsi256Font();
 	}
 
 	@Override
-	public JAnsi256Skin loadSkin(String file) throws IOException {
+	public JAnsi256Skin loadSkin(final String file) throws IOException {
 		return new JAnsi256Skin(file);
 	}
 
 	@Override
 	public void waitForExit() {
 		try {
-			do {
+			do
 				Thread.sleep(500);
-			} while (stopped == false);
+			while (stopped == false);
 		} catch (final InterruptedException e) {
 
 		}
@@ -283,9 +276,8 @@ public class JAnsi256Engine implements it.cavallium.warppi.gui.graphicengine.Gra
 
 	@Override
 	public boolean isSupported() {
-		if (StaticVars.startupArguments.isMSDOSModeEnabled() || (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isHeadless256EngineForced() == false)) {
+		if (StaticVars.startupArguments.isMSDOSModeEnabled() || StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isHeadless256EngineForced() == false)
 			return false;
-		}
 		return true;
 	}
 

@@ -9,14 +9,14 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class EmptyNumber implements Function {
 
-	public EmptyNumber(MathContext root) {
+	public EmptyNumber(final MathContext root) {
 		this.root = root;
 	}
 
 	private final MathContext root;
 
 	@Override
-	public ObjectArrayList<Function> simplify(Rule rule) throws Error, InterruptedException {
+	public ObjectArrayList<Function> simplify(final Rule rule) throws Error, InterruptedException {
 		return rule.execute(this);
 	}
 
@@ -26,7 +26,7 @@ public class EmptyNumber implements Function {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		return o instanceof EmptyNumber;
 	}
 
@@ -36,17 +36,17 @@ public class EmptyNumber implements Function {
 	}
 
 	@Override
-	public Function setParameter(int index, Function var) throws IndexOutOfBoundsException {
+	public Function setParameter(final int index, final Function var) throws IndexOutOfBoundsException {
 		throw new IndexOutOfBoundsException();
 	}
 
 	@Override
-	public Function getParameter(int index) throws IndexOutOfBoundsException {
+	public Function getParameter(final int index) throws IndexOutOfBoundsException {
 		throw new IndexOutOfBoundsException();
 	}
 
 	@Override
-	public ObjectArrayList<Block> toBlock(MathContext context) {
+	public ObjectArrayList<Block> toBlock(final MathContext context) {
 		// TODO Auto-generated method stub
 		return null;
 	}

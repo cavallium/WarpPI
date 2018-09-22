@@ -7,12 +7,12 @@ import it.cavallium.warppi.util.Error;
 
 public class FeatureSine extends FeatureSingleImpl {
 
-	public FeatureSine(Object child) {
+	public FeatureSine(final Object child) {
 		super(child);
 	}
 
 	@Override
-	public Function toFunction(MathContext context) throws Error {
+	public Function toFunction(final MathContext context) throws Error {
 		return new Sine(context, getFunction1());
 	}
 

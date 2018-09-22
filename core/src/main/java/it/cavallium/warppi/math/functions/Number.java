@@ -23,29 +23,29 @@ public class Number implements Function {
 	private final MathContext root;
 	protected BigDecimal term;
 
-	public Number(MathContext root, BigInteger val) {
+	public Number(final MathContext root, final BigInteger val) {
 		this.root = root;
 		term = new BigDecimal(val).setScale(Utils.scale, Utils.scaleMode2);
 	}
 
-	public Number(MathContext root, BigDecimal val) {
+	public Number(final MathContext root, final BigDecimal val) {
 		this.root = root;
 		term = val.setScale(Utils.scale, Utils.scaleMode2);
 	}
 
-	public Number(MathContext root, String s) throws Error {
+	public Number(final MathContext root, final String s) throws Error {
 		this(root, new BigDecimal(s).setScale(Utils.scale, Utils.scaleMode2));
 	}
 
-	public Number(MathContext root, int s) {
+	public Number(final MathContext root, final int s) {
 		this(root, BigDecimal.valueOf(s).setScale(Utils.scale, Utils.scaleMode2));
 	}
 
-	public Number(MathContext root, float s) {
+	public Number(final MathContext root, final float s) {
 		this(root, BigDecimal.valueOf(s).setScale(Utils.scale, Utils.scaleMode2));
 	}
 
-	public Number(MathContext root, double s) {
+	public Number(final MathContext root, final double s) {
 		this(root, BigDecimal.valueOf(s).setScale(Utils.scale, Utils.scaleMode2));
 	}
 
@@ -53,41 +53,38 @@ public class Number implements Function {
 		return term;
 	}
 
-	public void setTerm(BigDecimal val) {
+	public void setTerm(final BigDecimal val) {
 		term = val.setScale(Utils.scale, Utils.scaleMode2);
 	}
 
-	public Number add(Number f) {
+	public Number add(final Number f) {
 		final Number ret = new Number(root, getTerm().add(f.getTerm()));
 		return ret;
 	}
 
-	public Number multiply(Number f) {
+	public Number multiply(final Number f) {
 		final Number ret = new Number(root, getTerm().multiply(f.getTerm()));
 		return ret;
 	}
 
-	public Number divide(Number f) throws Error {
+	public Number divide(final Number f) throws Error {
 		final Number ret = new Number(root, BigDecimalMath.divideRound(getTerm(), f.getTerm()));
 		return ret;
 	}
 
-	public Number pow(Number f) throws Error, InterruptedException {
+	public Number pow(final Number f) throws Error, InterruptedException {
 		Number ret = new Number(root, BigDecimal.ONE);
 		if (Utils.isIntegerValue(f.term)) {
 			final BigInteger bi = f.term.toBigInteger().abs();
 			for (BigInteger i = BigInteger.ZERO; i.compareTo(bi) < 0; i = i.add(BigInteger.ONE)) {
-				if (Thread.interrupted()) {
+				if (Thread.interrupted())
 					throw new InterruptedException();
-				}
 				ret = ret.multiply(new Number(root, getTerm()));
 			}
-			if (f.term.signum() == -1) {
+			if (f.term.signum() == -1)
 				ret = new Number(root, 1).divide(ret);
-			}
-		} else {
+		} else
 			ret.term = BigDecimalMath.pow(term, f.term);
-		}
 		return ret;
 	}
 
@@ -99,15 +96,13 @@ public class Number implements Function {
 		String s = sWith0.indexOf(".") < 0 ? sWith0 : sWith0.replaceAll("0*$", "").replaceAll("\\.$", "");
 		final String sExtended = sExtendedWith0.indexOf(".") < 0 ? sExtendedWith0 : sExtendedWith0.replaceAll("0*$", "").replaceAll("\\.$", "");
 
-		if (sExtended.length() > s.length()) {
+		if (sExtended.length() > s.length())
 			s = s + "…";
-		}
 
 		if (root.exactMode == false) {
 			final String cuttedNumber = s.split("\\.")[0];
-			if (cuttedNumber.length() > 8) {
+			if (cuttedNumber.length() > 8)
 				return cuttedNumber.substring(0, 1) + "," + cuttedNumber.substring(1, 8) + "ℯ℮" + (cuttedNumber.length() - 1);
-			}
 		}
 		return s;
 	}
@@ -118,7 +113,7 @@ public class Number implements Function {
 	}
 
 	@Override
-	public ObjectArrayList<Function> simplify(Rule rule) throws Error, InterruptedException {
+	public ObjectArrayList<Function> simplify(final Rule rule) throws Error, InterruptedException {
 		return rule.execute(this);
 	}
 
@@ -136,22 +131,19 @@ public class Number implements Function {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (o != null & term != null) {
+	public boolean equals(final Object o) {
+		if (o != null & term != null)
 			if (o instanceof Number) {
 				final BigDecimal nav = ((Number) o).getTerm();
 				final boolean na1 = term.compareTo(BigDecimal.ZERO) == 0;
 				final boolean na2 = nav.compareTo(BigDecimal.ZERO) == 0;
 				if (na1 == na2) {
-					if (na1 == true) {
+					if (na1 == true)
 						return true;
-					}
-				} else {
+				} else
 					return false;
-				}
 				return nav.compareTo(term) == 0;
 			}
-		}
 		return false;
 	}
 
@@ -164,12 +156,12 @@ public class Number implements Function {
 	 * @Override
 	 * public void draw(int x, int y, Graphics g) {
 	 * }
-	 * 
+	 *
 	 * @Override
 	 * public int getHeight() {
 	 * return Utils.getFontHeight();
 	 * }
-	 * 
+	 *
 	 * @Override
 	 * public int getWidth() {
 	 * return 6*toString().length()-1;
@@ -177,9 +169,8 @@ public class Number implements Function {
 	 */
 
 	public boolean canBeFactorized() {
-		if (Utils.isIntegerValue(getTerm())) {
+		if (Utils.isIntegerValue(getTerm()))
 			return getTerm().toBigIntegerExact().compareTo(BigInteger.valueOf(1)) > 1;
-		}
 		return false;
 	}
 
@@ -195,21 +186,18 @@ public class Number implements Function {
 
 		final int comparedToZero = n.compareTo(zero);
 		final int comparedToTwo = n.compareTo(two);
-		if (comparedToZero == 0) {
+		if (comparedToZero == 0)
 			return fs;
-		}
-		if (comparedToTwo < 0) {
-			if (comparedToZero > 0) {
+		if (comparedToTwo < 0)
+			if (comparedToZero > 0)
 				return fs;
-			} else {
+			else {
 				fs.add(BigInteger.valueOf(-1));
 				n = n.multiply(BigInteger.valueOf(-1));
 			}
-		}
 
-		if (n.compareTo(two) < 0) {
+		if (n.compareTo(two) < 0)
 			throw new IllegalArgumentException("must be greater than one");
-		}
 
 		while (n.mod(two).equals(BigInteger.ZERO)) {
 			fs.add(two);
@@ -218,14 +206,12 @@ public class Number implements Function {
 
 		if (n.compareTo(BigInteger.ONE) > 0) {
 			BigInteger f = BigInteger.valueOf(3);
-			while (f.compareTo(Utils.maxFactor) <= 0 && f.multiply(f).compareTo(n) <= 0) {
+			while (f.compareTo(Utils.maxFactor) <= 0 && f.multiply(f).compareTo(n) <= 0)
 				if (n.mod(f).equals(BigInteger.ZERO)) {
 					fs.add(f);
 					n = n.divide(f);
-				} else {
+				} else
 					f = f.add(two);
-				}
-			}
 			fs.add(n);
 		}
 
@@ -233,38 +219,34 @@ public class Number implements Function {
 	}
 
 	@Override
-	public ObjectArrayList<Block> toBlock(MathContext context) {
+	public ObjectArrayList<Block> toBlock(final MathContext context) {
 		final ObjectArrayList<Block> result = new ObjectArrayList<>();
 		final String numberString = toString();
 		if (numberString.contains("ℯ℮")) {
 			final String[] numberParts = numberString.split("ℯ℮", 2);
 			final BlockPower bp = new BlockExponentialNotation();
 			final BlockContainer bpec = bp.getExponentContainer();
-			for (final char c : numberParts[0].toCharArray()) {
+			for (final char c : numberParts[0].toCharArray())
 				result.add(new BlockChar(c));
-			}
-			for (final char c : numberParts[1].toCharArray()) {
-				bpec.appendBlockUnsafe(new BlockChar(c));
-			} ;
+			for (final char c : numberParts[1].toCharArray())
+				bpec.appendBlockUnsafe(new BlockChar(c));;
 			bpec.recomputeDimensions();
 			bp.recomputeDimensions();
 			result.add(bp);
 			return result;
-		} else {
-			for (final char c : numberString.toCharArray()) {
+		} else
+			for (final char c : numberString.toCharArray())
 				result.add(new BlockChar(c));
-			}
-		}
 		return result;
 	}
 
 	@Override
-	public Function setParameter(int index, Function var) throws IndexOutOfBoundsException {
+	public Function setParameter(final int index, final Function var) throws IndexOutOfBoundsException {
 		throw new IndexOutOfBoundsException();
 	}
 
 	@Override
-	public Function getParameter(int index) throws IndexOutOfBoundsException {
+	public Function getParameter(final int index) throws IndexOutOfBoundsException {
 		throw new IndexOutOfBoundsException();
 	}
 }

@@ -16,7 +16,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Fractions rule
  * (a / b) ^ -1 = b / a
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -40,28 +40,26 @@ public class FractionsRule4 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
 		if (f instanceof Power) {
-			FunctionOperator fnc = (FunctionOperator) f;
+			final FunctionOperator fnc = (FunctionOperator) f;
 			if (fnc.getParameter1() instanceof Division && fnc.getParameter2() instanceof Number) {
-				Function n2 = fnc.getParameter2();
-				if (n2.equals(new Number(f.getMathContext(), -1))) {
+				final Function n2 = fnc.getParameter2();
+				if (n2.equals(new Number(f.getMathContext(), -1)))
 					isExecutable = true;
-				}
 			}
 		}
-	
+
 		if (isExecutable) {
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			FunctionOperator fnc = (FunctionOperator) f;
-			Function a = ((FunctionOperator) fnc.getParameter1()).getParameter1();
-			Function b = ((FunctionOperator) fnc.getParameter1()).getParameter2();
-			Function res = new Division(f.getMathContext(), b, a);
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final FunctionOperator fnc = (FunctionOperator) f;
+			final Function a = ((FunctionOperator) fnc.getParameter1()).getParameter1();
+			final Function b = ((FunctionOperator) fnc.getParameter1()).getParameter2();
+			final Function res = new Division(f.getMathContext(), b, a);
 			result.add(res);
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 }

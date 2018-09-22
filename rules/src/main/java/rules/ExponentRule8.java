@@ -17,7 +17,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Exponent rule
  * (a) ^ (b+c) = a ^ b + a ^ c
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -41,22 +41,21 @@ public class ExponentRule8 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
-		boolean isExecutable = false;
+	public ObjectArrayList<Function> execute(final Function f) {
 		if (f instanceof Power) {
-			FunctionOperator fnc = (FunctionOperator) f;
+			final FunctionOperator fnc = (FunctionOperator) f;
 			if (fnc.getParameter2() instanceof Sum) {
-				Sum sum = (Sum) fnc.getParameter2();
-				MathContext root = f.getMathContext();
-				ObjectArrayList<Function> result = new ObjectArrayList<>();
-				Function a = fnc.getParameter1();
-				Function b = sum.getParameter1();
-				Function c = sum.getParameter2();
+				final Sum sum = (Sum) fnc.getParameter2();
+				final MathContext root = f.getMathContext();
+				final ObjectArrayList<Function> result = new ObjectArrayList<>();
+				final Function a = fnc.getParameter1();
+				final Function b = sum.getParameter1();
+				final Function c = sum.getParameter2();
 				result.add(new Multiplication(root, new Power(root, a, b), new Power(root, a, c)));
 				return result;
 			}
 		}
-	
+
 		return null;
 	}
 }

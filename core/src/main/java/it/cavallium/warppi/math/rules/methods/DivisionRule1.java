@@ -11,21 +11,21 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Division method<br>
  * <b>Example: (XY)/(YZ) = Y/Y * X/Z</b>
- * 
+ *
  * @author Andrea Cavalli
  *
  */
 public class DivisionRule1 {
 
-	public static boolean compare(Division f) throws InterruptedException {
+	public static boolean compare(final Division f) throws InterruptedException {
 		return false;//TODO:    return f.getParameter1().isSimplified() && f.getParameter2().isSimplified() && (f.getParameter1() instanceof Multiplication || f.getParameter2() instanceof Multiplication) && getFirstWorkingDivisionCouple(getDivisionElements(f)) != null;
 	}
 
-	public static ObjectArrayList<Function> execute(Division f) throws Error, InterruptedException {
+	public static ObjectArrayList<Function> execute(final Division f) throws Error, InterruptedException {
 		final MathContext root = f.getMathContext();
 		Function result;
-		final ObjectArrayList<Function>[] elements = getDivisionElements(f);
-		final int[] workingElementCouple = getFirstWorkingDivisionCouple(elements);
+		final ObjectArrayList<Function>[] elements = DivisionRule1.getDivisionElements(f);
+		final int[] workingElementCouple = DivisionRule1.getFirstWorkingDivisionCouple(elements);
 		final Function elem1 = elements[0].get(workingElementCouple[0]);
 		final Function elem2 = elements[1].get(workingElementCouple[1]);
 
@@ -46,20 +46,17 @@ public class DivisionRule1 {
 		Function prec;
 		for (int part = 0; part < 2; part++) {
 			prec = null;
-			for (int i = size[part] - 1; i >= 0; i--) {
-				if (i != workingElementCouple[part]) {
-					if (prec == null) {
+			for (int i = size[part] - 1; i >= 0; i--)
+				if (i != workingElementCouple[part])
+					if (prec == null)
 						prec = elements[part].get(i);
-					} else {
+					else {
 						final Function a = elements[part].get(i);
 						final Function b = prec;
 						prec = new Multiplication(root, a, b);
 					}
-				}
-			}
-			if (prec == null) {
+			if (prec == null)
 				prec = new Number(root, 1);
-			}
 			resultDivisionArray[part] = prec;
 		}
 
@@ -71,13 +68,13 @@ public class DivisionRule1 {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static ObjectArrayList<Function>[] getDivisionElements(Division division) throws InterruptedException {
+	private static ObjectArrayList<Function>[] getDivisionElements(final Division division)
+			throws InterruptedException {
 		final ObjectArrayList<Function> elementsNumerator = new ObjectArrayList<>();
 		Function numMult = division.getParameter1();
 		while (numMult instanceof Multiplication) {
-			if (Thread.interrupted()) {
+			if (Thread.interrupted())
 				throw new InterruptedException();
-			}
 			elementsNumerator.add(((Multiplication) numMult).getParameter1());
 			numMult = ((Multiplication) numMult).getParameter2();
 		}
@@ -86,9 +83,8 @@ public class DivisionRule1 {
 		final ObjectArrayList<Function> elementsDenominator = new ObjectArrayList<>();
 		Function denomMult = division.getParameter2();
 		while (denomMult instanceof Multiplication) {
-			if (Thread.interrupted()) {
+			if (Thread.interrupted())
 				throw new InterruptedException();
-			}
 			elementsDenominator.add(((Multiplication) denomMult).getParameter1());
 			denomMult = ((Multiplication) denomMult).getParameter2();
 		}
@@ -97,7 +93,7 @@ public class DivisionRule1 {
 		return new ObjectArrayList[] { elementsNumerator, elementsDenominator };
 	}
 
-	private static int[] getFirstWorkingDivisionCouple(ObjectArrayList<Function>[] elements)
+	private static int[] getFirstWorkingDivisionCouple(final ObjectArrayList<Function>[] elements)
 			throws InterruptedException {
 		return null;
 		//TODO:

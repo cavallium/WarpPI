@@ -9,35 +9,31 @@ public class IntervalsManager {
 	private static List<ObservableInterval> intervals = new LinkedList<>();
 
 	static {
-		startChecker();
+		IntervalsManager.startChecker();
 	}
 
 	private IntervalsManager() {
 
 	}
 
-	public static void register(ObservableInterval t) {
-		synchronized (intervals) {
-			if (!intervals.contains(t)) {
-				intervals.add(t);
-			}
+	public static void register(final ObservableInterval t) {
+		synchronized (IntervalsManager.intervals) {
+			if (!IntervalsManager.intervals.contains(t))
+				IntervalsManager.intervals.add(t);
 		}
 	}
 
 	private static void startChecker() {
-		Thread t = new Thread(() -> {
+		final Thread t = new Thread(() -> {
 			try {
 				while (true) {
 					Thread.sleep(1000);
-					for (ObservableInterval interval : intervals) {
-						if (interval.running) {
-							if (interval.subscribers.size() <= 0) {
+					for (final ObservableInterval interval : IntervalsManager.intervals)
+						if (interval.running)
+							if (interval.subscribers.size() <= 0)
 								interval.stopInterval();
-							}
-						}
-					}
 				}
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 		});

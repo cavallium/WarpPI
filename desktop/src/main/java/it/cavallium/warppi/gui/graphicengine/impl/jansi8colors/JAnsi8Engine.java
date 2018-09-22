@@ -32,7 +32,7 @@ public class JAnsi8Engine implements it.cavallium.warppi.gui.graphicengine.Graph
 	@Override
 	public int[] getSize() {
 		new ConsoleHandler();
-		return new int[] { C_WIDTH, C_HEIGHT };
+		return new int[] { JAnsi8Engine.C_WIDTH, JAnsi8Engine.C_HEIGHT };
 	}
 
 	@Override
@@ -41,18 +41,18 @@ public class JAnsi8Engine implements it.cavallium.warppi.gui.graphicengine.Graph
 	}
 
 	@Override
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		this.title = title;
 	}
 
 	@Override
-	public void setResizable(boolean r) {
+	public void setResizable(final boolean r) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setDisplayMode(int ww, int wh) {
+	public void setDisplayMode(final int ww, final int wh) {
 		// TODO Auto-generated method stub
 
 	}
@@ -63,11 +63,11 @@ public class JAnsi8Engine implements it.cavallium.warppi.gui.graphicengine.Graph
 	}
 
 	@Override
-	public void create(Runnable onInitialized) {
+	public void create(final Runnable onInitialized) {
 		title = Engine.getPlatform().getSettings().getCalculatorName();
 		r = new JAnsi8Renderer();
-		C_WIDTH = StaticVars.screenSize[0] / C_MUL_X;//Main.screenSize[0]/2;//;60;
-		C_HEIGHT = StaticVars.screenSize[1] / C_MUL_Y;//Main.screenSize[1]/3;//;40;
+		JAnsi8Engine.C_WIDTH = StaticVars.screenSize[0] / JAnsi8Engine.C_MUL_X;//Main.screenSize[0]/2;//;60;
+		JAnsi8Engine.C_HEIGHT = StaticVars.screenSize[1] / JAnsi8Engine.C_MUL_Y;//Main.screenSize[1]/3;//;40;
 		StaticVars.outputLevel = -1;
 		AnsiConsole.systemInstall();
 		if (Utils.isWindows() && !StaticVars.startupArguments.isMSDOSModeEnabled()) {
@@ -128,9 +128,8 @@ public class JAnsi8Engine implements it.cavallium.warppi.gui.graphicengine.Graph
 							break;
 						}
 					}
-					if (key != null) {
+					if (key != null)
 						Keyboard.keyPressed(key);
-					}
 
 				}
 			});
@@ -138,9 +137,8 @@ public class JAnsi8Engine implements it.cavallium.warppi.gui.graphicengine.Graph
 			t.start();
 		}
 		stopped = false;
-		if (onInitialized != null) {
+		if (onInitialized != null)
 			onInitialized.run();
-		}
 	}
 
 	@Override
@@ -150,12 +148,12 @@ public class JAnsi8Engine implements it.cavallium.warppi.gui.graphicengine.Graph
 
 	@Override
 	public int getWidth() {
-		return C_WIDTH * C_MUL_X;
+		return JAnsi8Engine.C_WIDTH * JAnsi8Engine.C_MUL_X;
 	}
 
 	@Override
 	public int getHeight() {
-		return C_HEIGHT * C_MUL_Y;
+		return JAnsi8Engine.C_HEIGHT * JAnsi8Engine.C_MUL_Y;
 	}
 
 	@Override
@@ -164,7 +162,7 @@ public class JAnsi8Engine implements it.cavallium.warppi.gui.graphicengine.Graph
 	}
 
 	@Override
-	public void start(RenderingLoop d) {
+	public void start(final RenderingLoop d) {
 		renderLoop = d;
 		final Thread th = new Thread(() -> {
 			try {
@@ -179,9 +177,8 @@ public class JAnsi8Engine implements it.cavallium.warppi.gui.graphicengine.Graph
 					if (extraTimeInt + deltaInt < 200) {
 						Thread.sleep(200 - (extraTimeInt + deltaInt));
 						extratime = 0;
-					} else {
+					} else
 						extratime += delta - 200d;
-					}
 				}
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
@@ -196,7 +193,7 @@ public class JAnsi8Engine implements it.cavallium.warppi.gui.graphicengine.Graph
 	public void repaint() {
 		renderLoop.refresh();
 		r.curColor = 0x1C;
-		r.glDrawStringCenter((C_WIDTH * C_MUL_X) / 2, 0, title);
+		r.glDrawStringCenter(JAnsi8Engine.C_WIDTH * JAnsi8Engine.C_MUL_X / 2, 0, title);
 		if (win) {
 			WindowsSupport.writeConsole(JAnsi24bitRenderer.ANSI_PREFIX + "0;0f");
 			WindowsSupport.writeConsole(JAnsi24bitRenderer.ANSI_PREFIX + "?12l");
@@ -206,47 +203,43 @@ public class JAnsi8Engine implements it.cavallium.warppi.gui.graphicengine.Graph
 			AnsiConsole.out.print(JAnsi24bitRenderer.ANSI_PREFIX + "?12l");
 			AnsiConsole.out.print(JAnsi24bitRenderer.ANSI_PREFIX + "?25l");
 		}
-		for (int y = 0; y < C_HEIGHT; y++) {
+		for (int y = 0; y < JAnsi8Engine.C_HEIGHT; y++) {
 			int precBgColor = -1;
 			int precFgColor = -1;
 			int curBgColor = -1;
 			int curFgColor = -1;
-			for (int x = 0; x < C_WIDTH; x++) {
-				curBgColor = (r.colorMatrix[x + y * C_WIDTH] & 0xF0) >> 4;
-				curFgColor = r.colorMatrix[x + y * C_WIDTH] & 0x0F;
+			for (int x = 0; x < JAnsi8Engine.C_WIDTH; x++) {
+				curBgColor = (r.colorMatrix[x + y * JAnsi8Engine.C_WIDTH] & 0xF0) >> 4;
+				curFgColor = r.colorMatrix[x + y * JAnsi8Engine.C_WIDTH] & 0x0F;
 				if (precBgColor != curBgColor) {
 					final String str = JAnsi8Renderer.ANSI_PREFIX + JAnsi8Renderer.ansiBgColorPrefix + JAnsi8Renderer.colorANSI[curBgColor] + JAnsi8Renderer.ansiColorSuffix;
-					if (win) {
+					if (win)
 						WindowsSupport.writeConsole(str);
-					} else {
+					else
 						AnsiConsole.out.print(str);
-					}
 				}
 				if (precFgColor != curFgColor) {
 					final String str = JAnsi8Renderer.ANSI_PREFIX + JAnsi8Renderer.ansiFgColorPrefix + JAnsi8Renderer.colorANSI[curFgColor] + JAnsi8Renderer.ansiColorSuffix;
-					if (win) {
+					if (win)
 						WindowsSupport.writeConsole(str);
-					} else {
+					else
 						AnsiConsole.out.print(str);
-					}
 				}
 
-				final String stri = r.charmatrix[x + y * C_WIDTH] + "";
-				if (win) {
+				final String stri = r.charmatrix[x + y * JAnsi8Engine.C_WIDTH] + "";
+				if (win)
 					WindowsSupport.writeConsole(stri);
-				} else {
+				else
 					AnsiConsole.out.print(stri);
-				}
 
 				precBgColor = curBgColor;
 				precFgColor = curFgColor;
 			}
 
-			if (win) {
+			if (win)
 				WindowsSupport.writeConsole("\r\n");
-			} else {
+			else
 				AnsiConsole.out.println();
-			}
 		}
 	}
 
@@ -256,26 +249,26 @@ public class JAnsi8Engine implements it.cavallium.warppi.gui.graphicengine.Graph
 	}
 
 	@Override
-	public JAnsi8Font loadFont(String file) throws IOException {
+	public JAnsi8Font loadFont(final String file) throws IOException {
 		return new JAnsi8Font();
 	}
 
 	@Override
-	public JAnsi8Font loadFont(String path, String file) throws IOException {
+	public JAnsi8Font loadFont(final String path, final String file) throws IOException {
 		return new JAnsi8Font();
 	}
 
 	@Override
-	public JAnsi8Skin loadSkin(String file) throws IOException {
+	public JAnsi8Skin loadSkin(final String file) throws IOException {
 		return new JAnsi8Skin(file);
 	}
 
 	@Override
 	public void waitForExit() {
 		try {
-			do {
+			do
 				Thread.sleep(500);
-			} while (stopped == false);
+			while (stopped == false);
 		} catch (final InterruptedException e) {
 
 		}
@@ -283,9 +276,8 @@ public class JAnsi8Engine implements it.cavallium.warppi.gui.graphicengine.Graph
 
 	@Override
 	public boolean isSupported() {
-		if (StaticVars.startupArguments.isMSDOSModeEnabled() || (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isHeadless8EngineForced() == false)) {
+		if (StaticVars.startupArguments.isMSDOSModeEnabled() || StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isHeadless8EngineForced() == false)
 			return false;
-		}
 		return true;
 	}
 

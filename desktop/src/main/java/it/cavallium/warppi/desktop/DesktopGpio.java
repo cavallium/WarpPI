@@ -33,32 +33,27 @@ public class DesktopGpio implements it.cavallium.warppi.Platform.Gpio {
 	}
 
 	@Override
-	public void wiringPiSetupPhys() {
+	public void wiringPiSetupPhys() {}
+
+	@Override
+	public void pinMode(final int i, final int type) {
+
 	}
 
 	@Override
-	public void pinMode(int i, int type) {
-		
-	}
+	public void digitalWrite(final int pin, final int val) {}
 
 	@Override
-	public void digitalWrite(int pin, int val) {
-	}
+	public void digitalWrite(final int pin, final boolean val) {}
 
 	@Override
-	public void digitalWrite(int pin, boolean val) {
-	}
+	public void pwmWrite(final int pin, final int val) {}
 
 	@Override
-	public void pwmWrite(int pin, int val) {
-	}
+	public void delayMicroseconds(final int t) {}
 
 	@Override
-	public void delayMicroseconds(int t) {
-	}
-
-	@Override
-	public int digitalRead(int pin) {
+	public int digitalRead(final int pin) {
 		return 0;
 	}
 

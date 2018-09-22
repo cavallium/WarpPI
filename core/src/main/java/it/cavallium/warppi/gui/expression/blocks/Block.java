@@ -17,7 +17,7 @@ public abstract class Block implements GraphicalElement {
 	protected int line;
 
 	/**
-	 * 
+	 *
 	 * @param r
 	 *            Graphic Renderer class.
 	 * @param x
@@ -53,7 +53,7 @@ public abstract class Block implements GraphicalElement {
 	public int getLine() {
 		return line;
 	}
-	
+
 	public int getCaretDeltaPositionAfterCreation() {
 		return 1;
 	}

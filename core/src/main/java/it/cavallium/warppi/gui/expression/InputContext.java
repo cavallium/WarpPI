@@ -16,7 +16,7 @@ public class InputContext {
 		variableTypes.put(MathematicalSymbols.EULER_NUMBER, V_TYPE.CONSTANT);
 	}
 
-	public InputContext(HashMap<Character, V_TYPE> variableTypes) {
+	public InputContext(final HashMap<Character, V_TYPE> variableTypes) {
 		this.variableTypes = variableTypes;
 	}
 }

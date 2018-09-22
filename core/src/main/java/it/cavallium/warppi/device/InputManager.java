@@ -4,9 +4,9 @@ public class InputManager {
 	private final Keyboard keyboard;
 	private final HardwareTouchDevice touchDevice;
 
-	public InputManager(Keyboard k, HardwareTouchDevice t) {
-		this.keyboard = k;
-		this.touchDevice = t;
+	public InputManager(final Keyboard k, final HardwareTouchDevice t) {
+		keyboard = k;
+		touchDevice = t;
 	}
 
 	public Keyboard getKeyboard() {

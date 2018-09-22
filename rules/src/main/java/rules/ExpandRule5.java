@@ -17,7 +17,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Expand rule
  * -(-a) = a
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -40,30 +40,27 @@ public class ExpandRule5 implements Rule {
 	     - An ObjectArrayList<Function> if it did something
 	*/
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
-		if (f instanceof Negative) {
-			isExecutable = ((FunctionSingle)f).getParameter() instanceof Negative;
-		} else if (f instanceof Multiplication) {
-			if (((FunctionOperator)f).getParameter1().equals(new Number(f.getMathContext(), -1)) && ((FunctionOperator)f).getParameter2() instanceof Multiplication) {
-				isExecutable = ((FunctionOperator)((FunctionOperator)f).getParameter2()).getParameter1().equals(((FunctionOperator)f).getParameter1());
-			}
-		}
-	
+		if (f instanceof Negative)
+			isExecutable = ((FunctionSingle) f).getParameter() instanceof Negative;
+		else if (f instanceof Multiplication)
+			if (((FunctionOperator) f).getParameter1().equals(new Number(f.getMathContext(), -1)) && ((FunctionOperator) f).getParameter2() instanceof Multiplication)
+				isExecutable = ((FunctionOperator) ((FunctionOperator) f).getParameter2()).getParameter1().equals(((FunctionOperator) f).getParameter1());
+
 		if (isExecutable) {
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-	
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+
 			if (f instanceof Negative) {
-				Negative fnc = (Negative) f;
-				result.add(((FunctionSingle)((FunctionSingle)fnc.getParameter()).getParameter()).getParameter());
+				final Negative fnc = (Negative) f;
+				result.add(((FunctionSingle) ((FunctionSingle) fnc.getParameter()).getParameter()).getParameter());
 			} else if (f instanceof Multiplication) {
-				FunctionOperator fnc = (FunctionOperator) f;
-				result.add(((FunctionOperator)fnc.getParameter2()).getParameter2());
+				final FunctionOperator fnc = (FunctionOperator) f;
+				result.add(((FunctionOperator) fnc.getParameter2()).getParameter2());
 			}
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 
 }

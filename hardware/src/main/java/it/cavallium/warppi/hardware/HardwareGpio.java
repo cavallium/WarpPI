@@ -40,33 +40,33 @@ public class HardwareGpio implements it.cavallium.warppi.Platform.Gpio {
 	}
 
 	@Override
-	public void pinMode(int i, int type) {
+	public void pinMode(final int i, final int type) {
 		com.pi4j.wiringpi.Gpio.pinMode(i, type);
-		
+
 	}
 
 	@Override
-	public void digitalWrite(int pin, int val) {
+	public void digitalWrite(final int pin, final int val) {
 		com.pi4j.wiringpi.Gpio.digitalWrite(pin, val);
 	}
 
 	@Override
-	public void digitalWrite(int pin, boolean val) {
+	public void digitalWrite(final int pin, final boolean val) {
 		com.pi4j.wiringpi.Gpio.digitalWrite(pin, val);
 	}
 
 	@Override
-	public void pwmWrite(int pin, int val) {
+	public void pwmWrite(final int pin, final int val) {
 		com.pi4j.wiringpi.Gpio.pwmWrite(pin, val);
 	}
 
 	@Override
-	public void delayMicroseconds(int t) {
+	public void delayMicroseconds(final int t) {
 		com.pi4j.wiringpi.Gpio.delayMicroseconds(t);
 	}
 
 	@Override
-	public int digitalRead(int pin) {
+	public int digitalRead(final int pin) {
 		return com.pi4j.wiringpi.Gpio.digitalRead(pin);
 	}
 

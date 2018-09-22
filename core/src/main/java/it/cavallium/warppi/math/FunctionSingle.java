@@ -9,37 +9,37 @@ public abstract class FunctionSingle implements Function {
 	/**
 	 * Create a new instance of FunctionSingle. The Math Context will be the
 	 * same of <strong>value</strong>'s.
-	 * 
+	 *
 	 * @throws NullPointerException
 	 *             when value is null.
 	 * @param value
 	 *            The parameter of this function.
 	 */
-	public FunctionSingle(Function value) throws NullPointerException {
+	public FunctionSingle(final Function value) throws NullPointerException {
 		mathContext = value.getMathContext();
 		parameter = value;
 	}
 
 	/**
 	 * Create a new instance of FunctionSingle.
-	 * 
+	 *
 	 * @param mathContext
 	 *            Math Context
 	 */
-	public FunctionSingle(MathContext mathContext) {
+	public FunctionSingle(final MathContext mathContext) {
 		this.mathContext = mathContext;
 		parameter = null;
 	}
 
 	/**
 	 * Create a new instance of FunctionSingle.
-	 * 
+	 *
 	 * @param mathContext
 	 *            Math Context
 	 * @param value
 	 *            The parameter of this function.
 	 */
-	public FunctionSingle(MathContext mathContext, Function value) {
+	public FunctionSingle(final MathContext mathContext, final Function value) {
 		this.mathContext = mathContext;
 		parameter = value;
 	}
@@ -53,7 +53,7 @@ public abstract class FunctionSingle implements Function {
 	protected Function parameter;
 
 	/**
-	 * 
+	 *
 	 * @return Parameter.
 	 */
 	public Function getParameter() {
@@ -61,33 +61,31 @@ public abstract class FunctionSingle implements Function {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param var
 	 *            Parameter.
 	 * @return A new instance of this function.
 	 */
-	public FunctionSingle setParameter(Function value) {
+	public FunctionSingle setParameter(final Function value) {
 		final FunctionSingle s = clone();
 		s.parameter = value;
 		return s;
 	}
 
 	@Override
-	public FunctionSingle setParameter(int index, Function var) throws IndexOutOfBoundsException {
-		if (index == 0) {
+	public FunctionSingle setParameter(final int index, final Function var) throws IndexOutOfBoundsException {
+		if (index == 0)
 			return this.setParameter(var);
-		} else {
+		else
 			throw new IndexOutOfBoundsException();
-		}
 	}
 
 	@Override
-	public Function getParameter(int index) throws IndexOutOfBoundsException {
-		if (index == 0) {
+	public Function getParameter(final int index) throws IndexOutOfBoundsException {
+		if (index == 0)
 			return this.getParameter();
-		} else {
+		else
 			throw new IndexOutOfBoundsException();
-		}
 	}
 
 	@Override
@@ -96,16 +94,14 @@ public abstract class FunctionSingle implements Function {
 	}
 
 	@Override
-	public final ObjectArrayList<Function> simplify(Rule rule) throws Error, InterruptedException {
+	public final ObjectArrayList<Function> simplify(final Rule rule) throws Error, InterruptedException {
 		final ObjectArrayList<Function> simplifiedParam = parameter.simplify(rule);
-		if (simplifiedParam == null) {
+		if (simplifiedParam == null)
 			return rule.execute(this);
-		}
 
 		final ObjectArrayList<Function> result = new ObjectArrayList<>();
-		for (final Function f : simplifiedParam) {
+		for (final Function f : simplifiedParam)
 			result.add(this.setParameter(f));
-		}
 
 		return result;
 	}

@@ -5,7 +5,7 @@ import java.math.MathContext;
 
 /**
  * Complex numbers with BigDecimal real and imaginary components
- * 
+ *
  * @since 2008-10-26
  * @author Richard J. Mathar
  */
@@ -35,45 +35,45 @@ public class BigComplex {
 
 	/**
 	 * ctor with real and imaginary parts
-	 * 
+	 *
 	 * @param x
 	 *            real part
 	 * @param y
 	 *            imaginary part
 	 */
-	public BigComplex(BigDecimal x, BigDecimal y) {
+	public BigComplex(final BigDecimal x, final BigDecimal y) {
 		re = x;
 		im = y;
 	}
 
 	/**
 	 * ctor with real part.
-	 * 
+	 *
 	 * @param x
 	 *            real part.
 	 *            The imaginary part is set to zero.
 	 */
-	public BigComplex(BigDecimal x) {
+	public BigComplex(final BigDecimal x) {
 		re = x;
 		im = BigDecimal.ZERO;
 	}
 
 	/**
 	 * ctor with real and imaginary parts
-	 * 
+	 *
 	 * @param x
 	 *            real part
 	 * @param y
 	 *            imaginary part
 	 */
-	public BigComplex(double x, double y) {
+	public BigComplex(final double x, final double y) {
 		re = new BigDecimal(x);
 		im = new BigDecimal(y);
 	}
 
 	/**
 	 * Multiply with another BigComplex
-	 * 
+	 *
 	 * @param oth
 	 *            The BigComplex which is a factor in the product
 	 * @param mc
@@ -82,7 +82,7 @@ public class BigComplex {
 	 * @since 2010-07-19 implemented with 3 multiplications and 5
 	 *        additions/subtractions
 	 */
-	BigComplex multiply(final BigComplex oth, MathContext mc) {
+	BigComplex multiply(final BigComplex oth, final MathContext mc) {
 		final BigDecimal a = re.add(im).multiply(oth.re);
 		final BigDecimal b = oth.re.add(oth.im).multiply(im);
 		final BigDecimal c = oth.im.subtract(oth.re).multiply(re);
@@ -93,7 +93,7 @@ public class BigComplex {
 
 	/**
 	 * Add a BigDecimal
-	 * 
+	 *
 	 * @param oth
 	 *            the value to be added to the real part.
 	 * @return this added to oth
@@ -105,7 +105,7 @@ public class BigComplex {
 
 	/**
 	 * Subtract another BigComplex
-	 * 
+	 *
 	 * @param oth
 	 *            the value to be subtracted from this.
 	 * @return this minus oth
@@ -118,7 +118,7 @@ public class BigComplex {
 
 	/**
 	 * Complex-conjugation
-	 * 
+	 *
 	 * @return the complex conjugate of this.
 	 */
 	BigComplex conj() {
@@ -127,7 +127,7 @@ public class BigComplex {
 
 	/**
 	 * The absolute value squared.
-	 * 
+	 *
 	 * @return The sum of the squares of real and imaginary parts.
 	 *         This is the square of BigComplex.abs() .
 	 */
@@ -137,18 +137,18 @@ public class BigComplex {
 
 	/**
 	 * The absolute value.
-	 * 
+	 *
 	 * @return the square root of the sum of the squares of real and imaginary
 	 *         parts.
 	 * @since 2008-10-27
 	 */
-	BigDecimal abs(MathContext mc) {
+	BigDecimal abs(final MathContext mc) {
 		return BigDecimalMath.sqrt(norm(), mc);
 	}
 
 	/**
 	 * The square root.
-	 * 
+	 *
 	 * @return the square root of the this.
 	 *         The branch is chosen such that the imaginary part of the result
 	 *         has the
@@ -158,31 +158,29 @@ public class BigComplex {
 	 *      ISSAC 1996 p142-149.
 	 * @since 2008-10-27
 	 */
-	BigComplex sqrt(MathContext mc) {
+	BigComplex sqrt(final MathContext mc) {
 		final BigDecimal half = new BigDecimal("2");
 		/*
 		 * compute l=sqrt(re^2+im^2), then u=sqrt((l+re)/2)
 		 * and v= +- sqrt((l-re)/2 as the new real and imaginary parts.
 		 */
 		final BigDecimal l = abs(mc);
-		if (l.compareTo(BigDecimal.ZERO) == 0) {
+		if (l.compareTo(BigDecimal.ZERO) == 0)
 			return new BigComplex(BigDecimalMath.scalePrec(BigDecimal.ZERO, mc), BigDecimalMath.scalePrec(BigDecimal.ZERO, mc));
-		}
 		final BigDecimal u = BigDecimalMath.sqrt(l.add(re).divide(half, mc), mc);
 		final BigDecimal v = BigDecimalMath.sqrt(l.subtract(re).divide(half, mc), mc);
-		if (im.compareTo(BigDecimal.ZERO) >= 0) {
+		if (im.compareTo(BigDecimal.ZERO) >= 0)
 			return new BigComplex(u, v);
-		} else {
+		else
 			return new BigComplex(u, v.negate());
-		}
 	}
 
 	/**
 	 * The inverse of this.
-	 * 
+	 *
 	 * @return 1/this
 	 */
-	BigComplex inverse(MathContext mc) {
+	BigComplex inverse(final MathContext mc) {
 		final BigDecimal hyp = norm();
 		/* 1/(x+iy)= (x-iy)/(x^2+y^2 */
 		return new BigComplex(re.divide(hyp, mc), im.divide(hyp, mc).negate());
@@ -190,17 +188,17 @@ public class BigComplex {
 
 	/**
 	 * Divide through another BigComplex number.
-	 * 
+	 *
 	 * @return this/oth
 	 */
-	BigComplex divide(BigComplex oth, MathContext mc) {
+	BigComplex divide(final BigComplex oth, final MathContext mc) {
 		/* lazy implementation: (x+iy)/(a+ib)= (x+iy)* 1/(a+ib) */
 		return multiply(oth.inverse(mc), mc);
 	}
 
 	/**
 	 * Human-readable Fortran-type display
-	 * 
+	 *
 	 * @return real and imaginary part in parenthesis, divided by a comma.
 	 */
 	@Override
@@ -210,10 +208,10 @@ public class BigComplex {
 
 	/**
 	 * Human-readable Fortran-type display
-	 * 
+	 *
 	 * @return real and imaginary part in parenthesis, divided by a comma.
 	 */
-	public String toString(MathContext mc) {
+	public String toString(final MathContext mc) {
 		return "(" + re.round(mc).toString() + "," + im.round(mc).toString() + ")";
 	}
 

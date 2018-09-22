@@ -9,7 +9,7 @@ public class SolveForXScreen extends Screen {
 	@SuppressWarnings("unused")
 	private final MathInputScreen es;
 
-	public SolveForXScreen(MathInputScreen es) {
+	public SolveForXScreen(final MathInputScreen es) {
 		super();
 		canBeInHistory = false;
 
@@ -33,7 +33,7 @@ public class SolveForXScreen extends Screen {
 	}
 
 	@Override
-	public void beforeRender(float dt) {
+	public void beforeRender(final float dt) {
 
 	}
 
@@ -43,7 +43,7 @@ public class SolveForXScreen extends Screen {
 	}
 
 	@Override
-	public boolean onKeyPressed(KeyPressedEvent k) {
+	public boolean onKeyPressed(final KeyPressedEvent k) {
 		switch (k.getKey()) {
 			case LETTER_X:
 				//TODO: far funzionare questa parte

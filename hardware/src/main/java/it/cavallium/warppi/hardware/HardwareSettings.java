@@ -7,16 +7,16 @@ public class HardwareSettings implements Settings {
 	private boolean debug;
 
 	public HardwareSettings() {
-		this.debug = true;
+		debug = true;
 	}
-	
+
 	@Override
 	public boolean isDebugEnabled() {
 		return debug;
 	}
 
 	@Override
-	public void setDebugEnabled(boolean debug) {
+	public void setDebugEnabled(final boolean debug) {
 		this.debug = debug;
 	}
 

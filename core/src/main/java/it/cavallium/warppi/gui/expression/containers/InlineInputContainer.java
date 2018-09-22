@@ -16,20 +16,20 @@ public class InlineInputContainer extends InputContainer {
 		super();
 	}
 
-	public InlineInputContainer(InputContext ic) {
+	public InlineInputContainer(final InputContext ic) {
 		super(ic);
 	}
 
-	public InlineInputContainer(InputContext ic, boolean small) {
+	public InlineInputContainer(final InputContext ic, final boolean small) {
 		super(ic, small);
 	}
 
-	public InlineInputContainer(InputContext ic, boolean small, int minWidth, int minHeight) {
+	public InlineInputContainer(final InputContext ic, final boolean small, final int minWidth, final int minHeight) {
 		super(ic, small, minWidth, minHeight);
 	}
 
 	@Override
-	public Block parseChar(char c) {
+	public Block parseChar(final char c) {
 		return new BlockChar(c);
 	}
 }

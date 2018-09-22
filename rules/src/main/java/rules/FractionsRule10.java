@@ -15,7 +15,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Number rule
  * a/(-b) = -(a/b)
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -39,17 +39,17 @@ public class FractionsRule10 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		if (f instanceof Division) {
-			MathContext root = f.getMathContext();
-			Division div = (Division) f;
-			if (div.getParameter2() instanceof Multiplication && ((Multiplication)div.getParameter2()).isNegative()) {
-				ObjectArrayList<Function> result = new ObjectArrayList<>();
-				result.add(Multiplication.newNegative(root, new Division(root, div.getParameter1(), ((Multiplication)div.getParameter2()).toPositive())));
+			final MathContext root = f.getMathContext();
+			final Division div = (Division) f;
+			if (div.getParameter2() instanceof Multiplication && ((Multiplication) div.getParameter2()).isNegative()) {
+				final ObjectArrayList<Function> result = new ObjectArrayList<>();
+				result.add(Multiplication.newNegative(root, new Division(root, div.getParameter1(), ((Multiplication) div.getParameter2()).toPositive())));
 				return result;
 			}
 		}
-		
+
 		return null;
 	}
 }

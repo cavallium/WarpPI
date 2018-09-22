@@ -24,7 +24,7 @@ public class MathContext {
 	}
 
 	@Deprecated
-	public Function parseString(String string) throws Error {
+	public Function parseString(final String string) throws Error {
 		return null;
 		/*
 		if (string.contains("{")) {
@@ -46,7 +46,7 @@ public class MathContext {
 	}
 
 	@Deprecated
-	public Function parseEquationString(String string) throws Error {
+	public Function parseEquationString(final String string) throws Error {
 		return null;
 		/*
 		final String[] parts = string.split("=");
@@ -60,7 +60,7 @@ public class MathContext {
 	}
 
 	@Deprecated
-	public ObjectArrayList<Function> solveExpression(ObjectArrayList<Function> input) throws Error {
+	public ObjectArrayList<Function> solveExpression(final ObjectArrayList<Function> input) throws Error {
 		return null;
 		/*
 		ObjectArrayList<Function> results = new ObjectArrayList<>();
@@ -140,7 +140,7 @@ public class MathContext {
 		throw new UnsupportedOperationException();
 	}
 
-	public ObjectArrayList<Rule> getAcceptableRules(RuleType currentAcceptedRules) {
+	public ObjectArrayList<Rule> getAcceptableRules(final RuleType currentAcceptedRules) {
 		return RulesManager.rules[currentAcceptedRules.ordinal()];
 	}
 }

@@ -33,35 +33,33 @@ public class TeaVMGpio implements it.cavallium.warppi.Platform.Gpio {
 	}
 
 	@Override
-	public void wiringPiSetupPhys() {
-	}
+	public void wiringPiSetupPhys() {}
 
 	@Override
-	public void pinMode(int i, int type) {
-	}
+	public void pinMode(final int i, final int type) {}
 
 	@Override
-	public void digitalWrite(int pin, int val) {
+	public void digitalWrite(final int pin, final int val) {
 		throw new java.lang.UnsupportedOperationException("Not implemented.");
 	}
 
 	@Override
-	public void digitalWrite(int pin, boolean val) {
+	public void digitalWrite(final int pin, final boolean val) {
 		throw new java.lang.UnsupportedOperationException("Not implemented.");
 	}
 
 	@Override
-	public void pwmWrite(int pin, int val) {
+	public void pwmWrite(final int pin, final int val) {
 		throw new java.lang.UnsupportedOperationException("Not implemented.");
 	}
-		
+
 	@Override
-	public void delayMicroseconds(int t) {
+	public void delayMicroseconds(final int t) {
 		throw new java.lang.UnsupportedOperationException("Not implemented.");
 	}
-		
+
 	@Override
-	public int digitalRead(int pin) {
+	public int digitalRead(final int pin) {
 		throw new java.lang.UnsupportedOperationException("Not implemented.");
 	}
 

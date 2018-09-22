@@ -6,7 +6,7 @@ import it.cavallium.warppi.Platform.URLClassLoader;
 
 public class HardwareURLClassLoader extends java.net.URLClassLoader implements URLClassLoader {
 
-	public HardwareURLClassLoader(URL[] urls) {
+	public HardwareURLClassLoader(final URL[] urls) {
 		super(urls);
 	}
 

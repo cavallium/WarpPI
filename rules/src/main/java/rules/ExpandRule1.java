@@ -4,8 +4,6 @@ SETTINGS: (please don't move this part)
  PATH=ExpandRule1
 */
 
-
-
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionOperator;
 import it.cavallium.warppi.math.MathContext;
@@ -22,7 +20,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
  * Expand rule
  * -(+a+b) = -a-b
  * -(+a-b) = -a+b
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -45,83 +43,78 @@ public class ExpandRule1 implements Rule {
 	     - An ObjectArrayList<Function> if it did something
 	*/
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
 		if (f instanceof Multiplication) {
-			Multiplication fnc = (Multiplication) f;
+			final Multiplication fnc = (Multiplication) f;
 			if (fnc.getParameter1().equals(new Number(fnc.getMathContext(), -1))) {
-				Function expr = fnc.getParameter2();
-				if (expr instanceof Sum) {
+				final Function expr = fnc.getParameter2();
+				if (expr instanceof Sum)
 					isExecutable = true;
-				} else if (expr instanceof Subtraction) {
+				else if (expr instanceof Subtraction)
 					isExecutable = true;
-				} else if (expr instanceof SumSubtraction) {
+				else if (expr instanceof SumSubtraction)
 					isExecutable = true;
-				}
 			}
 		} else if (f instanceof Subtraction || f instanceof SumSubtraction) {
-			FunctionOperator fnc = (FunctionOperator) f;
-			Function expr = fnc.getParameter2();
-			if (expr instanceof Sum) {
+			final FunctionOperator fnc = (FunctionOperator) f;
+			final Function expr = fnc.getParameter2();
+			if (expr instanceof Sum)
 				isExecutable = true;
-			} else if (expr instanceof Subtraction) {
+			else if (expr instanceof Subtraction)
 				isExecutable = true;
-			} else if (expr instanceof SumSubtraction) {
+			else if (expr instanceof SumSubtraction)
 				isExecutable = true;
-			}
 		}
 		if (isExecutable) {
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			MathContext root = f.getMathContext();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final MathContext root = f.getMathContext();
 
 			Function expr = null;
 			int fromSubtraction = 0;
 			FunctionOperator subtraction = null;
-			if (f instanceof Multiplication) {
+			if (f instanceof Multiplication)
 				expr = ((Multiplication) f).getParameter2();
-			} else if (f instanceof Subtraction || f instanceof SumSubtraction) {
+			else if (f instanceof Subtraction || f instanceof SumSubtraction) {
 				expr = ((Multiplication) f).getParameter2();
-				if (f instanceof Subtraction) {
+				if (f instanceof Subtraction)
 					fromSubtraction = 1;
-				} else {
+				else
 					fromSubtraction = 2;
-				}
 			}
 
 			if (f instanceof SumSubtraction) {
-				
+
 			}
 
-			Function fnc = expr;
+			final Function fnc = expr;
 			if (fnc instanceof Sum) {
-				Function a = ((Sum)fnc).getParameter1();
-				Function b = ((Sum)fnc).getParameter2();
-				Function fnc2 = new Subtraction(root, new Multiplication(root, new Number(root, -1), a), b);
+				final Function a = ((Sum) fnc).getParameter1();
+				final Function b = ((Sum) fnc).getParameter2();
+				final Function fnc2 = new Subtraction(root, new Multiplication(root, new Number(root, -1), a), b);
 				if (fromSubtraction > 0) {
-					subtraction = new Subtraction(root, ((FunctionOperator)f).getParameter1(), fnc2);
+					subtraction = new Subtraction(root, ((FunctionOperator) f).getParameter1(), fnc2);
 					result.add(subtraction);
-				} else {
+				} else
 					result.add(fnc2);
-				}
 			} else if (fnc instanceof Subtraction) {
-				Function a = ((Subtraction)fnc).getParameter1();
-				Function b = ((Subtraction)fnc).getParameter2();
-				Function fnc2 = new Sum(root, new Multiplication(root, new Number(root, -1), a), b);
+				final Function a = ((Subtraction) fnc).getParameter1();
+				final Function b = ((Subtraction) fnc).getParameter2();
+				final Function fnc2 = new Sum(root, new Multiplication(root, new Number(root, -1), a), b);
 				if (fromSubtraction > 0) {
-					subtraction = new Subtraction(root, ((FunctionOperator)f).getParameter1(), fnc2);
+					subtraction = new Subtraction(root, ((FunctionOperator) f).getParameter1(), fnc2);
 					result.add(subtraction);
-				} else {
+				} else
 					result.add(fnc2);
-				}
 			} else if (fnc instanceof SumSubtraction) {
-				Function a = ((SumSubtraction)fnc).getParameter1();
-				Function b = ((SumSubtraction)fnc).getParameter2();
-				Function fnc2 = new Sum(root, new Multiplication(root, new Number(root, -1), a), b);
-				Function fnc3 = new Subtraction(root, new Multiplication(root, new Number(root, -1), a), b);
+				final Function a = ((SumSubtraction) fnc).getParameter1();
+				final Function b = ((SumSubtraction) fnc).getParameter2();
+				final Function fnc2 = new Sum(root, new Multiplication(root, new Number(root, -1), a), b);
+				final Function fnc3 = new Subtraction(root, new Multiplication(root, new Number(root, -1), a), b);
 				if (fromSubtraction > 0) {
-					subtraction = new SumSubtraction(root, ((FunctionOperator)f).getParameter1(), fnc2);
+					subtraction = new SumSubtraction(root, ((FunctionOperator) f).getParameter1(), fnc2);
 					result.add(subtraction);
-					subtraction = new SumSubtraction(root, ((FunctionOperator)f).getParameter1(), fnc3);
+					subtraction = new SumSubtraction(root, ((FunctionOperator) f).getParameter1(), fnc3);
 					result.add(subtraction);
 					result.add(subtraction);
 				} else {
@@ -130,9 +123,8 @@ public class ExpandRule1 implements Rule {
 				}
 			}
 			return result;
-		} else {
+		} else
 			return null;
-		}
-		
+
 	}
 }

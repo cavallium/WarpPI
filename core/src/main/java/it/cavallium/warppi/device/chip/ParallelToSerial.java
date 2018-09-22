@@ -9,7 +9,7 @@ public class ParallelToSerial {
 	private final int QH;
 	private final int CLK;
 
-	public ParallelToSerial(int SH_LD_pin, int CLK_INH_pin, int QH_pin, int CLK_pin) {
+	public ParallelToSerial(final int SH_LD_pin, final int CLK_INH_pin, final int QH_pin, final int CLK_pin) {
 		SH_LD = SH_LD_pin;
 		CLK_INH = CLK_INH_pin;
 		QH = QH_pin;

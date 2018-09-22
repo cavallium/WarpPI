@@ -14,14 +14,14 @@ public class JoinNumberAndVariables implements MathParserStep {
 
 	private final MathContext context;
 
-	public JoinNumberAndVariables(MathContext context) {
+	public JoinNumberAndVariables(final MathContext context) {
 		this.context = context;
 	}
 
 	@Override
-	public boolean eval(IntWrapper curIndex, Function lastFunction, Function currentFunction,
-			ObjectArrayList<Function> functionsList) {
-		if (currentFunction instanceof Number | currentFunction instanceof Variable | currentFunction instanceof Division) {
+	public boolean eval(final IntWrapper curIndex, final Function lastFunction, final Function currentFunction,
+			final ObjectArrayList<Function> functionsList) {
+		if (currentFunction instanceof Number | currentFunction instanceof Variable | currentFunction instanceof Division)
 			if (lastFunction instanceof Variable | lastFunction instanceof Number | (lastFunction instanceof Multiplication && ((Multiplication) lastFunction).getParameter2() != null)) {
 				final Function a = currentFunction;
 				final Function b = lastFunction;
@@ -29,7 +29,6 @@ public class JoinNumberAndVariables implements MathParserStep {
 				functionsList.remove(curIndex.i + 1);
 				return true;
 			}
-		}
 		return false;
 	}
 

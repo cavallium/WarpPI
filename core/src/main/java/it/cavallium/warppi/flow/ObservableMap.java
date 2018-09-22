@@ -3,12 +3,12 @@ package it.cavallium.warppi.flow;
 import java.util.function.Function;
 
 public class ObservableMap<T, U> extends Observable<U> {
-	private Observable<T> originalObservable;
-	private Function<T, U> mapAction;
+	private final Observable<T> originalObservable;
+	private final Function<T, U> mapAction;
 	private volatile boolean initialized = false;
 	private Disposable mapDisposable;
 
-	public ObservableMap(Observable<T> originalObservable, Function<T, U> mapAction) {
+	public ObservableMap(final Observable<T> originalObservable, final Function<T, U> mapAction) {
 		super();
 		this.originalObservable = originalObservable;
 		this.mapAction = mapAction;
@@ -16,17 +16,14 @@ public class ObservableMap<T, U> extends Observable<U> {
 
 	private void initialize() {
 		this.mapDisposable = originalObservable.subscribe((t) -> {
-			for (Subscriber<? super U> sub : this.subscribers) {
-				sub.onNext(mapAction.apply(t));
-			} ;
+			for (final Subscriber<? super U> sub : subscribers)
+				sub.onNext(mapAction.apply(t));;
 		}, (e) -> {
-			for (Subscriber<? super U> sub : this.subscribers) {
-				sub.onError(e);
-			} ;
+			for (final Subscriber<? super U> sub : subscribers)
+				sub.onError(e);;
 		}, () -> {
-			for (Subscriber<? super U> sub : this.subscribers) {
-				sub.onComplete();
-			} ;
+			for (final Subscriber<? super U> sub : subscribers)
+				sub.onComplete();;
 		});
 	}
 
@@ -38,14 +35,14 @@ public class ObservableMap<T, U> extends Observable<U> {
 	}
 
 	@Override
-	public Disposable subscribe(Subscriber<? super U> sub) {
-		Disposable disp = super.subscribe(sub);
+	public Disposable subscribe(final Subscriber<? super U> sub) {
+		final Disposable disp = super.subscribe(sub);
 		chechInitialized();
 		return disp;
 	}
 
 	@Override
-	public void onDisposed(Subscriber<? super U> sub) {
+	public void onDisposed(final Subscriber<? super U> sub) {
 		super.onDisposed(sub);
 		mapDisposable.dispose();
 	}

@@ -8,12 +8,12 @@ public class FeatureChar implements Feature {
 
 	public final char ch;
 
-	public FeatureChar(char ch) {
+	public FeatureChar(final char ch) {
 		this.ch = ch;
 	}
 
 	@Override
-	public Function toFunction(MathContext context) {
+	public Function toFunction(final MathContext context) {
 		return null;
 	}
 

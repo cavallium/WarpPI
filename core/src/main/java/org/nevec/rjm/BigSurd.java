@@ -14,7 +14,7 @@ import it.cavallium.warppi.util.Utils;
  * a square root of a non-negative fraction.
  * This might be extended to values on the imaginary axis by allowing negative
  * values underneath the square root, but this is not yet implemented.
- * 
+ *
  * @since 2011-02-12
  * @author Richard J. Mathar
  */
@@ -41,7 +41,7 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 
 	/**
 	 * Default ctor, which represents the zero.
-	 * 
+	 *
 	 * @since 2011-02-12
 	 */
 	public BigSurd() {
@@ -52,21 +52,20 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 	/**
 	 * ctor given the prefactor and the basis of the root.
 	 * This creates an object of value a*sqrt(b).
-	 * 
+	 *
 	 * @param a
 	 *            the prefactor.
 	 * @param b
 	 *            the discriminant.
 	 * @since 2011-02-12
 	 */
-	public BigSurd(Rational a, Rational b) {
+	public BigSurd(final Rational a, final Rational b) {
 		pref = a;
 		/*
 		 * reject attempts to use a negative b
 		 */
-		if (b.signum() < 0) {
+		if (b.signum() < 0)
 			throw new ProviderException("Not implemented: imaginary surds");
-		}
 		disc = b;
 		try {
 			normalize();
@@ -79,36 +78,36 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 	/**
 	 * ctor given the numerator and denominator of the root.
 	 * This creates an object of value sqrt(a/b).
-	 * 
+	 *
 	 * @param a
 	 *            the numerator
 	 * @param b
 	 *            the denominator.
 	 * @since 2011-02-12
 	 */
-	public BigSurd(int a, int b) {
+	public BigSurd(final int a, final int b) {
 		this(Rational.ONE, new Rational(a, b));
 	}
 
 	/**
 	 * ctor given the value under the root.
 	 * This creates an object of value sqrt(a).
-	 * 
+	 *
 	 * @param a
 	 *            the discriminant.
 	 * @since 2011-02-12
 	 */
-	public BigSurd(BigInteger a) {
+	public BigSurd(final BigInteger a) {
 		this(Rational.ONE, new Rational(a, BigInteger.ONE));
 	}
 
-	public BigSurd(Rational a) {
+	public BigSurd(final Rational a) {
 		this(Rational.ONE, a);
 	}
 
 	/**
 	 * Create a deep copy.
-	 * 
+	 *
 	 * @since 2011-02-12
 	 */
 	@Override
@@ -130,26 +129,25 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 
 	/**
 	 * Add two surds of compatible discriminant.
-	 * 
+	 *
 	 * @param val
 	 *            The value to be added to this.
 	 */
 
 	public BigSurdVec add(final BigSurd val) {
 		// zero plus somethings yields something
-		if (signum() == 0) {
+		if (signum() == 0)
 			return new BigSurdVec(val);
-		} else if (val.signum() == 0) {
+		else if (val.signum() == 0)
 			return new BigSurdVec(this);
-		} else {
+		else
 			// let the ctor of BigSurdVec to the work
 			return new BigSurdVec(this, val);
-		}
 	} /* BigSurd.add */
 
 	/**
 	 * Multiply by another square root.
-	 * 
+	 *
 	 * @param val
 	 *            a second number of this type.
 	 * @return the product of this with the val.
@@ -161,7 +159,7 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 
 	/**
 	 * Multiply by a rational number.
-	 * 
+	 *
 	 * @param val
 	 *            the factor.
 	 * @return the product of this with the val.
@@ -173,7 +171,7 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 
 	/**
 	 * Multiply by a BigInteger.
-	 * 
+	 *
 	 * @param val
 	 *            a second number.
 	 * @return the product of this with the value.
@@ -185,7 +183,7 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 
 	/**
 	 * Multiply by an integer.
-	 * 
+	 *
 	 * @param val
 	 *            a second number.
 	 * @return the product of this with the value.
@@ -198,7 +196,7 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 
 	/**
 	 * Compute the square.
-	 * 
+	 *
 	 * @return this value squared.
 	 * @since 2011-02-12
 	 */
@@ -210,7 +208,7 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 
 	/**
 	 * Divide by another square root.
-	 * 
+	 *
 	 * @param val
 	 *            A second number of this type.
 	 * @return The value of this/val
@@ -218,9 +216,8 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 	 * @since 2011-02-12
 	 */
 	public BigSurd divide(final BigSurd val) throws Error {
-		if (val.signum() == 0) {
+		if (val.signum() == 0)
 			throw new ArithmeticException("Dividing " + toFancyString() + " through zero.");
-		}
 		return new BigSurd(pref.divide(val.pref), disc.divide(val.disc));
 	} /* BigSurd.divide */
 
@@ -228,14 +225,13 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 		final BigSurd bs = this;
 		final BigInteger denominator = pref.b;
 		String s = "";
-		if (denominator.compareTo(BigInteger.ONE) != 0) {
+		if (denominator.compareTo(BigInteger.ONE) != 0)
 			s += "(";
-		}
-		if (bs.isBigInteger()) {
+		if (bs.isBigInteger())
 			s += bs.BigDecimalValue(new MathContext(Utils.scale, Utils.scaleMode2)).toBigInteger().toString();
-		} else if (bs.isRational()) {
+		else if (bs.isRational())
 			s += bs.toRational().toString();
-		} else {
+		else {
 			final BigInteger numerator = bs.pref.a;
 			if (numerator.compareTo(BigInteger.ONE) != 0) {
 				s += numerator.toString();
@@ -243,21 +239,19 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 				s += "(";
 			}
 			s += "2√";
-			if (bs.disc.isInteger()) {
+			if (bs.disc.isInteger())
 				s += bs.disc.toString();
-			} else {
+			else
 				s += "(" + bs.disc.toString() + ")";
-			}
-			if (numerator.compareTo(BigInteger.ONE) != 0) {
+			if (numerator.compareTo(BigInteger.ONE) != 0)
 				s += ")";
-			}
 		}
 		return s;
 	}
 
 	/**
 	 * Divide by an integer.
-	 * 
+	 *
 	 * @param val
 	 *            a second number.
 	 * @return the value of this/val
@@ -265,31 +259,29 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 	 * @since 2011-02-12
 	 */
 	public BigSurd divide(final BigInteger val) throws Error {
-		if (val.signum() == 0) {
+		if (val.signum() == 0)
 			throw new ArithmeticException("Dividing " + toFancyString() + " through zero.");
-		}
 		return new BigSurd(pref.divide(val), disc);
 	} /* BigSurd.divide */
 
 	/**
 	 * Divide by an integer.
-	 * 
+	 *
 	 * @param val
 	 *            A second number.
 	 * @return The value of this/val
 	 * @throws Error
 	 * @since 2011-02-12
 	 */
-	public BigSurd divide(int val) throws Error {
-		if (val == 0) {
+	public BigSurd divide(final int val) throws Error {
+		if (val == 0)
 			throw new ArithmeticException("Dividing " + toFancyString() + " through zero.");
-		}
 		return new BigSurd(pref.divide(val), disc);
 	} /* BigSurd.divide */
 
 	/**
 	 * Compute the negative.
-	 * 
+	 *
 	 * @return -this.
 	 * @since 2011-02-12
 	 */
@@ -305,7 +297,7 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 
 	/**
 	 * Absolute value.
-	 * 
+	 *
 	 * @return The absolute (non-negative) value of this.
 	 * @since 2011-02-12
 	 */
@@ -315,7 +307,7 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 
 	/**
 	 * Compares the value of this with another constant.
-	 * 
+	 *
 	 * @param val
 	 *            the other constant to compare with
 	 * @return -1, 0 or 1 if this number is numerically less than, equal to,
@@ -330,21 +322,16 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 		 */
 		final int sig = signum();
 		final int sigv = val.signum();
-		if (sig < 0 && sigv >= 0) {
+		if (sig < 0 && sigv >= 0)
 			return -1;
-		}
-		if (sig > 0 && sigv <= 0) {
+		if (sig > 0 && sigv <= 0)
 			return 1;
-		}
-		if (sig == 0 && sigv == 0) {
+		if (sig == 0 && sigv == 0)
 			return 0;
-		}
-		if (sig == 0 && sigv > 0) {
+		if (sig == 0 && sigv > 0)
 			return -1;
-		}
-		if (sig == 0 && sigv < 0) {
+		if (sig == 0 && sigv < 0)
 			return 1;
-		}
 
 		/*
 		 * Work out the cases of equal sign. Compare absolute values by
@@ -355,34 +342,32 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 		final Rational this2 = sqr();
 		final Rational val2 = val.sqr();
 		final int c = this2.compareTo(val2);
-		if (c == 0) {
+		if (c == 0)
 			return 0;
-		} else if (sig > 0 && c > 0 || sig < 0 && c < 0) {
+		else if (sig > 0 && c > 0 || sig < 0 && c < 0)
 			return 1;
-		} else {
+		else
 			return -1;
-		}
 	} /* BigSurd.compareTo */
 
 	/**
 	 * Return a string in the format (number/denom)*()^(1/2).
 	 * If the discriminant equals 1, print just the prefactor.
-	 * 
+	 *
 	 * @return the human-readable version in base 10
 	 * @since 2011-02-12
 	 */
 	@Override
 	public String toString() {
-		if (disc.compareTo(Rational.ONE) != 0 && disc.compareTo(Rational.ZERO) != 0) {
-			return ("(" + pref.toString() + ")*(" + disc.toString() + ")^(1/2)");
-		} else {
+		if (disc.compareTo(Rational.ONE) != 0 && disc.compareTo(Rational.ZERO) != 0)
+			return "(" + pref.toString() + ")*(" + disc.toString() + ")^(1/2)";
+		else
 			return pref.toString();
-		}
 	} /* BigSurd.toString */
 
 	/**
 	 * Return a double value representation.
-	 * 
+	 *
 	 * @return The value with double precision.
 	 * @since 2011-02-12
 	 */
@@ -395,24 +380,24 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 		System.out.println("dv sq " + p2.toString());
 		final double res = p2.doubleValue();
 		System.out.println("dv sq " + res);
-		return (pref.signum() >= 0) ? Math.sqrt(res) : -Math.sqrt(res);
+		return pref.signum() >= 0 ? Math.sqrt(res) : -Math.sqrt(res);
 	} /* BigSurd.doubleValue */
 
 	/**
 	 * Return a float value representation.
-	 * 
+	 *
 	 * @return The value with single precision.
 	 * @since 2011-02-12
 	 */
 	public float floatValue() {
-		return (float) (doubleValue());
+		return (float) doubleValue();
 	} /* BigSurd.floatValue */
 
 	/**
 	 * True if the value is integer.
 	 * Equivalent to the indication whether a conversion to an integer
 	 * can be exact.
-	 * 
+	 *
 	 * @since 2011-02-12
 	 */
 	public boolean isBigInteger() {
@@ -423,29 +408,28 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 	 * True if the value is rational.
 	 * Equivalent to the indication whether a conversion to a Rational can be
 	 * exact.
-	 * 
+	 *
 	 * @since 2011-02-12
 	 */
 	public boolean isRational() {
-		return (disc.signum() == 0 || disc.compareTo(Rational.ONE) == 0);
+		return disc.signum() == 0 || disc.compareTo(Rational.ONE) == 0;
 	} /* BigSurd.isRational */
 
 	/**
 	 * Convert to a rational value if possible
-	 * 
+	 *
 	 * @since 2012-02-15
 	 */
 	public Rational toRational() {
-		if (isRational()) {
+		if (isRational())
 			return pref;
-		} else {
+		else
 			throw new ArithmeticException("Undefined conversion " + toFancyString() + " to Rational.");
-		}
 	} /* BigSurd.toRational */
 
 	/**
 	 * The sign: 1 if the number is >0, 0 if ==0, -1 if <0
-	 * 
+	 *
 	 * @return the signum of the value.
 	 * @since 2011-02-12
 	 */
@@ -460,7 +444,7 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 
 	/**
 	 * Normalize to squarefree discriminant.
-	 * 
+	 *
 	 * @throws Error
 	 * @since 2011-02-12
 	 */
@@ -493,15 +477,14 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 			pref = pref.divide(sqf);
 
 			disc = new Rational(numC, denC);
-		} else {
+		} else
 			pref = Rational.ZERO;
-		}
 	} /* BigSurd.normalize */
 
 	/**
 	 * Normalize to coprime numerator and denominator in prefactor and
 	 * discriminant
-	 * 
+	 *
 	 * @throws Error
 	 * @since 2011-02-12
 	 */
@@ -538,13 +521,13 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 
 	/**
 	 * Return the approximate floating point representation.
-	 * 
+	 *
 	 * @param mc
 	 *            Description of the accuracy needed.
 	 * @return A representation with digits valid as described by mc
 	 * @since 2012-02-15
 	 */
-	public BigDecimal BigDecimalValue(MathContext mc) {
+	public BigDecimal BigDecimalValue(final MathContext mc) {
 		/*
 		 * the relative error of the result equals the relative error of the
 		 * prefactor plus half of the relative error of the discriminant.

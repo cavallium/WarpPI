@@ -12,7 +12,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Joke
  *
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -35,7 +35,7 @@ public class JokeRule implements Rule {
 	     - An ObjectArrayList<Function> if it did something
 	*/
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		return null;
 	}
 }

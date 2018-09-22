@@ -1,15 +1,15 @@
 package it.cavallium.warppi.math.parser.features.interfaces;
 
 public interface FeatureMultiple extends Feature {
-	public Object[] getChildren();
+	Object[] getChildren();
 
-	public Object getChild(int index);
+	Object getChild(int index);
 
-	public int getChildCount();
+	int getChildCount();
 
-	public void setChild(int index, Object obj);
+	void setChild(int index, Object obj);
 
-	public void setChildren(Object[] objs);
+	void setChildren(Object[] objs);
 
-	public void addChild(Object obj);
+	void addChild(Object obj);
 }

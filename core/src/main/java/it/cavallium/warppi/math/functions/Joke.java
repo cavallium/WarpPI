@@ -20,13 +20,13 @@ public class Joke implements Function {
 	private final byte joke;
 	private final MathContext root;
 
-	public Joke(MathContext root, byte joke) {
+	public Joke(final MathContext root, final byte joke) {
 		this.root = root;
 		this.joke = joke;
 	}
 
 	@Override
-	public ObjectArrayList<Function> simplify(Rule rule) throws Error, InterruptedException {
+	public ObjectArrayList<Function> simplify(final Rule rule) throws Error, InterruptedException {
 		return rule.execute(this);
 	}
 
@@ -41,17 +41,17 @@ public class Joke implements Function {
 	}
 
 	@Override
-	public Function setParameter(int index, Function var) throws IndexOutOfBoundsException {
+	public Function setParameter(final int index, final Function var) throws IndexOutOfBoundsException {
 		throw new IndexOutOfBoundsException();
 	}
 
 	@Override
-	public Function getParameter(int index) throws IndexOutOfBoundsException {
+	public Function getParameter(final int index) throws IndexOutOfBoundsException {
 		throw new IndexOutOfBoundsException();
 	}
 
 	@Override
-	public ObjectArrayList<Block> toBlock(MathContext context) throws Error {
+	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
 		// TODO Auto-generated method stub
 		throw new Error(Errors.NOT_IMPLEMENTED, "Unknown function " + getClass().getSimpleName());
 	}

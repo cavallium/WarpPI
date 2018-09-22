@@ -8,7 +8,7 @@ public class MmapByteBuffer {
 	private final int length;
 	private final ByteBuffer buffer;
 
-	public MmapByteBuffer(int fd, int address, int length, ByteBuffer buffer) {
+	public MmapByteBuffer(final int fd, final int address, final int length, final ByteBuffer buffer) {
 		this.fd = fd;
 		this.address = address;
 		this.length = length;

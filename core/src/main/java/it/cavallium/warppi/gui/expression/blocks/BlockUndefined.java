@@ -15,24 +15,24 @@ public class BlockUndefined extends Block {
 	}
 
 	@Override
-	public void draw(GraphicEngine ge, Renderer r, int x, int y, Caret caret) {
+	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y, final Caret caret) {
 		BlockContainer.getDefaultFont(small).use(ge);
 		r.glColor(BlockContainer.getDefaultColor());
 		r.glDrawStringLeft(x, y, "UNDEFINED");
 	}
 
 	@Override
-	public boolean putBlock(Caret caret, Block newBlock) {
+	public boolean putBlock(final Caret caret, final Block newBlock) {
 		return false;
 	}
 
 	@Override
-	public boolean delBlock(Caret caret) {
+	public boolean delBlock(final Caret caret) {
 		return false;
 	}
 
 	@Override
-	public BlockReference<?> getBlock(Caret caret) {
+	public BlockReference<?> getBlock(final Caret caret) {
 		return null;
 	}
 
@@ -44,7 +44,7 @@ public class BlockUndefined extends Block {
 	}
 
 	@Override
-	public void setSmall(boolean small) {
+	public void setSmall(final boolean small) {
 		this.small = small;
 		recomputeDimensions();
 	}
@@ -55,7 +55,7 @@ public class BlockUndefined extends Block {
 	}
 
 	@Override
-	public Feature toFeature(MathContext context) {
+	public Feature toFeature(final MathContext context) {
 		return new FeatureChar(MathematicalSymbols.UNDEFINED);
 	}
 

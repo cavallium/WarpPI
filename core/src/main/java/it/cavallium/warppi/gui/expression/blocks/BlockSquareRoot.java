@@ -21,7 +21,7 @@ public class BlockSquareRoot extends Block {
 	}
 
 	@Override
-	public void draw(GraphicEngine ge, Renderer r, int x, int y, Caret caret) {
+	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y, final Caret caret) {
 		BlockContainer.getDefaultFont(small).use(ge);
 		r.glColor(BlockContainer.getDefaultColor());
 		r.glDrawLine(x, y + height - 10 + 1, x, y + height - 10 + 2); // /
@@ -36,27 +36,25 @@ public class BlockSquareRoot extends Block {
 	}
 
 	@Override
-	public boolean putBlock(Caret caret, Block newBlock) {
+	public boolean putBlock(final Caret caret, final Block newBlock) {
 		boolean added = false;
 		added = added | containerNumber.putBlock(caret, newBlock);
-		if (added) {
+		if (added)
 			recomputeDimensions();
-		}
 		return added;
 	}
 
 	@Override
-	public boolean delBlock(Caret caret) {
+	public boolean delBlock(final Caret caret) {
 		boolean removed = false;
 		removed = removed | containerNumber.delBlock(caret);
-		if (removed) {
+		if (removed)
 			recomputeDimensions();
-		}
 		return removed;
 	}
 
 	@Override
-	public BlockReference<?> getBlock(Caret caret) {
+	public BlockReference<?> getBlock(final Caret caret) {
 		return containerNumber.getBlock(caret);
 	}
 
@@ -70,12 +68,12 @@ public class BlockSquareRoot extends Block {
 		line = 3 + l1;
 		if (height < 9) {
 			height = 9;
-			line += (9 - (3 + h1));
+			line += 9 - (3 + h1);
 		}
 	}
 
 	@Override
-	public void setSmall(boolean small) {
+	public void setSmall(final boolean small) {
 		this.small = small;
 		containerNumber.setSmall(small);
 		recomputeDimensions();
@@ -91,7 +89,7 @@ public class BlockSquareRoot extends Block {
 	}
 
 	@Override
-	public Feature toFeature(MathContext context) throws Error {
+	public Feature toFeature(final MathContext context) throws Error {
 		final Function contnt = getNumberContainer().toFunction(context);
 		return new FeatureSquareRoot(contnt);
 	}

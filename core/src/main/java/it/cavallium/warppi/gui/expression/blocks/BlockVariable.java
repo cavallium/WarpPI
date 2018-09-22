@@ -26,11 +26,11 @@ public class BlockVariable extends Block {
 	private BlockVariable typeDirtyID;
 	private final boolean typeLocked;
 
-	public BlockVariable(InputContext ic, char ch) {
+	public BlockVariable(final InputContext ic, final char ch) {
 		this(ic, ch, false);
 	}
 
-	public BlockVariable(InputContext ic, char ch, boolean typeLocked) {
+	public BlockVariable(final InputContext ic, final char ch, final boolean typeLocked) {
 		this.ic = ic;
 		this.ch = ch;
 		type = V_TYPE.VARIABLE;
@@ -44,13 +44,11 @@ public class BlockVariable extends Block {
 
 	private void retrieveValue() {
 		type = ic.variableTypes.get(ch);
-		if (type == null) {
+		if (type == null)
 			type = V_TYPE.VARIABLE;
-		}
 		typeDirtyID = ic.variableTypeDirtyID;
-		if (menu != null) {
+		if (menu != null)
 			menu.mustRefreshMenu = true;
-		}
 		mustRefresh = true;
 		System.out.println("retrieve:" + type.toString());
 	}
@@ -68,10 +66,9 @@ public class BlockVariable extends Block {
 	}
 
 	@Override
-	public void draw(GraphicEngine ge, Renderer r, int x, int y, Caret caret) {
-		if (ic.variableTypeDirtyID != typeDirtyID) {
+	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y, final Caret caret) {
+		if (ic.variableTypeDirtyID != typeDirtyID)
 			retrieveValue();
-		}
 		if (mustRefresh) {
 			mustRefresh = false;
 			switch (type) {
@@ -94,17 +91,17 @@ public class BlockVariable extends Block {
 	}
 
 	@Override
-	public boolean putBlock(Caret caret, Block newBlock) {
+	public boolean putBlock(final Caret caret, final Block newBlock) {
 		return false;
 	}
 
 	@Override
-	public boolean delBlock(Caret caret) {
+	public boolean delBlock(final Caret caret) {
 		return false;
 	}
 
 	@Override
-	public BlockReference<?> getBlock(Caret caret) {
+	public BlockReference<?> getBlock(final Caret caret) {
 		return null;
 	}
 
@@ -116,7 +113,7 @@ public class BlockVariable extends Block {
 	}
 
 	@Override
-	public void setSmall(boolean small) {
+	public void setSmall(final boolean small) {
 		this.small = small;
 		recomputeDimensions();
 	}
@@ -140,7 +137,7 @@ public class BlockVariable extends Block {
 		String text = "";
 		boolean mustRefreshMenu = true;
 
-		public VariableMenu(BlockVariable var) {
+		public VariableMenu(final BlockVariable var) {
 			super(var);
 		}
 
@@ -155,7 +152,7 @@ public class BlockVariable extends Block {
 		public void close() {}
 
 		@Override
-		public boolean onKeyPressed(KeyPressedEvent k) {
+		public boolean onKeyPressed(final KeyPressedEvent k) {
 			switch (k.getKey()) {
 				case LEFT:
 				case UP:
@@ -200,12 +197,12 @@ public class BlockVariable extends Block {
 		}
 
 		@Override
-		public boolean onKeyReleased(KeyReleasedEvent k) {
+		public boolean onKeyReleased(final KeyReleasedEvent k) {
 			return false;
 		}
 
 		@Override
-		public boolean beforeRender(float delta, Caret caret) {
+		public boolean beforeRender(final float delta, final Caret caret) {
 			if (mustRefreshMenu) {
 				mustRefreshMenu = false;
 				text = block.type.toString();
@@ -220,24 +217,20 @@ public class BlockVariable extends Block {
 		}
 
 		@Override
-		public void draw(GraphicEngine ge, Renderer r, Caret caret) {
+		public void draw(final GraphicEngine ge, final Renderer r, final Caret caret) {
 			r.glColor3f(1.0f, 1.0f, 1.0f);
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(ge);
 			int popupX = location[0];
 			int popupY = location[1];
-			if (popupX < 0) {
+			if (popupX < 0)
 				popupX = 0;
-			}
-			if (popupY < 0) {
+			if (popupY < 0)
 				popupY = 0;
-			}
 			final int[] screenSize = ge.getSize();
-			if (popupX + width >= screenSize[0]) {
+			if (popupX + width >= screenSize[0])
 				popupX = screenSize[0] - width - 1;
-			}
-			if (popupY + height >= screenSize[1]) {
+			if (popupY + height >= screenSize[1])
 				popupY = screenSize[1] - height - 1;
-			}
 			r.glFillRect(location[0] + width / 2 - 5, popupY + 1, 10, 5, 163, 16, 10, 5);
 			r.glFillColor(popupX, popupY + 5, width, height);
 			r.glFillColor(popupX + 2, popupY + 4, width - 4, height + 2);
@@ -252,7 +245,7 @@ public class BlockVariable extends Block {
 	}
 
 	@Override
-	public Feature toFeature(MathContext context) throws Error {
+	public Feature toFeature(final MathContext context) throws Error {
 		return new FeatureVariable(ch, type);
 	}
 }

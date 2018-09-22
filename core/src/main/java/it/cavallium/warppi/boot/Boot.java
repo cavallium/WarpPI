@@ -13,13 +13,13 @@ import it.cavallium.warppi.math.rules.RulesManager;
 import it.cavallium.warppi.util.Error;
 
 public class Boot {
-	
-	public static void boot(Platform platform, String[] args) throws Exception {
-		Engine.start(platform, new LoadingScreen(), new PIHardwareDisplay(), new PIHardwareTouchDevice(false, false, false), new CalculatorHUD(), parseStartupArguments(args));
+
+	public static void boot(final Platform platform, final String[] args) throws Exception {
+		Engine.start(platform, new LoadingScreen(), new PIHardwareDisplay(), new PIHardwareTouchDevice(false, false, false), new CalculatorHUD(), Boot.parseStartupArguments(args));
 		Engine.INSTANCE.getLoadPhase().subscribe(Boot::loadCalculator);
 	}
 
-	private static void loadCalculator(LoadingStatus loading) {
+	private static void loadCalculator(final LoadingStatus loading) {
 		try {
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().setBrightness(0.2f);
 			RulesManager.initialize();
@@ -33,12 +33,12 @@ public class Boot {
 
 	public static StartupArguments parseStartupArguments(final String[] a) {
 		final StartupArgumentsImpl args = new StartupArgumentsImpl();
-		Arrays.asList(a).stream().parallel().map(String::toLowerCase).forEach(arg -> parseArgument(args, arg));
+		Arrays.asList(a).stream().parallel().map(String::toLowerCase).forEach(arg -> Boot.parseArgument(args, arg));
 		args.setHeadlessEngineForced(args.isHeadlessEngineForced() || args.isHeadless8EngineForced() || args.isHeadless256EngineForced() || args.isHeadless24bitEngineForced());
 		return args;
 	}
 
-	public static void parseArgument(StartupArgumentsImpl args, String arg) {
+	public static void parseArgument(final StartupArgumentsImpl args, final String arg) {
 		switch (arg) {
 			case "-zoomed":
 				args.setZoomed(true);

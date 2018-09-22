@@ -14,69 +14,75 @@ public abstract class Observable<T> implements ObservableSource<T> {
 		return null;
 	}
 
-	public Disposable subscribe(Action1<? super T> onNext) {
+	public Disposable subscribe(final Action1<? super T> onNext) {
 		return subscribe(createSubscriber(onNext));
 	}
 
-	protected Observable<T>.DisposableOfSubscriber createDisposable(Subscriber<? super T> sub) {
+	protected Observable<T>.DisposableOfSubscriber createDisposable(final Subscriber<? super T> sub) {
 		return new DisposableOfSubscriber(sub);
 	}
 
-	public Disposable subscribe(Action1<? super T> onNext, Action1<Throwable> onError) {
+	public Disposable subscribe(final Action1<? super T> onNext, final Action1<Throwable> onError) {
 		return subscribe(createSubscriber(onNext, onError));
 	}
 
-	public Disposable subscribe(Action1<? super T> onNext, Action1<Throwable> onError, Action0 onCompleted) {
+	public Disposable subscribe(final Action1<? super T> onNext, final Action1<Throwable> onError,
+			final Action0 onCompleted) {
 		return subscribe(createSubscriber(onNext, onError, onCompleted));
 	}
 
-	public void subscribe(Observer<? super T> obs) {
+	@Override
+	public void subscribe(final Observer<? super T> obs) {
 		subscribe(createSubscriber(obs));
 	}
 
-	public Disposable subscribe(Subscriber<? super T> sub) {
+	public Disposable subscribe(final Subscriber<? super T> sub) {
 		subscribers.add(sub);
 		return createDisposable(sub);
 	}
 
-	protected Subscriber<T> createSubscriber(Action1<? super T> onNext) {
+	protected Subscriber<T> createSubscriber(final Action1<? super T> onNext) {
 		return new Subscriber<T>() {
 			@Override
-			public void onSubscribe(Subscription s) {}
+			public void onSubscribe(final Subscription s) {}
 
-			public void onNext(T t) {
+			@Override
+			public void onNext(final T t) {
 				onNext.call(t);
 			}
 		};
 	}
 
-	protected Subscriber<T> createSubscriber(Action1<? super T> onNext, Action1<Throwable> onError) {
+	protected Subscriber<T> createSubscriber(final Action1<? super T> onNext, final Action1<Throwable> onError) {
 		return new Subscriber<T>() {
 			@Override
-			public void onSubscribe(Subscription s) {}
+			public void onSubscribe(final Subscription s) {}
 
-			public void onNext(T t) {
+			@Override
+			public void onNext(final T t) {
 				onNext.call(t);
 			}
 
 			@Override
-			public void onError(Throwable t) {
+			public void onError(final Throwable t) {
 				onError.call(t);
 			}
 		};
 	}
 
-	protected Subscriber<T> createSubscriber(Action1<? super T> onNext, Action1<Throwable> onError, Action0 onCompl) {
+	protected Subscriber<T> createSubscriber(final Action1<? super T> onNext, final Action1<Throwable> onError,
+			final Action0 onCompl) {
 		return new Subscriber<T>() {
 			@Override
-			public void onSubscribe(Subscription s) {}
+			public void onSubscribe(final Subscription s) {}
 
-			public void onNext(T t) {
+			@Override
+			public void onNext(final T t) {
 				onNext.call(t);
 			}
 
 			@Override
-			public void onError(Throwable t) {
+			public void onError(final Throwable t) {
 				onError.call(t);
 			}
 
@@ -87,17 +93,18 @@ public abstract class Observable<T> implements ObservableSource<T> {
 		};
 	}
 
-	protected Subscriber<T> createSubscriber(Observer<? super T> obs) {
+	protected Subscriber<T> createSubscriber(final Observer<? super T> obs) {
 		return new Subscriber<T>() {
 			@Override
-			public void onSubscribe(Subscription s) {}
+			public void onSubscribe(final Subscription s) {}
 
-			public void onNext(T t) {
+			@Override
+			public void onNext(final T t) {
 				obs.onNext(t);
 			}
 
 			@Override
-			public void onError(Throwable t) {
+			public void onError(final Throwable t) {
 				obs.onError(t);
 			}
 
@@ -108,32 +115,32 @@ public abstract class Observable<T> implements ObservableSource<T> {
 		};
 	}
 
-	public static final <T> Observable<T> merge(Observable<T> a, Observable<T> b) {
+	public static final <T> Observable<T> merge(final Observable<T> a, final Observable<T> b) {
 		return new ObservableMerged<>(a, b);
 	}
 
 	@Deprecated
-	public static final <T> Observable<T> of(Observable<T> a) {
+	public static final <T> Observable<T> of(final Observable<T> a) {
 		return null;
 	}
 
-	public final <U> Observable<U> map(Function<T, U> f) {
-		return new ObservableMap<T, U>(this, f);
+	public final <U> Observable<U> map(final Function<T, U> f) {
+		return new ObservableMap<>(this, f);
 	}
 
-	public static final <T, U> Observable<Pair<T, U>> combineLatest(Observable<T> a, Observable<U> b) {
+	public static final <T, U> Observable<Pair<T, U>> combineLatest(final Observable<T> a, final Observable<U> b) {
 		return new ObservableCombinedLatest<>(a, b);
 	}
 
-	public static final <T, U> Observable<Pair<T, U>> combineChanged(Observable<T> a, Observable<U> b) {
+	public static final <T, U> Observable<Pair<T, U>> combineChanged(final Observable<T> a, final Observable<U> b) {
 		return new ObservableCombinedChanged<>(a, b);
 	}
 
-	public static final <T, U> Observable<Pair<T, U>> zip(Observable<T> a, Observable<U> b) {
+	public static final <T, U> Observable<Pair<T, U>> zip(final Observable<T> a, final Observable<U> b) {
 		return new ObservableZipped<>(a, b);
 	}
 
-	public static final Observable<Long> interval(long interval) {
+	public static final Observable<Long> interval(final long interval) {
 		return new ObservableInterval(interval);
 	}
 
@@ -141,7 +148,7 @@ public abstract class Observable<T> implements ObservableSource<T> {
 
 		private final Subscriber<? super T> sub;
 
-		public DisposableOfSubscriber(Subscriber<? super T> sub) {
+		public DisposableOfSubscriber(final Subscriber<? super T> sub) {
 			this.sub = sub;
 		}
 
@@ -155,9 +162,8 @@ public abstract class Observable<T> implements ObservableSource<T> {
 
 		@Override
 		public void dispose() {
-			if (isDisposed()) {
+			if (isDisposed())
 				throw new RuntimeException("Already disposed!");
-			}
 			subscribers.remove(sub);
 			Observable.this.onDisposed(sub);
 		}
@@ -169,8 +175,8 @@ public abstract class Observable<T> implements ObservableSource<T> {
 
 	}
 
-	public Observable<T> doOnNext(Action1<T> onNext) {
-		Subject<T> onNextSubject = BehaviorSubject.create();
+	public Observable<T> doOnNext(final Action1<T> onNext) {
+		final Subject<T> onNextSubject = BehaviorSubject.create();
 		this.subscribe((val) -> {
 			onNext.call(val);
 			onNextSubject.onNext(val);
@@ -178,7 +184,7 @@ public abstract class Observable<T> implements ObservableSource<T> {
 		return onNextSubject;
 	}
 
-	public void onDisposed(Subscriber<? super T> sub) {
+	public void onDisposed(final Subscriber<? super T> sub) {
 
 	}
 }

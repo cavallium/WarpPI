@@ -9,21 +9,20 @@ import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public abstract class FunctionDynamic implements Function {
-	public FunctionDynamic(MathContext root) {
+	public FunctionDynamic(final MathContext root) {
 		this.root = root;
 		functions = new Function[] {};
 	}
 
-	public FunctionDynamic(Function[] values) {
-		if (values.length > 0) {
+	public FunctionDynamic(final Function[] values) {
+		if (values.length > 0)
 			root = values[0].getMathContext();
-		} else {
+		else
 			throw new NullPointerException("Nessun elemento nell'array. Impossibile ricavare il nodo root");
-		}
 		functions = values;
 	}
 
-	public FunctionDynamic(MathContext root, Function[] values) {
+	public FunctionDynamic(final MathContext root, final Function[] values) {
 		this.root = root;
 		functions = values;
 	}
@@ -39,9 +38,8 @@ public abstract class FunctionDynamic implements Function {
 		final FunctionDynamic f = clone();
 		final int vsize = value.size();
 		final Function[] tmp = new Function[vsize];
-		for (int i = 0; i < vsize; i++) {
+		for (int i = 0; i < vsize; i++)
 			tmp[i] = value.get(i);
-		}
 		f.functions = tmp;
 		return f;
 	}
@@ -53,18 +51,18 @@ public abstract class FunctionDynamic implements Function {
 	}
 
 	@Override
-	public Function getParameter(int index) {
+	public Function getParameter(final int index) {
 		return functions[index];
 	}
 
 	@Override
-	public FunctionDynamic setParameter(int index, Function value) {
+	public FunctionDynamic setParameter(final int index, final Function value) {
 		final FunctionDynamic f = clone();
 		f.functions[index] = value;
 		return f;
 	}
 
-	public FunctionDynamic appendParameter(Function value) {
+	public FunctionDynamic appendParameter(final Function value) {
 		final FunctionDynamic f = clone();
 		f.functions = Arrays.copyOf(f.functions, f.functions.length + 1);
 		f.functions[f.functions.length - 1] = value;
@@ -73,53 +71,49 @@ public abstract class FunctionDynamic implements Function {
 
 	/**
 	 * Retrieve the current number of parameters.
-	 * 
+	 *
 	 * @return The number of parameters.
 	 */
 	public int getParametersLength() {
 		return functions.length;
 	}
 
-	public FunctionDynamic setParametersLength(int length) {
+	public FunctionDynamic setParametersLength(final int length) {
 		final FunctionDynamic f = clone();
 		f.functions = Arrays.copyOf(functions, length);
 		return f;
 	}
 
 	@Override
-	public final ObjectArrayList<Function> simplify(Rule rule) throws Error, InterruptedException {
+	public final ObjectArrayList<Function> simplify(final Rule rule) throws Error, InterruptedException {
 		final Function[] fncs = getParameters();
-		if (Thread.interrupted()) {
+		if (Thread.interrupted())
 			throw new InterruptedException();
-		}
 		final ObjectArrayList<Function> result = new ObjectArrayList<>();
 
 		final ObjectArrayList<ObjectArrayList<Function>> ln = new ObjectArrayList<>();
 		boolean alreadySolved = true;
 		for (final Function fnc : fncs) {
 			final ObjectArrayList<Function> l = new ObjectArrayList<>();
-			if (Thread.interrupted()) {
+			if (Thread.interrupted())
 				throw new InterruptedException();
-			}
 			final ObjectArrayList<Function> simplifiedFnc = fnc.simplify(rule);
-			if (simplifiedFnc == null) {
+			if (simplifiedFnc == null)
 				l.add(fnc);
-			} else {
+			else {
 				l.addAll(simplifiedFnc);
 				alreadySolved = false;
 			}
 			ln.add(l);
 		}
 
-		if (alreadySolved) {
+		if (alreadySolved)
 			return rule.execute(this);
-		}
 
 		final Function[][] results = Utils.joinFunctionsResults(ln);
 
-		for (final Function[] f : results) {
+		for (final Function[] f : results)
 			result.add(this.setParameters(f));
-		}
 
 		return result;
 	}
@@ -138,7 +132,7 @@ public abstract class FunctionDynamic implements Function {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		return false;
 	}
 }

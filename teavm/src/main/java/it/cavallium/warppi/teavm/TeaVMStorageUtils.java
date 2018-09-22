@@ -22,182 +22,178 @@ import org.teavm.jso.browser.Window;
 import it.cavallium.warppi.Platform.StorageUtils;
 
 public class TeaVMStorageUtils implements StorageUtils {
-	public boolean exists(File f) {
+	@Override
+	public boolean exists(final File f) {
 		return f.exists();
 	}
 
-	public File get(String path) {
+	@Override
+	public File get(final String path) {
 		return new File(path);
 	}
 
-	private static String join(String[] list, String conjunction)
-	{
-	   StringBuilder sb = new StringBuilder();
-	   boolean first = true;
-	   for (String item : list)
-	   {
-	      if (first)
-	         first = false;
-	      else
-	         sb.append(conjunction);
-	      sb.append(item);
-	   }
-	   return sb.toString();
-	}
-	
-	public File get(String... path) {
-		return new File(join(path, File.separator));
+	private static String join(final String[] list, final String conjunction) {
+		final StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (final String item : list) {
+			if (first)
+				first = false;
+			else
+				sb.append(conjunction);
+			sb.append(item);
+		}
+		return sb.toString();
 	}
 
-	private static Map<String, File> resourcesCache = new HashMap<String, File>();
+	@Override
+	public File get(final String... path) {
+		return new File(TeaVMStorageUtils.join(path, File.separator));
+	}
 
-	public File getResource(String path) throws IOException, URISyntaxException {
+	private static Map<String, File> resourcesCache = new HashMap<>();
+
+	@Override
+	public File getResource(final String path) throws IOException, URISyntaxException {
 		try {
 			File targetFile;
-			if (resourcesCache.containsKey(path)) {
-				if ((targetFile = resourcesCache.get(path)).exists()) {
+			if (TeaVMStorageUtils.resourcesCache.containsKey(path))
+				if ((targetFile = TeaVMStorageUtils.resourcesCache.get(path)).exists())
 					return targetFile;
-				} else {
-					resourcesCache.remove(path);
-				}
-			}
-			final URL res = new URL(this.getBasePath()+path);
-			InputStream initialStream = res.openStream();
-			byte[] buffer = new byte[initialStream.available()];
-		    initialStream.read(buffer);
-		    
-		    targetFile = File.createTempFile("res", ".bin");
-		    targetFile.createNewFile();
-		    FileOutputStream outStream = new FileOutputStream(targetFile);
-		    outStream.write(buffer);
-		    outStream.close();
-		    resourcesCache.put(path, targetFile);
-		    return targetFile;
+				else
+					TeaVMStorageUtils.resourcesCache.remove(path);
+			final URL res = new URL(getBasePath() + path);
+			final InputStream initialStream = res.openStream();
+			final byte[] buffer = new byte[initialStream.available()];
+			initialStream.read(buffer);
+
+			targetFile = File.createTempFile("res", ".bin");
+			targetFile.createNewFile();
+			final FileOutputStream outStream = new FileOutputStream(targetFile);
+			outStream.write(buffer);
+			outStream.close();
+			TeaVMStorageUtils.resourcesCache.put(path, targetFile);
+			return targetFile;
 		} catch (final java.lang.IllegalArgumentException e) {
 			throw e;
 		}
 	}
 
-	public InputStream getResourceStream(String path) throws IOException, URISyntaxException {
+	@Override
+	public InputStream getResourceStream(final String path) throws IOException, URISyntaxException {
 		try {
 			File targetFile;
-			if (resourcesCache.containsKey(path)) {
-				if ((targetFile = resourcesCache.get(path)).exists()) {
+			if (TeaVMStorageUtils.resourcesCache.containsKey(path))
+				if ((targetFile = TeaVMStorageUtils.resourcesCache.get(path)).exists())
 					return new FileInputStream(targetFile);
-				} else {
-					resourcesCache.remove(path);
-				}
-			}
-			final URL res = new URL(this.getBasePath()+path);
-			InputStream initialStream = res.openStream();
-			byte[] buffer = new byte[initialStream.available()];
-		    initialStream.read(buffer);
-		    
-		    targetFile = File.createTempFile("res", ".bin");
-		    targetFile.createNewFile();
-		    FileOutputStream outStream = new FileOutputStream(targetFile);
-		    outStream.write(buffer);
-		    outStream.close();
-		    resourcesCache.put(path, targetFile);
-		    return new FileInputStream(targetFile);
+				else
+					TeaVMStorageUtils.resourcesCache.remove(path);
+			final URL res = new URL(getBasePath() + path);
+			final InputStream initialStream = res.openStream();
+			final byte[] buffer = new byte[initialStream.available()];
+			initialStream.read(buffer);
+
+			targetFile = File.createTempFile("res", ".bin");
+			targetFile.createNewFile();
+			final FileOutputStream outStream = new FileOutputStream(targetFile);
+			outStream.write(buffer);
+			outStream.close();
+			TeaVMStorageUtils.resourcesCache.put(path, targetFile);
+			return new FileInputStream(targetFile);
 		} catch (final java.lang.IllegalArgumentException e) {
 			throw e;
 		}
 	}
 
-	public List<String> readAllLines(File file) throws IOException {
-        Reader reader_ = new InputStreamReader(new FileInputStream(file), Charset.defaultCharset());
-        BufferedReader reader = reader_ instanceof BufferedReader ? (BufferedReader) reader_ : new BufferedReader(reader_);
-        List<String> list = new ArrayList<String>();
-        String line = reader.readLine();
-        while (line != null) {
-            list.add(line);
-            line = reader.readLine();
-        }
-        reader.close();
-        return list;
+	@Override
+	public List<String> readAllLines(final File file) throws IOException {
+		final Reader reader_ = new InputStreamReader(new FileInputStream(file), Charset.defaultCharset());
+		final BufferedReader reader = reader_ instanceof BufferedReader ? (BufferedReader) reader_ : new BufferedReader(reader_);
+		final List<String> list = new ArrayList<>();
+		String line = reader.readLine();
+		while (line != null) {
+			list.add(line);
+			line = reader.readLine();
+		}
+		reader.close();
+		return list;
 	}
 
-	public String read(InputStream input) throws IOException {
+	@Override
+	public String read(final InputStream input) throws IOException {
 		return IOUtils.toString(input, "UTF-8");
 	}
 
-	public List<File> walk(File dir) throws IOException {
-		List<File> out = new ArrayList<>();
-		File[] filesList = dir.listFiles();
-		if (filesList == null) {
+	@Override
+	public List<File> walk(final File dir) throws IOException {
+		final List<File> out = new ArrayList<>();
+		final File[] filesList = dir.listFiles();
+		if (filesList == null)
 			out.add(dir);
-		} else {
-			for (File f : filesList) {
+		else
+			for (final File f : filesList)
 				if (f.isDirectory()) {
-					if (f.canRead()) {
+					if (f.canRead())
 						out.addAll(walk(dir));
-					}
-				} else if (f.isFile()) {
-					if (f.canRead()) {
+				} else if (f.isFile())
+					if (f.canRead())
 						out.add(f);
-					}
-				}
-			}
-		}
 		return out;
 	}
 
-	public File relativize(File rulesPath, File f) {
+	@Override
+	public File relativize(final File rulesPath, final File f) {
 		return f;
 	}
 
-	public File resolve(File file, String string) {
+	@Override
+	public File resolve(final File file, final String string) {
 		return new File(file.getAbsolutePath() + File.separatorChar + string);
 	}
 
-	public File getParent(File f) {
+	@Override
+	public File getParent(final File f) {
 		return f.getParentFile();
 	}
 
-	public void createDirectories(File dir) throws IOException {
+	@Override
+	public void createDirectories(final File dir) throws IOException {
 		dir.mkdirs();
 	}
 
-	public void write(File f, byte[] bytes, int... options) throws IOException {
+	@Override
+	public void write(final File f, final byte[] bytes, final int... options) throws IOException {
 		boolean create = false;
-		for (int opt : options) {
-			if (opt == StorageUtils.OpenOptionCreate) {
+		for (final int opt : options)
+			if (opt == StorageUtils.OpenOptionCreate)
 				create = true;
-			}
-		}
-		if (f.exists() == false) {
+		if (f.exists() == false)
 			if (create) {
-				if (!f.createNewFile()) {
+				if (!f.createNewFile())
 					throw new IOException("File doesn't exist, can't create it!");
-				}
-			} else {
+			} else
 				throw new IOException("File doesn't exist.");
-			}
-		}
-		FileOutputStream stream = new FileOutputStream(f);
+		final FileOutputStream stream = new FileOutputStream(f);
 		stream.write(bytes);
 		stream.close();
 	}
 
-	public List<String> readAllLines(InputStream input) throws IOException {
+	@Override
+	public List<String> readAllLines(final InputStream input) throws IOException {
 		try (BufferedReader buffer = new BufferedReader(new InputStreamReader(input))) {
 			String thisLine = null;
-			ArrayList<String> output = new ArrayList<>();
-			while ((thisLine = buffer.readLine()) != null) {
+			final ArrayList<String> output = new ArrayList<>();
+			while ((thisLine = buffer.readLine()) != null)
 				output.add(thisLine);
-	        }
 			return output;
 		}
 	}
 
 	@Override
 	public String getBasePath() {
-		String fullurl = Window.current().getLocation().getFullURL();
-		if (fullurl.charAt(fullurl.length()-1) == '/') {
-			return fullurl+"resources";
-		} else {
-			return fullurl+"/resources";
-		}
+		final String fullurl = Window.current().getLocation().getFullURL();
+		if (fullurl.charAt(fullurl.length() - 1) == '/')
+			return fullurl + "resources";
+		else
+			return fullurl + "/resources";
 	}
 }

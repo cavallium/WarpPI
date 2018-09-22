@@ -13,7 +13,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Expression
  * (x) = x
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -36,9 +36,9 @@ public class ExpressionRule implements Rule {
 	     - An ObjectArrayList<Function> if it did something
 	*/
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		if (f instanceof Expression) {
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
 			result.add(f.getParameter(0));
 			return result;
 		}

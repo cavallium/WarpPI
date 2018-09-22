@@ -41,36 +41,36 @@ public class Keyboard {
 
 	public synchronized void startKeyboard() {
 		final Thread kt = new Thread(() -> {
-			if (Engine.getPlatform().getSettings().isDebugEnabled()) {
+			if (Engine.getPlatform().getSettings().isDebugEnabled())
 				try {
 					while (true) {
-						if (debugKeyCode != -1) {
-							debugKeyPressed(debugKeyCode);
-							debugKeyCode = -1;
+						if (Keyboard.debugKeyCode != -1) {
+							Keyboard.debugKeyPressed(Keyboard.debugKeyCode);
+							Keyboard.debugKeyCode = -1;
 						}
-						if (debugKeyCodeRelease != -1) {
-							debugKeyReleased(debugKeyCodeRelease);
-							debugKeyCodeRelease = -1;
+						if (Keyboard.debugKeyCodeRelease != -1) {
+							Keyboard.debugKeyReleased(Keyboard.debugKeyCodeRelease);
+							Keyboard.debugKeyCodeRelease = -1;
 						}
 						Thread.sleep(50);
 					}
 				} catch (final InterruptedException e) {}
-			} else {
-				Engine.getPlatform().getGpio().pinMode(CLK_INH_pin, Engine.getPlatform().getGpio().valueOutput());
-				Engine.getPlatform().getGpio().pinMode(RCK_pin, Engine.getPlatform().getGpio().valueOutput());
-				Engine.getPlatform().getGpio().pinMode(SER_pin, Engine.getPlatform().getGpio().valueOutput());
-				Engine.getPlatform().getGpio().pinMode(SH_LD_pin, Engine.getPlatform().getGpio().valueOutput());
-				Engine.getPlatform().getGpio().pinMode(SCK_and_CLK_pin, Engine.getPlatform().getGpio().valueOutput());
-				Engine.getPlatform().getGpio().pinMode(QH_pin, Engine.getPlatform().getGpio().valueInput());
+			else {
+				Engine.getPlatform().getGpio().pinMode(Keyboard.CLK_INH_pin, Engine.getPlatform().getGpio().valueOutput());
+				Engine.getPlatform().getGpio().pinMode(Keyboard.RCK_pin, Engine.getPlatform().getGpio().valueOutput());
+				Engine.getPlatform().getGpio().pinMode(Keyboard.SER_pin, Engine.getPlatform().getGpio().valueOutput());
+				Engine.getPlatform().getGpio().pinMode(Keyboard.SH_LD_pin, Engine.getPlatform().getGpio().valueOutput());
+				Engine.getPlatform().getGpio().pinMode(Keyboard.SCK_and_CLK_pin, Engine.getPlatform().getGpio().valueOutput());
+				Engine.getPlatform().getGpio().pinMode(Keyboard.QH_pin, Engine.getPlatform().getGpio().valueInput());
 
-				Engine.getPlatform().getGpio().digitalWrite(CLK_INH_pin, false);
-				Engine.getPlatform().getGpio().digitalWrite(RCK_pin, false);
-				Engine.getPlatform().getGpio().digitalWrite(SER_pin, false);
-				Engine.getPlatform().getGpio().digitalWrite(SH_LD_pin, false);
-				Engine.getPlatform().getGpio().digitalWrite(SCK_and_CLK_pin, false);
-				Engine.getPlatform().getGpio().digitalWrite(QH_pin, false);
-				final SerialToParallel chip1 = new SerialToParallel(RCK_pin, SCK_and_CLK_pin /*SCK*/, SER_pin);
-				final ParallelToSerial chip2 = new ParallelToSerial(SH_LD_pin, CLK_INH_pin, QH_pin, SCK_and_CLK_pin/*CLK*/);
+				Engine.getPlatform().getGpio().digitalWrite(Keyboard.CLK_INH_pin, false);
+				Engine.getPlatform().getGpio().digitalWrite(Keyboard.RCK_pin, false);
+				Engine.getPlatform().getGpio().digitalWrite(Keyboard.SER_pin, false);
+				Engine.getPlatform().getGpio().digitalWrite(Keyboard.SH_LD_pin, false);
+				Engine.getPlatform().getGpio().digitalWrite(Keyboard.SCK_and_CLK_pin, false);
+				Engine.getPlatform().getGpio().digitalWrite(Keyboard.QH_pin, false);
+				final SerialToParallel chip1 = new SerialToParallel(Keyboard.RCK_pin, Keyboard.SCK_and_CLK_pin /*SCK*/, Keyboard.SER_pin);
+				final ParallelToSerial chip2 = new ParallelToSerial(Keyboard.SH_LD_pin, Keyboard.CLK_INH_pin, Keyboard.QH_pin, Keyboard.SCK_and_CLK_pin/*CLK*/);
 
 				KeyboardDebugScreen.log("Started keyboard system");
 
@@ -85,15 +85,14 @@ public class Keyboard {
 //						KeyboardDebugScreen.ks[col] = data;
 
 						for (int row = 0; row < 8; row++) {
-							if (data[row] == true && precedentStates[row][col] == false) {
-//								System.out.println("Pressed button at " + (row + 1) + ", " + (col + 1));
+							if (data[row] == true && Keyboard.precedentStates[row][col] == false)
+								//								System.out.println("Pressed button at " + (row + 1) + ", " + (col + 1));
 //								KeyboardDebugScreen.log("Pressed button at " + (row + 1) + ", " + (col + 1));
-								keyPressedRaw(row, col);
-							} else if (data[row] == false && precedentStates[row][col] == true) {
-								keyReleasedRaw(row, col);
+								Keyboard.keyPressedRaw(row, col);
+							else if (data[row] == false && Keyboard.precedentStates[row][col] == true)
+								Keyboard.keyReleasedRaw(row, col);
 //								KeyboardDebugScreen.log("Released button at " + (row + 1) + ", " + (col + 1));
-							}
-							precedentStates[row][col] = data[row];
+							Keyboard.precedentStates[row][col] = data[row];
 						}
 					}
 				}
@@ -105,259 +104,229 @@ public class Keyboard {
 		kt.start();
 	}
 
-	public static void debugKeyPressed(int keyCode) {
+	public static void debugKeyPressed(final int keyCode) {
 		switch (keyCode) {
 			case KeyEvent.VK_ESCAPE:
 				Keyboard.keyPressed(Key.POWEROFF);
 				break;
 			case KeyEvent.VK_S:
-				if (Keyboard.shift) {
+				if (Keyboard.shift)
 					Keyboard.keyPressed(Key.ARCSINE);
-				} else if (Keyboard.alpha) {
+				else if (Keyboard.alpha)
 					Keyboard.keyPressed(Key.LETTER_S);
-				} else {
+				else
 					Keyboard.keyPressed(Key.SINE);
-				}
 				break;
 			case KeyEvent.VK_C:
-				if (Keyboard.shift) {
+				if (Keyboard.shift)
 					Keyboard.keyPressed(Key.ARCCOSINE);
-				} else if (Keyboard.alpha) {
+				else if (Keyboard.alpha)
 					Keyboard.keyPressed(Key.LETTER_C);
-				} else {
+				else
 					Keyboard.keyPressed(Key.COSINE);
-				}
 				break;
 			case KeyEvent.VK_T:
-				if (Keyboard.shift) {
+				if (Keyboard.shift)
 					Keyboard.keyPressed(Key.ARCTANGENT);
-				} else if (Keyboard.alpha) {
+				else if (Keyboard.alpha)
 					Keyboard.keyPressed(Key.LETTER_T);
-				} else {
+				else
 					Keyboard.keyPressed(Key.TANGENT);
-				}
 				break;
 			case KeyEvent.VK_D:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.debug_DEG);
-				} else if (Keyboard.alpha) {
+				else if (Keyboard.alpha)
 					Keyboard.keyPressed(Key.LETTER_D);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_R:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.debug_RAD);
-				} else if (Keyboard.alpha) {
+				else if (Keyboard.alpha)
 					Keyboard.keyPressed(Key.LETTER_R);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_G:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.debug_GRA);
-				} else if (Keyboard.alpha) {
+				else if (Keyboard.alpha)
 					Keyboard.keyPressed(Key.LETTER_G);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_X:
-				if (Keyboard.alpha) {
+				if (Keyboard.alpha)
 					Keyboard.keyPressed(Key.LETTER_X);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_P:
-				if (Keyboard.shift) {
+				if (Keyboard.shift)
 					Keyboard.keyPressed(Key.NONE);
-				} else if (Keyboard.alpha) {
+				else if (Keyboard.alpha)
 					Keyboard.keyPressed(Key.LETTER_P);
-				} else {
+				else
 					Keyboard.keyPressed(Key.PI);
-				}
 				break;
 			case KeyEvent.VK_E:
-				if (Keyboard.shift) {
+				if (Keyboard.shift)
 					Keyboard.keyPressed(Key.NONE);
-				} else if (Keyboard.alpha) {
+				else if (Keyboard.alpha)
 					Keyboard.keyPressed(Key.LETTER_E);
-				} else {
+				else
 					Keyboard.keyPressed(Key.EULER_NUMBER);
-				}
 				break;
 			case KeyEvent.VK_Y:
-				if (Keyboard.alpha) {
+				if (Keyboard.alpha)
 					Keyboard.keyPressed(Key.LETTER_Y);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_B:
-				if (Keyboard.shift) {
+				if (Keyboard.shift)
 					Keyboard.keyPressed(Key.BRIGHTNESS_CYCLE_REVERSE);
-				} else if (!Keyboard.shift && !Keyboard.alpha) {
+				else if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.BRIGHTNESS_CYCLE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.LETTER_B);
-				}
 				break;
 			case KeyEvent.VK_L:
-				if (Keyboard.shift) {
+				if (Keyboard.shift)
 					Keyboard.keyPressed(Key.LOGARITHM);
-				} else if (Keyboard.alpha) {
+				else if (Keyboard.alpha)
 					Keyboard.keyPressed(Key.LETTER_L);
-				} else {
+				else
 					Keyboard.keyPressed(Key.LOGARITHM);
-				}
 				break;
 			case KeyboardJogampValues.VK_ENTER:
 			case KeyEvent.VK_ENTER:
-				if (Keyboard.shift) {
+				if (Keyboard.shift)
 					Keyboard.keyPressed(Key.STEP);
-				} else if (!Keyboard.shift && !Keyboard.alpha) {
+				else if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.SIMPLIFY);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				int row = 2;
 				int col = 1;
 				Keyboard.debugKeysDown[row - 1][col - 1] = true;
 				break;
 			case KeyEvent.VK_1:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NUM1);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_2:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NUM2);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_3:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NUM3);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_4:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NUM4);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_5:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NUM5);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_6:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NUM6);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_7:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NUM7);
-				} else if (Keyboard.shift) {
-					if (Engine.getPlatform().getSettings().isDebugEnabled()) {
+				else if (Keyboard.shift)
+					if (Engine.getPlatform().getSettings().isDebugEnabled())
 						Keyboard.keyPressed(Key.DIVIDE);
-					}
-				}
 				break;
 			case KeyEvent.VK_8:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NUM8);
-				} else if (Keyboard.shift) {
+				else if (Keyboard.shift)
 					Keyboard.keyPressed(Key.PARENTHESIS_OPEN);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_9:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NUM9);
-				} else if (Keyboard.shift) {
+				else if (Keyboard.shift)
 					Keyboard.keyPressed(Key.PARENTHESIS_CLOSE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_0:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NUM0);
-				} else if (Keyboard.shift) {
+				else if (Keyboard.shift)
 					Keyboard.keyPressed(Key.EQUAL);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_M:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.SURD_MODE);
-				} else if (Keyboard.shift) {
+				else if (Keyboard.shift)
 					Keyboard.keyPressed(Key.NONE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.LETTER_M);
-				}
 				break;
 			case KeyboardJogampValues.VK_ADD:
 			case KeyEvent.VK_ADD:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.PLUS);
-				} else if (Keyboard.shift) {
+				else if (Keyboard.shift)
 					Keyboard.keyPressed(Key.PLUS_MINUS);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyboardJogampValues.VK_SUBTRACT:
 			case KeyEvent.VK_SUBTRACT:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.MINUS);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyboardJogampValues.VK_MULTIPLY:
 			case KeyEvent.VK_MULTIPLY:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.MULTIPLY);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyboardJogampValues.VK_DIVIDE:
 			case KeyEvent.VK_DIVIDE:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.DIVIDE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_BACK_SPACE:
 				Keyboard.keyPressed(Key.DELETE);
 				break;
 			case KeyboardJogampValues.VK_DELETE:
 			case KeyEvent.VK_DELETE:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.RESET);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyboardJogampValues.VK_LEFT:
 			case KeyEvent.VK_LEFT:
@@ -365,11 +334,10 @@ public class Keyboard {
 				row = 2;
 				col = 3;
 				Keyboard.debugKeysDown[row - 1][col - 1] = true;
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.LEFT);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyboardJogampValues.VK_RIGHT:
 			case KeyEvent.VK_RIGHT:
@@ -377,11 +345,10 @@ public class Keyboard {
 				row = 2;
 				col = 5;
 				Keyboard.debugKeysDown[row - 1][col - 1] = true;
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.RIGHT);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyboardJogampValues.VK_UP:
 			case KeyEvent.VK_UP:
@@ -389,11 +356,10 @@ public class Keyboard {
 				row = 1;
 				col = 4;
 				Keyboard.debugKeysDown[row - 1][col - 1] = true;
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.UP);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyboardJogampValues.VK_DOWN:
 			case KeyEvent.VK_DOWN:
@@ -401,188 +367,170 @@ public class Keyboard {
 				row = 3;
 				col = 4;
 				Keyboard.debugKeysDown[row - 1][col - 1] = true;
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.DOWN);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case (short) 12:
 				//DOWN
 				row = 2;
 				col = 4;
 				Keyboard.debugKeysDown[row - 1][col - 1] = true;
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.OK);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyboardJogampValues.VK_NUMPAD4:
 			case KeyEvent.VK_NUMPAD4:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.HISTORY_BACK);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyboardJogampValues.VK_NUMPAD6:
 			case KeyEvent.VK_NUMPAD6:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.HISTORY_FORWARD);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_PERIOD:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.DOT);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_A:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else if (Keyboard.alpha && !Keyboard.shift) {
+				else if (Keyboard.alpha && !Keyboard.shift)
 					Keyboard.keyPressed(Key.LETTER_A);
-				} else if (Keyboard.shift && !Keyboard.alpha) {
+				else if (Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_F:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else if (Keyboard.alpha && !Keyboard.shift) {
+				else if (Keyboard.alpha && !Keyboard.shift)
 					Keyboard.keyPressed(Key.LETTER_F);
-				} else if (Keyboard.shift && !Keyboard.alpha) {
+				else if (Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_H:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else if (Keyboard.alpha && !Keyboard.shift) {
+				else if (Keyboard.alpha && !Keyboard.shift)
 					Keyboard.keyPressed(Key.LETTER_H);
-				} else if (Keyboard.shift && !Keyboard.alpha) {
+				else if (Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_I:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else if (Keyboard.alpha && !Keyboard.shift) {
+				else if (Keyboard.alpha && !Keyboard.shift)
 					Keyboard.keyPressed(Key.LETTER_I);
-				} else if (Keyboard.shift && !Keyboard.alpha) {
+				else if (Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_J:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else if (Keyboard.alpha && !Keyboard.shift) {
+				else if (Keyboard.alpha && !Keyboard.shift)
 					Keyboard.keyPressed(Key.LETTER_J);
-				} else if (Keyboard.shift && !Keyboard.alpha) {
+				else if (Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_K:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else if (Keyboard.alpha && !Keyboard.shift) {
+				else if (Keyboard.alpha && !Keyboard.shift)
 					Keyboard.keyPressed(Key.LETTER_K);
-				} else if (Keyboard.shift && !Keyboard.alpha) {
+				else if (Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_N:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else if (Keyboard.alpha && !Keyboard.shift) {
+				else if (Keyboard.alpha && !Keyboard.shift)
 					Keyboard.keyPressed(Key.LETTER_N);
-				} else if (Keyboard.shift && !Keyboard.alpha) {
+				else if (Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_O:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else if (Keyboard.alpha && !Keyboard.shift) {
+				else if (Keyboard.alpha && !Keyboard.shift)
 					Keyboard.keyPressed(Key.LETTER_O);
-				} else if (Keyboard.shift && !Keyboard.alpha) {
+				else if (Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_Q:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else if (Keyboard.alpha && !Keyboard.shift) {
+				else if (Keyboard.alpha && !Keyboard.shift)
 					Keyboard.keyPressed(Key.LETTER_Q);
-				} else if (Keyboard.shift && !Keyboard.alpha) {
+				else if (Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_U:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else if (Keyboard.alpha && !Keyboard.shift) {
+				else if (Keyboard.alpha && !Keyboard.shift)
 					Keyboard.keyPressed(Key.LETTER_U);
-				} else if (Keyboard.shift && !Keyboard.alpha) {
+				else if (Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_V:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else if (Keyboard.alpha && !Keyboard.shift) {
+				else if (Keyboard.alpha && !Keyboard.shift)
 					Keyboard.keyPressed(Key.LETTER_V);
-				} else if (Keyboard.shift && !Keyboard.alpha) {
+				else if (Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_W:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else if (Keyboard.alpha && !Keyboard.shift) {
+				else if (Keyboard.alpha && !Keyboard.shift)
 					Keyboard.keyPressed(Key.LETTER_W);
-				} else if (Keyboard.shift && !Keyboard.alpha) {
+				else if (Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyEvent.VK_Z:
-				if (!Keyboard.shift && !Keyboard.alpha) {
+				if (!Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.NONE);
-				} else if (Keyboard.alpha && !Keyboard.shift) {
+				else if (Keyboard.alpha && !Keyboard.shift)
 					Keyboard.keyPressed(Key.LETTER_Z);
-				} else if (Keyboard.shift && !Keyboard.alpha) {
+				else if (Keyboard.shift && !Keyboard.alpha)
 					Keyboard.keyPressed(Key.ZOOM_MODE);
-				} else {
+				else
 					Keyboard.keyPressed(Key.NONE);
-				}
 				break;
 			case KeyboardJogampValues.VK_SHIFT:
 			case KeyEvent.VK_SHIFT:
@@ -610,7 +558,7 @@ public class Keyboard {
 		}
 	}
 
-	private synchronized static void debugKeyReleased(int keyCode) {
+	private synchronized static void debugKeyReleased(final int keyCode) {
 		switch (keyCode) {
 			case KeyEvent.VK_ENTER:
 				int row = 2;
@@ -655,15 +603,14 @@ public class Keyboard {
 		}
 	}
 
-	public static boolean isKeyDown(int row, int col) {
-		if (Engine.getPlatform().getSettings().isDebugEnabled() == false) {
-			return precedentStates[row - 1][col - 1];
-		} else {
-			return debugKeysDown[row - 1][col - 1];
-		}
+	public static boolean isKeyDown(final int row, final int col) {
+		if (Engine.getPlatform().getSettings().isDebugEnabled() == false)
+			return Keyboard.precedentStates[row - 1][col - 1];
+		else
+			return Keyboard.debugKeysDown[row - 1][col - 1];
 	}
 
-	public synchronized static void keyReleasedRaw(int row, int col) {
+	public synchronized static void keyReleasedRaw(final int row, final int col) {
 //		KeyboardDebugScreen.keyX = row;
 //		KeyboardDebugScreen.keyY = col;
 		if (row == 1 && col == 1) {
@@ -672,80 +619,80 @@ public class Keyboard {
 	}
 
 	static final String[][][] KeyLabelsMap = /* [ROW, COLUMN, (0:normal 1:shift 2:alpha)] */
-		{ { /* ROW 0 */
-			{ "⇪", "⇪", null }, /* 0,0 */
-			{ "A", null, "A" }, /* 0,1 */
-			{"", null, null }, /* 0,2 */
-			{ "⇧", null, null }, /* 0,3 */
-			{"", null, null }, /* 0,4 */
-			{"", null, null }, /* 0,5 */
-			{ "☼", "☼", null }, /* 0,6 */
-			{"↩", null, null } /* 0,7 */
-	}, { /* ROW 1 */
-			{"", null, null }, /* 1,0 */
-			{"", null, null }, /* 1,1 */
-			{"⇦", null, null }, /* 1,2 */
-			{"OK", null, null }, /* 1,3 */
-			{"⇨", null, null }, /* 1,4 */
-			{"↤", null, null }, /* 1,5 */
-			{"↦", null, null }, /* 1,6 */
-			{"", null, null } /* 1,7 */
-	}, { /* ROW 2 */
-			{"", null, null }, /* 2,0 */
-			{"√", null, null }, /* 2,1 */
-			{"", null, null }, /* 2,2 */
-			{"⇩", null, null }, /* 2,3 */
-			{"↶", null, null }, /* 2,4 */
-			{"", null, null }, /* 2,5 */
-			{"", null, null }, /* 2,6 */
-			{"", null, null } /* 2,7 */
-	}, { /* ROW 3 */
-			{"", null, null }, /* 3,0 */
-			{"", null, null }, /* 3,1 */
-			{"^x", null, null }, /* 3,2 */
-			{"^2", null, null }, /* 3,3 */
-			{"", null, null }, /* 3,4 */
-			{"", null, null }, /* 3,5 */
-			{"", null, null }, /* 3,6 */
-			{".", null, "y" } /* 3,7 */
-	}, { /* ROW 4 */
-			{"", null, null }, /* 4,0 */
-			{"", null, null }, /* 4,1 */
-			{"(", null, null }, /* 4,2 */
-			{")", null, null }, /* 4,3 */
-			{"", null, null }, /* 4,4 */
-			{"S⇔D", null, null }, /* 4,5 */
-			{"", null, null }, /* 4,6 */
-			{"0", null, "x" } /* 4,7 */
-	}, { /* ROW 5 */
-			{"7", null, null }, /* 5,0 */
-			{"8", null, null }, /* 5,1 */
-			{"9", null, null }, /* 5,2 */
-			{"⌫", null, null }, /* 5,3 */
-			{"RESET", null, null }, /* 5,4 */
-			{"", null, null }, /* 5,5 */
-			{"", null, null }, /* 5,6 */
-			{"", null, null } /* 5,7 */
-	}, { /* ROW 6 */
-			{"4", null, null }, /* 6,0 */
-			{"5", null, null }, /* 6,1 */
-			{"6", null, null }, /* 6,2 */
-			{"*", null, null }, /* 6,3 */
-			{"/", null, null }, /* 6,4 */
-			{"", null, null }, /* 6,5 */
-			{"", null, null }, /* 6,6 */
-			{"", null, null } /* 6,7 */
-	}, { /* ROW 7 */
-			{"1", null, null }, /* 7,0 */
-			{"2", null, null }, /* 7,1 */
-			{"3", null, null }, /* 7,2 */
-			{"+", null, null }, /* 7,3 */
-			{"-", null, null }, /* 7,4 */
-			{"", null, null }, /* 7,5 */
-			{"", null, null }, /* 7,6 */
-			{"", null, null } /* 7,7 */
-	} };
-	
+			{ { /* ROW 0 */
+					{ "⇪", "⇪", null }, /* 0,0 */
+					{ "A", null, "A" }, /* 0,1 */
+					{ "", null, null }, /* 0,2 */
+					{ "⇧", null, null }, /* 0,3 */
+					{ "", null, null }, /* 0,4 */
+					{ "", null, null }, /* 0,5 */
+					{ "☼", "☼", null }, /* 0,6 */
+					{ "↩", null, null } /* 0,7 */
+			}, { /* ROW 1 */
+					{ "", null, null }, /* 1,0 */
+					{ "", null, null }, /* 1,1 */
+					{ "⇦", null, null }, /* 1,2 */
+					{ "OK", null, null }, /* 1,3 */
+					{ "⇨", null, null }, /* 1,4 */
+					{ "↤", null, null }, /* 1,5 */
+					{ "↦", null, null }, /* 1,6 */
+					{ "", null, null } /* 1,7 */
+			}, { /* ROW 2 */
+					{ "", null, null }, /* 2,0 */
+					{ "√", null, null }, /* 2,1 */
+					{ "", null, null }, /* 2,2 */
+					{ "⇩", null, null }, /* 2,3 */
+					{ "↶", null, null }, /* 2,4 */
+					{ "", null, null }, /* 2,5 */
+					{ "", null, null }, /* 2,6 */
+					{ "", null, null } /* 2,7 */
+			}, { /* ROW 3 */
+					{ "", null, null }, /* 3,0 */
+					{ "", null, null }, /* 3,1 */
+					{ "^x", null, null }, /* 3,2 */
+					{ "^2", null, null }, /* 3,3 */
+					{ "", null, null }, /* 3,4 */
+					{ "", null, null }, /* 3,5 */
+					{ "", null, null }, /* 3,6 */
+					{ ".", null, "y" } /* 3,7 */
+			}, { /* ROW 4 */
+					{ "", null, null }, /* 4,0 */
+					{ "", null, null }, /* 4,1 */
+					{ "(", null, null }, /* 4,2 */
+					{ ")", null, null }, /* 4,3 */
+					{ "", null, null }, /* 4,4 */
+					{ "S⇔D", null, null }, /* 4,5 */
+					{ "", null, null }, /* 4,6 */
+					{ "0", null, "x" } /* 4,7 */
+			}, { /* ROW 5 */
+					{ "7", null, null }, /* 5,0 */
+					{ "8", null, null }, /* 5,1 */
+					{ "9", null, null }, /* 5,2 */
+					{ "⌫", null, null }, /* 5,3 */
+					{ "RESET", null, null }, /* 5,4 */
+					{ "", null, null }, /* 5,5 */
+					{ "", null, null }, /* 5,6 */
+					{ "", null, null } /* 5,7 */
+			}, { /* ROW 6 */
+					{ "4", null, null }, /* 6,0 */
+					{ "5", null, null }, /* 6,1 */
+					{ "6", null, null }, /* 6,2 */
+					{ "*", null, null }, /* 6,3 */
+					{ "/", null, null }, /* 6,4 */
+					{ "", null, null }, /* 6,5 */
+					{ "", null, null }, /* 6,6 */
+					{ "", null, null } /* 6,7 */
+			}, { /* ROW 7 */
+					{ "1", null, null }, /* 7,0 */
+					{ "2", null, null }, /* 7,1 */
+					{ "3", null, null }, /* 7,2 */
+					{ "+", null, null }, /* 7,3 */
+					{ "-", null, null }, /* 7,4 */
+					{ "", null, null }, /* 7,5 */
+					{ "", null, null }, /* 7,6 */
+					{ "", null, null } /* 7,7 */
+			} };
+
 	static final Key[][][] keyMap = /* [ROW, COLUMN, (0:normal 1:shift 2:alpha)] */
 			{ { /* ROW 0 */
 					{ Key.SHIFT, Key.SHIFT, Key.SHIFT }, /* 0,0 */
@@ -820,45 +767,40 @@ public class Keyboard {
 					{ Key.NONE, Key.NONE, Key.NONE }, /* 7,6 */
 					{ Key.NONE, Key.NONE, Key.NONE } /* 7,7 */
 			} };
-	
-	public static String getKeyName(int row, int col) {
-		return getKeyName(row, col, shift, alpha);
+
+	public static String getKeyName(final int row, final int col) {
+		return Keyboard.getKeyName(row, col, Keyboard.shift, Keyboard.alpha);
 	}
-	
-	public static String getKeyName(int row, int col, boolean shift, boolean alpha) {
-		String[] keyValues = KeyLabelsMap[row][col];
+
+	public static String getKeyName(final int row, final int col, final boolean shift, final boolean alpha) {
+		final String[] keyValues = Keyboard.KeyLabelsMap[row][col];
 		if (shift) {
-			if (keyValues[1] != null) {
+			if (keyValues[1] != null)
 				return keyValues[1];
-			}
-		} else if (alpha) {
-			if (keyValues[2] != null) {
+		} else if (alpha)
+			if (keyValues[2] != null)
 				return keyValues[2];
-			}
-		}
 		return keyValues[0];
 	}
 
-	public static boolean hasKeyName(int row, int col) {
-		String[] keyValues = KeyLabelsMap[row][col];
-		if (shift) {
+	public static boolean hasKeyName(final int row, final int col) {
+		final String[] keyValues = Keyboard.KeyLabelsMap[row][col];
+		if (Keyboard.shift)
 			return keyValues[1] != null;
-		} else if (alpha) {
+		else if (Keyboard.alpha)
 			return keyValues[2] != null;
-		} else {
+		else
 			return true;
-		}
 	}
 
-	public static synchronized void keyPressedRaw(int row, int col) {
+	public static synchronized void keyPressedRaw(final int row, final int col) {
 //		KeyboardDebugScreen.keyX = row;
 //		KeyboardDebugScreen.keyY = col;
-		final Key k = keyMap[row][col][shift ? 1 : alpha ? 2 : 0];
-		if (k != null) {
-			keyPressed(k);
-		} else {
-			keyPressed(Key.NONE);
-		}
+		final Key k = Keyboard.keyMap[row][col][Keyboard.shift ? 1 : Keyboard.alpha ? 2 : 0];
+		if (k != null)
+			Keyboard.keyPressed(k);
+		else
+			Keyboard.keyPressed(Key.NONE);
 	}
 
 	public static void stopKeyboard() {
@@ -872,15 +814,14 @@ public class Keyboard {
 		}
 	}
 
-	public synchronized static void keyPressed(Key k) {
+	public synchronized static void keyPressed(final Key k) {
 		boolean done = false;
-		if (additionalListener != null) {
+		if (Keyboard.additionalListener != null)
 			try {
-				done = additionalListener.onKeyPressed(new KeyPressedEvent(k));
+				done = Keyboard.additionalListener.onKeyPressed(new KeyPressedEvent(k));
 			} catch (final Exception ex) {
 				new GUIErrorMessage(ex);
 			}
-		}
 		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager() != null) {
 			final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 			boolean refresh = false;
@@ -890,9 +831,9 @@ public class Keyboard {
 			} catch (final Exception ex) {
 				new GUIErrorMessage(ex);
 			}
-			if (scr != null && scr.initialized && scrdone) {
+			if (scr != null && scr.initialized && scrdone)
 				refresh = true;
-			} else {
+			else
 				switch (k) {
 					case POWEROFF:
 						Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.destroy();
@@ -909,7 +850,7 @@ public class Keyboard {
 						refresh = true;
 						break;
 					case ZOOM_MODE:
-						float newZoom = (StaticVars.windowZoom.getLastValue() % 3) + 1;
+						final float newZoom = StaticVars.windowZoom.getLastValue() % 3 + 1;
 						StaticVars.windowZoom.onNext(newZoom);
 						Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Keyboard", "Zoom: " + newZoom);
 //						StaticVars.windowZoom = ((StaticVars.windowZoom - 0.5f) % 2f) + 1f;
@@ -925,7 +866,6 @@ public class Keyboard {
 					default:
 						break;
 				}
-			}
 			switch (k) {
 				case SHIFT:
 					if (Keyboard.alpha)
@@ -948,47 +888,41 @@ public class Keyboard {
 					}
 					break;
 			}
-			if (refresh) {
-				refreshRequest = true;
-			}
-		} else if (!done) {
+			if (refresh)
+				Keyboard.refreshRequest = true;
+		} else if (!done)
 			Engine.getPlatform().getConsoleUtils().out().println(1, "Key " + k.toString() + " ignored.");
-		}
 	}
 
-	public synchronized static void keyReleased(Key k) {
+	public synchronized static void keyReleased(final Key k) {
 		boolean done = false;
-		if (additionalListener != null) {
-			done = additionalListener.onKeyReleased(new KeyReleasedEvent(k));
-		}
+		if (Keyboard.additionalListener != null)
+			done = Keyboard.additionalListener.onKeyReleased(new KeyReleasedEvent(k));
 		boolean refresh = false;
 		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager() != null) {
 			final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
-			if (scr != null && scr.initialized && scr.onKeyReleased(new KeyReleasedEvent(k))) {
+			if (scr != null && scr.initialized && scr.onKeyReleased(new KeyReleasedEvent(k)))
 				refresh = true;
-			} else {
+			else
 				switch (k) {
 					case NONE:
 						break;
 					default:
 						break;
 				}
-			}
-			if (refresh) {
-				refreshRequest = true;
-			}
-		} else if (!done) {
+			if (refresh)
+				Keyboard.refreshRequest = true;
+		} else if (!done)
 			Engine.getPlatform().getConsoleUtils().out().println(1, "Key " + k.toString() + " ignored.");
-		}
 	}
 
-	public void setAdditionalKeyboardListener(KeyboardEventListener l) {
-		additionalListener = l;
+	public void setAdditionalKeyboardListener(final KeyboardEventListener l) {
+		Keyboard.additionalListener = l;
 	}
 
 	public static boolean popRefreshRequest() {
-		if (refreshRequest) {
-			refreshRequest = false;
+		if (Keyboard.refreshRequest) {
+			Keyboard.refreshRequest = false;
 			return true;
 		}
 		return false;
@@ -1007,7 +941,7 @@ Keyboard:
 	| SHIFT STATE  |
 	| ALPHA STATE  |
 	|--------------|
-	
+
 	Physical keyboard:
 	|0,0-----|0,1-----|########|0,3-----|########|0,5-----|0,6-----|
 	| SHIFT  | ALPHA  |########|  ^     |########|SETTINGS|+BRIGHT |
@@ -1050,28 +984,28 @@ Keyboard:
 SCREEN F_n:
 	MathInputScreen:
 		Default:
-			[F_1] Normal: Solve for X			Shift: Solve for _			Alpha: 
-			[F_2] Normal: 						Shift: 						Alpha: 
-			[F_3] Normal: Variables	& constants	Shift: 						Alpha: 
-			[F_4] Normal: Functions f(x)		Shift: 						Alpha: 
+			[F_1] Normal: Solve for X			Shift: Solve for _			Alpha:
+			[F_2] Normal: 						Shift: 						Alpha:
+			[F_3] Normal: Variables	& constants	Shift: 						Alpha:
+			[F_4] Normal: Functions f(x)		Shift: 						Alpha:
 		Variable popup:
-			[F_1] Normal(if constant):Set value	Shift: 						Alpha: 
-			[F_2] Normal: 						Shift: 						Alpha: 
-			[F_3] Normal: 						Shift: 						Alpha: 
-			[F_4] Normal: 						Shift: 						Alpha: 
+			[F_1] Normal(if constant):Set value	Shift: 						Alpha:
+			[F_2] Normal: 						Shift: 						Alpha:
+			[F_3] Normal: 						Shift: 						Alpha:
+			[F_4] Normal: 						Shift: 						Alpha:
 	MarioScreen
-		[F_1] Normal: 						Shift: 						Alpha: 
-		[F_2] Normal: 						Shift: 						Alpha: 
-		[F_3] Normal: 						Shift: 						Alpha: 
-		[F_4] Normal: 						Shift: 						Alpha: 
+		[F_1] Normal: 						Shift: 						Alpha:
+		[F_2] Normal: 						Shift: 						Alpha:
+		[F_3] Normal: 						Shift: 						Alpha:
+		[F_4] Normal: 						Shift: 						Alpha:
 	ChooseVariableValueScreen
-		[F_1] Normal: 						Shift: 						Alpha: 
-		[F_2] Normal: 						Shift: 						Alpha: 
-		[F_3] Normal: 						Shift: 						Alpha: 
-		[F_4] Normal: 						Shift: 						Alpha: 
+		[F_1] Normal: 						Shift: 						Alpha:
+		[F_2] Normal: 						Shift: 						Alpha:
+		[F_3] Normal: 						Shift: 						Alpha:
+		[F_4] Normal: 						Shift: 						Alpha:
 	SolveForXScreen
-		[F_1] Normal: 						Shift: 						Alpha: 
-		[F_2] Normal: 						Shift: 						Alpha: 
-		[F_3] Normal: 						Shift: 						Alpha: 
-		[F_4] Normal: 						Shift: 						Alpha: 
+		[F_1] Normal: 						Shift: 						Alpha:
+		[F_2] Normal: 						Shift: 						Alpha:
+		[F_3] Normal: 						Shift: 						Alpha:
+		[F_4] Normal: 						Shift: 						Alpha:
 */

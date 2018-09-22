@@ -19,34 +19,32 @@ public class BlockPower extends Block {
 	}
 
 	@Override
-	public void draw(GraphicEngine ge, Renderer r, int x, int y, Caret caret) {
+	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y, final Caret caret) {
 		BlockContainer.getDefaultFont(true).use(ge);
 		r.glColor(BlockContainer.getDefaultColor());
 		containerExponent.draw(ge, r, x, y, caret);
 	}
 
 	@Override
-	public boolean putBlock(Caret caret, Block newBlock) {
+	public boolean putBlock(final Caret caret, final Block newBlock) {
 		boolean added = false;
 		added = added | containerExponent.putBlock(caret, newBlock);
-		if (added) {
+		if (added)
 			recomputeDimensions();
-		}
 		return added;
 	}
 
 	@Override
-	public boolean delBlock(Caret caret) {
+	public boolean delBlock(final Caret caret) {
 		boolean removed = false;
 		removed = removed | containerExponent.delBlock(caret);
-		if (removed) {
+		if (removed)
 			recomputeDimensions();
-		}
 		return removed;
 	}
 
 	@Override
-	public BlockReference<?> getBlock(Caret caret) {
+	public BlockReference<?> getBlock(final Caret caret) {
 		return containerExponent.getBlock(caret);
 	}
 
@@ -60,7 +58,7 @@ public class BlockPower extends Block {
 	}
 
 	@Override
-	public void setSmall(boolean small) {
+	public void setSmall(final boolean small) {
 		this.small = small;
 		containerExponent.setSmall(true);
 		recomputeDimensions();
@@ -76,7 +74,7 @@ public class BlockPower extends Block {
 	}
 
 	@Override
-	public Feature toFeature(MathContext context) throws Error {
+	public Feature toFeature(final MathContext context) throws Error {
 		final Function exp = getExponentContainer().toFunction(context);
 		return new FeaturePowerChar(exp);
 	}

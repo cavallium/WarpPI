@@ -38,7 +38,7 @@ import java.nio.file.StandardCopyOption;
  * the
  * JAR archive. These libraries usualy contain implementation of some methods in
  * native code (using JNI - Java Native Interface).
- * 
+ *
  * @see http://adamheinrich.com/blog/2012/how-to-load-native-jni-library-from-jar
  * @see https://github.com/adamheinrich/native-utils
  *
@@ -63,13 +63,13 @@ public class NativeUtils {
 
 	/**
 	 * Loads library from current JAR archive
-	 * 
+	 *
 	 * The file from JAR is copied into system temporary directory and then
 	 * loaded. The temporary file is deleted after
 	 * exiting.
 	 * Method uses String as filename because the pathname is "abstract", not
 	 * system-dependent.
-	 * 
+	 *
 	 * @param path
 	 *            The path of file inside JAR as absolute path (beginning with
 	 *            '/'), e.g. /package/File.ext
@@ -85,28 +85,26 @@ public class NativeUtils {
 	 * @throws FileNotFoundException
 	 *             If the file could not be found inside the JAR.
 	 */
-	public static void loadLibraryFromJar(String path) throws IOException {
+	public static void loadLibraryFromJar(final String path) throws IOException {
 
-		if (!path.startsWith("/")) {
+		if (!path.startsWith("/"))
 			throw new IllegalArgumentException("The path has to be absolute (start with '/').");
-		}
 
 		// Obtain filename from path
 		final String[] parts = path.split("/");
-		final String filename = (parts.length > 1) ? parts[parts.length - 1] : null;
+		final String filename = parts.length > 1 ? parts[parts.length - 1] : null;
 
 		// Check if the filename is okay
-		if (filename == null || filename.length() < MIN_PREFIX_LENGTH) {
+		if (filename == null || filename.length() < NativeUtils.MIN_PREFIX_LENGTH)
 			throw new IllegalArgumentException("The filename has to be at least 3 characters long.");
-		}
 
 		// Prepare temporary file
-		if (temporaryDir == null) {
-			temporaryDir = createTempDirectory("nativeutils");
-			temporaryDir.deleteOnExit();
+		if (NativeUtils.temporaryDir == null) {
+			NativeUtils.temporaryDir = NativeUtils.createTempDirectory("nativeutils");
+			NativeUtils.temporaryDir.deleteOnExit();
 		}
 
-		final File temp = new File(temporaryDir, filename);
+		final File temp = new File(NativeUtils.temporaryDir, filename);
 
 		try (InputStream is = NativeUtils.class.getResourceAsStream(path)) {
 			Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
@@ -121,34 +119,31 @@ public class NativeUtils {
 		try {
 			System.load(temp.getAbsolutePath());
 		} finally {
-			if (isPosixCompliant()) {
+			if (NativeUtils.isPosixCompliant())
 				// Assume POSIX compliant file system, can be deleted after loading
 				temp.delete();
-			} else {
+			else
 				// Assume non-POSIX, and don't delete until last file descriptor closed
 				temp.deleteOnExit();
-			}
 		}
 	}
 
 	private static boolean isPosixCompliant() {
 		try {
-			if (FileSystems.getDefault().supportedFileAttributeViews().contains("posix")) {
+			if (FileSystems.getDefault().supportedFileAttributeViews().contains("posix"))
 				return true;
-			}
 			return false;
 		} catch (FileSystemNotFoundException | ProviderNotFoundException | SecurityException e) {
 			return false;
 		}
 	}
 
-	private static File createTempDirectory(String prefix) throws IOException {
+	private static File createTempDirectory(final String prefix) throws IOException {
 		final String tempDir = System.getProperty("java.io.tmpdir");
 		final File generatedDir = new File(tempDir, prefix + System.nanoTime());
 
-		if (!generatedDir.mkdir()) {
+		if (!generatedDir.mkdir())
 			throw new IOException("Failed to create temp directory " + generatedDir.getName());
-		}
 
 		return generatedDir;
 	}

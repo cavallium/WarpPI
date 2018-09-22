@@ -11,12 +11,12 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class RootSquare extends FunctionOperator {
 
-	public RootSquare(MathContext root, Function value2) {
+	public RootSquare(final MathContext root, final Function value2) {
 		super(root, new Number(root, 2), value2);
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (o instanceof Root) {
 			final FunctionOperator f = (FunctionOperator) o;
 			return parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2());
@@ -30,16 +30,15 @@ public class RootSquare extends FunctionOperator {
 	}
 
 	@Override
-	public ObjectArrayList<Block> toBlock(MathContext context) throws Error {
+	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
 		final ObjectArrayList<Block> result = new ObjectArrayList<>();
 		final BlockSquareRoot bsqr = new BlockSquareRoot();
 		final BlockContainer bsqrc = bsqr.getNumberContainer();
-		for (final Block b : getParameter2().toBlock(context)) {
+		for (final Block b : getParameter2().toBlock(context))
 			bsqrc.appendBlockUnsafe(b);
-		}
 		bsqrc.recomputeDimensions();
 		bsqr.recomputeDimensions();
-		result.add((bsqr));
+		result.add(bsqr);
 		return result;
 	}
 

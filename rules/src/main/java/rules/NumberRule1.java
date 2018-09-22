@@ -16,7 +16,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Number rule
  * a * 0 = 0
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -40,31 +40,28 @@ public class NumberRule1 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
 		if (f instanceof Multiplication) {
-			MathContext root = f.getMathContext();
-			FunctionOperator mult = (FunctionOperator) f;
+			final MathContext root = f.getMathContext();
+			final FunctionOperator mult = (FunctionOperator) f;
 			if (mult.getParameter1() instanceof Number) {
-				Function numb = mult.getParameter1();
-				if (numb.equals(new Number(root, 0))) {
+				final Function numb = mult.getParameter1();
+				if (numb.equals(new Number(root, 0)))
 					isExecutable = true;
-				}
 			}
 			if (mult.getParameter2() instanceof Number) {
-				Function numb = mult.getParameter2();
-				if (numb.equals(new Number(root, 0))) {
+				final Function numb = mult.getParameter2();
+				if (numb.equals(new Number(root, 0)))
 					isExecutable = true;
-				}
 			}
 		}
 
 		if (isExecutable) {
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
 			result.add(new Number(f.getMathContext(), 0));
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 }

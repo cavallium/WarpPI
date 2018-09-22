@@ -7,13 +7,14 @@ import it.cavallium.warppi.gui.graphicengine.impl.common.PngSkin;
 
 public class FBSkin extends PngSkin {
 
-	public FBSkin(String file) throws IOException {
+	public FBSkin(final String file) throws IOException {
 		super(file);
 	}
 
 	@Override
-	public void use(GraphicEngine d) {
-		FBEngine dfb = (FBEngine) d;
+	public void use(final GraphicEngine d) {
+		@SuppressWarnings("unused")
+		final FBEngine dfb = (FBEngine) d;
 		// TODO: implement
 	}
 

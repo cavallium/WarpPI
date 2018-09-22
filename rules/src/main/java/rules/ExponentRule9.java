@@ -16,7 +16,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Exponent rule
  * (a ^ b) ^ c = a ^ (b * c)
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -40,25 +40,23 @@ public class ExponentRule9 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
 		if (f instanceof Power) {
-			FunctionOperator fnc = (FunctionOperator) f;
-			if (fnc.getParameter1() instanceof Power) {
+			final FunctionOperator fnc = (FunctionOperator) f;
+			if (fnc.getParameter1() instanceof Power)
 				isExecutable = true;
-			}
 		}
-	
+
 		if (isExecutable) {
-			MathContext root = f.getMathContext();
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			FunctionOperator powC = (FunctionOperator) f;
-			FunctionOperator powB = (FunctionOperator) powC.getParameter1();
-			Function p = new Power(root, powB.getParameter1(), new Multiplication(root, powB.getParameter2(), powC.getParameter2()));
+			final MathContext root = f.getMathContext();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final FunctionOperator powC = (FunctionOperator) f;
+			final FunctionOperator powB = (FunctionOperator) powC.getParameter1();
+			final Function p = new Power(root, powB.getParameter1(), new Multiplication(root, powB.getParameter2(), powC.getParameter2()));
 			result.add(p);
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 }

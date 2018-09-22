@@ -33,9 +33,9 @@ public class HtmlEngine implements GraphicEngine {
 	private RenderingLoop renderingLoop;
 	private HtmlRenderer renderer;
 	private int width, height;
-	private final int frameTime = (int) (1000d/10d);
+	private final int frameTime = (int) (1000d / 10d);
 	private final BehaviorSubject<Integer[]> onResize = BehaviorSubject.create();
-	
+
 	@Override
 	public int[] getSize() {
 		return new int[] { getWidth(), getHeight() };
@@ -47,50 +47,50 @@ public class HtmlEngine implements GraphicEngine {
 	}
 
 	@Override
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		HtmlEngine.setHTMLTitle(title);
 	}
 
-	@JSBody(params = {"wndTitle"}, script = "document.title = wndTitle")
+	@JSBody(params = { "wndTitle" }, script = "document.title = wndTitle")
 	private static native void setHTMLTitle(String wndTitle);
-	
-	@Override
-	public void setResizable(boolean r) {}
 
 	@Override
-	public void setDisplayMode(int ww, int wh) {
+	public void setResizable(final boolean r) {}
+
+	@Override
+	public void setDisplayMode(final int ww, final int wh) {
 		canvas.setWidth(ww);
 		width = ww;
 		canvas.setHeight(wh);
 		height = wh;
 	}
 
-	private String previousValue="";
-	
+	private String previousValue = "";
+
 	@Override
-	public void create(Runnable onInitialized) {
+	public void create(final Runnable onInitialized) {
 		exitSemaphore = Engine.getPlatform().newSemaphore(0);
 		width = -1;
 		height = -1;
-		canvas = (HTMLCanvasElement) document.createElement("canvas");
-		g = (CanvasRenderingContext2D ) canvas.getContext("2d");
-		HTMLInputElement keyInput = (HTMLInputElement) document.createElement("input");
+		canvas = (HTMLCanvasElement) HtmlEngine.document.createElement("canvas");
+		g = (CanvasRenderingContext2D) canvas.getContext("2d");
+		final HTMLInputElement keyInput = (HTMLInputElement) HtmlEngine.document.createElement("input");
 		keyInput.setType("text");
 		keyInput.getStyle().setProperty("opacity", "0.1");
 		setDisplayMode(480, 320);
-		document.getElementById("container").appendChild(canvas);
-		document.getBody().appendChild(keyInput);
+		HtmlEngine.document.getElementById("container").appendChild(canvas);
+		HtmlEngine.document.getBody().appendChild(keyInput);
 		keyInput.setTabIndex(0);
-		keyInput.addEventListener("keydown", (KeyboardEvent evt) -> {
+		keyInput.addEventListener("keydown", (final KeyboardEvent evt) -> {
 			evt.preventDefault();
 			new Thread(() -> {
 				previousValue = keyInput.getValue();
 				Keyboard.debugKeyPressed(evt.getKeyCode());
 				System.out.println(evt.getKeyCode());
-				System.out.println(""+(int) evt.getKey().charAt(0));
+				System.out.println("" + (int) evt.getKey().charAt(0));
 			}).start();
 		});
-		keyInput.addEventListener("input", (Event evt) -> {
+		keyInput.addEventListener("input", (final Event evt) -> {
 			evt.preventDefault();
 			final String previousValue = this.previousValue;
 			final String newValue = keyInput.getValue();
@@ -99,121 +99,101 @@ public class HtmlEngine implements GraphicEngine {
 
 			new Thread(() -> {
 				if (newLen == prevLen) {
-					
-				} else if (newLen - prevLen == 1) {
-					Keyboard.debugKeyPressed((int) newValue.toUpperCase().charAt(newLen-1));
-				} else if (newLen - prevLen > 1) {
-					for (int i = 0; i < newLen - prevLen; i++) {
-						Keyboard.debugKeyPressed((int) newValue.toUpperCase().charAt(prevLen + i));
-					}
-				} else if (newLen - prevLen < 1) {
-					for (int i = 0; i < prevLen - newLen; i++) {
+
+				} else if (newLen - prevLen == 1)
+					Keyboard.debugKeyPressed(newValue.toUpperCase().charAt(newLen - 1));
+				else if (newLen - prevLen > 1)
+					for (int i = 0; i < newLen - prevLen; i++)
+						Keyboard.debugKeyPressed(newValue.toUpperCase().charAt(prevLen + i));
+				else if (newLen - prevLen < 1)
+					for (int i = 0; i < prevLen - newLen; i++)
 						Keyboard.debugKeyPressed(8);
-					}
-				}
 			}).start();
 		});
-		canvas.addEventListener("click", (Event evt) -> {
+		canvas.addEventListener("click", (final Event evt) -> {
 			keyInput.focus();
 		});
-		document.addEventListener("DOMContentLoaded", (Event e) -> {
+		HtmlEngine.document.addEventListener("DOMContentLoaded", (final Event e) -> {
 			keyInput.focus();
 		});
-		NodeList<? extends HTMLElement> buttons = document.getBody().getElementsByTagName("button");
-		for (int i = 0; i < buttons.getLength(); i++) {
-			if (buttons.item(i).hasAttribute("keycode")) {
-				buttons.item(i).addEventListener("click", (Event evt) -> {
+		final NodeList<? extends HTMLElement> buttons = HtmlEngine.document.getBody().getElementsByTagName("button");
+		for (int i = 0; i < buttons.getLength(); i++)
+			if (buttons.item(i).hasAttribute("keycode"))
+				buttons.item(i).addEventListener("click", (final Event evt) -> {
 					evt.preventDefault();
-					EventTarget target = evt.getCurrentTarget();
-					HTMLButtonElement button = target.cast();
+					final EventTarget target = evt.getCurrentTarget();
+					final HTMLButtonElement button = target.cast();
 					new Thread(() -> {
 						try {
 							if (button.hasAttribute("keycode") && button.getAttribute("keycode").contains(",")) {
-								String code = button.getAttribute("keycode");
-								String[] coordinates = code.split(",", 2);
-								boolean removeshift = Keyboard.shift && Integer.parseInt(coordinates[0]) != 0 && Integer.parseInt(coordinates[1]) != 0;
-								boolean removealpha = Keyboard.alpha && Integer.parseInt(coordinates[0]) != 0 && Integer.parseInt(coordinates[1]) != 1;
+								final String code = button.getAttribute("keycode");
+								final String[] coordinates = code.split(",", 2);
+								final boolean removeshift = Keyboard.shift && Integer.parseInt(coordinates[0]) != 0 && Integer.parseInt(coordinates[1]) != 0;
+								final boolean removealpha = Keyboard.alpha && Integer.parseInt(coordinates[0]) != 0 && Integer.parseInt(coordinates[1]) != 1;
 								Keyboard.keyPressedRaw(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]));
-								if (removeshift) {
-									Keyboard.keyPressedRaw(0,0);
-								}
-								if (removealpha) {
-									Keyboard.keyPressedRaw(0,1);
-								}
+								if (removeshift)
+									Keyboard.keyPressedRaw(0, 0);
+								if (removealpha)
+									Keyboard.keyPressedRaw(0, 1);
 								Thread.sleep(100);
 								Keyboard.keyReleasedRaw(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]));
-								if (removeshift) {
-									Keyboard.keyReleasedRaw(0,0);
-								}
-								if (removealpha) {
-									Keyboard.keyReleasedRaw(0,1);
-								}
-							} else {
-								if (Keyboard.alpha && !Keyboard.shift) {
-									if (button.hasAttribute("keycodea")) {
-										Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodea")));
-									} else {
-										Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycode")));
-									}
-								} else if (!Keyboard.alpha && Keyboard.shift) {
-									if (button.hasAttribute("keycodes")) {
-										Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodes")));
-									} else {
-										Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycode")));
-									}
-								} else if (Keyboard.alpha && Keyboard.shift) {
-									if (button.hasAttribute("keycodesa")) {
-										Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodesa")));
-									} else {
-										if (button.hasAttribute("keycodes")) {
-											Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodes")));
-										} else {
-											Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycode")));
-										}
-									}
-								} else {
+								if (removeshift)
+									Keyboard.keyReleasedRaw(0, 0);
+								if (removealpha)
+									Keyboard.keyReleasedRaw(0, 1);
+							} else if (Keyboard.alpha && !Keyboard.shift) {
+								if (button.hasAttribute("keycodea"))
+									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodea")));
+								else
 									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycode")));
-								}
-							}
-						} catch (Exception ex) {
+							} else if (!Keyboard.alpha && Keyboard.shift) {
+								if (button.hasAttribute("keycodes"))
+									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodes")));
+								else
+									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycode")));
+							} else if (Keyboard.alpha && Keyboard.shift) {
+								if (button.hasAttribute("keycodesa"))
+									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodesa")));
+								else if (button.hasAttribute("keycodes"))
+									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodes")));
+								else
+									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycode")));
+							} else
+								Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycode")));
+						} catch (final Exception ex) {
 							ex.printStackTrace();
 						}
 					}).start();
 				});
-			}
-		}
 		renderer = new HtmlRenderer(this, g);
 		initialized = true;
-		if (onInitialized != null) {
+		if (onInitialized != null)
 			onInitialized.run();
-		}
 	}
 
 	@Override
 	public int getWidth() {
-		if (width == -1) {
+		if (width == -1)
 			width = canvas.getWidth();
-		}
 		return width;
 	}
 
 	@Override
 	public int getHeight() {
-		if (height == -1) {
+		if (height == -1)
 			height = canvas.getHeight();
-		}
 		return height;
 	}
 
 	@Override
 	public void destroy() {
-		document.getBody().removeChild(canvas);
+		HtmlEngine.document.getBody().removeChild(canvas);
 		initialized = false;
 		exitSemaphore.release();
 	}
 
 	@Override
-	public void start(RenderingLoop d) {
+	public void start(final RenderingLoop d) {
 		renderingLoop = d;
 		final Thread th = new Thread(() -> {
 			try {
@@ -228,9 +208,8 @@ public class HtmlEngine implements GraphicEngine {
 					if (extraTimeInt + deltaInt < frameTime) {
 						Thread.sleep(frameTime - (extraTimeInt + deltaInt));
 						extratime = 0;
-					} else {
+					} else
 						extratime += delta - frameTime;
-					}
 				}
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
@@ -252,17 +231,17 @@ public class HtmlEngine implements GraphicEngine {
 	}
 
 	@Override
-	public HtmlFont loadFont(String fontName) throws IOException {
+	public HtmlFont loadFont(final String fontName) throws IOException {
 		return new HtmlFont(fontName);
 	}
 
 	@Override
-	public HtmlFont loadFont(String path, String fontName) throws IOException {
+	public HtmlFont loadFont(final String path, final String fontName) throws IOException {
 		return new HtmlFont(fontName);
 	}
 
 	@Override
-	public HtmlSkin loadSkin(String file) throws IOException {
+	public HtmlSkin loadSkin(final String file) throws IOException {
 		return new HtmlSkin(file);
 	}
 

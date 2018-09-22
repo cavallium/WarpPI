@@ -7,19 +7,19 @@ import it.cavallium.warppi.gui.graphicengine.impl.common.RFTFont;
 
 public class FBFont extends RFTFont {
 
-	public FBFont(String fontName) throws IOException {
+	public FBFont(final String fontName) throws IOException {
 		super(fontName);
 	}
-	
-	public FBFont(String path, String fontName) throws IOException {
+
+	public FBFont(final String path, final String fontName) throws IOException {
 		super(path, fontName);
 	}
 
 	@Override
-	public void use(GraphicEngine d) {
-		FBEngine dfb = (FBEngine) d;
+	public void use(final GraphicEngine d) {
+		@SuppressWarnings("unused")
+		final FBEngine dfb = (FBEngine) d;
 		// TODO: implement
 	}
-
 
 }

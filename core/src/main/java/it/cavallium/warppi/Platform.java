@@ -14,166 +14,189 @@ import it.cavallium.warppi.util.Error;
 
 public interface Platform {
 
-	public ConsoleUtils getConsoleUtils();
-	public Gpio getGpio();
-	public StorageUtils getStorageUtils();
-	public PngUtils getPngUtils();
-	public Settings getSettings();
+	ConsoleUtils getConsoleUtils();
 
-	public void setThreadName(Thread t, String name);
-	public void setThreadDaemon(Thread t);
-	public void setThreadDaemon(Thread t, boolean value);
+	Gpio getGpio();
 
-	public void exit(int value);
-	public void gc();
+	StorageUtils getStorageUtils();
 
-	public boolean isJavascript();
-	public boolean isRunningOnRaspberry();
-	
-	public String getOsName();
+	PngUtils getPngUtils();
 
-	public void alphaChanged(boolean val);
-	public void shiftChanged(boolean val);
+	Settings getSettings();
 
-	public Semaphore newSemaphore();
-	public Semaphore newSemaphore(int i);
-	
-	public URLClassLoader newURLClassLoader(URL[] urls);
+	void setThreadName(Thread t, String name);
 
-	public Map<String, GraphicEngine> getEnginesList();
-	public GraphicEngine getEngine(String string) throws NullPointerException;
+	void setThreadDaemon(Thread t);
 
-	public void throwNewExceptionInInitializerError(String text);
-	public String[] stacktraceToString(Error e);
+	void setThreadDaemon(Thread t, boolean value);
 
-	public void loadPlatformRules();
-	public void zip(String targetPath, String destinationFilePath, String password);
-	public void unzip(String targetZipFilePath, String destinationFolderPath, String password);
+	void exit(int value);
 
-	public boolean compile(String[] command, PrintWriter printWriter, PrintWriter errors);
+	void gc();
+
+	boolean isJavascript();
+
+	boolean isRunningOnRaspberry();
+
+	String getOsName();
+
+	void alphaChanged(boolean val);
+
+	void shiftChanged(boolean val);
+
+	Semaphore newSemaphore();
+
+	Semaphore newSemaphore(int i);
+
+	URLClassLoader newURLClassLoader(URL[] urls);
+
+	Map<String, GraphicEngine> getEnginesList();
+
+	GraphicEngine getEngine(String string) throws NullPointerException;
+
+	void throwNewExceptionInInitializerError(String text);
+
+	String[] stacktraceToString(Error e);
+
+	void loadPlatformRules();
+
+	void zip(String targetPath, String destinationFilePath, String password);
+
+	void unzip(String targetZipFilePath, String destinationFolderPath, String password);
+
+	boolean compile(String[] command, PrintWriter printWriter, PrintWriter errors);
 
 	public interface Gpio {
-		public int valueOutput();
-		public int valuePwmOutput();
-		public int valueInput();
-		public int valueHigh();
-		public int valueLow();
-		public Object valueUnknownBoardType();
+		int valueOutput();
 
-		public void wiringPiSetupPhys();
+		int valuePwmOutput();
 
-		public void pinMode(int i, int type);
+		int valueInput();
 
-		public void digitalWrite(int pin, int val);
+		int valueHigh();
 
-		public void digitalWrite(int pin, boolean val);
+		int valueLow();
 
-		public void pwmWrite(int pin, int val);
-		
-		public void delayMicroseconds(int t);
+		Object valueUnknownBoardType();
 
-		public int digitalRead(int pin);
+		void wiringPiSetupPhys();
 
-		public Object getBoardType();
+		void pinMode(int i, int type);
+
+		void digitalWrite(int pin, int val);
+
+		void digitalWrite(int pin, boolean val);
+
+		void pwmWrite(int pin, int val);
+
+		void delayMicroseconds(int t);
+
+		int digitalRead(int pin);
+
+		Object getBoardType();
 	}
-	
+
 	public interface ConsoleUtils {
-		public static final int OUTPUTLEVEL_NODEBUG = 0;
-		public static final int OUTPUTLEVEL_DEBUG_MIN = 1;
-		public static final int OUTPUTLEVEL_DEBUG_VERBOSE = 4;
-		
-		public AdvancedOutputStream out();
-		
-		public int getOutputLevel();
-		
+		int OUTPUTLEVEL_NODEBUG = 0;
+		int OUTPUTLEVEL_DEBUG_MIN = 1;
+		int OUTPUTLEVEL_DEBUG_VERBOSE = 4;
+
+		AdvancedOutputStream out();
+
+		int getOutputLevel();
+
 		public interface AdvancedOutputStream {
-			public void println(Object str);
+			void println(Object str);
 
-			public void println(int level);
+			void println(int level);
 
-			public void println(int level, Object str);
+			void println(int level, Object str);
 
-			public void print(int level, String str);
+			void print(int level, String str);
 
-			public void println(int level, String prefix, String str);
+			void println(int level, String prefix, String str);
 
-			public void println(int level, String... parts);
+			void println(int level, String... parts);
 		}
 	}
-	
+
 	public interface StorageUtils {
 		int OpenOptionWrite = 0;
 		int OpenOptionCreate = 1;
 
-		public boolean exists(File f);
+		boolean exists(File f);
 
-		public File get(String path);
+		File get(String path);
 
-		public File get(String... path);
+		File get(String... path);
 
 		@Deprecated()
-		public File getResource(String string) throws IOException, URISyntaxException;
+		File getResource(String string) throws IOException, URISyntaxException;
 
-		public InputStream getResourceStream(String string) throws IOException, URISyntaxException;
+		InputStream getResourceStream(String string) throws IOException, URISyntaxException;
 
-		public List<String> readAllLines(File file) throws IOException;
-		
-		public String read(InputStream input) throws IOException;
+		List<String> readAllLines(File file) throws IOException;
 
-		public List<File> walk(File dir) throws IOException;
+		String read(InputStream input) throws IOException;
 
-		public File relativize(File rulesPath, File f);
+		List<File> walk(File dir) throws IOException;
 
-		public File resolve(File file, String string);
-		
-		public File getParent(File f);
+		File relativize(File rulesPath, File f);
 
-		public void createDirectories(File dir) throws IOException;
+		File resolve(File file, String string);
 
-		public void write(File f, byte[] bytes, int... options) throws IOException;
+		File getParent(File f);
 
-		public List<String> readAllLines(InputStream input) throws IOException;
+		void createDirectories(File dir) throws IOException;
 
-		public String getBasePath();
+		void write(File f, byte[] bytes, int... options) throws IOException;
+
+		List<String> readAllLines(InputStream input) throws IOException;
+
+		String getBasePath();
 	}
-	
+
 	public interface Semaphore {
 		void release();
+
 		void acquire() throws InterruptedException;
 	}
-	
+
 	public interface URLClassLoader {
-	public Class<?> loadClass(String name) throws ClassNotFoundException;
+		Class<?> loadClass(String name) throws ClassNotFoundException;
+
 		void close() throws IOException;
 	}
-	
+
 	public interface PngUtils {
 
-		public PngReader load(InputStream resourceStream);
-		
+		PngReader load(InputStream resourceStream);
+
 		public interface PngReader {
 
 			int[] getImageMatrix();
 
 			int[] getSize();
-			
+
 		}
-		
+
 	}
-	
+
 	public interface Settings {
 
-		public boolean isDebugEnabled();
+		boolean isDebugEnabled();
 
-		public void setDebugEnabled(boolean debugOn);
+		void setDebugEnabled(boolean debugOn);
 
-		public default String getCalculatorName() {
+		default String getCalculatorName() {
 			return "WarpPI";
 		}
-		public default String getCalculatorNameLowercase() {
+
+		default String getCalculatorNameLowercase() {
 			return "warppi";
 		}
-		public default String getCalculatorNameUppercase() {
+
+		default String getCalculatorNameUppercase() {
 			return "WARPPI";
 		}
 

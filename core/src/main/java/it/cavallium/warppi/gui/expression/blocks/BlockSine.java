@@ -12,7 +12,7 @@ public class BlockSine extends BlockParenthesisAbstract {
 	}
 
 	@Override
-	public Feature toFeature(MathContext context) throws Error {
+	public Feature toFeature(final MathContext context) throws Error {
 		final Function cont = getNumberContainer().toFunction(context);
 		return new FeatureSine(cont);
 	}

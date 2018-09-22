@@ -10,17 +10,17 @@ public class GUIErrorMessage {
 	private final String err;
 	private final long creationTime;
 
-	public GUIErrorMessage(Error e) {
+	public GUIErrorMessage(final Error e) {
 		err = e.getLocalizedMessage();
 		creationTime = System.currentTimeMillis();
 	}
 
-	public GUIErrorMessage(Exception ex) {
+	public GUIErrorMessage(final Exception ex) {
 		err = ex.getLocalizedMessage();
 		creationTime = System.currentTimeMillis();
 	}
 
-	public void draw(GraphicEngine g, Renderer r, String msg) {
+	public void draw(final GraphicEngine g, final Renderer r, final String msg) {
 		final int scrW = g.getWidth();
 		final int scrH = g.getHeight();
 		final int width = 200;

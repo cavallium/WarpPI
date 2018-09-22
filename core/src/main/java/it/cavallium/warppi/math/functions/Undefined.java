@@ -12,12 +12,12 @@ public class Undefined implements Function {
 
 	protected final MathContext root;
 
-	public Undefined(MathContext root) {
+	public Undefined(final MathContext root) {
 		this.root = root;
 	}
 
 	@Override
-	public ObjectArrayList<Function> simplify(Rule rule) throws Error, InterruptedException {
+	public ObjectArrayList<Function> simplify(final Rule rule) throws Error, InterruptedException {
 		return rule.execute(this);
 	}
 
@@ -27,7 +27,7 @@ public class Undefined implements Function {
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		return false;
 	}
 
@@ -37,17 +37,17 @@ public class Undefined implements Function {
 	}
 
 	@Override
-	public Function setParameter(int index, Function var) throws IndexOutOfBoundsException {
+	public Function setParameter(final int index, final Function var) throws IndexOutOfBoundsException {
 		throw new IndexOutOfBoundsException();
 	}
 
 	@Override
-	public Function getParameter(int index) throws IndexOutOfBoundsException {
+	public Function getParameter(final int index) throws IndexOutOfBoundsException {
 		throw new IndexOutOfBoundsException();
 	}
 
 	@Override
-	public ObjectArrayList<Block> toBlock(MathContext context) {
+	public ObjectArrayList<Block> toBlock(final MathContext context) {
 		final ObjectArrayList<Block> result = new ObjectArrayList<>();
 		result.add(new BlockUndefined());
 		return result;

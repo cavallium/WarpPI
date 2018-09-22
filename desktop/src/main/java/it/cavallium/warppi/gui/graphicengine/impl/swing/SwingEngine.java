@@ -22,16 +22,15 @@ public class SwingEngine implements GraphicEngine {
 	public Semaphore exitSemaphore;
 
 	@Override
-	public void setTitle(String title) {
+	public void setTitle(final String title) {
 		INSTANCE.setTitle(title);
 	}
 
 	@Override
-	public void setResizable(boolean r) {
+	public void setResizable(final boolean r) {
 		INSTANCE.setResizable(r);
-		if (!r) {
+		if (!r)
 			INSTANCE.setUndecorated(true);
-		}
 	}
 
 	@Override
@@ -48,7 +47,7 @@ public class SwingEngine implements GraphicEngine {
 	}
 
 	@Override
-	public void create(Runnable onInitialized) {
+	public void create(final Runnable onInitialized) {
 		r = new SwingRenderer();
 		g = new BufferedImage(r.size[0], r.size[1], BufferedImage.TYPE_INT_RGB);
 		initialized = false;
@@ -58,9 +57,8 @@ public class SwingEngine implements GraphicEngine {
 		setDisplayMode(StaticVars.screenSize[0], StaticVars.screenSize[1]);
 		INSTANCE.setVisible(true);
 		initialized = true;
-		if (onInitialized != null) {
+		if (onInitialized != null)
 			onInitialized.run();
-		}
 	}
 
 	@Override
@@ -87,7 +85,7 @@ public class SwingEngine implements GraphicEngine {
 	}
 
 	@Override
-	public void start(RenderingLoop d) {
+	public void start(final RenderingLoop d) {
 		INSTANCE.setRenderingLoop(d);
 		final Thread th = new Thread(() -> {
 			try {
@@ -96,13 +94,12 @@ public class SwingEngine implements GraphicEngine {
 					final long start = System.nanoTime();
 					repaint();
 					final long end = System.nanoTime();
-					final double delta = (end - start);
+					final double delta = end - start;
 					if (extratime + delta < 50 * 1000d * 1000d) {
 						Thread.sleep((long) Math.floor(50d - (extratime + delta) / 1000d / 1000d));
 						extratime = 0;
-					} else {
+					} else
 						extratime += delta - 50d;
-					}
 				}
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
@@ -115,9 +112,8 @@ public class SwingEngine implements GraphicEngine {
 
 	@Deprecated()
 	public void refresh() {
-		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || (Engine.INSTANCE.getHardwareDevice().getDisplayManager().error != null && Engine.INSTANCE.getHardwareDevice().getDisplayManager().error.length() > 0) || Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen().mustBeRefreshed()) {
+		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || Engine.INSTANCE.getHardwareDevice().getDisplayManager().error != null && Engine.INSTANCE.getHardwareDevice().getDisplayManager().error.length() > 0 || Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen().mustBeRefreshed())
 			INSTANCE.c.paintImmediately(0, 0, getWidth(), getHeight());
-		}
 	}
 
 	@Override
@@ -130,7 +126,7 @@ public class SwingEngine implements GraphicEngine {
 			force = false;
 		}
 
-		public Startable(boolean force) {
+		public Startable(final boolean force) {
 			this.force = force;
 		}
 
@@ -155,17 +151,17 @@ public class SwingEngine implements GraphicEngine {
 	}
 
 	@Override
-	public BinaryFont loadFont(String fontName) throws IOException {
+	public BinaryFont loadFont(final String fontName) throws IOException {
 		return new SwingFont(fontName);
 	}
 
 	@Override
-	public BinaryFont loadFont(String path, String fontName) throws IOException {
+	public BinaryFont loadFont(final String path, final String fontName) throws IOException {
 		return new SwingFont(path, fontName);
 	}
 
 	@Override
-	public Skin loadSkin(String file) throws IOException {
+	public Skin loadSkin(final String file) throws IOException {
 		return new SwingSkin(file);
 	}
 
@@ -178,9 +174,8 @@ public class SwingEngine implements GraphicEngine {
 
 	@Override
 	public boolean isSupported() {
-		if (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isCPUEngineForced() == false) {
+		if (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isCPUEngineForced() == false)
 			return false;
-		}
 		return (StaticVars.startupArguments.isHeadlessEngineForced() || GraphicsEnvironment.isHeadless()) == false;
 	}
 
@@ -189,11 +184,11 @@ public class SwingEngine implements GraphicEngine {
 		return true;
 	}
 
-	public void setAlphaChanged(boolean val) {
-		this.INSTANCE.setAlphaChanged(val);
+	public void setAlphaChanged(final boolean val) {
+		INSTANCE.setAlphaChanged(val);
 	}
 
-	public void setShiftChanged(boolean val) {
-		this.INSTANCE.setShiftChanged(val);
+	public void setShiftChanged(final boolean val) {
+		INSTANCE.setShiftChanged(val);
 	}
 }

@@ -24,7 +24,7 @@ public class EmptyScreen extends Screen {
 	}
 
 	@Override
-	public void beforeRender(float dt) {
+	public void beforeRender(final float dt) {
 
 	}
 

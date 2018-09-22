@@ -5,7 +5,7 @@ public class BlockReference<T extends Block> {
 	private final BlockContainer container;
 	private final int blockPosition;
 
-	public BlockReference(T block, int blockPosition, BlockContainer container) {
+	public BlockReference(final T block, final int blockPosition, final BlockContainer container) {
 		this.block = block;
 		this.blockPosition = blockPosition;
 		this.container = container;
@@ -39,14 +39,13 @@ public class BlockReference<T extends Block> {
 		return isInsideBounds(this.blockPosition - 1);
 	}
 
-	private BlockReference<?> getBlockAtSafe(int i) {
-		if (isInsideBounds(i)) {
+	private BlockReference<?> getBlockAtSafe(final int i) {
+		if (isInsideBounds(i))
 			return container.getBlockAt(i);
-		}
 		return null;
 	}
 
-	private boolean isInsideBounds(int i) {
+	private boolean isInsideBounds(final int i) {
 		return i < container.getSize() && i >= 0;
 	}
 

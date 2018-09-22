@@ -21,7 +21,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
  * a - a = 0
  * -a + a = 0
  * a ± a = {0, 2a}
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -45,41 +45,36 @@ public class NumberRule3 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
 		if (f instanceof Subtraction) {
-			FunctionOperator sub = (FunctionOperator) f;
-			if (sub.getParameter1().equals(sub.getParameter2())) {
+			final FunctionOperator sub = (FunctionOperator) f;
+			if (sub.getParameter1().equals(sub.getParameter2()))
 				isExecutable = true;
-			}
 		} else if (f instanceof Sum) {
-			FunctionOperator sub = (FunctionOperator) f;
-			if (sub.getParameter1() instanceof Multiplication) {
+			final FunctionOperator sub = (FunctionOperator) f;
+			if (sub.getParameter1() instanceof Multiplication)
 				if (((FunctionOperator) sub.getParameter1()).getParameter1() instanceof Number && ((FunctionOperator) sub.getParameter1()).getParameter1().equals(new Number(f.getMathContext(), -1))) {
-					Function neg = ((FunctionOperator) sub.getParameter1()).getParameter2();
-					if (neg.equals(sub.getParameter2())) {
+					final Function neg = ((FunctionOperator) sub.getParameter1()).getParameter2();
+					if (neg.equals(sub.getParameter2()))
 						isExecutable = true;
-					}
 				}
-			}
 		} else if (f instanceof SumSubtraction) {
-			FunctionOperator sub = (FunctionOperator) f;
-			if (sub.getParameter1().equals(sub.getParameter2())) {
+			final FunctionOperator sub = (FunctionOperator) f;
+			if (sub.getParameter1().equals(sub.getParameter2()))
 				isExecutable = true;
-			}
 		}
 
 		if (isExecutable) {
-			MathContext root = f.getMathContext();
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final MathContext root = f.getMathContext();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
 			if (f instanceof SumSubtraction) {
-				Function mul = new Multiplication(root, new Number(root, 2), ((FunctionOperator) f).getParameter1());
+				final Function mul = new Multiplication(root, new Number(root, 2), ((FunctionOperator) f).getParameter1());
 				result.add(mul);
 			}
 			result.add(new Number(root, 0));
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 }

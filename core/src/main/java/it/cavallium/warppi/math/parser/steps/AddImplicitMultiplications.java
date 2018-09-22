@@ -11,26 +11,25 @@ public class AddImplicitMultiplications implements MathParserStep {
 
 	private final MathContext context;
 
-	public AddImplicitMultiplications(MathContext context) {
+	public AddImplicitMultiplications(final MathContext context) {
 		this.context = context;
 	}
 
 	@Override
-	public boolean eval(IntWrapper curIndex, Function lastFunction, Function currentFunction,
-			ObjectArrayList<Function> functionsList) {
+	public boolean eval(final IntWrapper curIndex, final Function lastFunction, final Function currentFunction,
+			final ObjectArrayList<Function> functionsList) {
 		if (currentFunction instanceof Function) {
 			if (lastFunction instanceof Function) {
 				functionsList.set(curIndex.i, new Multiplication(context, currentFunction, lastFunction));
 				functionsList.remove(curIndex.i + 1);
 				return true;
 			}
-		} else if (currentFunction instanceof Function) {
+		} else if (currentFunction instanceof Function)
 			if (lastFunction instanceof Function) {
 				functionsList.set(curIndex.i, new Multiplication(context, currentFunction, lastFunction));
 				functionsList.remove(curIndex.i + 1);
 				return true;
 			}
-		}
 		return false;
 	}
 

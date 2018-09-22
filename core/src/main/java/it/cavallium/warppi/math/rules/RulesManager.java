@@ -13,6 +13,7 @@ import java.util.List;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Platform.ConsoleUtils;
+import it.cavallium.warppi.Platform.StorageUtils;
 import it.cavallium.warppi.Platform.URLClassLoader;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.math.Function;
@@ -30,33 +31,30 @@ public class RulesManager {
 
 	private RulesManager() {}
 
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings({ "unchecked" })
 	public static void initialize() {
 		Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "RulesManager", "Loading the rules");
-		rules = new ObjectArrayList[RuleType.values().length];
-		for (final RuleType val : RuleType.values()) {
-			rules[val.ordinal()] = new ObjectArrayList<>();
-		}
+		RulesManager.rules = new ObjectArrayList[RuleType.values().length];
+		for (final RuleType val : RuleType.values())
+			RulesManager.rules[val.ordinal()] = new ObjectArrayList<>();
 		try {
 			boolean compiledSomething = false;
 			InputStream defaultRulesList;
 			try {
 				defaultRulesList = Engine.getPlatform().getStorageUtils().getResourceStream("/default-rules.lst");
-			} catch (IOException ex) {
+			} catch (final IOException ex) {
 				throw new FileNotFoundException("default-rules.lst not found!");
 			}
 			final List<String> ruleLines = new ArrayList<>();
 			final File rulesPath = Engine.getPlatform().getStorageUtils().get("rules/");
-			if (rulesPath.exists()) {
-				for (File f : Engine.getPlatform().getStorageUtils().walk(rulesPath)) {
+			if (rulesPath.exists())
+				for (final File f : Engine.getPlatform().getStorageUtils().walk(rulesPath))
 					if (f.toString().endsWith(".java")) {
 						String path = Engine.getPlatform().getStorageUtils().relativize(rulesPath, f).toString();
 						path = path.substring(0, path.length() - ".java".length());
 						ruleLines.add(path);
 						Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "RulesManager", "Found external rule: " + f.getAbsolutePath());
 					}
-				}
-			}
 			ruleLines.addAll(Engine.getPlatform().getStorageUtils().readAllLines(defaultRulesList));
 
 			final File tDir = Engine.getPlatform().getStorageUtils().resolve(Engine.getPlatform().getStorageUtils().get(System.getProperty("java.io.tmpdir"), "WarpPi-Calculator"), "rules-rt");
@@ -67,34 +65,31 @@ public class RulesManager {
 			File cacheFilePath = null;
 			cacheFilePath = new File("math-rules-cache.zip");
 			boolean cacheFileExists = false;
-			if (Engine.getPlatform().isJavascript()) {
+			if (Engine.getPlatform().isJavascript())
 				Engine.getPlatform().loadPlatformRules();
-			} else {
+			else {
 				if (cacheFilePath.exists()) {
 					cacheFileExists = true;
 					cacheFileStream = new FileInputStream(cacheFilePath);
-				} else {
+				} else
 					try {
 						cacheFileStream = Engine.getPlatform().getStorageUtils().getResourceStream("/math-rules-cache.zip");//Paths.get(Utils.getJarDirectory().toString()).resolve("math-rules-cache.zip").toAbsolutePath(
 						org.apache.commons.io.FileUtils.copyInputStreamToFile(cacheFileStream, cacheFilePath);
 						cacheFileExists = true;
-					} catch (IOException ex) { //File does not exists.
+					} catch (final IOException ex) { //File does not exists.
 					}
-				}
 				boolean useCache = false;
-				if (cacheFileExists) {
+				if (cacheFileExists)
 					try {
-						if (tDir.exists()) {
+						if (tDir.exists())
 							tDir.delete();
-						}
 						Engine.getPlatform().unzip(cacheFilePath.toString(), tDir.getParent().toString(), "");
 						useCache = !StaticVars.startupArguments.isUncached();
 					} catch (final Exception ex) {
 						ex.printStackTrace();
 					}
-				}
 
-				for (final String rulesLine : ruleLines) {
+				for (final String rulesLine : ruleLines)
 					if (rulesLine.length() > 0) {
 						final String[] ruleDetails = rulesLine.split(",", 1);
 						final String ruleName = ruleDetails[0];
@@ -103,57 +98,51 @@ public class RulesManager {
 						final String pathWithoutExtension = "/rules/" + ruleNameEscaped;
 						final String scriptFile = pathWithoutExtension + ".java";
 						final InputStream resourcePath = Engine.getPlatform().getStorageUtils().getResourceStream(scriptFile);
-						if (resourcePath == null) {
+						if (resourcePath == null)
 							System.err.println(new FileNotFoundException("/rules/" + ruleName + ".java not found!"));
-						} else {
+						else {
 							Rule r = null;
-							if (useCache) {
+							if (useCache)
 								try {
 									Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "RulesManager", ruleName, "Trying to load cached rule");
-									r = loadClassRuleFromSourceFile(scriptFile, tDir);
-									if (r != null) {
+									r = RulesManager.loadClassRuleFromSourceFile(scriptFile, tDir);
+									if (r != null)
 										Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "RulesManager", ruleName, "Loaded cached rule");
-									}
 								} catch (final Exception e) {
 									e.printStackTrace();
-									Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "RulesManager", ruleName, "Can't load the rule "+ ruleNameEscaped +"!");
+									Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "RulesManager", ruleName, "Can't load the rule " + ruleNameEscaped + "!");
 								}
-							}
 							if (r == null || !useCache) {
 								Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "RulesManager", ruleName, "This rule is not cached. Compiling");
 								try {
-									r = compileJavaRule(scriptFile, tDir);
+									r = RulesManager.compileJavaRule(scriptFile, tDir);
 									compiledSomething = true;
 								} catch (InstantiationException | IllegalAccessException | ClassNotFoundException | IOException e) {
 									e.printStackTrace();
 								}
 
 							}
-							if (r != null) {
+							if (r != null)
 								RulesManager.addRule(r);
-							}
 						}
 					}
-				}
 			}
 			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "RulesManager", "Loaded all the rules successfully");
 			if (!Engine.getPlatform().isJavascript() && compiledSomething) {
-				if (cacheFileExists || cacheFilePath.exists()) {
+				if (cacheFileExists || cacheFilePath.exists())
 					cacheFilePath.delete();
-				}
 				Engine.getPlatform().zip(tDir.toString(), cacheFilePath.toString(), "");
 				Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "RulesManager", "Cached the compiled rules");
 			}
-			if (cacheFileStream != null) {
+			if (cacheFileStream != null)
 				cacheFileStream.close();
-			}
 		} catch (URISyntaxException | IOException e) {
 			e.printStackTrace();
 			Engine.getPlatform().exit(1);
 		}
 	}
 
-	public static Rule compileJavaRule(String scriptFile, File tDir) throws IOException, URISyntaxException,
+	public static Rule compileJavaRule(final String scriptFile, final File tDir) throws IOException, URISyntaxException,
 			InstantiationException, IllegalAccessException, ClassNotFoundException {
 		final InputStream resource = Engine.getPlatform().getStorageUtils().getResourceStream(scriptFile);
 		final String text = Engine.getPlatform().getStorageUtils().read(resource);
@@ -168,32 +157,29 @@ public class RulesManager {
 			final File tDirPath = Engine.getPlatform().getStorageUtils().getParent(Engine.getPlatform().getStorageUtils().resolve(tDir, javaClassNameAndPath.replace('.', File.separatorChar)));
 			final File tFileJava = Engine.getPlatform().getStorageUtils().resolve(tDirPath, javaClassNameOnly + ".java");
 			final File tFileClass = Engine.getPlatform().getStorageUtils().resolve(tDirPath, javaClassNameOnly + ".class");
-			if (!tDirPath.exists()) {
+			if (!tDirPath.exists())
 				Engine.getPlatform().getStorageUtils().createDirectories(tDirPath);
-			}
-			if (tFileJava.exists()) {
+			if (tFileJava.exists())
 				tFileJava.delete();
-			}
-			Engine.getPlatform().getStorageUtils().write(tFileJava, javaCode.getBytes("UTF-8"), Engine.getPlatform().getStorageUtils().OpenOptionWrite, Engine.getPlatform().getStorageUtils().OpenOptionCreate);
+			Engine.getPlatform().getStorageUtils();
+			Engine.getPlatform().getStorageUtils();
+			Engine.getPlatform().getStorageUtils().write(tFileJava, javaCode.getBytes("UTF-8"), StorageUtils.OpenOptionWrite, StorageUtils.OpenOptionCreate);
 			final boolean compiled = Engine.getPlatform().compile(new String[] { "-nowarn", "-1.8", tFileJava.toString() }, new PrintWriter(System.out), new PrintWriter(System.err));
-			if (StaticVars.startupArguments.isUncached()) {
+			if (StaticVars.startupArguments.isUncached())
 				tFileJava.deleteOnExit();
-			} else {
+			else
 				tFileJava.delete();
-			}
 			if (compiled) {
 				tFileClass.deleteOnExit();
-				return loadClassRuleDirectly(javaClassNameAndPath, tDir);
-			} else {
+				return RulesManager.loadClassRuleDirectly(javaClassNameAndPath, tDir);
+			} else
 				throw new IOException("Can't build script file '" + scriptFile + "'");
-			}
-		} else {
+		} else
 			throw new IOException("Can't build script file '" + scriptFile + "', the header is missing or wrong.");
-		}
 	}
 
-	public static Rule loadClassRuleFromSourceFile(String scriptFile, File tDir) throws IOException, URISyntaxException,
-			InstantiationException, IllegalAccessException, ClassNotFoundException {
+	public static Rule loadClassRuleFromSourceFile(final String scriptFile, final File tDir) throws IOException,
+			URISyntaxException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		final InputStream resource = Engine.getPlatform().getStorageUtils().getResourceStream(scriptFile);
 		final String text = Engine.getPlatform().getStorageUtils().read(resource);
 		final String[] textArray = text.split("\\n", 6);
@@ -202,17 +188,16 @@ public class RulesManager {
 			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "RulesManager", "Rule java class name: " + javaClassName);
 			final String javaClassNameAndPath = new StringBuilder("it.cavallium.warppi.math.rules.").append(javaClassName).toString();
 			try {
-				return loadClassRuleDirectly(javaClassNameAndPath, tDir);
+				return RulesManager.loadClassRuleDirectly(javaClassNameAndPath, tDir);
 			} catch (final Exception ex) {
 				ex.printStackTrace();
 				return null;
 			}
-		} else {
+		} else
 			throw new IOException("Can't load script file '" + scriptFile + "', the header is missing or wrong.");
-		}
 	}
 
-	public static Rule loadClassRuleDirectly(String javaClassNameAndPath, File tDir) throws IOException,
+	public static Rule loadClassRuleDirectly(final String javaClassNameAndPath, final File tDir) throws IOException,
 			URISyntaxException, InstantiationException, IllegalAccessException, ClassNotFoundException {
 		final URLClassLoader cl = Engine.getPlatform().newURLClassLoader(new URL[] { tDir.toURI().toURL() });
 		final Class<?> aClass = cl.loadClass(javaClassNameAndPath);
@@ -224,12 +209,12 @@ public class RulesManager {
 		ObjectArrayList<Function> uselessResult = null;
 		boolean uselessVariable = false;
 		for (final RuleType val : RuleType.values()) {
-			final ObjectArrayList<Rule> ruleList = rules[val.ordinal()];
+			final ObjectArrayList<Rule> ruleList = RulesManager.rules[val.ordinal()];
 			for (final Rule rule : ruleList) {
 				String ruleName = "<null>";
 				try {
 					ruleName = rule.getRuleName();
-					final ObjectArrayList<Function> uselessResult2 = rule.execute(generateUselessExpression());
+					final ObjectArrayList<Function> uselessResult2 = rule.execute(RulesManager.generateUselessExpression());
 					uselessVariable = (uselessResult == null ? new ObjectArrayList<>() : uselessResult).equals(uselessResult2);
 					uselessResult = uselessResult2;
 				} catch (final Exception e) {
@@ -241,7 +226,7 @@ public class RulesManager {
 			}
 		}
 		try {
-			new MathSolver(generateUselessExpression()).solveAllSteps();
+			new MathSolver(RulesManager.generateUselessExpression()).solveAllSteps();
 		} catch (InterruptedException | Error e) {
 			e.printStackTrace();
 		}
@@ -254,8 +239,8 @@ public class RulesManager {
 		return expr;
 	}
 
-	public static void addRule(Rule rule) {
-		rules[rule.getRuleType().ordinal()].add(rule);
+	public static void addRule(final Rule rule) {
+		RulesManager.rules[rule.getRuleType().ordinal()].add(rule);
 		Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "RulesManager", rule.getRuleName(), "Loaded as " + rule.getRuleType() + " rule");
 	}
 }

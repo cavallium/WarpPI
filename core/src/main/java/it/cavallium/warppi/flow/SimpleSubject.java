@@ -10,23 +10,20 @@ public class SimpleSubject<T> extends Subject<T> {
 
 	@Override
 	public void onComplete() {
-		for (Subscriber<? super T> sub : this.subscribers) {
-			sub.onComplete();
-		} ;
+		for (final Subscriber<? super T> sub : subscribers)
+			sub.onComplete();;
 	}
 
 	@Override
-	public void onError(Throwable e) {
-		for (Subscriber<? super T> sub : this.subscribers) {
-			sub.onError(e);
-		} ;
+	public void onError(final Throwable e) {
+		for (final Subscriber<? super T> sub : subscribers)
+			sub.onError(e);;
 	}
 
 	@Override
-	public void onNext(T t) {
-		for (Subscriber<? super T> sub : this.subscribers) {
-			sub.onNext(t);
-		} ;
+	public void onNext(final T t) {
+		for (final Subscriber<? super T> sub : subscribers)
+			sub.onNext(t);;
 	}
 
 	@Override
@@ -60,6 +57,6 @@ public class SimpleSubject<T> extends Subject<T> {
 	}
 
 	@Override
-	public void onSubscribe(Disposable d) {}
+	public void onSubscribe(final Disposable d) {}
 
 }

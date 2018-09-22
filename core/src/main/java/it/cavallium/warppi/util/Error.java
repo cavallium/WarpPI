@@ -3,16 +3,16 @@ package it.cavallium.warppi.util;
 public class Error extends java.lang.Throwable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -1014947815755694651L;
 
-	public Error(Errors errorID) {
+	public Error(final Errors errorID) {
 		super(errorID.toString());
 		id = errorID;
 	}
 
-	public Error(Errors errorID, String errorMessage) {
+	public Error(final Errors errorID, final String errorMessage) {
 		super(errorID.toString() + ": " + errorMessage);
 		id = errorID;
 	}

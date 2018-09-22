@@ -42,26 +42,26 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 		this(new InputContext());
 	}
 
-	public InputContainer(InputContext ic) {
+	public InputContainer(final InputContext ic) {
 		this(ic, false);
 	}
 
-	public InputContainer(InputContext ic, boolean small) {
+	public InputContainer(final InputContext ic, final boolean small) {
 		this(ic, small, 0, 0);
 	}
 
-	public InputContainer(InputContext ic, boolean small, int minWidth, int minHeight) {
+	public InputContainer(final InputContext ic, final boolean small, final int minWidth, final int minHeight) {
 		inputContext = ic;
 		caret = new Caret(CaretState.VISIBLE_ON, 0);
 		root = new BlockContainer(small, false);
 	}
 
-	public void typeChar(char c) {
+	public void typeChar(final char c) {
 		final Block b = parseChar(c);
 		typeBlock(b);
 	}
 
-	public void typeBlock(Block b) {
+	public void typeBlock(final Block b) {
 		if (b != null) {
 			caret.resetRemaining();
 			if (root.putBlock(caret, b)) {
@@ -75,15 +75,14 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 		closeExtra();
 	}
 
-	public void typeChar(String c) {
+	public void typeChar(final String c) {
 		typeChar(c.charAt(0));
 	}
 
 	public void del() {
 		caret.resetRemaining();
-		if (root.delBlock(caret)) {
+		if (root.delBlock(caret))
 			root.recomputeDimensions();
-		}
 		if (caret.getPosition() > 0) {
 			caret.setPosition(caret.getPosition() - 1);
 			maxPosition = root.computeCaretMaxBound();
@@ -101,11 +100,10 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 
 	public void moveLeft() {
 		final int curPos = caret.getPosition();
-		if (curPos > 0) {
+		if (curPos > 0)
 			caret.setPosition(curPos - 1);
-		} else {
+		else
 			caret.setPosition(maxPosition - 1);
-		}
 		caret.turnOn();
 		caretTime = 0;
 		closeExtra();
@@ -113,11 +111,10 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 
 	public void moveRight() {
 		final int curPos = caret.getPosition();
-		if (curPos + 1 < maxPosition) {
+		if (curPos + 1 < maxPosition)
 			caret.setPosition(curPos + 1);
-		} else {
+		else
 			caret.setPosition(0);
-		}
 		caret.turnOn();
 		caretTime = 0;
 		closeExtra();
@@ -144,31 +141,29 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 	}
 
 	/**
-	 * 
+	 *
 	 * @param delta
 	 *            Time, in seconds
 	 * @return true if something changed
 	 */
-	public boolean beforeRender(float delta) {
+	public boolean beforeRender(final float delta) {
 		boolean somethingChanged = false;
 		caretTime += delta;
-		if (caretTime >= CARET_DURATION) {
-			while (caretTime >= CARET_DURATION) {
-				caretTime -= CARET_DURATION;
+		if (caretTime >= InputContainer.CARET_DURATION)
+			while (caretTime >= InputContainer.CARET_DURATION) {
+				caretTime -= InputContainer.CARET_DURATION;
 				caret.flipState();
 				somethingChanged = true;
 			}
-		}
 
-		if (extra != null) {
+		if (extra != null)
 			somethingChanged = somethingChanged | extra.beforeRender(delta, caret);
-		}
 
 		return somethingChanged;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param ge
 	 *            Graphic Engine class.
 	 * @param r
@@ -178,12 +173,11 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 	 * @param y
 	 *            Position relative to the window.
 	 */
-	public void draw(GraphicEngine ge, Renderer r, int x, int y) {
+	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y) {
 		caret.resetRemaining();
 		root.draw(ge, r, x, y, caret);
-		if (extra != null) {
+		if (extra != null)
 			extra.draw(ge, r, caret);
-		}
 	}
 
 	public void clear() {
@@ -201,16 +195,15 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 		return maxPosition;
 	}
 
-	public void setCaretPosition(int pos) {
-		if (pos > 0 && pos < maxPosition) {
+	public void setCaretPosition(final int pos) {
+		if (pos > 0 && pos < maxPosition)
 			caret.setPosition(pos);
-		}
 		caret.turnOn();
 		caretTime = 0;
 		closeExtra();
 	}
 
-	public void setParsed(boolean parsed) {
+	public void setParsed(final boolean parsed) {
 		this.parsed = parsed;
 	}
 
@@ -220,7 +213,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 
 	/**
 	 * <strong>WARNING! DO NOT MODIFY THIS ARRAY!!!</strong>
-	 * 
+	 *
 	 * @return an arraylist representing the content
 	 */
 	public ObjectArrayList<Block> getContent() {
@@ -232,9 +225,8 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 			final BlockReference<?> selectedBlock = getSelectedBlock();
 			if (selectedBlock != null) {
 				extra = selectedBlock.get().getExtraMenu();
-				if (extra != null) {
+				if (extra != null)
 					extra.open();
-				}
 			}
 		} else {
 			extra.close();
@@ -257,7 +249,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 		return extra;
 	}
 
-	public Function toFunction(MathContext context) throws Error {
+	public Function toFunction(final MathContext context) throws Error {
 		return root.toFunction(context);
 	}
 

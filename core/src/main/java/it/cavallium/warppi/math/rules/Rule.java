@@ -6,29 +6,29 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
  * Rule interface
- * 
+ *
  * @author Andrea Cavalli
  *
  */
 public interface Rule {
 	/**
 	 * Get rule name
-	 * 
+	 *
 	 * @return
 	 */
-	public default String getRuleName() {
+	default String getRuleName() {
 		return "UnnamedRule1";
 	}
 
 	/**
 	 * Get rule type
-	 * 
+	 *
 	 * @return
 	 */
-	public RuleType getRuleType();
+	RuleType getRuleType();
 
 	/**
-	 * 
+	 *
 	 * @param func
 	 * @return
 	 *         <ul>
@@ -39,5 +39,5 @@ public interface Rule {
 	 *         </ul>
 	 * @throws Error
 	 */
-	public ObjectArrayList<Function> execute(Function func) throws Error, InterruptedException;
+	ObjectArrayList<Function> execute(Function func) throws Error, InterruptedException;
 }

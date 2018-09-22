@@ -18,7 +18,7 @@ import javax.swing.JButton;
 
 public class SwingAdvancedButton extends JButton {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -8445811316606975284L;
 	public Image backgroundImage;
@@ -28,81 +28,77 @@ public class SwingAdvancedButton extends JButton {
 	public int state;
 
 	public SwingAdvancedButton() {
-		this.setOpaque(false);
-		this.backgroundImage = null;
-		this.backgroundSize = new Dimension(0, 0);
+		setOpaque(false);
+		backgroundImage = null;
+		backgroundSize = new Dimension(0, 0);
 	}
 
 	public SwingAdvancedButton(final BufferedImage backgroundImage) throws IOException {
-		this.setOpaque(false);
+		setOpaque(false);
 		this.backgroundImage = backgroundImage;
-		if (backgroundImage != null) {
-			this.backgroundSize = new Dimension(backgroundImage.getWidth(), backgroundImage.getHeight());
-		}
-		this.setMinimumSize(this.backgroundSize);
-		this.setMaximumSize(this.backgroundSize);
-		this.setPreferredSize(this.backgroundSize);
-		this.setSize(this.backgroundSize);
+		if (backgroundImage != null)
+			backgroundSize = new Dimension(backgroundImage.getWidth(), backgroundImage.getHeight());
+		setMinimumSize(backgroundSize);
+		setMaximumSize(backgroundSize);
+		setPreferredSize(backgroundSize);
+		this.setSize(backgroundSize);
 	}
 
 	public SwingAdvancedButton(final BufferedImage backgroundImage, final Dimension backgroundSize) throws IOException {
-		this.setOpaque(false);
+		setOpaque(false);
 		this.backgroundImage = backgroundImage;
 		this.backgroundSize = backgroundSize;
-		this.setMinimumSize(this.backgroundSize);
-		this.setMaximumSize(this.backgroundSize);
-		this.setPreferredSize(this.backgroundSize);
+		setMinimumSize(this.backgroundSize);
+		setMaximumSize(this.backgroundSize);
+		setPreferredSize(this.backgroundSize);
 		this.setSize(this.backgroundSize);
 	}
 
+	@Override
 	public void paintComponent(final Graphics g) {
 		if (drawColor) {
 			final Graphics2D g2d = (Graphics2D) g.create();
 			final AlphaComposite acomp = AlphaComposite.getInstance(3, 1.0f);
 			g2d.setComposite(acomp);
 			g2d.setColor(getBackground());
-			g2d.fillRect(0, 0, this.getWidth(), this.getHeight());
+			g2d.fillRect(0, 0, getWidth(), getHeight());
 			g2d.dispose();
 		}
-		if (this.backgroundImage != null) {
+		if (backgroundImage != null) {
 			final Graphics2D g2d = (Graphics2D) g.create();
 			final AlphaComposite acomp = AlphaComposite.getInstance(3, 1.0f);
 			g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
 			g2d.setComposite(acomp);
-			g2d.drawImage(this.backgroundImage, 0, (int) this.backgroundSize.getHeight() * -state, (int) this.backgroundSize.getWidth(), (int) (this.backgroundSize.getHeight() * 3), null);
+			g2d.drawImage(backgroundImage, 0, (int) backgroundSize.getHeight() * -state, (int) backgroundSize.getWidth(), (int) (backgroundSize.getHeight() * 3), null);
 			g2d.setFont(g.getFont());
 			g2d.setColor(super.getForeground());
-			g2d.drawString(this.getText(), super.getWidth() / 2 - g.getFontMetrics().stringWidth(this.getText()) / 2, super.getHeight() / 2 + g.getFontMetrics().getHeight() / 4);
+			g2d.drawString(getText(), super.getWidth() / 2 - g.getFontMetrics().stringWidth(getText()) / 2, super.getHeight() / 2 + g.getFontMetrics().getHeight() / 4);
 			g2d.dispose();
 		}
-		if (drawDefaultComponent) {
+		if (drawDefaultComponent)
 			super.paintComponent(g);
-		}
 		super.setBorderPainted(drawDefaultComponent);
 	}
-	
+
 	@Override
 	public boolean isEnabled() {
-		if (canclick == false) {
+		if (canclick == false)
 			return false;
-		}
 		return super.isEnabled();
 	}
 
 	@Override
-    public void fireActionPerformed(ActionEvent paramActionEvent)
-    {
-		if (this.getCanClick()) {
+	public void fireActionPerformed(final ActionEvent paramActionEvent) {
+		if (getCanClick())
 			super.fireActionPerformed(paramActionEvent);
-		}
-    }
-	
-	public void setCanClick(boolean can) {
+	}
+
+	public void setCanClick(final boolean can) {
 		canclick = can;
 	}
-	
+
 	private boolean canclick = true;
-	
+
 	public boolean getCanClick() {
 		return canclick;
 	}

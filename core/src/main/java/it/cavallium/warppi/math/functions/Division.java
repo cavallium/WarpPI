@@ -11,12 +11,12 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class Division extends FunctionOperator {
 
-	public Division(MathContext root, Function value1, Function value2) {
+	public Division(final MathContext root, final Function value1, final Function value2) {
 		super(root, value1, value2);
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (o instanceof Division) {
 			final FunctionOperator f = (FunctionOperator) o;
 			return getParameter1().equals(f.getParameter1()) && getParameter2().equals(f.getParameter2());
@@ -35,19 +35,17 @@ public class Division extends FunctionOperator {
 	}
 
 	@Override
-	public ObjectArrayList<Block> toBlock(MathContext context) throws Error {
+	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
 		final ObjectArrayList<Block> result = new ObjectArrayList<>();
 		final ObjectArrayList<Block> sub1 = getParameter1().toBlock(context);
 		final ObjectArrayList<Block> sub2 = getParameter2().toBlock(context);
 		final BlockDivision bd = new BlockDivision();
 		final BlockContainer uc = bd.getUpperContainer();
 		final BlockContainer lc = bd.getLowerContainer();
-		for (final Block b : sub1) {
+		for (final Block b : sub1)
 			uc.appendBlockUnsafe(b);
-		}
-		for (final Block b : sub2) {
+		for (final Block b : sub2)
 			lc.appendBlockUnsafe(b);
-		}
 		uc.recomputeDimensions();
 		lc.recomputeDimensions();
 		bd.recomputeDimensions();

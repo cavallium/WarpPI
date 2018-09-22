@@ -7,16 +7,16 @@ public class SerialToParallel {
 	private final int SCK; //Shift register clock pin
 	private final int SER; //Serial data input
 
-	public SerialToParallel(int RCK_pin, int SCK_pin, int SER_pin) {
+	public SerialToParallel(final int RCK_pin, final int SCK_pin, final int SER_pin) {
 		RCK = RCK_pin;
 		SCK = SCK_pin;
 		SER = SER_pin;
 	}
 
-	public void write(boolean[] data) {
-		if (data.length != 8) {
+	public void write(final boolean[] data) {
+		if (data.length != 8)
 			return;
-		} else {
+		else {
 			Engine.getPlatform().getGpio().digitalWrite(RCK, Engine.getPlatform().getGpio().valueLow());
 
 			for (int i = 7; i >= 0; i--) {

@@ -17,7 +17,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Expand rule
  * a(b+c)=ab+ac
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -40,22 +40,21 @@ public class ExpandRule2 implements Rule {
 	     - An ObjectArrayList<Function> if it did something
 	*/
 	@Override
-	public ObjectArrayList<Function> execute(Function f) throws Error {
+	public ObjectArrayList<Function> execute(final Function f) throws Error {
 		boolean isExecutable = false;
 		if (f instanceof Multiplication) {
 			final Multiplication fnc = (Multiplication) f;
-			if (fnc.getParameter1() instanceof Sum) {
+			if (fnc.getParameter1() instanceof Sum)
 				isExecutable = true;
-			} else if (fnc.getParameter2() instanceof Sum) {
+			else if (fnc.getParameter2() instanceof Sum)
 				isExecutable = true;
-			} else {
+			else
 				isExecutable = false;
-			}
 		}
 		if (isExecutable) {
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			MathContext root = f.getMathContext();
-			
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final MathContext root = f.getMathContext();
+
 			final Multiplication fnc = (Multiplication) f;
 			final Sum sum;
 			final Function a;
@@ -65,9 +64,8 @@ public class ExpandRule2 implements Rule {
 			} else if (fnc.getParameter2() instanceof Sum) {
 				sum = (Sum) fnc.getParameter2();
 				a = fnc.getParameter1();
-			} else {
+			} else
 				throw new Error(Errors.UNBALANCED_STACK);
-			}
 
 			final Function b = sum.getParameter1();
 			final Function c = sum.getParameter2();
@@ -75,9 +73,8 @@ public class ExpandRule2 implements Rule {
 			final Multiplication ac = new Multiplication(root, a, c);
 			result.add(new Sum(root, ab, ac));
 			return result;
-		} else {
+		} else
 			return null;
-		}
-		
+
 	}
 }

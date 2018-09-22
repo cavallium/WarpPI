@@ -1,9 +1,9 @@
 package it.cavallium.warppi.gui;
 
 public interface HardwareDisplay {
-	public void initialize();
+	void initialize();
 
-	public void shutdown();
+	void shutdown();
 
-	public void setBrightness(double value);
+	void setBrightness(double value);
 }

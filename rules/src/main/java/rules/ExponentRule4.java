@@ -17,7 +17,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Exponent rule
  * (a*b)^n=a^n*b^n
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -41,30 +41,28 @@ public class ExponentRule4 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
 		if (f instanceof Power) {
-			FunctionOperator fnc = (FunctionOperator) f;
-			if (fnc.getParameter1() instanceof Multiplication && fnc.getParameter2() instanceof Number) {
+			final FunctionOperator fnc = (FunctionOperator) f;
+			if (fnc.getParameter1() instanceof Multiplication && fnc.getParameter2() instanceof Number)
 				isExecutable = true;
-			}
 		}
-	
+
 		if (isExecutable) {
-			MathContext root = f.getMathContext();
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			FunctionOperator fnc = (FunctionOperator) f;
-			FunctionOperator mult = (FunctionOperator) fnc.getParameter1();
-			Function a = mult.getParameter1();
-			Function b = mult.getParameter2();
-			Function n = fnc.getParameter2();
-			Function p1 = new Power(root, a, n);
-			Function p2 = new Power(root, b, n);
-			Function retMult = new Multiplication(root, p1, p2);
+			final MathContext root = f.getMathContext();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final FunctionOperator fnc = (FunctionOperator) f;
+			final FunctionOperator mult = (FunctionOperator) fnc.getParameter1();
+			final Function a = mult.getParameter1();
+			final Function b = mult.getParameter2();
+			final Function n = fnc.getParameter2();
+			final Function p1 = new Power(root, a, n);
+			final Function p2 = new Power(root, b, n);
+			final Function retMult = new Multiplication(root, p1, p2);
 			result.add(retMult);
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 }

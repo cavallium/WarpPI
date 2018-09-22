@@ -9,7 +9,7 @@ public class TouchPoint {
 	private final float y;
 	private final long id;
 
-	public TouchPoint(long id, float x, float y, float radiusX, float radiusY, float force, float rotationAngle) {
+	public TouchPoint(final long id, final float x, final float y, final float radiusX, final float radiusY, final float force, final float rotationAngle) {
 		super();
 		this.id = id;
 		this.radiusX = radiusX;
@@ -53,7 +53,7 @@ public class TouchPoint {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + Float.floatToIntBits(force);
-		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + (int) (id ^ id >>> 32);
 		result = prime * result + Float.floatToIntBits(radiusX);
 		result = prime * result + Float.floatToIntBits(radiusY);
 		result = prime * result + Float.floatToIntBits(rotationAngle);
@@ -63,14 +63,14 @@ public class TouchPoint {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj)
 			return true;
 		if (obj == null)
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		TouchPoint other = (TouchPoint) obj;
+		final TouchPoint other = (TouchPoint) obj;
 		if (Float.floatToIntBits(force) != Float.floatToIntBits(other.force))
 			return false;
 		if (id != other.id)

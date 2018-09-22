@@ -34,7 +34,7 @@ public class TeaVMPlatform implements Platform {
 		el.put("HTML5 engine", new HtmlEngine());
 		settings = new TeaVMSettings();
 	}
-	
+
 	@Override
 	public ConsoleUtils getConsoleUtils() {
 		return cu;
@@ -61,25 +61,22 @@ public class TeaVMPlatform implements Platform {
 	}
 
 	@Override
-	public void setThreadName(Thread t, String name) {
-	}
+	public void setThreadName(final Thread t, final String name) {}
 
 	@Override
-	public void setThreadDaemon(Thread t) {
-	}
+	public void setThreadDaemon(final Thread t) {}
 
 	@Override
-	public void setThreadDaemon(Thread t, boolean value) {
-	}
+	public void setThreadDaemon(final Thread t, final boolean value) {}
 
 	@Override
-	public void exit(int value) {
+	public void exit(final int value) {
 		System.err.println("====================PROGRAM END====================");
 	}
 
 	@Override
 	public void gc() {
-		
+
 	}
 
 	@Override
@@ -91,21 +88,21 @@ public class TeaVMPlatform implements Platform {
 	public String getOsName() {
 		return on;
 	}
-	
+
 	private boolean shift, alpha;
-	
+
 	@Override
-	public void alphaChanged(boolean alpha) {
+	public void alphaChanged(final boolean alpha) {
 		this.alpha = alpha;
-		HTMLDocument doc = Window.current().getDocument();
-		doc.getBody().setClassName((shift ? "shift " : "") + (alpha ? "alpha": ""));
+		final HTMLDocument doc = Window.current().getDocument();
+		doc.getBody().setClassName((shift ? "shift " : "") + (alpha ? "alpha" : ""));
 	}
 
 	@Override
-	public void shiftChanged(boolean shift) {
+	public void shiftChanged(final boolean shift) {
 		this.shift = shift;
-		HTMLDocument doc = Window.current().getDocument();
-		doc.getBody().setClassName((shift ? "shift " : "") + (alpha ? "alpha": ""));
+		final HTMLDocument doc = Window.current().getDocument();
+		doc.getBody().setClassName((shift ? "shift " : "") + (alpha ? "alpha" : ""));
 	}
 
 	@Override
@@ -114,12 +111,12 @@ public class TeaVMPlatform implements Platform {
 	}
 
 	@Override
-	public Semaphore newSemaphore(int i) {
+	public Semaphore newSemaphore(final int i) {
 		return new TeaVMSemaphore(i);
 	}
 
 	@Override
-	public URLClassLoader newURLClassLoader(URL[] urls) {
+	public URLClassLoader newURLClassLoader(final URL[] urls) {
 		return new TeaVMURLClassLoader(urls);
 	}
 
@@ -129,17 +126,17 @@ public class TeaVMPlatform implements Platform {
 	}
 
 	@Override
-	public GraphicEngine getEngine(String string) throws NullPointerException {
+	public GraphicEngine getEngine(final String string) throws NullPointerException {
 		return el.get(string);
 	}
 
 	@Override
-	public void throwNewExceptionInInitializerError(String text) {
+	public void throwNewExceptionInInitializerError(final String text) {
 		throw new NullPointerException();
 	}
 
 	@Override
-	public String[] stacktraceToString(Error e) {
+	public String[] stacktraceToString(final Error e) {
 		return e.getMessage().toUpperCase().replace("\r", "").split("\n");
 	}
 
@@ -197,17 +194,17 @@ public class TeaVMPlatform implements Platform {
 	}
 
 	@Override
-	public void zip(String targetPath, String destinationFilePath, String password) {
+	public void zip(final String targetPath, final String destinationFilePath, final String password) {
 		throw new java.lang.UnsupportedOperationException("Not implemented.");
 	}
 
 	@Override
-	public void unzip(String targetZipFilePath, String destinationFolderPath, String password) {
+	public void unzip(final String targetZipFilePath, final String destinationFolderPath, final String password) {
 		throw new java.lang.UnsupportedOperationException("Not implemented.");
 	}
 
 	@Override
-	public boolean compile(String[] command, PrintWriter printWriter, PrintWriter errors) {
+	public boolean compile(final String[] command, final PrintWriter printWriter, final PrintWriter errors) {
 		throw new java.lang.UnsupportedOperationException("Not implemented.");
 	}
 

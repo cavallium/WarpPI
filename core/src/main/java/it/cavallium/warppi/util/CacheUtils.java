@@ -11,29 +11,28 @@ public class CacheUtils {
 	private static final Map<String, Long> time = Collections.synchronizedMap(new HashMap<>());
 
 	@SuppressWarnings("unchecked")
-	public static <T> T get(String entryName, long expireDelta, Supplier<T> function) {
-		refreshEntry(entryName);
-		synchronized (cache) {
-			if (cache.containsKey(entryName)) {
-				return (T) cache.get(entryName);
-			} else {
-				time.put(entryName, System.currentTimeMillis() + expireDelta);
-				T result = function.get();
-				cache.put(entryName, result);
+	public static <T> T get(final String entryName, final long expireDelta, final Supplier<T> function) {
+		CacheUtils.refreshEntry(entryName);
+		synchronized (CacheUtils.cache) {
+			if (CacheUtils.cache.containsKey(entryName))
+				return (T) CacheUtils.cache.get(entryName);
+			else {
+				CacheUtils.time.put(entryName, System.currentTimeMillis() + expireDelta);
+				final T result = function.get();
+				CacheUtils.cache.put(entryName, result);
 				return result;
 			}
 		}
 	}
 
-	private static void refreshEntry(String entryName) {
-		synchronized (time) {
-			synchronized (cache) {
-				if (time.containsKey(entryName)) {
-					if (time.get(entryName) <= System.currentTimeMillis()) {
-						time.remove(entryName);
-						cache.remove(entryName);
+	private static void refreshEntry(final String entryName) {
+		synchronized (CacheUtils.time) {
+			synchronized (CacheUtils.cache) {
+				if (CacheUtils.time.containsKey(entryName))
+					if (CacheUtils.time.get(entryName) <= System.currentTimeMillis()) {
+						CacheUtils.time.remove(entryName);
+						CacheUtils.cache.remove(entryName);
 					}
-				}
 			}
 		}
 	}

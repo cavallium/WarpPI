@@ -26,9 +26,9 @@ public interface Consumer<T> {
 	 * @throws NullPointerException
 	 *             if {@code after} is null
 	 */
-	default Consumer<T> andThen(Consumer<? super T> after) {
+	default Consumer<T> andThen(final Consumer<? super T> after) {
 		Objects.requireNonNull(after);
-		return (T t) -> {
+		return (final T t) -> {
 			accept(t);
 			after.accept(t);
 		};

@@ -25,7 +25,7 @@ public class BlockDivision extends Block {
 	}
 
 	@Override
-	public void draw(GraphicEngine ge, Renderer r, int x, int y, Caret caret) {
+	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y, final Caret caret) {
 		BlockContainer.getDefaultFont(small).use(ge);
 		r.glColor(BlockContainer.getDefaultColor());
 		containerUp.draw(ge, r, x + 1 + paddingLeftUpper, y, caret);
@@ -35,34 +35,31 @@ public class BlockDivision extends Block {
 	}
 
 	@Override
-	public boolean putBlock(Caret caret, Block newBlock) {
+	public boolean putBlock(final Caret caret, final Block newBlock) {
 		boolean added = false;
 		added = added | containerUp.putBlock(caret, newBlock);
 		added = added | containerDown.putBlock(caret, newBlock);
-		if (added) {
+		if (added)
 			recomputeDimensions();
-		}
 		return added;
 	}
 
 	@Override
-	public boolean delBlock(Caret caret) {
+	public boolean delBlock(final Caret caret) {
 		boolean removed = false;
 		removed = removed | containerUp.delBlock(caret);
 		removed = removed | containerDown.delBlock(caret);
-		if (removed) {
+		if (removed)
 			recomputeDimensions();
-		}
 		return removed;
 	}
 
 	@Override
-	public BlockReference<?> getBlock(Caret caret) {
+	public BlockReference<?> getBlock(final Caret caret) {
 		BlockReference<?> bl = null;
 		bl = containerUp.getBlock(caret);
-		if (bl != null) {
+		if (bl != null)
 			return bl;
-		}
 		bl = containerDown.getBlock(caret);
 		return bl;
 	}
@@ -92,7 +89,7 @@ public class BlockDivision extends Block {
 	}
 
 	@Override
-	public void setSmall(boolean small) {
+	public void setSmall(final boolean small) {
 		this.small = small;
 		containerUp.setSmall(small);
 		containerDown.setSmall(small);
@@ -113,7 +110,7 @@ public class BlockDivision extends Block {
 	}
 
 	@Override
-	public Feature toFeature(MathContext context) throws Error {
+	public Feature toFeature(final MathContext context) throws Error {
 		final Function upper = getUpperContainer().toFunction(context);
 		final Function lower = getLowerContainer().toFunction(context);
 		return new FeatureDivision(upper, lower);

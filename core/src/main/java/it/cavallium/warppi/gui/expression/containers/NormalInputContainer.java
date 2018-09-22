@@ -28,20 +28,20 @@ public class NormalInputContainer extends InputContainer {
 		super();
 	}
 
-	public NormalInputContainer(InputContext ic) {
+	public NormalInputContainer(final InputContext ic) {
 		super(ic);
 	}
 
-	public NormalInputContainer(InputContext ic, boolean small) {
+	public NormalInputContainer(final InputContext ic, final boolean small) {
 		super(ic, small);
 	}
 
-	public NormalInputContainer(InputContext ic, boolean small, int minWidth, int minHeight) {
+	public NormalInputContainer(final InputContext ic, final boolean small, final int minWidth, final int minHeight) {
 		super(ic, small, minWidth, minHeight);
 	}
 
 	@Override
-	public Block parseChar(char c) {
+	public Block parseChar(final char c) {
 		switch (c) {
 			case MathematicalSymbols.DIVISION:
 				return new BlockDivision();
@@ -81,17 +81,15 @@ public class NormalInputContainer extends InputContainer {
 			case MathematicalSymbols.EULER_NUMBER:
 				return new BlockVariable(inputContext, c, true);
 			default:
-				for (final char v : MathematicalSymbols.variables) {
-					if (c == v) {
+				for (final char v : MathematicalSymbols.variables)
+					if (c == v)
 						return new BlockVariable(inputContext, c);
-					}
-				}
 				return new BlockChar(c);
 		}
 	}
 
 	@Override
-	public void typeChar(char c) {
+	public void typeChar(final char c) {
 		super.typeChar(c);
 		switch (c) {
 			case MathematicalSymbols.PARENTHESIS_CLOSE:
@@ -106,18 +104,15 @@ public class NormalInputContainer extends InputContainer {
 				int before = 0;
 				while (true) {
 					currentBlock = currentBlock.getPreviousBlock();
-					if (currentBlock == null) {
+					if (currentBlock == null)
 						break;
-					}
 					final Block b = currentBlock.get();
 					if (b instanceof BlockNumericChar || b instanceof BlockVariable) {
-						if (!groupedBefore) {
+						if (!groupedBefore)
 							groupedBefore = true;
-						}
 						before++;
-					} else {
+					} else
 						break;
-					}
 				}
 				if (groupedBefore) {
 					moveLeft();
@@ -129,9 +124,8 @@ public class NormalInputContainer extends InputContainer {
 						moveLeft();
 						moveLeft();
 					}
-					for (int i = 0; i < before + 1; i++) {
+					for (int i = 0; i < before + 1; i++)
 						moveRight();
-					}
 					moveRight();// Move to the divisor
 				}
 

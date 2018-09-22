@@ -18,9 +18,9 @@ public class CacheFile {
 	private FileInputStream lastFIS;
 
 	public CacheFile() {
-		do {
+		do
 			path = UUID.randomUUID().toString() + ".ser";
-		} while (new File(path).exists());
+		while (new File(path).exists());
 		try {
 			File.createTempFile(Engine.getPlatform().getSettings().getCalculatorNameLowercase(), "");
 		} catch (final IOException e) {
@@ -29,28 +29,26 @@ public class CacheFile {
 	}
 
 	public ObjectOutputStream getObjectOutputStram() {
-		if (lastOOS == null) {
+		if (lastOOS == null)
 			try {
 				return new ObjectOutputStream(new FileOutputStream(path));
 			} catch (final IOException e) {
 				e.printStackTrace();
 				return lastOOS;
 			}
-		} else {
+		else
 			return lastOOS;
-		}
 	}
 
 	public ObjectInputStream getObjectInputStram() {
-		if (lastOIS == null) {
+		if (lastOIS == null)
 			try {
 				return new ObjectInputStream(new FileInputStream(path));
 			} catch (final IOException e) {
 				return lastOIS;
 			}
-		} else {
+		else
 			return lastOIS;
-		}
 	}
 
 	public void closeStreams() {

@@ -16,7 +16,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * SumSumbraction
  * a±b = c, d
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -39,12 +39,12 @@ public class SumSubtractionRule implements Rule {
 	     - An ObjectArrayList<Function> if it did something
 	*/
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		if (f instanceof SumSubtraction) {
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			Function variable1 = ((FunctionOperator) f).getParameter1();
-			Function variable2 = ((FunctionOperator) f).getParameter2();
-			MathContext mathContext = f.getMathContext();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final Function variable1 = ((FunctionOperator) f).getParameter1();
+			final Function variable2 = ((FunctionOperator) f).getParameter2();
+			final MathContext mathContext = f.getMathContext();
 			if (variable1 instanceof Number && variable2 instanceof Number) {
 				//a±b = c, d
 				result.add(((Number) variable1).add((Number) variable2));

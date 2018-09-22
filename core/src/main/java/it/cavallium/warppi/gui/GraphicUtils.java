@@ -1,20 +1,20 @@
 package it.cavallium.warppi.gui;
 
 public class GraphicUtils {
-	public static final float sin(float rad) {
-		return sin[(int) (rad * radToIndex) & SIN_MASK];
+	public static final float sin(final float rad) {
+		return GraphicUtils.sin[(int) (rad * GraphicUtils.radToIndex) & GraphicUtils.SIN_MASK];
 	}
 
-	public static final float cos(float rad) {
-		return cos[(int) (rad * radToIndex) & SIN_MASK];
+	public static final float cos(final float rad) {
+		return GraphicUtils.cos[(int) (rad * GraphicUtils.radToIndex) & GraphicUtils.SIN_MASK];
 	}
 
-	public static final float sinDeg(float deg) {
-		return sin[(int) (deg * degToIndex) & SIN_MASK];
+	public static final float sinDeg(final float deg) {
+		return GraphicUtils.sin[(int) (deg * GraphicUtils.degToIndex) & GraphicUtils.SIN_MASK];
 	}
 
-	public static final float cosDeg(float deg) {
-		return cos[(int) (deg * degToIndex) & SIN_MASK];
+	public static final float cosDeg(final float deg) {
+		return GraphicUtils.cos[(int) (deg * GraphicUtils.degToIndex) & GraphicUtils.SIN_MASK];
 	}
 
 	@SuppressWarnings("unused")
@@ -36,26 +36,26 @@ public class GraphicUtils {
 		DEG = 180.0f / (float) Math.PI;
 
 		SIN_BITS = 8;
-		SIN_MASK = ~(-1 << SIN_BITS);
-		SIN_COUNT = SIN_MASK + 1;
+		SIN_MASK = ~(-1 << GraphicUtils.SIN_BITS);
+		SIN_COUNT = GraphicUtils.SIN_MASK + 1;
 
 		radFull = (float) (Math.PI * 2.0);
-		degFull = (float) (360.0);
-		radToIndex = SIN_COUNT / radFull;
-		degToIndex = SIN_COUNT / degFull;
+		degFull = (float) 360.0;
+		radToIndex = GraphicUtils.SIN_COUNT / GraphicUtils.radFull;
+		degToIndex = GraphicUtils.SIN_COUNT / GraphicUtils.degFull;
 
-		sin = new float[SIN_COUNT];
-		cos = new float[SIN_COUNT];
+		sin = new float[GraphicUtils.SIN_COUNT];
+		cos = new float[GraphicUtils.SIN_COUNT];
 
-		for (int i = 0; i < SIN_COUNT; i++) {
-			sin[i] = (float) Math.sin((i + 0.5f) / SIN_COUNT * radFull);
-			cos[i] = (float) Math.cos((i + 0.5f) / SIN_COUNT * radFull);
+		for (int i = 0; i < GraphicUtils.SIN_COUNT; i++) {
+			GraphicUtils.sin[i] = (float) Math.sin((i + 0.5f) / GraphicUtils.SIN_COUNT * GraphicUtils.radFull);
+			GraphicUtils.cos[i] = (float) Math.cos((i + 0.5f) / GraphicUtils.SIN_COUNT * GraphicUtils.radFull);
 		}
 
 		// Four cardinal directions (credits: Nate)
 		for (int i = 0; i < 360; i += 90) {
-			sin[(int) (i * degToIndex) & SIN_MASK] = (float) Math.sin(i * Math.PI / 180.0);
-			cos[(int) (i * degToIndex) & SIN_MASK] = (float) Math.cos(i * Math.PI / 180.0);
+			GraphicUtils.sin[(int) (i * GraphicUtils.degToIndex) & GraphicUtils.SIN_MASK] = (float) Math.sin(i * Math.PI / 180.0);
+			GraphicUtils.cos[(int) (i * GraphicUtils.degToIndex) & GraphicUtils.SIN_MASK] = (float) Math.cos(i * Math.PI / 180.0);
 		}
 	}
 }

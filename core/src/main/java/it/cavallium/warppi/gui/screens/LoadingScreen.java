@@ -32,7 +32,7 @@ public class LoadingScreen extends Screen {
 	}
 
 	@Override
-	public void beforeRender(float dt) {
+	public void beforeRender(final float dt) {
 		loadingTextTranslation = GraphicUtils.sinDeg(endLoading * 90f) * 10f;
 
 		endLoading += dt;
@@ -60,9 +60,8 @@ public class LoadingScreen extends Screen {
 		if (mustRefresh) {
 			mustRefresh = false;
 			return true;
-		} else {
+		} else
 			return false;
-		}
 	}
 
 }

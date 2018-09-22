@@ -6,6 +6,6 @@ import it.cavallium.warppi.util.Error;
 
 public abstract interface Feature {
 
-	public Function toFunction(MathContext context) throws Error;
+	Function toFunction(MathContext context) throws Error;
 
 }

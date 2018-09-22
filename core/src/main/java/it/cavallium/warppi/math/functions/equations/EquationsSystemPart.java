@@ -8,12 +8,12 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class EquationsSystemPart extends FunctionSingle {
 
-	public EquationsSystemPart(MathContext root, Equation equazione) {
+	public EquationsSystemPart(final MathContext root, final Equation equazione) {
 		super(root, equazione);
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -24,7 +24,7 @@ public class EquationsSystemPart extends FunctionSingle {
 	}
 
 	@Override
-	public ObjectArrayList<Block> toBlock(MathContext context) throws Error {
+	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
 		// TODO Auto-generated method stub
 		return null;
 	}

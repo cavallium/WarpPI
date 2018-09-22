@@ -11,7 +11,7 @@ public class BehaviorSubject<T> extends Subject<T> {
 		lastValueSet = false;
 	}
 
-	protected BehaviorSubject(T initialValue) {
+	protected BehaviorSubject(final T initialValue) {
 		super();
 		lastValue = initialValue;
 		lastValueSet = true;
@@ -21,31 +21,28 @@ public class BehaviorSubject<T> extends Subject<T> {
 		return new BehaviorSubject<>();
 	}
 
-	public final static <T> BehaviorSubject<T> create(T initialValue) {
-		return new BehaviorSubject<T>(initialValue);
+	public final static <T> BehaviorSubject<T> create(final T initialValue) {
+		return new BehaviorSubject<>(initialValue);
 	}
 
 	@Override
 	public void onComplete() {
-		for (Subscriber<? super T> sub : this.subscribers) {
+		for (final Subscriber<? super T> sub : subscribers)
 			sub.onComplete();
-		}
 	}
 
 	@Override
-	public void onError(Throwable e) {
-		for (Subscriber<? super T> sub : this.subscribers) {
-			sub.onError(e);
-		} ;
+	public void onError(final Throwable e) {
+		for (final Subscriber<? super T> sub : subscribers)
+			sub.onError(e);;
 	}
 
 	@Override
-	public void onNext(T t) {
+	public void onNext(final T t) {
 		lastValue = t;
 		lastValueSet = true;
-		for (Subscriber<? super T> sub : this.subscribers) {
+		for (final Subscriber<? super T> sub : subscribers)
 			sub.onNext(t);
-		}
 	}
 
 	@Override
@@ -79,13 +76,12 @@ public class BehaviorSubject<T> extends Subject<T> {
 	}
 
 	@Override
-	public void onSubscribe(Disposable d) {
+	public void onSubscribe(final Disposable d) {
 		@SuppressWarnings("unchecked")
-		DisposableOfSubscriber ds = (DisposableOfSubscriber) d;
-		Subscriber<? super T> s = ds.getSubscriber();
-		if (lastValueSet) {
+		final DisposableOfSubscriber ds = (DisposableOfSubscriber) d;
+		final Subscriber<? super T> s = ds.getSubscriber();
+		if (lastValueSet)
 			s.onNext(lastValue);
-		}
 	}
 
 	public T getLastValue() {

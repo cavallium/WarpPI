@@ -12,69 +12,65 @@ public class PIHardwareTouchDevice implements HardwareTouchDevice {
 
 	private final boolean invertXY, invertX, invertY;
 
-	public PIHardwareTouchDevice(boolean invertXY, boolean invertX, boolean invertY) {
+	public PIHardwareTouchDevice(final boolean invertXY, final boolean invertX, final boolean invertY) {
 		this.invertXY = invertXY;
 		this.invertX = invertX;
 		this.invertY = invertY;
 	}
 
 	@Override
-	public boolean onTouchStart(TouchStartEvent e) {
+	public boolean onTouchStart(final TouchStartEvent e) {
 		final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 		boolean refresh = false;
-		if (scr != null && scr.initialized && scr.onTouchStart(e)) {
+		if (scr != null && scr.initialized && scr.onTouchStart(e))
 			refresh = true;
-		} else {
+		else {
 			//Default behavior
 		}
-		if (refresh) {
+		if (refresh)
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
-		}
 		return true;
 	}
 
 	@Override
-	public boolean onTouchEnd(TouchEndEvent e) {
+	public boolean onTouchEnd(final TouchEndEvent e) {
 		final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 		boolean refresh = false;
-		if (scr != null && scr.initialized && scr.onTouchEnd(e)) {
+		if (scr != null && scr.initialized && scr.onTouchEnd(e))
 			refresh = true;
-		} else {
+		else {
 			//Default behavior
 		}
-		if (refresh) {
+		if (refresh)
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
-		}
 		return true;
 	}
 
 	@Override
-	public boolean onTouchCancel(TouchCancelEvent e) {
+	public boolean onTouchCancel(final TouchCancelEvent e) {
 		final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 		boolean refresh = false;
-		if (scr != null && scr.initialized && scr.onTouchCancel(e)) {
+		if (scr != null && scr.initialized && scr.onTouchCancel(e))
 			refresh = true;
-		} else {
+		else {
 			//Default behavior
 		}
-		if (refresh) {
+		if (refresh)
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
-		}
 		return true;
 	}
 
 	@Override
-	public boolean onTouchMove(TouchMoveEvent e) {
+	public boolean onTouchMove(final TouchMoveEvent e) {
 		final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 		boolean refresh = false;
-		if (scr != null && scr.initialized && scr.onTouchMove(e)) {
+		if (scr != null && scr.initialized && scr.onTouchMove(e))
 			refresh = true;
-		} else {
+		else {
 			//Default behavior
 		}
-		if (refresh) {
+		if (refresh)
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
-		}
 		return true;
 	}
 
@@ -94,20 +90,18 @@ public class PIHardwareTouchDevice implements HardwareTouchDevice {
 	}
 
 	@Override
-	public TouchPoint makePoint(long id, float x, float y, int screenWidth, int screenHeight, float radiusX,
-			float radiusY, float force, float rotationAngle) {
+	public TouchPoint makePoint(final long id, float x, float y, final int screenWidth, final int screenHeight,
+			final float radiusX, final float radiusY, final float force, final float rotationAngle) {
 		if (getInvertedXY()) {
-			double oldX = x;
-			double oldY = y;
-			x = (float) (oldY * ((double) screenWidth) / ((double) screenHeight));
-			y = (float) (oldX * ((double) screenHeight) / ((double) screenWidth));
+			final double oldX = x;
+			final double oldY = y;
+			x = (float) (oldY * screenWidth / screenHeight);
+			y = (float) (oldX * screenHeight / screenWidth);
 		}
-		if (getInvertedX()) {
+		if (getInvertedX())
 			x = screenWidth - x;
-		}
-		if (getInvertedY()) {
+		if (getInvertedY())
 			y = screenHeight - y;
-		}
 		return new TouchPoint(id, x, y, radiusX, radiusY, force, rotationAngle);
 	}
 }

@@ -15,7 +15,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Exponent rule
  * a^1=a
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -39,21 +39,19 @@ public class ExponentRule2 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
 		if (f instanceof Power) {
-			FunctionOperator fnc = (FunctionOperator) f;
-			if (fnc.getParameter2().equals(new Number(f.getMathContext(), 1))) {
+			final FunctionOperator fnc = (FunctionOperator) f;
+			if (fnc.getParameter2().equals(new Number(f.getMathContext(), 1)))
 				isExecutable = true;
-			}
 		}
-	
+
 		if (isExecutable) {
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			result.add(((FunctionOperator)f).getParameter1());
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			result.add(((FunctionOperator) f).getParameter1());
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 }

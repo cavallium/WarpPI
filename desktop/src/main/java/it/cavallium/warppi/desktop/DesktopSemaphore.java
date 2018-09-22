@@ -6,11 +6,11 @@ public class DesktopSemaphore extends Semaphore implements it.cavallium.warppi.P
 
 	private static final long serialVersionUID = -2362314723921013871L;
 
-	public DesktopSemaphore(int arg0) {
+	public DesktopSemaphore(final int arg0) {
 		super(arg0);
 	}
 
-	public DesktopSemaphore(int permits, boolean fair) {
+	public DesktopSemaphore(final int permits, final boolean fair) {
 		super(permits, fair);
 	}
 }

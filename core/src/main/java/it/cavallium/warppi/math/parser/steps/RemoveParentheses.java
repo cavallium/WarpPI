@@ -12,19 +12,18 @@ public class RemoveParentheses implements MathParserStep {
 	@SuppressWarnings("unused")
 	private final MathContext context;
 
-	public RemoveParentheses(MathContext context) {
+	public RemoveParentheses(final MathContext context) {
 		this.context = context;
 	}
 
 	@Override
-	public boolean eval(IntWrapper curIndex, Function lastFunction, Function currentFunction,
-			ObjectArrayList<Function> functionsList) {
+	public boolean eval(final IntWrapper curIndex, final Function lastFunction, final Function currentFunction,
+			final ObjectArrayList<Function> functionsList) {
 		if (currentFunction instanceof Expression) {
-			if (((Expression) currentFunction).getParameter() == null) {
+			if (((Expression) currentFunction).getParameter() == null)
 				functionsList.remove(curIndex.i);
-			} else {
+			else
 				functionsList.set(curIndex.i, ((Expression) currentFunction).getParameter());
-			}
 			return true;
 		}
 		return false;

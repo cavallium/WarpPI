@@ -7,7 +7,7 @@ public class HardwareDevice {
 	private final DisplayManager displayManager;
 	private final InputManager inputManager;
 
-	public HardwareDevice(DisplayManager m, InputManager im) {
+	public HardwareDevice(final DisplayManager m, final InputManager im) {
 		displayManager = m;
 		inputManager = im;
 	}
@@ -20,10 +20,10 @@ public class HardwareDevice {
 		return inputManager;
 	}
 
-	public void setup(Runnable r) {
+	public void setup(final Runnable r) {
 		displayManager.initialize();
 		inputManager.getKeyboard().startKeyboard();
-		Thread t = new Thread(r);
+		final Thread t = new Thread(r);
 		Engine.getPlatform().setThreadDaemon(t, false);
 		Engine.getPlatform().setThreadName(t, "Main thread (after setup)");
 		t.start();

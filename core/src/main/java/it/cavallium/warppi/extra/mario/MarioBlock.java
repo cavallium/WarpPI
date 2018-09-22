@@ -5,7 +5,7 @@ public class MarioBlock {
 	private final int y;
 	private final byte id;
 
-	public MarioBlock(int x, int y, byte b) {
+	public MarioBlock(final int x, final int y, final byte b) {
 		this.x = x;
 		this.y = y;
 		id = b;
@@ -27,7 +27,7 @@ public class MarioBlock {
 		return y;
 	}
 
-	public static boolean isSolid(byte id) {
+	public static boolean isSolid(final byte id) {
 		return id != 0b0;
 	}
 }

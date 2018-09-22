@@ -1,36 +1,36 @@
 package it.cavallium.warppi.boot;
 
 public interface StartupArguments {
-	public boolean isRaspberryModeAllowed();
+	boolean isRaspberryModeAllowed();
 
-	public boolean isZoomed();
+	boolean isZoomed();
 
-	public boolean isHeadlessEngineForced();
+	boolean isHeadlessEngineForced();
 
-	public boolean isHeadless8EngineForced();
+	boolean isHeadless8EngineForced();
 
-	public boolean isHeadless256EngineForced();
+	boolean isHeadless256EngineForced();
 
-	public boolean isHeadless24bitEngineForced();
+	boolean isHeadless24bitEngineForced();
 
-	public boolean isCPUEngineForced();
+	boolean isCPUEngineForced();
 
-	public boolean isGPUEngineForced();
+	boolean isGPUEngineForced();
 
-	public boolean isFrameBufferEngineForced();
+	boolean isFrameBufferEngineForced();
 
-	public boolean isNoGUIEngineForced();
+	boolean isNoGUIEngineForced();
 
-	public boolean isHTMLEngineForced();
+	boolean isHTMLEngineForced();
 
-	public boolean isMSDOSModeEnabled();
+	boolean isMSDOSModeEnabled();
 
-	public boolean isVerboseLoggingEnabled();
+	boolean isVerboseLoggingEnabled();
 
-	public boolean isDebugEnabled();
+	boolean isDebugEnabled();
 
-	public boolean isUncached();
+	boolean isUncached();
 
-	public boolean isEngineForced();
+	boolean isEngineForced();
 
 }

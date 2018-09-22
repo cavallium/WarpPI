@@ -9,7 +9,7 @@ public class BlockExponentialNotation extends BlockPower {
 	private int bh;
 
 	@Override
-	public void draw(GraphicEngine ge, Renderer r, int x, int y, Caret caret) {
+	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y, final Caret caret) {
 		BlockContainer.getDefaultFont(small).use(ge);
 		r.glColor(BlockContainer.getDefaultColor());
 		r.glDrawStringLeft(x, y + height - bh, "ℯ℮");

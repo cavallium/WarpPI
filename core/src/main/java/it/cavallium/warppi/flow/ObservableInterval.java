@@ -7,12 +7,12 @@ public class ObservableInterval extends Observable<Long> {
 	volatile boolean running;
 	volatile Thread timeThread;
 
-	protected ObservableInterval(long interval) {
+	protected ObservableInterval(final long interval) {
 		super();
 		this.interval = interval;
 		try {
 			startInterval();
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
@@ -20,15 +20,15 @@ public class ObservableInterval extends Observable<Long> {
 	void stopInterval() {
 		if (running) {
 			running = false;
-			this.timeThread.interrupt();
+			timeThread.interrupt();
 		}
 	}
 
 	@Override
-	public Disposable subscribe(Subscriber<? super Long> sub) {
+	public Disposable subscribe(final Subscriber<? super Long> sub) {
 		try {
 			startInterval();
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		}
 		return super.subscribe(sub);
@@ -36,18 +36,16 @@ public class ObservableInterval extends Observable<Long> {
 
 	void startInterval() throws InterruptedException {
 		if (running == false) {
-			while (timeThread != null) {
+			while (timeThread != null)
 				Thread.sleep(100);
-			}
 			timeThread = new Thread(() -> {
 				try {
 					while (!Thread.interrupted()) {
-						for (Subscriber<? super Long> sub : this.subscribers) {
+						for (final Subscriber<? super Long> sub : subscribers)
 							sub.onNext(System.currentTimeMillis());
-						}
 						Thread.sleep(interval);
 					}
-				} catch (InterruptedException e) {}
+				} catch (final InterruptedException e) {}
 				timeThread = null;
 			});
 			Engine.getPlatform().setThreadName(timeThread, "ObservableTimer");
@@ -56,12 +54,12 @@ public class ObservableInterval extends Observable<Long> {
 		}
 	}
 
-	public static ObservableInterval create(long l) {
+	public static ObservableInterval create(final long l) {
 		return new ObservableInterval(l);
 	}
 
 	@Override
-	public void onDisposed(Subscriber<? super Long> sub) {
+	public void onDisposed(final Subscriber<? super Long> sub) {
 		super.onDisposed(sub);
 		stopInterval();
 	}

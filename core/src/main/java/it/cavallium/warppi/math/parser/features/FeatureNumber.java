@@ -9,11 +9,11 @@ import it.cavallium.warppi.util.Error;
 public class FeatureNumber implements FeatureBasic {
 	private String numberString;
 
-	public FeatureNumber(char c) {
+	public FeatureNumber(final char c) {
 		numberString = c + "";
 	}
 
-	public FeatureNumber(String s) {
+	public FeatureNumber(final String s) {
 		numberString = s;
 	}
 
@@ -25,24 +25,22 @@ public class FeatureNumber implements FeatureBasic {
 		return numberString;
 	}
 
-	public void append(char ch) {
+	public void append(final char ch) {
 		numberString += ch;
 	}
 
 	@Override
-	public Number toFunction(MathContext context) throws Error {
+	public Number toFunction(final MathContext context) throws Error {
 		String nmbstr = getNumberString();
-		if (nmbstr.charAt(0) == '.') {
+		if (nmbstr.charAt(0) == '.')
 			nmbstr = '0' + nmbstr;
-		} else if (nmbstr.charAt(nmbstr.length() - 1) == '.') {
+		else if (nmbstr.charAt(nmbstr.length() - 1) == '.')
 			nmbstr += "0";
-		} else if (nmbstr.length() == 1) {
-			if (nmbstr.charAt(0) == MathematicalSymbols.MINUS) {
+		else if (nmbstr.length() == 1)
+			if (nmbstr.charAt(0) == MathematicalSymbols.MINUS)
 				nmbstr += "1";
-			} else if (nmbstr.charAt(0) == MathematicalSymbols.SUBTRACTION) {
+			else if (nmbstr.charAt(0) == MathematicalSymbols.SUBTRACTION)
 				nmbstr += "1";
-			}
-		}
 		return new Number(context, nmbstr);
 	}
 }

@@ -37,7 +37,7 @@ public class HardwarePlatform implements Platform {
 		el.put("framebuffer engine", new FBEngine());
 		settings = new HardwareSettings();
 	}
-	
+
 	@Override
 	public ConsoleUtils getConsoleUtils() {
 		return cu;
@@ -64,22 +64,22 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public void setThreadName(Thread t, String name) {
+	public void setThreadName(final Thread t, final String name) {
 		t.setName(name);
 	}
 
 	@Override
-	public void setThreadDaemon(Thread t) {
+	public void setThreadDaemon(final Thread t) {
 		t.setDaemon(true);
 	}
 
 	@Override
-	public void setThreadDaemon(Thread t, boolean value) {
+	public void setThreadDaemon(final Thread t, final boolean value) {
 		t.setDaemon(value);
 	}
 
 	@Override
-	public void exit(int value) {
+	public void exit(final int value) {
 		System.exit(value);
 	}
 
@@ -99,13 +99,12 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public void alphaChanged(boolean val) {
-		
+	public void alphaChanged(final boolean val) {
+
 	}
 
 	@Override
-	public void shiftChanged(boolean val) {
-	}
+	public void shiftChanged(final boolean val) {}
 
 	@Override
 	public Semaphore newSemaphore() {
@@ -113,12 +112,12 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public Semaphore newSemaphore(int i) {
+	public Semaphore newSemaphore(final int i) {
 		return new HardwareSemaphore(i);
 	}
 
 	@Override
-	public URLClassLoader newURLClassLoader(URL[] urls) {
+	public URLClassLoader newURLClassLoader(final URL[] urls) {
 		return new HardwareURLClassLoader(urls);
 	}
 
@@ -128,17 +127,17 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public GraphicEngine getEngine(String string) throws NullPointerException {
+	public GraphicEngine getEngine(final String string) throws NullPointerException {
 		return el.get(string);
 	}
 
 	@Override
-	public void throwNewExceptionInInitializerError(String text) {
+	public void throwNewExceptionInInitializerError(final String text) {
 		throw new ExceptionInInitializerError();
 	}
 
 	@Override
-	public String[] stacktraceToString(Error e) {
+	public String[] stacktraceToString(final Error e) {
 		final StringWriter sw = new StringWriter();
 		final PrintWriter pw = new PrintWriter(sw);
 		e.printStackTrace(pw);
@@ -147,11 +146,11 @@ public class HardwarePlatform implements Platform {
 
 	@Override
 	public void loadPlatformRules() {
-		
+
 	}
 
 	@Override
-	public void zip(String targetPath, String destinationFilePath, String password) {
+	public void zip(final String targetPath, final String destinationFilePath, final String password) {
 		try {
 			final ZipParameters parameters = new ZipParameters();
 			parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
@@ -167,11 +166,10 @@ public class HardwarePlatform implements Platform {
 			final ZipFile zipFile = new ZipFile(destinationFilePath);
 
 			final File targetFile = new File(targetPath);
-			if (targetFile.isFile()) {
+			if (targetFile.isFile())
 				zipFile.addFile(targetFile, parameters);
-			} else if (targetFile.isDirectory()) {
+			else if (targetFile.isDirectory())
 				zipFile.addFolder(targetFile, parameters);
-			}
 
 		} catch (final Exception e) {
 			e.printStackTrace();
@@ -179,12 +177,11 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public void unzip(String targetZipFilePath, String destinationFolderPath, String password) {
+	public void unzip(final String targetZipFilePath, final String destinationFolderPath, final String password) {
 		try {
 			final ZipFile zipFile = new ZipFile(targetZipFilePath);
-			if (zipFile.isEncrypted()) {
+			if (zipFile.isEncrypted())
 				zipFile.setPassword(password);
-			}
 			zipFile.extractAll(destinationFolderPath);
 
 		} catch (final Exception e) {
@@ -193,7 +190,7 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public boolean compile(String[] command, PrintWriter printWriter, PrintWriter errors) {
+	public boolean compile(final String[] command, final PrintWriter printWriter, final PrintWriter errors) {
 		return org.eclipse.jdt.internal.compiler.batch.Main.compile(command, printWriter, errors, null);
 	}
 
@@ -216,7 +213,7 @@ public class HardwarePlatform implements Platform {
 					} catch (IOException readException) {
 						return false;
 					}
-
+		
 				} else {
 					return false;
 				}

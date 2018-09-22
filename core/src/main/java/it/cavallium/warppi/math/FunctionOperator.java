@@ -11,7 +11,7 @@ public abstract class FunctionOperator implements Function {
 	/**
 	 * Create a new instance of FunctionOperator. The Math Context will be the
 	 * same of <strong>value1</strong>'s.
-	 * 
+	 *
 	 * @throws NullPointerException
 	 *             when value1 is null.
 	 * @param value1
@@ -19,7 +19,7 @@ public abstract class FunctionOperator implements Function {
 	 * @param value2
 	 *            The parameter of this function.
 	 */
-	public FunctionOperator(Function value1, Function value2) throws NullPointerException {
+	public FunctionOperator(final Function value1, final Function value2) throws NullPointerException {
 		mathContext = value1.getMathContext();
 		parameter1 = value1;
 		parameter2 = value2;
@@ -27,13 +27,13 @@ public abstract class FunctionOperator implements Function {
 
 	/**
 	 * Create a new instance of FunctionOperator.
-	 * 
+	 *
 	 * @param value1
 	 *            The parameter of this function.
 	 * @param value2
 	 *            The parameter of this function.
 	 */
-	public FunctionOperator(MathContext mc, Function value1, Function value2) {
+	public FunctionOperator(final MathContext mc, final Function value1, final Function value2) {
 		mathContext = mc;
 		parameter1 = value1;
 		parameter2 = value2;
@@ -45,7 +45,7 @@ public abstract class FunctionOperator implements Function {
 	protected Function parameter2 = null;
 
 	/**
-	 * 
+	 *
 	 * @return First parameter.
 	 */
 	public Function getParameter1() {
@@ -53,7 +53,7 @@ public abstract class FunctionOperator implements Function {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return Second parameter.
 	 */
 	public Function getParameter2() {
@@ -61,31 +61,31 @@ public abstract class FunctionOperator implements Function {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param var
 	 *            First parameter.
 	 * @return A new instance of this function.
 	 */
-	public FunctionOperator setParameter1(Function var) {
+	public FunctionOperator setParameter1(final Function var) {
 		final FunctionOperator s = clone();
 		s.parameter1 = var;
 		return s;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param var
 	 *            Second parameter.
 	 * @return A new instance of this function.
 	 */
-	public FunctionOperator setParameter2(Function var) {
+	public FunctionOperator setParameter2(final Function var) {
 		final FunctionOperator s = clone();
 		s.parameter2 = var;
 		return s;
 	}
 
 	@Override
-	public FunctionOperator setParameter(int index, Function var) throws IndexOutOfBoundsException {
+	public FunctionOperator setParameter(final int index, final Function var) throws IndexOutOfBoundsException {
 		switch (index) {
 			case 0:
 				return setParameter1(var);
@@ -97,7 +97,7 @@ public abstract class FunctionOperator implements Function {
 	}
 
 	@Override
-	public Function getParameter(int index) throws IndexOutOfBoundsException {
+	public Function getParameter(final int index) throws IndexOutOfBoundsException {
 		switch (index) {
 			case 0:
 				return getParameter1();
@@ -114,58 +114,50 @@ public abstract class FunctionOperator implements Function {
 	}
 
 	@Override
-	public final ObjectArrayList<Function> simplify(Rule rule) throws Error, InterruptedException {
-		if (Thread.interrupted()) {
+	public final ObjectArrayList<Function> simplify(final Rule rule) throws Error, InterruptedException {
+		if (Thread.interrupted())
 			throw new InterruptedException();
-		}
 
 		final ObjectArrayList<Function> simplifiedParam1 = parameter1.simplify(rule);
 		final ObjectArrayList<Function> simplifiedParam2 = parameter2.simplify(rule);
 		try {
-			if (simplifiedParam1 == null & simplifiedParam2 == null) {
+			if (simplifiedParam1 == null & simplifiedParam2 == null)
 				return rule.execute(this);
-			}
 		} catch (final Exception e) {
 			final Error err = new Error(Errors.ERROR, "Error while executing rule '" + rule.getRuleName() + "'!\n" + e.getMessage());
 			err.initCause(e);
 			throw err;
 		}
 
-		if (Thread.interrupted()) {
+		if (Thread.interrupted())
 			throw new InterruptedException();
-		}
 		final ObjectArrayList<Function> result = new ObjectArrayList<>();
 
 		final ObjectArrayList<Function> l1 = new ObjectArrayList<>();
 		final ObjectArrayList<Function> l2 = new ObjectArrayList<>();
-		if (Thread.interrupted()) {
+		if (Thread.interrupted())
 			throw new InterruptedException();
-		}
-		if (simplifiedParam1 == null) {
+		if (simplifiedParam1 == null)
 			l1.add(parameter1);
-		} else {
-			if (Thread.interrupted()) {
+		else {
+			if (Thread.interrupted())
 				throw new InterruptedException();
-			}
 			l1.addAll(simplifiedParam1);
 		}
-		if (Thread.interrupted()) {
+		if (Thread.interrupted())
 			throw new InterruptedException();
-		}
-		if (simplifiedParam2 == null) {
+		if (simplifiedParam2 == null)
 			l2.add(parameter2);
-		} else {
-			if (Thread.interrupted()) {
+		else {
+			if (Thread.interrupted())
 				throw new InterruptedException();
-			}
 			l2.addAll(simplifiedParam2);
 		}
 
 		final Function[][] results = Utils.joinFunctionsResults(l1, l2);
 
-		for (final Function[] f : results) {
+		for (final Function[] f : results)
 			result.add(setParameter1(f[0]).setParameter2(f[1]));
-		}
 
 		return result;
 	}

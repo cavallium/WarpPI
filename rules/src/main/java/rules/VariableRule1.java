@@ -17,7 +17,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Variable rule
  * ax+bx=(a+b)*x (a,b NUMBER; x VARIABLE|MULTIPLICATION)
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -41,25 +41,24 @@ public class VariableRule1 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
 		if (f instanceof Subtraction || f instanceof Sum) {
-			FunctionOperator fnc = (FunctionOperator) f;
+			final FunctionOperator fnc = (FunctionOperator) f;
 			if (fnc.getParameter1() instanceof Multiplication & fnc.getParameter2() instanceof Multiplication) {
-				FunctionOperator m1 = (FunctionOperator) fnc.getParameter1();
-				FunctionOperator m2 = (FunctionOperator) fnc.getParameter2();
-				if (m1.getParameter1().equals(m2.getParameter1()) || m1.getParameter2().equals(m2.getParameter2())) {
+				final FunctionOperator m1 = (FunctionOperator) fnc.getParameter1();
+				final FunctionOperator m2 = (FunctionOperator) fnc.getParameter2();
+				if (m1.getParameter1().equals(m2.getParameter1()) || m1.getParameter2().equals(m2.getParameter2()))
 					isExecutable = true;
-				}
 			}
 		}
 
 		if (isExecutable) {
-			FunctionOperator fnc = (FunctionOperator) f;
-			MathContext root = fnc.getMathContext();
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			FunctionOperator m1 = (FunctionOperator) fnc.getParameter1();
-			FunctionOperator m2 = (FunctionOperator) fnc.getParameter2();
+			final FunctionOperator fnc = (FunctionOperator) f;
+			final MathContext root = fnc.getMathContext();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final FunctionOperator m1 = (FunctionOperator) fnc.getParameter1();
+			final FunctionOperator m2 = (FunctionOperator) fnc.getParameter2();
 			Function a;
 			Function b;
 			Function x;
@@ -74,16 +73,14 @@ public class VariableRule1 implements Rule {
 			}
 
 			Function rets;
-			if (fnc instanceof Sum) {
+			if (fnc instanceof Sum)
 				rets = new Sum(root, a, b);
-			} else {
+			else
 				rets = new Subtraction(root, a, b);
-			}
-			Function retm = new Multiplication(root, rets, x);
+			final Function retm = new Multiplication(root, rets, x);
 			result.add(retm);
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 }

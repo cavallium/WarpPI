@@ -5,12 +5,12 @@ import it.cavallium.warppi.math.functions.Multiplication;
 
 public class FeatureMultiplication extends FeatureDoubleImpl {
 
-	public FeatureMultiplication(Object child1, Object child2) {
+	public FeatureMultiplication(final Object child1, final Object child2) {
 		super(child1, child2);
 	}
 
 	@Override
-	public Multiplication toFunction(MathContext context) {
+	public Multiplication toFunction(final MathContext context) {
 		return new Multiplication(context, getFunction1(), getFunction2());
 	}
 

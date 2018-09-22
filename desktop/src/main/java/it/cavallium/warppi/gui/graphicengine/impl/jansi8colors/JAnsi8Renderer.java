@@ -21,7 +21,7 @@ public class JAnsi8Renderer implements Renderer {
 	public static final String ANSI_RESET = "\u001B[0m";
 	public static char FILL;
 
-	private int hexColor(int red, int green, int blue) {
+	private int hexColor(final int red, final int green, final int blue) {
 		final int r1 = red;
 		int r2;
 		final int g1 = green;
@@ -31,97 +31,97 @@ public class JAnsi8Renderer implements Renderer {
 
 		final float[] match = new float[16];
 
-		// COLOR 
+		// COLOR
 		r2 = 0;
 		g2 = 0;
 		b2 = 0;
 		match[0] = (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
 
-		// COLOR 
+		// COLOR
 		r2 = 205;
 		g2 = 0;
 		b2 = 0;
 		match[1] = (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
 
-		// COLOR 
+		// COLOR
 		r2 = 0;
 		g2 = 205;
 		b2 = 0;
 		match[2] = (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
 
-		// COLOR 
+		// COLOR
 		r2 = 205;
 		g2 = 205;
 		b2 = 0;
 		match[3] = (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
 
-		// COLOR 
+		// COLOR
 		r2 = 0;
 		g2 = 0;
 		b2 = 238;
 		match[4] = (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
 
-		// COLOR 
+		// COLOR
 		r2 = 205;
 		g2 = 0;
 		b2 = 205;
 		match[5] = (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
 
-		// COLOR 
+		// COLOR
 		r2 = 0;
 		g2 = 205;
 		b2 = 205;
 		match[6] = (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
 
-		// COLOR 
+		// COLOR
 		r2 = 229;
 		g2 = 229;
 		b2 = 229;
 		match[7] = (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
 
-		// COLOR 
+		// COLOR
 		r2 = 127;
 		g2 = 127;
 		b2 = 127;
 		match[8] = (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
 
-		// COLOR 
+		// COLOR
 		r2 = 255;
 		g2 = 0;
 		b2 = 0;
 		match[9] = (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
 
-		// COLOR 
+		// COLOR
 		r2 = 0;
 		g2 = 255;
 		b2 = 0;
 		match[0xa] = (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
 
-		// COLOR 
+		// COLOR
 		r2 = 255;
 		g2 = 255;
 		b2 = 0;
 		match[0xb] = (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
 
-		// COLOR 
+		// COLOR
 		r2 = 92;
 		g2 = 92;
 		b2 = 255;
 		match[0xc] = (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
 
-		// COLOR 
+		// COLOR
 		r2 = 255;
 		g2 = 0;
 		b2 = 255;
 		match[0xd] = (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
 
-		// COLOR 
+		// COLOR
 		r2 = 0;
 		g2 = 255;
 		b2 = 255;
 		match[0xe] = (r2 - r1) * (r2 - r1) + (g2 - g1) * (g2 - g1) + (b2 - b1) * (b2 - b1);
 
-		// COLOR 
+		// COLOR
 		r2 = 255;
 		g2 = 255;
 		b2 = 255;
@@ -130,15 +130,14 @@ public class JAnsi8Renderer implements Renderer {
 		int minIndex = 0;
 		for (int i = 1; i < match.length; i++) {
 			final float newnumber = match[i];
-			if ((newnumber < match[minIndex])) {
+			if (newnumber < match[minIndex])
 				minIndex = i;
-			}
 		}
 
 		return minIndex;
 	}
 
-	private int[] hexColorReverse(int i) {
+	private int[] hexColorReverse(final int i) {
 		switch (i) {
 			case 0x0:
 				return new int[] { 0, 0, 0 };
@@ -175,42 +174,42 @@ public class JAnsi8Renderer implements Renderer {
 		}
 	}
 
-	private int colorUnion(int[] col) {
+	private int colorUnion(final int[] col) {
 		return 0xFF << 24 | col[0] << 16 | col[1] << 8 | col[2];
 	}
 
 	@Override
-	public void glColor3i(int r, int gg, int b) {
+	public void glColor3i(final int r, final int gg, final int b) {
 		curColor = hexColor(r, gg, b);
 	}
 
 	@Override
-	public void glColor(int c) {
+	public void glColor(final int c) {
 		curColor = hexColor(c >> 16 & 0xFF, c >> 8 & 0xFF, c & 0xFF);
 	}
 
 	@Override
-	public void glColor4i(int red, int green, int blue, int alpha) {
+	public void glColor4i(final int red, final int green, final int blue, final int alpha) {
 		curColor = hexColor(red, green, blue);
 	}
 
 	@Override
-	public void glColor3f(float red, float green, float blue) {
+	public void glColor3f(final float red, final float green, final float blue) {
 		curColor = hexColor((int) (red * 255), (int) (green * 255), (int) (blue * 255));
 	}
 
 	@Override
-	public void glColor4f(float red, float green, float blue, float alpha) {
+	public void glColor4f(final float red, final float green, final float blue, final float alpha) {
 		curColor = hexColor((int) (red * 255), (int) (green * 255), (int) (blue * 255));
 	}
 
 	@Override
-	public void glClearColor4i(int red, int green, int blue, int alpha) {
+	public void glClearColor4i(final int red, final int green, final int blue, final int alpha) {
 		clearColor = hexColor(red, green, blue);
 	}
 
 	@Override
-	public void glClearColor4f(float red, float green, float blue, float alpha) {
+	public void glClearColor4f(final float red, final float green, final float blue, final float alpha) {
 		clearColor = hexColor((int) (red * 255), (int) (green * 255), (int) (blue * 255));
 	}
 
@@ -220,12 +219,12 @@ public class JAnsi8Renderer implements Renderer {
 	}
 
 	@Override
-	public void glClearColor(int c) {
+	public void glClearColor(final int c) {
 		clearColor = hexColor(c >> 16 & 0xFF, c >> 8 & 0xFF, c & 0xFF);
 	}
 
 	@Override
-	public void glClear(int screenWidth, int screenHeight) {
+	public void glClear(final int screenWidth, final int screenHeight) {
 		clearAll();
 	}
 
@@ -239,23 +238,22 @@ public class JAnsi8Renderer implements Renderer {
 		final int dx = (int) Math.abs(x2 - x1);
 		final int dy = (int) Math.abs(y2 - y1);
 
-		final int sx = (x1 < x2) ? 1 : -1;
-		final int sy = (y1 < y2) ? 1 : -1;
+		final int sx = x1 < x2 ? 1 : -1;
+		final int sy = y1 < y2 ? 1 : -1;
 
 		int err = dx - dy;
 
 		while (true) {
-			if (((int) x1) >= JAnsi8Engine.C_WIDTH || ((int) y1) >= JAnsi8Engine.C_HEIGHT || ((int) x2) >= JAnsi8Engine.C_WIDTH || ((int) y2) >= JAnsi8Engine.C_HEIGHT) {
+			if ((int) x1 >= JAnsi8Engine.C_WIDTH || (int) y1 >= JAnsi8Engine.C_HEIGHT || (int) x2 >= JAnsi8Engine.C_WIDTH || (int) y2 >= JAnsi8Engine.C_HEIGHT)
 				break;
-			}
-			final int precBG = colorMatrix[((int) x1) + ((int) y1) * JAnsi8Engine.C_WIDTH] & 0xF0;
-			colorMatrix[((int) x1) + ((int) y1) * JAnsi8Engine.C_WIDTH] = precBG | curColor;
-			if (FILL == 0) initFill();
-			charmatrix[((int) x1) + ((int) y1) * JAnsi8Engine.C_WIDTH] = FILL;
+			final int precBG = colorMatrix[(int) x1 + (int) y1 * JAnsi8Engine.C_WIDTH] & 0xF0;
+			colorMatrix[(int) x1 + (int) y1 * JAnsi8Engine.C_WIDTH] = precBG | curColor;
+			if (JAnsi8Renderer.FILL == 0)
+				initFill();
+			charmatrix[(int) x1 + (int) y1 * JAnsi8Engine.C_WIDTH] = JAnsi8Renderer.FILL;
 
-			if (x1 == x2 && y1 == y2) {
+			if (x1 == x2 && y1 == y2)
 				break;
-			}
 
 			final int e2 = 2 * err;
 
@@ -272,26 +270,27 @@ public class JAnsi8Renderer implements Renderer {
 	}
 
 	private void initFill() {
-		FILL = StaticVars.startupArguments.isMSDOSModeEnabled() ? 0xDB : '█';
+		JAnsi8Renderer.FILL = StaticVars.startupArguments.isMSDOSModeEnabled() ? 0xDB : '█';
 	}
 
 	@Override
-	public void glFillRect(float x, float y, float width, float height, float uvX, float uvY, float uvWidth,
-			float uvHeight) {
-		if (currentSkin != null) {
+	public void glFillRect(final float x, final float y, final float width, final float height, final float uvX,
+			final float uvY, final float uvWidth, final float uvHeight) {
+		if (currentSkin != null)
 			glDrawSkin((int) (x / JAnsi8Engine.C_MUL_X), (int) (y / JAnsi8Engine.C_MUL_Y), (int) (uvX / JAnsi8Engine.C_MUL_X), (int) (uvY / JAnsi8Engine.C_MUL_Y), (int) ((uvWidth + uvX) / JAnsi8Engine.C_MUL_X), (int) ((uvHeight + uvY) / JAnsi8Engine.C_MUL_Y), true);
-		} else {
+		else
 			glFillColor(x, y, width, height);
-		}
 	}
 
 	@Override
-	public void glFillColor(float x, float y, float width, float height) {
-		if (FILL == 0) initFill();
-		glFillColor(x, y, width, height, FILL, curColor);
+	public void glFillColor(final float x, final float y, final float width, final float height) {
+		if (JAnsi8Renderer.FILL == 0)
+			initFill();
+		glFillColor(x, y, width, height, JAnsi8Renderer.FILL, curColor);
 	}
 
-	private void glFillColor(float x, float y, float width, float height, char character, int color) {
+	private void glFillColor(final float x, final float y, final float width, final float height, final char character,
+			final int color) {
 		final int ix = (int) x / JAnsi8Engine.C_MUL_X;
 		final int iy = (int) y / JAnsi8Engine.C_MUL_Y;
 		final int iw = (int) width / JAnsi8Engine.C_MUL_X;
@@ -299,63 +298,56 @@ public class JAnsi8Renderer implements Renderer {
 
 		int x1 = ix + iw;
 		int y1 = iy + ih;
-		if (ix >= JAnsi8Engine.C_WIDTH || iy >= JAnsi8Engine.C_WIDTH) {
+		if (ix >= JAnsi8Engine.C_WIDTH || iy >= JAnsi8Engine.C_WIDTH)
 			return;
-		}
-		if (x1 >= JAnsi8Engine.C_WIDTH) {
+		if (x1 >= JAnsi8Engine.C_WIDTH)
 			x1 = JAnsi8Engine.C_WIDTH;
-		}
-		if (y1 >= JAnsi8Engine.C_HEIGHT) {
+		if (y1 >= JAnsi8Engine.C_HEIGHT)
 			y1 = JAnsi8Engine.C_HEIGHT;
-		}
 		final int sizeW = JAnsi8Engine.C_WIDTH;
-		for (int px = ix; px < x1; px++) {
+		for (int px = ix; px < x1; px++)
 			for (int py = iy; py < y1; py++) {
-				final int precBG = colorMatrix[(px) + (py) * sizeW] & 0xF0;
-				colorMatrix[(px) + (py) * sizeW] = precBG | color;
-				charmatrix[(px) + (py) * sizeW] = character;
+				final int precBG = colorMatrix[px + py * sizeW] & 0xF0;
+				colorMatrix[px + py * sizeW] = precBG | color;
+				charmatrix[px + py * sizeW] = character;
 			}
-		}
 	}
 
 	@Override
-	public void glDrawCharLeft(int x, int y, char ch) {
-		final int cx = (x) / JAnsi8Engine.C_MUL_X;
-		final int cy = (y) / JAnsi8Engine.C_MUL_Y;
-		if (cx >= JAnsi8Engine.C_WIDTH || cy >= JAnsi8Engine.C_HEIGHT) {
+	public void glDrawCharLeft(final int x, final int y, final char ch) {
+		final int cx = x / JAnsi8Engine.C_MUL_X;
+		final int cy = y / JAnsi8Engine.C_MUL_Y;
+		if (cx >= JAnsi8Engine.C_WIDTH || cy >= JAnsi8Engine.C_HEIGHT)
 			return;
-		}
 		charmatrix[cx + cy * JAnsi8Engine.C_WIDTH] = ch;
 		final int precBG = colorMatrix[cx + cy * JAnsi8Engine.C_WIDTH] & 0xF0;
 		colorMatrix[cx + cy * JAnsi8Engine.C_WIDTH] = precBG | curColor;
 	}
 
 	@Override
-	public void glDrawCharCenter(int x, int y, char ch) {
+	public void glDrawCharCenter(final int x, final int y, final char ch) {
 		glDrawCharLeft(x, y, ch);
 	}
 
 	@Override
-	public void glDrawCharRight(int x, int y, char ch) {
-		final int cx = (x) / JAnsi8Engine.C_MUL_X - 1;
-		final int cy = (y) / JAnsi8Engine.C_MUL_Y;
-		if (cx >= JAnsi8Engine.C_WIDTH || cy >= JAnsi8Engine.C_HEIGHT) {
+	public void glDrawCharRight(final int x, final int y, final char ch) {
+		final int cx = x / JAnsi8Engine.C_MUL_X - 1;
+		final int cy = y / JAnsi8Engine.C_MUL_Y;
+		if (cx >= JAnsi8Engine.C_WIDTH || cy >= JAnsi8Engine.C_HEIGHT)
 			return;
-		}
 		charmatrix[cx + cy * JAnsi8Engine.C_WIDTH] = ch;
 		final int precBG = colorMatrix[cx + cy * JAnsi8Engine.C_WIDTH] & 0xF0;
 		colorMatrix[cx + cy * JAnsi8Engine.C_WIDTH] = precBG | curColor;
 	}
 
 	@Override
-	public void glDrawStringLeft(float x, float y, String text) {
-		final int cx = ((int) x) / JAnsi8Engine.C_MUL_X;
-		final int cy = ((int) y) / JAnsi8Engine.C_MUL_Y;
+	public void glDrawStringLeft(final float x, final float y, final String text) {
+		final int cx = (int) x / JAnsi8Engine.C_MUL_X;
+		final int cy = (int) y / JAnsi8Engine.C_MUL_Y;
 		int i = 0;
 		for (final char c : text.toCharArray()) {
-			if (cx + i >= JAnsi8Engine.C_WIDTH || cy >= JAnsi8Engine.C_HEIGHT) {
+			if (cx + i >= JAnsi8Engine.C_WIDTH || cy >= JAnsi8Engine.C_HEIGHT)
 				break;
-			}
 			charmatrix[cx + i + cy * JAnsi8Engine.C_WIDTH] = c;
 			final int precBG = colorMatrix[cx + i + cy * JAnsi8Engine.C_WIDTH] & 0xF0;
 			colorMatrix[cx + i + cy * JAnsi8Engine.C_WIDTH] = precBG | curColor;
@@ -364,14 +356,13 @@ public class JAnsi8Renderer implements Renderer {
 	}
 
 	@Override
-	public void glDrawStringCenter(float x, float y, String text) {
-		final int cx = ((int) x) / JAnsi8Engine.C_MUL_X - text.length() / 2;
-		final int cy = ((int) y) / JAnsi8Engine.C_MUL_Y;
+	public void glDrawStringCenter(final float x, final float y, final String text) {
+		final int cx = (int) x / JAnsi8Engine.C_MUL_X - text.length() / 2;
+		final int cy = (int) y / JAnsi8Engine.C_MUL_Y;
 		int i = 0;
 		for (final char c : text.toCharArray()) {
-			if (cx + i >= JAnsi8Engine.C_WIDTH || cy >= JAnsi8Engine.C_HEIGHT) {
+			if (cx + i >= JAnsi8Engine.C_WIDTH || cy >= JAnsi8Engine.C_HEIGHT)
 				break;
-			}
 			charmatrix[cx + i + cy * JAnsi8Engine.C_WIDTH] = c;
 			final int precBG = colorMatrix[cx + i + cy * JAnsi8Engine.C_WIDTH] & 0xF0;
 			colorMatrix[cx + i + cy * JAnsi8Engine.C_WIDTH] = precBG | curColor;
@@ -380,12 +371,12 @@ public class JAnsi8Renderer implements Renderer {
 	}
 
 	@Override
-	public void glDrawStringRight(float x, float y, String text) {
+	public void glDrawStringRight(final float x, final float y, final String text) {
 		// TODO Auto-generated method stub
 
 	}
 
-	private void glDrawSkin(int x0, int y0, int s0, int t0, int s1, int t1, boolean transparent) {
+	private void glDrawSkin(int x0, int y0, int s0, int t0, int s1, int t1, final boolean transparent) {
 		int oldColor;
 		int newColor;
 		final int onex = s0 <= s1 ? 1 : -1;
@@ -404,42 +395,37 @@ public class JAnsi8Renderer implements Renderer {
 			t1 = t00;
 			height = t1 - t0;
 		}
-		if (x0 >= JAnsi8Engine.C_WIDTH || y0 >= JAnsi8Engine.C_WIDTH) {
+		if (x0 >= JAnsi8Engine.C_WIDTH || y0 >= JAnsi8Engine.C_WIDTH)
 			return;
-		}
-		if (x0 + width >= JAnsi8Engine.C_WIDTH) {
+		if (x0 + width >= JAnsi8Engine.C_WIDTH)
 			s1 = JAnsi8Engine.C_WIDTH - x0 + s0;
-		}
-		if (y0 + height >= JAnsi8Engine.C_HEIGHT) {
+		if (y0 + height >= JAnsi8Engine.C_HEIGHT)
 			t1 = JAnsi8Engine.C_HEIGHT - y0 + t0;
-		}
 		if (x0 < 0) {
 			if (onex == -1) {
 				width += x0;
 				s1 += x0 + 1;
-			} else {
+			} else
 				s0 -= x0;
-			}
 			x0 = 0;
 		}
 		if (y0 < 0) {
 			if (oney == -1) {
 				height += y0;
 				t1 += y0 + 1;
-			} else {
+			} else
 				t0 -= y0;
-			}
 			y0 = 0;
 		}
 		int pixelX;
 		int pixelY;
-		for (int texx = 0; texx < s1 - s0; texx++) {
+		for (int texx = 0; texx < s1 - s0; texx++)
 			for (int texy = 0; texy < t1 - t0; texy++) {
-				pixelX = (x0 + texx * onex + width);
-				pixelY = (y0 + texy * oney + height);
-				if (pixelY < JAnsi8Engine.C_HEIGHT) {
-					if (pixelX - (pixelX % JAnsi8Engine.C_WIDTH) == 0) {
-						newColor = currentSkin.skinData[(s0 + texx) + (t0 + texy) * currentSkin.skinSize[0]];
+				pixelX = x0 + texx * onex + width;
+				pixelY = y0 + texy * oney + height;
+				if (pixelY < JAnsi8Engine.C_HEIGHT)
+					if (pixelX - pixelX % JAnsi8Engine.C_WIDTH == 0) {
+						newColor = currentSkin.skinData[s0 + texx + (t0 + texy) * currentSkin.skinSize[0]];
 						if (transparent) {
 							oldColor = colorUnion(hexColorReverse((colorMatrix[pixelX + pixelY * JAnsi8Engine.C_WIDTH] & 0xF0) >> 4));
 							final float a2 = (newColor >> 24 & 0xFF) / 255f;
@@ -451,12 +437,11 @@ public class JAnsi8Renderer implements Renderer {
 						}
 						final int bgColor = colorMatrix[pixelX + pixelY * JAnsi8Engine.C_WIDTH] & 0xF0;
 						colorMatrix[pixelX + pixelY * JAnsi8Engine.C_WIDTH] = bgColor | hexColor(newColor >> 16 & 0xFF, newColor >> 8 & 0xFF, newColor & 0xFF);
-						if (FILL == 0) initFill();
-						charmatrix[pixelX + pixelY * JAnsi8Engine.C_WIDTH] = FILL;
+						if (JAnsi8Renderer.FILL == 0)
+							initFill();
+						charmatrix[pixelX + pixelY * JAnsi8Engine.C_WIDTH] = JAnsi8Renderer.FILL;
 					}
-				}
 			}
-		}
 	}
 
 	@Override

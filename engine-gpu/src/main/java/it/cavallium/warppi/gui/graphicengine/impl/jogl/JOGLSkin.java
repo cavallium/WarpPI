@@ -21,22 +21,21 @@ public class JOGLSkin implements Skin {
 	private boolean initialized = false;
 	private boolean isResource;
 
-	JOGLSkin(GraphicEngine d, String file) throws IOException {
+	JOGLSkin(final GraphicEngine d, final String file) throws IOException {
 		load(file);
 	}
 
 	@Override
-	public void load(String file) throws IOException {
+	public void load(final String file) throws IOException {
 		final boolean isResource = !Files.exists(Paths.get(file));
-		if (isResource && (this.getClass().getClassLoader().getResource(file)) == null) {
+		if (isResource && this.getClass().getClassLoader().getResource(file) == null)
 			throw new IOException("File '" + file + "' not found!");
-		}
 		texturePath = file;
 		this.isResource = isResource;
 	}
 
 	@Override
-	public void initialize(GraphicEngine d) {
+	public void initialize(final GraphicEngine d) {
 		try {
 			final OpenedTextureData i = JOGLRenderer.openTexture(texturePath, isResource);
 			t = JOGLRenderer.importTexture(i.f, i.deleteOnExit);
@@ -51,10 +50,9 @@ public class JOGLSkin implements Skin {
 	}
 
 	@Override
-	public void use(GraphicEngine d) {
-		if (!initialized) {
+	public void use(final GraphicEngine d) {
+		if (!initialized)
 			initialize(d);
-		}
 		final JOGLRenderer r = (JOGLRenderer) d.getRenderer();
 		r.useTexture(t, w, h);
 	}

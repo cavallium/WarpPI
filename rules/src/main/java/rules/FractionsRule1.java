@@ -16,7 +16,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Fractions rule
  * 0 / a = 0
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -40,32 +40,28 @@ public class FractionsRule1 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		boolean isExecutable = false;
-		MathContext root = f.getMathContext();
+		final MathContext root = f.getMathContext();
 		if (f instanceof Division) {
-			FunctionOperator fnc = (FunctionOperator) f;
+			final FunctionOperator fnc = (FunctionOperator) f;
 			if (fnc.getParameter1() instanceof Number) {
-				Function numb1 = fnc.getParameter1();
-				if (numb1.equals(new Number(root, 0))) {
+				final Function numb1 = fnc.getParameter1();
+				if (numb1.equals(new Number(root, 0)))
 					if (fnc.getParameter2() instanceof Number) {
-						Function numb2 = fnc.getParameter2();
-						if (numb2.equals(new Number(root, 0)) == false) {
+						final Function numb2 = fnc.getParameter2();
+						if (numb2.equals(new Number(root, 0)) == false)
 							isExecutable = true;
-						}
-					} else {
+					} else
 						isExecutable = true;
-					}
-				}
 			}
 		}
-	
+
 		if (isExecutable) {
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
 			result.add(new Number(f.getMathContext(), 0));
 			return result;
-		} else {
+		} else
 			return null;
-		}
 	}
 }

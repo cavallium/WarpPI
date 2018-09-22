@@ -1,15 +1,15 @@
 package it.cavallium.warppi.gui;
 
 public interface GraphicalInterface {
-	public void create() throws InterruptedException;
+	void create() throws InterruptedException;
 
-	public void initialize() throws InterruptedException;
+	void initialize() throws InterruptedException;
 
-	public void render();
+	void render();
 
-	public void renderTopmost();
+	void renderTopmost();
 
-	public void beforeRender(float dt);
+	void beforeRender(float dt);
 
-	public boolean mustBeRefreshed();
+	boolean mustBeRefreshed();
 }

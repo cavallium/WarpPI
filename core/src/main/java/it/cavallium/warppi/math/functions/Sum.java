@@ -11,19 +11,18 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class Sum extends FunctionOperator {
 
-	public Sum(MathContext root, Function value1, Function value2) {
+	public Sum(final MathContext root, final Function value1, final Function value2) {
 		super(root, value1, value2);
 	}
 
 	@Override
-	public boolean equals(Object o) {
+	public boolean equals(final Object o) {
 		if (o instanceof Sum) {
 			final FunctionOperator f = (FunctionOperator) o;
-			if (parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2())) {
+			if (parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2()))
 				return true;
-			} else if (parameter1.equals(f.getParameter2()) && parameter2.equals(f.getParameter1())) {
+			else if (parameter1.equals(f.getParameter2()) && parameter2.equals(f.getParameter1()))
 				return true;
-			}
 		}
 		return false;
 	}
@@ -34,7 +33,7 @@ public class Sum extends FunctionOperator {
 	}
 
 	@Override
-	public ObjectArrayList<Block> toBlock(MathContext context) throws Error {
+	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
 		final ObjectArrayList<Block> result = new ObjectArrayList<>();
 		result.addAll(getParameter1().toBlock(context));
 		result.add(new BlockChar(MathematicalSymbols.SUM));

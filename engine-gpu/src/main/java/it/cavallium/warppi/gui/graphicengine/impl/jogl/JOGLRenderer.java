@@ -40,11 +40,11 @@ public class JOGLRenderer implements Renderer {
 
 	private static final int colBuffer = 2;
 
-	private static final int vertMax = vertSize * ELEMENT_VERTICES_COUNT * ELEMENTS_MAX_COUNT_PER_BUFFER;
+	private static final int vertMax = JOGLRenderer.vertSize * JOGLRenderer.ELEMENT_VERTICES_COUNT * JOGLRenderer.ELEMENTS_MAX_COUNT_PER_BUFFER;
 
-	private static final int texMax = texSize * ELEMENT_VERTICES_COUNT * ELEMENTS_MAX_COUNT_PER_BUFFER;
+	private static final int texMax = JOGLRenderer.texSize * JOGLRenderer.ELEMENT_VERTICES_COUNT * JOGLRenderer.ELEMENTS_MAX_COUNT_PER_BUFFER;
 
-	private static final int colMax = colSize * ELEMENT_VERTICES_COUNT * ELEMENTS_MAX_COUNT_PER_BUFFER;
+	private static final int colMax = JOGLRenderer.colSize * JOGLRenderer.ELEMENT_VERTICES_COUNT * JOGLRenderer.ELEMENTS_MAX_COUNT_PER_BUFFER;
 
 	private int[] handlers;
 	FloatBuffer fbVertices;
@@ -62,32 +62,32 @@ public class JOGLRenderer implements Renderer {
 	JOGLFont currentFont;
 
 	@Override
-	public void glColor3i(int r, int gg, int b) {
-		final float red = (r) / 255f;
-		final float gre = (gg) / 255f;
-		final float blu = (b) / 255f;
+	public void glColor3i(final int r, final int gg, final int b) {
+		final float red = r / 255f;
+		final float gre = gg / 255f;
+		final float blu = b / 255f;
 		//currentColor = new float[] { red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, };
 		currentColor = new float[] { red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, }; //OK
 	}
 
 	@Override
-	public void glColor3f(float red, float gre, float blu) {
+	public void glColor3f(final float red, final float gre, final float blu) {
 		// currentColor = new float[] { red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, };
 		currentColor = new float[] { red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, };//OK
 	}
 
 	@Override
-	public void glColor4f(float red, float gre, float blu, float alp) {
+	public void glColor4f(final float red, final float gre, final float blu, final float alp) {
 		// currentColor = new float[] { red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, };
 		currentColor = new float[] { red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, };//ok
 
 	}
 
 	@Override
-	public void glColor(int rgb) {
-		final int alpha = (rgb >> 24) & 0xFF;
-		final int red = (rgb >> 16) & 0xFF;
-		final int green = (rgb >> 8) & 0xFF;
+	public void glColor(final int rgb) {
+		final int alpha = rgb >> 24 & 0xFF;
+		final int red = rgb >> 16 & 0xFF;
+		final int green = rgb >> 8 & 0xFF;
 		final int blue = rgb & 0xFF;
 		glColor4i(red, green, blue, alpha);
 	}
@@ -98,59 +98,57 @@ public class JOGLRenderer implements Renderer {
 	}
 
 	@Override
-	public void glClearColor(int rgb) {
-		final float alpha = ((rgb >> 24) & 0xFF) / 255f;
-		final float red = ((rgb >> 16) & 0xFF) / 255f;
-		final float green = ((rgb >> 8) & 0xFF) / 255f;
+	public void glClearColor(final int rgb) {
+		final float alpha = (rgb >> 24 & 0xFF) / 255f;
+		final float red = (rgb >> 16 & 0xFF) / 255f;
+		final float green = (rgb >> 8 & 0xFF) / 255f;
 		final float blue = (rgb & 0xFF) / 255f;
 		glClearColor4f(red, green, blue, alpha);
 	}
 
 	@Override
-	public void glColor4i(int r, int g, int b, int a) {
-		final float red = (r) / 255f;
-		final float gre = (g) / 255f;
-		final float blu = (b) / 255f;
-		final float alp = (a) / 255f;
+	public void glColor4i(final int r, final int g, final int b, final int a) {
+		final float red = r / 255f;
+		final float gre = g / 255f;
+		final float blu = b / 255f;
+		final float alp = a / 255f;
 		//currentColor = new float[] { red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, };
 		currentColor = new float[] { red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, };//OK
 	}
 
 	@Override
-	public void glClearColor4i(int red, int green, int blue, int alpha) {
-		final float ros = (red) / 255f;
-		final float gre = (green) / 255f;
-		final float blu = (blue) / 255f;
-		final float alp = (alpha) / 255f;
+	public void glClearColor4i(final int red, final int green, final int blue, final int alpha) {
+		final float ros = red / 255f;
+		final float gre = green / 255f;
+		final float blu = blue / 255f;
+		final float alp = alpha / 255f;
 		currentClearColorARGBf = new float[] { alp, ros, gre, blu };
 	}
 
 	@Override
-	public void glClearColor4f(float red, float green, float blue, float alpha) {
+	public void glClearColor4f(final float red, final float green, final float blue, final float alpha) {
 		currentClearColorARGBf = new float[] { alpha, red, green, blue };
 	}
 
 	@Override
-	public void glClear(int screenWidth, int screenHeight) {
+	public void glClear(final int screenWidth, final int screenHeight) {
 		glColor(glGetClearColor());
 		glFillColor(0, 0, screenWidth, screenHeight);
 	}
 
 	@Override
-	public void glDrawLine(float x0, float y0, float x1, float y1) {
+	public void glDrawLine(final float x0, final float y0, final float x1, final float y1) {
 		glFillColor(x0, y0, x1 - x0 + 1, y1 - y0 + 1);
 	}
 
 	@Override
-	public void glFillRect(float x, float y, float width, float height, float uvX, float uvY, float uvWidth,
-			float uvHeight) {
+	public void glFillRect(final float x, final float y, final float width, final float height, float uvX, float uvY,
+			float uvWidth, float uvHeight) {
 		enableTexture();
-		if (uvWidth < 0) {
+		if (uvWidth < 0)
 			uvX -= uvWidth;
-		}
-		if (uvHeight < 0) {
+		if (uvHeight < 0)
 			uvY -= uvHeight;
-		}
 		uvWidth /= currentTexWidth;
 		uvX /= currentTexWidth;
 		uvHeight /= currentTexHeight;
@@ -179,7 +177,7 @@ public class JOGLRenderer implements Renderer {
 	}
 
 	@Override
-	public void glFillColor(float x0, float y0, float w1, float h1) {
+	public void glFillColor(final float x0, final float y0, final float w1, final float h1) {
 		disableTexture();
 //		final float[] vertices = { x0, y0, 0.0f, x0, y0 + h1, 0.0f, x0 + w1, y0, 0.0f, x0 + w1, y0 + h1, 0.0f, };
 //		final float[] tex_vertices = { 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, };
@@ -205,7 +203,7 @@ public class JOGLRenderer implements Renderer {
 	}
 
 	@Override
-	public void glDrawStringLeft(float x, float y, String text) {
+	public void glDrawStringLeft(final float x, final float y, final String text) {
 		final int txtLen = text.length();
 		final int[] txtArray = currentFont.getCharIndexes(text);
 		int tableIndexX;
@@ -213,22 +211,22 @@ public class JOGLRenderer implements Renderer {
 		for (int currentCharIndex = 0; currentCharIndex < txtLen; currentCharIndex++) {
 			tableIndexX = txtArray[currentCharIndex] % currentFont.memoryWidthOfEachColumn;
 			tableIndexY = (txtArray[currentCharIndex] - tableIndexX) / currentFont.memoryWidthOfEachColumn;
-			glFillRect(x + ((float) currentCharIndex) * ((float) (currentFont.charW)), y, currentFont.charW, currentFont.charH, tableIndexX * currentFont.charW, tableIndexY * currentFont.charH, currentFont.charW, currentFont.charH);
+			glFillRect(x + (float) currentCharIndex * (float) currentFont.charW, y, currentFont.charW, currentFont.charH, tableIndexX * currentFont.charW, tableIndexY * currentFont.charH, currentFont.charW, currentFont.charH);
 		}
 	}
 
 	@Override
-	public void glDrawStringCenter(float x, float y, String text) {
-		glDrawStringLeft(x - (currentFont.getStringWidth(text) / 2), y, text);
+	public void glDrawStringCenter(final float x, final float y, final String text) {
+		glDrawStringLeft(x - currentFont.getStringWidth(text) / 2, y, text);
 	}
 
 	@Override
-	public void glDrawStringRight(float x, float y, String text) {
+	public void glDrawStringRight(final float x, final float y, final String text) {
 		glDrawStringLeft(x - currentFont.getStringWidth(text), y, text);
 	}
 
 	@Override
-	public void glDrawCharLeft(int x, int y, char ch) {
+	public void glDrawCharLeft(final int x, final int y, final char ch) {
 		final int index = currentFont.getCharIndex(ch);
 		final int tableIndexX = index % currentFont.memoryWidthOfEachColumn;
 		final int tableIndexY = (index - tableIndexX) / currentFont.memoryWidthOfEachColumn;
@@ -236,12 +234,12 @@ public class JOGLRenderer implements Renderer {
 	}
 
 	@Override
-	public void glDrawCharCenter(int x, int y, char ch) {
-		glDrawCharLeft(x - (currentFont.charW / 2), y, ch);
+	public void glDrawCharCenter(final int x, final int y, final char ch) {
+		glDrawCharLeft(x - currentFont.charW / 2, y, ch);
 	}
 
 	@Override
-	public void glDrawCharRight(int x, int y, char ch) {
+	public void glDrawCharRight(final int x, final int y, final char ch) {
 		glDrawCharLeft(x - currentFont.charW, y, ch);
 	}
 
@@ -251,7 +249,7 @@ public class JOGLRenderer implements Renderer {
 	}
 
 	@Deprecated
-	static Texture importTexture(GL gl, String string) throws IOException {
+	static Texture importTexture(final GL gl, final String string) throws IOException {
 		final FileInputStream f = new FileInputStream("test.png");
 		final TextureData tx_dat = TextureIO.newTextureData(gl.getGLProfile(), f, false, TextureIO.PNG);
 		final Texture tex = new Texture(gl, tx_dat);
@@ -262,16 +260,15 @@ public class JOGLRenderer implements Renderer {
 		return tex;
 	}
 
-	static OpenedTextureData openTexture(String file, boolean isResource) throws GLException, IOException {
+	static OpenedTextureData openTexture(final String file, final boolean isResource) throws GLException, IOException {
 		BufferedImage img = ImageIO.read(isResource ? JOGLRenderer.class.getResource("/" + file) : new File(file).toURI().toURL());
 		File f;
 		if (isResource) {
 			f = Files.createTempFile("texture-", ".png").toFile();
 			f.deleteOnExit();
 			ImageIO.write(img, "png", f);
-		} else {
+		} else
 			f = new File(file);
-		}
 		final int imgW = img.getWidth();
 		final int imgH = img.getHeight();
 		img = null;
@@ -291,7 +288,7 @@ public class JOGLRenderer implements Renderer {
 		 * @param f
 		 * @param deleteOnExit
 		 */
-		public OpenedTextureData(int w, int h, File f, boolean deleteOnExit) {
+		public OpenedTextureData(final int w, final int h, final File f, final boolean deleteOnExit) {
 			this.w = w;
 			this.h = h;
 			this.f = f;
@@ -300,20 +297,18 @@ public class JOGLRenderer implements Renderer {
 
 	}
 
-	static Texture importTexture(File f, boolean deleteOnExit) throws GLException, IOException {
+	static Texture importTexture(File f, final boolean deleteOnExit) throws GLException, IOException {
 		final Texture tex = TextureIO.newTexture(f, false);
-		if (deleteOnExit && f.exists()) {
+		if (deleteOnExit && f.exists())
 			try {
-				if (Engine.getPlatform().getSettings().isDebugEnabled()) {
+				if (Engine.getPlatform().getSettings().isDebugEnabled())
 					throw new IOException("Delete on exit!");
-				}
 				f.delete();
 			} catch (final Exception ex) {
 				f.deleteOnExit();
 			}
-		}
-		tex.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-		tex.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+		tex.setTexParameteri(JOGLRenderer.gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+		tex.setTexParameteri(JOGLRenderer.gl, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
 		f = null;
 		return tex;
 	}
@@ -321,48 +316,41 @@ public class JOGLRenderer implements Renderer {
 	public void initDrawCycle() {
 		final boolean textureChange = precTexEnabled != currentTexEnabled || precTex != currentTex;
 		if (fbVertices == null) {
-			fbVertices = Buffers.newDirectFloatBuffer(vertMax);
-			fbTextures = Buffers.newDirectFloatBuffer(texMax);
-			fbColors = Buffers.newDirectFloatBuffer(colMax);
+			fbVertices = Buffers.newDirectFloatBuffer(JOGLRenderer.vertMax);
+			fbTextures = Buffers.newDirectFloatBuffer(JOGLRenderer.texMax);
+			fbColors = Buffers.newDirectFloatBuffer(JOGLRenderer.colMax);
 			handlers = new int[3];
-			gl.glGenBuffers(3, handlers, 0);
+			JOGLRenderer.gl.glGenBuffers(3, handlers, 0);
 		}
 		startDrawSegment(false);
-		if (textureChange) {
+		if (textureChange)
 			changeTexture();
-		}
 	}
 
 	public void endDrawCycle() {
 		final boolean textureChange = precTexEnabled != currentTexEnabled || precTex != currentTex;
 		if (textureChange) {
-			if (fbElements > 0) {
+			if (fbElements > 0)
 				endDrawSegment();
-			}
 			changeTexture();
-		} else {
-			if (fbElements > 0) {
-				endDrawSegment();
-			}
-		}
+		} else if (fbElements > 0)
+			endDrawSegment();
 	}
 
 	private void changeTexture() {
 		precTexEnabled = currentTexEnabled;
 		precTex = currentTex;
 		if (currentTexEnabled) {
-			gl.glEnable(GL.GL_TEXTURE_2D);
-			currentTex.bind(gl);
-		} else {
-			gl.glDisable(GL.GL_TEXTURE_2D);
-		}
+			JOGLRenderer.gl.glEnable(GL.GL_TEXTURE_2D);
+			currentTex.bind(JOGLRenderer.gl);
+		} else
+			JOGLRenderer.gl.glDisable(GL.GL_TEXTURE_2D);
 		firstBufferTexDataCall = true;
 	}
 
-	public void startDrawSegment(boolean continuation) {
-		if (!continuation || cycleEnded) {
+	public void startDrawSegment(final boolean continuation) {
+		if (!continuation || cycleEnded)
 			fbElements = 0;
-		}
 		cycleEnded = false;
 	}
 
@@ -372,18 +360,16 @@ public class JOGLRenderer implements Renderer {
 
 	public void doDrawSegment() {
 		final boolean textureChange = precTexEnabled != currentTexEnabled || precTex != currentTex;
-		final boolean changeRequired = fbElements >= ELEMENTS_MAX_COUNT_PER_BUFFER;
+		final boolean changeRequired = fbElements >= JOGLRenderer.ELEMENTS_MAX_COUNT_PER_BUFFER;
 		if (textureChange) {
 			if (fbElements > 0) {
 				endDrawSegment();
 				startDrawSegment(false);
 			}
 			changeTexture();
-		} else {
-			if (fbElements > 0 && changeRequired) {
-				endDrawSegment();
-				startDrawSegment(true);
-			}
+		} else if (fbElements > 0 && changeRequired) {
+			endDrawSegment();
+			startDrawSegment(true);
 		}
 	}
 
@@ -396,34 +382,31 @@ public class JOGLRenderer implements Renderer {
 		fbColors.flip();
 
 //		gl.glVertexPointer(vertSize, GL.GL_FLOAT, 0, fbVertices);
-		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, handlers[vertBuffer]);
-		if (firstBufferTexDataCall) {
-			gl.glBufferData(GL.GL_ARRAY_BUFFER, fbVertices.limit() * Buffers.SIZEOF_FLOAT, fbVertices, GL.GL_STATIC_DRAW);
-		} else {
-			gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, fbVertices.limit() * Buffers.SIZEOF_FLOAT, fbVertices);
-		}
-		gl.glVertexPointer(vertSize, GL.GL_FLOAT, 0, 0l);
+		JOGLRenderer.gl.glBindBuffer(GL.GL_ARRAY_BUFFER, handlers[JOGLRenderer.vertBuffer]);
+		if (firstBufferTexDataCall)
+			JOGLRenderer.gl.glBufferData(GL.GL_ARRAY_BUFFER, fbVertices.limit() * Buffers.SIZEOF_FLOAT, fbVertices, GL.GL_STATIC_DRAW);
+		else
+			JOGLRenderer.gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, fbVertices.limit() * Buffers.SIZEOF_FLOAT, fbVertices);
+		JOGLRenderer.gl.glVertexPointer(JOGLRenderer.vertSize, GL.GL_FLOAT, 0, 0l);
 //		gl.glTexCoordPointer(texSize, GL.GL_FLOAT, 0, fbTextures);
-		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, handlers[texBuffer]);
-		if (firstBufferTexDataCall) {
-			gl.glBufferData(GL.GL_ARRAY_BUFFER, fbTextures.limit() * Buffers.SIZEOF_FLOAT, fbTextures, GL.GL_STATIC_DRAW);
-		} else {
-			gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, fbTextures.limit() * Buffers.SIZEOF_FLOAT, fbTextures);
-		}
-		gl.glTexCoordPointer(texSize, GL.GL_FLOAT, 0, 0l);
+		JOGLRenderer.gl.glBindBuffer(GL.GL_ARRAY_BUFFER, handlers[JOGLRenderer.texBuffer]);
+		if (firstBufferTexDataCall)
+			JOGLRenderer.gl.glBufferData(GL.GL_ARRAY_BUFFER, fbTextures.limit() * Buffers.SIZEOF_FLOAT, fbTextures, GL.GL_STATIC_DRAW);
+		else
+			JOGLRenderer.gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, fbTextures.limit() * Buffers.SIZEOF_FLOAT, fbTextures);
+		JOGLRenderer.gl.glTexCoordPointer(JOGLRenderer.texSize, GL.GL_FLOAT, 0, 0l);
 //		gl.glColorPointer(colSize, GL.GL_FLOAT, 0, fbColors);
-		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, handlers[colBuffer]);
-		if (firstBufferTexDataCall) {
-			gl.glBufferData(GL.GL_ARRAY_BUFFER, fbColors.limit() * Buffers.SIZEOF_FLOAT, fbColors, GL.GL_STATIC_DRAW);
-		} else {
-			gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, fbColors.limit() * Buffers.SIZEOF_FLOAT, fbColors);
-		}
-		gl.glColorPointer(colSize, GL.GL_FLOAT, 0, 0l);
+		JOGLRenderer.gl.glBindBuffer(GL.GL_ARRAY_BUFFER, handlers[JOGLRenderer.colBuffer]);
+		if (firstBufferTexDataCall)
+			JOGLRenderer.gl.glBufferData(GL.GL_ARRAY_BUFFER, fbColors.limit() * Buffers.SIZEOF_FLOAT, fbColors, GL.GL_STATIC_DRAW);
+		else
+			JOGLRenderer.gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, fbColors.limit() * Buffers.SIZEOF_FLOAT, fbColors);
+		JOGLRenderer.gl.glColorPointer(JOGLRenderer.colSize, GL.GL_FLOAT, 0, 0l);
 
-		fbVertices.limit(vertMax);
-		fbTextures.limit(texMax);
-		fbColors.limit(colMax);
-		gl.glDrawArrays(GL.GL_TRIANGLES, 0, fbElements * ELEMENT_VERTICES_COUNT);
+		fbVertices.limit(JOGLRenderer.vertMax);
+		fbTextures.limit(JOGLRenderer.texMax);
+		fbColors.limit(JOGLRenderer.colMax);
+		JOGLRenderer.gl.glDrawArrays(GL.GL_TRIANGLES, 0, fbElements * JOGLRenderer.ELEMENT_VERTICES_COUNT);
 		//gl.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, fbElements * ELEMENT_VERTICES_COUNT);
 		firstBufferDataCall = false;
 		firstBufferTexDataCall = false;
@@ -455,7 +438,7 @@ public class JOGLRenderer implements Renderer {
 		doDrawSegment();
 	}
 
-	void useTexture(Texture t, float w, float h) {
+	void useTexture(final Texture t, final float w, final float h) {
 		currentTex = t;
 		currentTexWidth = w;
 		currentTexHeight = h;

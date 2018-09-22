@@ -5,15 +5,15 @@ import java.net.URISyntaxException;
 
 public interface Skin {
 
-	public void load(String file) throws IOException, URISyntaxException;
+	void load(String file) throws IOException, URISyntaxException;
 
-	public void initialize(GraphicEngine d);
+	void initialize(GraphicEngine d);
 
-	public boolean isInitialized();
+	boolean isInitialized();
 
-	public void use(GraphicEngine d);
+	void use(GraphicEngine d);
 
-	public int getSkinWidth();
+	int getSkinWidth();
 
-	public int getSkinHeight();
+	int getSkinHeight();
 }

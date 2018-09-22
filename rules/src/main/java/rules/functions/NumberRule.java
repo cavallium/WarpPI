@@ -17,7 +17,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 /**
  * Number
  *
- * 
+ *
  * @author Andrea Cavalli
  *
  */
@@ -40,19 +40,18 @@ public class NumberRule implements Rule {
 	     - An ObjectArrayList<Function> if it did something
 	*/
 	@Override
-	public ObjectArrayList<Function> execute(Function f) {
+	public ObjectArrayList<Function> execute(final Function f) {
 		if (f instanceof Number) {
-			ObjectArrayList<Function> result = new ObjectArrayList<>();
-			MathContext mathContext = f.getMathContext();
-			if (mathContext.exactMode) {
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			final MathContext mathContext = f.getMathContext();
+			if (mathContext.exactMode)
 				if (((Number) f).isInteger() == false) {
-					Number divisor = new Number(mathContext, BigInteger.TEN.pow(((Number) f).getNumberOfDecimalPlaces()));
-					Function number = new Number(mathContext, ((Number) f).getTerm().multiply(divisor.getTerm()));
-					Function div = new Division(mathContext, number, divisor);
+					final Number divisor = new Number(mathContext, BigInteger.TEN.pow(((Number) f).getNumberOfDecimalPlaces()));
+					final Function number = new Number(mathContext, ((Number) f).getTerm().multiply(divisor.getTerm()));
+					final Function div = new Division(mathContext, number, divisor);
 					result.add(div);
 					return result;
 				}
-			}
 		}
 		return null;
 	}

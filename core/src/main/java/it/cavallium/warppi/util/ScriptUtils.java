@@ -5,11 +5,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 public class ScriptUtils {
-	public static boolean instanceOf(Object a, Class<?> b) {
+	public static boolean instanceOf(final Object a, final Class<?> b) {
 		return b.isInstance(a);
 	}
 
-	public static LinkedList<BigInteger> mcm(LinkedList<BigInteger> factors1, LinkedList<BigInteger> factors2) {
+	public static LinkedList<BigInteger> mcm(final LinkedList<BigInteger> factors1,
+			final LinkedList<BigInteger> factors2) {
 		final LinkedList<BigInteger> mcm = new LinkedList<>();
 		final Iterator<BigInteger> i1 = factors1.iterator();
 		while (i1.hasNext()) {
