@@ -3,6 +3,7 @@ package it.cavallium.warppi.gui.graphicengine.html;
 import java.io.IOException;
 
 import org.teavm.jso.JSBody;
+import org.teavm.jso.JSObject;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.canvas.CanvasRenderingContext2D;
 import org.teavm.jso.dom.events.Event;
@@ -16,6 +17,7 @@ import org.teavm.jso.dom.html.HTMLInputElement;
 import org.teavm.jso.dom.xml.NodeList;
 
 import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.Platform.Semaphore;
 import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.flow.BehaviorSubject;
@@ -33,8 +35,10 @@ public class HtmlEngine implements GraphicEngine {
 	private RenderingLoop renderingLoop;
 	private HtmlRenderer renderer;
 	private int width, height;
+	public int mult = 1;
 	private final int frameTime = (int) (1000d / 10d);
 	private final BehaviorSubject<Integer[]> onResize = BehaviorSubject.create();
+	private final BehaviorSubject<Float> onZoom = BehaviorSubject.create();
 
 	@Override
 	public int[] getSize() {
@@ -66,7 +70,15 @@ public class HtmlEngine implements GraphicEngine {
 	}
 
 	private String previousValue = "";
-
+	
+	@JSBody(params = { "ctx", "enabled" }, script = ""
+			+ "ctx.mozImageSmoothingEnabled = enabled;"
+			+ "ctx.oImageSmoothingEnabled = enabled;"
+			+ "ctx.webkitImageSmoothingEnabled = enabled;"
+			+ "ctx.msImageSmoothingEnabled = enabled;"
+			+ "ctx.imageSmoothingEnabled = enabled;")
+	public static native void setImageSmoothingEnabled(CanvasRenderingContext2D ctx, boolean enabled);
+	
 	@Override
 	public void create(final Runnable onInitialized) {
 		exitSemaphore = Engine.getPlatform().newSemaphore(0);
@@ -75,6 +87,22 @@ public class HtmlEngine implements GraphicEngine {
 		canvas = (HTMLCanvasElement) HtmlEngine.document.createElement("canvas");
 		g = (CanvasRenderingContext2D) canvas.getContext("2d");
 		final HTMLInputElement keyInput = (HTMLInputElement) HtmlEngine.document.createElement("input");
+		StaticVars.windowZoom$.subscribe((zoom) -> {
+			onZoom.onNext(zoom);
+		});
+		onZoom.subscribe((windowZoom) -> {
+			if (windowZoom != 0) {
+				canvas.setWidth((int)(480 / 1));
+				canvas.setHeight((int)(320 / 1));
+				canvas.getStyle().setProperty("zoom", "" + (windowZoom + 1));
+				canvas.getStyle().setProperty("max-height", (int)(44 / windowZoom) + "vh");
+				width = 480 / windowZoom.intValue();
+				height = 320 / windowZoom.intValue();
+				this.mult = windowZoom.intValue();
+				StaticVars.screenSize[0] = width;
+				StaticVars.screenSize[1] = height;
+			}
+		});
 		keyInput.setType("text");
 		keyInput.getStyle().setProperty("opacity", "0.1");
 		setDisplayMode(480, 320);

@@ -12,7 +12,6 @@ public class HtmlRenderer implements Renderer {
 	HtmlSkin currentSkin = null;
 	private final CanvasRenderingContext2D g;
 	private final HtmlEngine e;
-
 	public HtmlRenderer(final HtmlEngine e, final CanvasRenderingContext2D g) {
 		this.g = g;
 		this.e = e;
@@ -105,7 +104,8 @@ public class HtmlRenderer implements Renderer {
 				t0 -= y0;
 			y0 = 0;
 		}
-		g.drawImage(currentSkin.getImgElement(), s0, t0, s1 - s0, t1 - t0, x0, y0, x1 - x0, y1 - y0);
+		HtmlEngine.setImageSmoothingEnabled(g, false);
+		g.drawImage(currentSkin.getImgElement(), s0, t0, s1 - s0, t1 - t0, x0 * e.mult, y0 * e.mult, (x1 - x0) * e.mult, (y1 - y0) * e.mult);
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class HtmlRenderer implements Renderer {
 		x += StaticVars.screenPos[0];
 		y += StaticVars.screenPos[1];
 		g.setFillStyle(currentColor);
-		g.fillRect(x, y, width, height);
+		g.fillRect(x * e.mult, y * e.mult, width * e.mult, height * e.mult);
 	}
 
 	@Override
@@ -136,7 +136,8 @@ public class HtmlRenderer implements Renderer {
 		for (int i = 0; i < l; i++) {
 			cpos = i * f.charW;
 			final int charIndex = text[i];
-			g.drawImage(f.imgEl, 0, charIndex * f.charH, f.charW, f.charH, x + cpos, y, f.charW, f.charH);
+			HtmlEngine.setImageSmoothingEnabled(g, false);
+			g.drawImage(f.imgEl, 0, charIndex * f.charH, f.charW, f.charH, (x + cpos) * e.mult, y * e.mult, f.charW * e.mult, f.charH * e.mult);
 		}
 	}
 
@@ -149,11 +150,12 @@ public class HtmlRenderer implements Renderer {
 	public void glDrawLine(final float x0, final float y0, final float x1, final float y1) {
 		if (x1 - x0 > 0 && y1 - y0 > 0) {
 			g.beginPath();
-			g.moveTo(x0, y0);
-			g.lineTo(x1, y1);
+			g.moveTo(x0 * e.mult, y0 * e.mult);
+			g.lineTo(x1 * e.mult, y1 * e.mult);
+			g.setLineWidth(e.mult);
 			g.stroke();
 		} else
-			g.fillRect(x0, y0, x1 - x0 + 1, y1 - y0 + 1);
+			g.fillRect(x0 * e.mult, y0 * e.mult, (x1 - x0 + 1) * e.mult, (y1 - y0 + 1) * e.mult);
 	}
 
 	@Override
@@ -226,7 +228,7 @@ public class HtmlRenderer implements Renderer {
 	@Override
 	public void glClear(final int screenWidth, final int screenHeight) {
 		g.setFillStyle(clearColor);
-		g.fillRect(0, 0, screenWidth, screenHeight);
+		g.fillRect(0, 0, screenWidth * e.mult, screenHeight * e.mult);
 		g.setFillStyle(currentColor);
 	}
 
