@@ -162,8 +162,6 @@ public class JOGLEngine implements GraphicEngine {
 	public boolean isSupported() {
 		if (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isGPUEngineForced() == false)
 			return false;
-		if (StaticVars.startupArguments.isHeadlessEngineForced())
-			return false;
 		boolean available = false;
 		boolean errored = false;
 		try {

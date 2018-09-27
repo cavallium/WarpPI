@@ -176,7 +176,7 @@ public class SwingEngine implements GraphicEngine {
 	public boolean isSupported() {
 		if (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isCPUEngineForced() == false)
 			return false;
-		return (StaticVars.startupArguments.isHeadlessEngineForced() || GraphicsEnvironment.isHeadless()) == false;
+		return (GraphicsEnvironment.isHeadless()) == false;
 	}
 
 	@Override

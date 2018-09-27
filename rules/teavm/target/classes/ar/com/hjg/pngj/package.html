@@ -1,0 +1,49 @@
+<html>
+<body bgcolor="white">
+<p>
+PNGJ main package
+</p>
+<p>
+Users of this library should rarely need more than the public members of this package.<br>
+Newcomers: start with <a href="PngReader.html">PngReader</a> and <a href="PngWriter.html">PngWriter</a>.
+</p>
+<p>
+Example of use: this code reads a true colour PNG image (RGB8 or RGBA8) 
+and reduces the red channel by half, increasing the green by 20.
+It copies all the "safe" metadata from the original image, and adds a textual metadata.
+  
+<pre class="code">
+  public static void convert(String origFilename, String destFilename) {
+    // you can also use PngReader (esentially the same) or PngReaderByte 
+    PngReaderInt pngr = new PngReaderInt(new File(origFilename));  
+    System.out.println(pngr.toString());
+    int channels = pngr.imgInfo.channels;
+    if (channels &lt; 3 || pngr.imgInfo.bitDepth != 8)
+       throw new RuntimeException("For simplicity this supports only RGB8/RGBA8 images");
+    // writer with same image properties as original
+    PngWriter pngw = new PngWriter(new File(destFilename), pngr.imgInfo, true);
+    // instruct the writer to grab all ancillary chunks from the original
+    pngw.copyChunksFrom(pngr.getChunksList(), ChunkCopyBehaviour.COPY_ALL_SAFE);
+    // add a textual chunk to writer
+    pngw.getMetadata().setText(PngChunkTextVar.KEY_Description, "Decreased red and increased green");
+    // also: while(pngr.hasMoreRows())
+    for (int row = 0; row &lt; pngr.imgInfo.rows; row++) {  
+       ImageLineInt l1 = pngr.readRowInt(); // each element is a sample
+       int[] scanline = l1.getScanline(); // to save typing
+       for (int j = 0; j < pngr.imgInfo.cols; j++) {
+          scanline[j * channels] /= 2;
+          scanline[j * channels + 1] = ImageLineHelper.clampTo_0_255(scanline[j * channels + 1] + 20);
+       }
+       pngw.writeRow(l1);
+    }
+    pngr.end(); // it's recommended to end the reader first, in case there are trailing chunks to read
+    pngw.end();
+ }
+
+</pre>
+
+For more examples, see the tests and samples.
+
+</p>
+</body>
+</html>

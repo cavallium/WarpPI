@@ -5,14 +5,6 @@ public interface StartupArguments {
 
 	boolean isZoomed();
 
-	boolean isHeadlessEngineForced();
-
-	boolean isHeadless8EngineForced();
-
-	boolean isHeadless256EngineForced();
-
-	boolean isHeadless24bitEngineForced();
-
 	boolean isCPUEngineForced();
 
 	boolean isGPUEngineForced();

@@ -13,9 +13,6 @@ import org.apache.commons.io.FileUtils;
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
-import it.cavallium.warppi.gui.graphicengine.impl.jansi24bitcolors.JAnsi24bitEngine;
-import it.cavallium.warppi.gui.graphicengine.impl.jansi256colors.JAnsi256Engine;
-import it.cavallium.warppi.gui.graphicengine.impl.jansi8colors.JAnsi8Engine;
 import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
 import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingEngine;
 import it.cavallium.warppi.util.CacheUtils;
@@ -43,9 +40,6 @@ public class DesktopPlatform implements Platform {
 		el = new HashMap<>();
 		el.put("CPU engine", new SwingEngine());
 		el.put("GPU engine", new JOGLEngine());
-		el.put("headless 24 bit engine", new JAnsi24bitEngine());
-		el.put("headless 256 colors engine", new JAnsi256Engine());
-		el.put("headless 8 colors engine", new JAnsi8Engine());
 		settings = new DesktopSettings();
 	}
 

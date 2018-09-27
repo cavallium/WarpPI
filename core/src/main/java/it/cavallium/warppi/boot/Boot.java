@@ -34,7 +34,6 @@ public class Boot {
 	public static StartupArguments parseStartupArguments(final String[] a) {
 		final StartupArgumentsImpl args = new StartupArgumentsImpl();
 		Arrays.asList(a).stream().parallel().map(String::toLowerCase).forEach(arg -> Boot.parseArgument(args, arg));
-		args.setHeadlessEngineForced(args.isHeadlessEngineForced() || args.isHeadless8EngineForced() || args.isHeadless256EngineForced() || args.isHeadless24bitEngineForced());
 		return args;
 	}
 
@@ -54,18 +53,6 @@ public class Boot {
 				break;
 			case "ms-dos":
 				args.setMSDOSModeEnabled(true);
-				break;
-			case "headless-8":
-				args.setHeadless8EngineForced(true);
-				break;
-			case "headless-256":
-				args.setHeadless256EngineForced(true);
-				break;
-			case "headless-24bit":
-				args.setHeadless24bitEngineForced(true);
-				break;
-			case "-headless":
-				args.setHeadlessEngineForced(true);
 				break;
 			case "html":
 				args.setHTMLEngineForced(true);

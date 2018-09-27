@@ -168,8 +168,6 @@ public class FBEngine implements GraphicEngine {
 	public boolean isSupported() {
 		if (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isFrameBufferEngineForced() == false)
 			return false;
-		if (StaticVars.startupArguments.isHeadlessEngineForced())
-			return false;
 		/*
 		File fbFile = new File("/dev/fb1");
 		try {
