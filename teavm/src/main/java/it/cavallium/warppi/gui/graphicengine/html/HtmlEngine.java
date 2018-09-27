@@ -92,9 +92,14 @@ public class HtmlEngine implements GraphicEngine {
 		});
 		onZoom.subscribe((windowZoom) -> {
 			if (windowZoom != 0) {
-				canvas.setWidth((int)(480 / 1));
-				canvas.setHeight((int)(320 / 1));
-				canvas.getStyle().setProperty("zoom", "" + (windowZoom + 1));
+				if (suppportsZoom()) {
+					canvas.setWidth((int)(480 / 1));
+					canvas.setHeight((int)(320 / 1));
+					canvas.getStyle().setProperty("zoom", "" + (windowZoom + 1));
+				} else {
+					canvas.setWidth((int)(480 / (windowZoom + 1)));
+					canvas.setHeight((int)(320 / (windowZoom + 1)));
+				}
 				canvas.getStyle().setProperty("max-height", (int)(44 / windowZoom) + "vh");
 				width = 480 / windowZoom.intValue();
 				height = 320 / windowZoom.intValue();
@@ -198,6 +203,9 @@ public class HtmlEngine implements GraphicEngine {
 		if (onInitialized != null)
 			onInitialized.run();
 	}
+
+	@JSBody(params = {}, script = "return CSS.supports(\"zoom:2\")")
+	private native boolean suppportsZoom();
 
 	@Override
 	public int getWidth() {
