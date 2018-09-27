@@ -205,7 +205,7 @@ public class HtmlEngine implements GraphicEngine {
 	}
 
 	@JSBody(params = {}, script = "return CSS.supports(\"zoom:2\")")
-	private native boolean suppportsZoom();
+	private static native boolean suppportsZoom();
 
 	@Override
 	public int getWidth() {

@@ -1,5 +1,6 @@
 package it.cavallium.warppi.flow;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,8 +36,7 @@ public class IntervalsManager {
 				e.printStackTrace();
 			}
 		});
-		t.setDaemon(true);
-		t.setName("Intervals Manager");
+		Utils.setThreadDaemon(t, true);
 		t.start();
 	}
 }

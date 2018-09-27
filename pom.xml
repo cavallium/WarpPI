@@ -29,8 +29,8 @@
 	<properties>
 		<project.version>0.9.0a0</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>1.9</maven.compiler.source>
+		<maven.compiler.target>1.9</maven.compiler.target>
 		<src.dir>src/main/java</src.dir>
 		<src.dir2>src/main/java</src.dir2>
 		<src.resdir>src/main/resources</src.resdir>

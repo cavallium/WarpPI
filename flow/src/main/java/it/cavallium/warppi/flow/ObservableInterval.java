@@ -46,7 +46,6 @@ public class ObservableInterval extends Observable<Long> {
 				} catch (final InterruptedException e) {}
 				timeThread = null;
 			});
-			timeThread.setName("ObservableTimer");
 			timeThread.start();
 			running = true;
 		}
