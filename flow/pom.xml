@@ -8,30 +8,13 @@
 		<artifactId>warppi</artifactId>
 	<version>${project.version}</version>
 	</parent>
-	<artifactId>warppi-core</artifactId>
+	<artifactId>warppi-flow</artifactId>
 	<packaging>bundle</packaging>
 
-	<name>WarpPI Calculator Core</name>
-	<description>WarpPI Calculator core project</description>
+	<name>WarpPI Flow Library</name>
+	<description>WarpPI Flow library project</description>
 
 	<dependencies>
-		<dependency>
-			<groupId>it.cavallium</groupId>
-			<artifactId>warppi-flow</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>it.unimi.dsi</groupId>
-			<artifactId>fastutil</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.code.gson</groupId>
-			<artifactId>gson</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -52,7 +35,7 @@
 				<configuration>
 					<instructions>
 						<Export-Package>it.cavallium.warppi.*</Export-Package>
-						<Bundle-SymbolicName>warppi-core</Bundle-SymbolicName>
+						<Bundle-SymbolicName>warppi-flow</Bundle-SymbolicName>
 					</instructions>
 				</configuration>
 			</plugin>

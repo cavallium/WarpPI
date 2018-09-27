@@ -1,7 +1,5 @@
 package it.cavallium.warppi.flow;
 
-import it.cavallium.warppi.Engine;
-
 public class ObservableInterval extends Observable<Long> {
 	private final long interval;
 	volatile boolean running;
@@ -48,7 +46,7 @@ public class ObservableInterval extends Observable<Long> {
 				} catch (final InterruptedException e) {}
 				timeThread = null;
 			});
-			Engine.getPlatform().setThreadName(timeThread, "ObservableTimer");
+			timeThread.setName("ObservableTimer");
 			timeThread.start();
 			running = true;
 		}

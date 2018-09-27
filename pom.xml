@@ -39,6 +39,7 @@
 
 	<modules>
 		<module>core</module>
+		<module>flow</module>
 		<module>rules</module>
 		<module>hardware</module>
 		<module>desktop</module>

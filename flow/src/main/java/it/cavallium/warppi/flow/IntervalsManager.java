@@ -3,8 +3,6 @@ package it.cavallium.warppi.flow;
 import java.util.LinkedList;
 import java.util.List;
 
-import it.cavallium.warppi.Engine;
-
 public class IntervalsManager {
 	private static List<ObservableInterval> intervals = new LinkedList<>();
 
@@ -37,8 +35,8 @@ public class IntervalsManager {
 				e.printStackTrace();
 			}
 		});
-		Engine.getPlatform().setThreadDaemon(t);
-		Engine.getPlatform().setThreadName(t, "Intervals Manager");
+		t.setDaemon(true);
+		t.setName("Intervals Manager");
 		t.start();
 	}
 }
