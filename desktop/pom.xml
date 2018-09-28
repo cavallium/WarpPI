@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>warppi-desktop</artifactId>
 
-	<packaging>bundle</packaging>
+	<packaging>jar</packaging>
 
 	<name>WarpPI Calculator Desktop</name>
 	<description>WarpPI Calculator desktop project</description>
@@ -56,23 +56,8 @@
 		</resources>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Export-Package>it.cavallium.warppi.*</Export-Package>
-						<Bundle-SymbolicName>warppi-desktop</Bundle-SymbolicName>
-					</instructions>
-				</configuration>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
 			</plugin>
 			<!-- Maven Assembly Plugin -->
 			<plugin>

@@ -97,8 +97,8 @@ public class HtmlEngine implements GraphicEngine {
 					canvas.setHeight((int)(320 / 1));
 					canvas.getStyle().setProperty("zoom", "" + (windowZoom + 1));
 				} else {
-					canvas.setWidth((int)(480 / (windowZoom + 1)));
-					canvas.setHeight((int)(320 / (windowZoom + 1)));
+					canvas.setWidth((int)(480 * 2));
+					canvas.setHeight((int)(320 * 2));
 				}
 				canvas.getStyle().setProperty("max-height", (int)(44 / windowZoom) + "vh");
 				width = 480 / windowZoom.intValue();

@@ -29,8 +29,10 @@
 	<properties>
 		<project.version>0.9.0a0</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.9</maven.compiler.source>
-		<maven.compiler.target>1.9</maven.compiler.target>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.release>11</maven.compiler.release>
+		<java.version>11</java.version>
 		<src.dir>src/main/java</src.dir>
 		<src.dir2>src/main/java</src.dir2>
 		<src.resdir>src/main/resources</src.resdir>
@@ -130,28 +132,11 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.7.0</version>
+					<version>3.8.0</version>
 					<configuration>
-						<source>1.8</source>
-						<target>1.8</target>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.0.0</version>
-					<executions>
-						<execution>
-							<id>build-javadoc</id>
-							<goals>
-								<goal>jar</goal>
-							</goals>
-							<phase>post-integration-test</phase>
-						</execution>
-					</executions>
-					<configuration>
-						<show>protected</show>
-						<failOnError>false</failOnError>
+						<source>${maven.compiler.source}</source>
+						<target>${maven.compiler.target}</target>
+						<release>${maven.compiler.release}</release>
 					</configuration>
 				</plugin>
 				<plugin>
