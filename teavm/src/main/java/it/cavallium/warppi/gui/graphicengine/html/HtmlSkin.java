@@ -41,16 +41,10 @@ public class HtmlSkin implements Skin {
 		if (!file.startsWith("/"))
 			file = "/" + file;
 		url = Engine.getPlatform().getStorageUtils().getBasePath() + file;
-		try {
-			final InputStream stream = Engine.getPlatform().getStorageUtils().getResourceStream(file);
-			final PngReader r = new PngReader(stream);
-			skinSize = new int[] { r.imgInfo.cols, r.imgInfo.rows };
-			r.close();
-		} catch (final URISyntaxException e) {
-			final IOException ex = new IOException();
-			ex.initCause(e);
-			throw ex;
-		}
+		final InputStream stream = Engine.getPlatform().getStorageUtils().getResourceStream(file);
+		final PngReader r = new PngReader(stream);
+		skinSize = new int[] { r.imgInfo.cols, r.imgInfo.rows };
+		r.close();
 	}
 
 	@Override

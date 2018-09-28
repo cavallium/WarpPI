@@ -29,10 +29,10 @@
 	<properties>
 		<project.version>0.9.0a0</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>11</maven.compiler.source>
-		<maven.compiler.target>11</maven.compiler.target>
-		<maven.compiler.release>11</maven.compiler.release>
-		<java.version>11</java.version>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.release>1.8</maven.compiler.release>
+		<java.version>1.8</java.version>
 		<src.dir>src/main/java</src.dir>
 		<src.dir2>src/main/java</src.dir2>
 		<src.resdir>src/main/resources</src.resdir>
@@ -45,8 +45,8 @@
 		<module>rules</module>
 		<module>hardware</module>
 		<module>desktop</module>
-		<module>teavm</module>
 		<module>engine-jogl</module>
+		<module>teavm</module>
 	</modules>
 
 	<repositories>
@@ -134,7 +134,7 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.8.0</version>
 					<configuration>
-						<release>11</release>
+						<release>${maven.compiler.release}</release>
 					</configuration>
 				</plugin>
 				<plugin>

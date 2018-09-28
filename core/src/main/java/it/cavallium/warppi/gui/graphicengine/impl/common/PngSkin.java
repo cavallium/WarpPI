@@ -29,27 +29,21 @@ public abstract class PngSkin implements Skin {
 		if (!file.startsWith("/")) {
 			file = "/" + file;
 		}
-		try {
-			if (!file.endsWith(".png")) {
-				final File f = File.createTempFile("picalculator-png", ".png");
-				f.deleteOnExit();
-				final BufferedImage img = ImageIO.read(Engine.getPlatform().getStorageUtils().getResourceStream(file));
-				ImageIO.write(img, "PNG", f);
-				file = f.toString();
-			}
-			final PngReader r = Engine.getPlatform().getPngUtils().load(Engine.getPlatform().getStorageUtils().getResourceStream(file));
-			if (r == null) {
-				skinData = new int[0];
-				skinSize = new int[] { 0, 0 };
-				System.err.println("ERROR WHILE LOADING SKIN " + file);
-			} else {
-				skinData = r.getImageMatrix();
-				skinSize = r.getSize();
-			}
-		} catch (final URISyntaxException e) {
-			final IOException ex = new IOException();
-			ex.initCause(e);
-			throw ex;
+		if (!file.endsWith(".png")) {
+			final File f = File.createTempFile("picalculator-png", ".png");
+			f.deleteOnExit();
+			final BufferedImage img = ImageIO.read(Engine.getPlatform().getStorageUtils().getResourceStream(file));
+			ImageIO.write(img, "PNG", f);
+			file = f.toString();
+		}
+		final PngReader r = Engine.getPlatform().getPngUtils().load(Engine.getPlatform().getStorageUtils().getResourceStream(file));
+		if (r == null) {
+			skinData = new int[0];
+			skinSize = new int[] { 0, 0 };
+			System.err.println("ERROR WHILE LOADING SKIN " + file);
+		} else {
+			skinData = r.getImageMatrix();
+			skinSize = r.getSize();
 		}
 	}
 

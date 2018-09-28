@@ -9,7 +9,7 @@
 	<version>${project.version}</version>
 	</parent>
 	<artifactId>warppi-core</artifactId>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 
 	<name>WarpPI Calculator Core</name>
 	<description>WarpPI Calculator core project</description>

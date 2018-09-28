@@ -178,7 +178,7 @@ public class RulesManager {
 			Engine.getPlatform().getStorageUtils();
 			Engine.getPlatform().getStorageUtils();
 			Engine.getPlatform().getStorageUtils().write(tFileJava, javaCode.getBytes("UTF-8"), StorageUtils.OpenOptionWrite, StorageUtils.OpenOptionCreate);
-			final boolean compiled = Engine.getPlatform().compile(new String[] { "-nowarn", "-1.8", tFileJava.toString() }, new PrintWriter(System.out), new PrintWriter(System.err));
+			final boolean compiled = Engine.getPlatform().compile(new String[] { "-nowarn", "-10", tFileJava.toString() }, new PrintWriter(System.out), new PrintWriter(System.err));
 			if (StaticVars.startupArguments.isUncached()) {
 				tFileJava.deleteOnExit();
 			} else {

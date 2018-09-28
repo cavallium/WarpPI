@@ -45,19 +45,19 @@ public class MarioScreen extends Screen {
 	public void initialized() {
 		try {
 			if (MarioScreen.skin == null) {
-				MarioScreen.skin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("marioskin.png");
+				MarioScreen.skin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("/marioskin.png");
 			}
 			if (MarioScreen.groundskin == null) {
-				MarioScreen.groundskin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("marioground.png");
+				MarioScreen.groundskin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("/marioground.png");
 			}
 			if (MarioScreen.gpuTest2 == null) {
 				try {
-					MarioScreen.gpuTest2 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("gputest2");
+					MarioScreen.gpuTest2 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("/gputest2");
 				} catch (final Exception ex) {}
 			}
 			if (MarioScreen.gpuTest1 == null) {
 				try {
-					MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("gputest12");
+					MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("/gputest12");
 					MarioScreen.gpuTest12 = true;
 				} catch (final Exception ex) {
 					MarioScreen.gpuTest12 = false;

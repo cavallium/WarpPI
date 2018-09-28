@@ -293,7 +293,7 @@ public final class DisplayManager implements RenderingLoop {
 	}
 
 	private void load_skin() throws IOException {
-		guiSkin = engine.loadSkin("skin.png");
+		guiSkin = engine.loadSkin("/skin.png");
 	}
 
 	private void load_fonts() throws IOException {

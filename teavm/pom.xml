@@ -9,8 +9,14 @@
 		<version>${project.version}</version>
 	</parent>
 	<artifactId>warppi-teavm</artifactId>
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 	
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.release>1.8</maven.compiler.release>
+		<java.version>1.8</java.version>
+	</properties>
 		
 	<name>WarpPI Calculator TeaVM</name>
 	<description>WarpPI Calculator teavm project</description>
@@ -31,12 +37,6 @@
 			<version>0.6.0-dev-567</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-	      <groupId>org.teavm</groupId>
-	      <artifactId>teavm-extras-slf4j</artifactId>
-	      <version>0.6.0-dev-567</version>
-	      <scope>provided</scope>
-	    </dependency>
 	</dependencies>
 	<repositories>
 		<repository>

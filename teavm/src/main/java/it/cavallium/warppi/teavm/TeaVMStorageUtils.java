@@ -79,7 +79,7 @@ public class TeaVMStorageUtils implements StorageUtils {
 	}
 
 	@Override
-	public InputStream getResourceStream(final String path) throws IOException, URISyntaxException {
+	public InputStream getResourceStream(final String path) throws IOException {
 		try {
 			File targetFile;
 			if (TeaVMStorageUtils.resourcesCache.containsKey(path))
@@ -99,6 +99,21 @@ public class TeaVMStorageUtils implements StorageUtils {
 			outStream.close();
 			TeaVMStorageUtils.resourcesCache.put(path, targetFile);
 			return new FileInputStream(targetFile);
+		} catch (final java.lang.IllegalArgumentException e) {
+			throw e;
+		}
+	}
+
+	@Override
+	public boolean doesResourceExist(final String path) throws IOException {
+		try {
+			File targetFile;
+			if (TeaVMStorageUtils.resourcesCache.containsKey(path))
+				if ((targetFile = TeaVMStorageUtils.resourcesCache.get(path)).exists())
+					return true;
+				else
+					TeaVMStorageUtils.resourcesCache.remove(path);
+			return true;
 		} catch (final java.lang.IllegalArgumentException e) {
 			throw e;
 		}

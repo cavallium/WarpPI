@@ -16,7 +16,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
  * Exponent rule
- * (a) ^ (b+c) = a ^ b + a ^ c
+ * (a) ^ (b+c) = a ^ b * a ^ c
  *
  * @author Andrea Cavalli
  *

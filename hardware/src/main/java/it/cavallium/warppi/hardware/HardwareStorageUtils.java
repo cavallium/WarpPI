@@ -92,7 +92,23 @@ public class HardwareStorageUtils implements StorageUtils {
 	}
 
 	@Override
-	public InputStream getResourceStream(String string) throws IOException, URISyntaxException {
+	public boolean doesResourceExist(String string) throws IOException {
+		final URL res = ClassUtils.classLoader.getResource(string);
+		final boolean isResource = res != null;
+		if (isResource)
+			return true;
+		else {
+			if (string.length() > 0) {
+				final char ch = string.charAt(0);
+				if (ch == '/' || ch == File.separatorChar)
+					string = string.substring(1);
+			}
+			return Files.exists(Paths.get(string));
+		}
+	}
+
+	@Override
+	public InputStream getResourceStream(String string) throws IOException {
 		final URL res = ClassUtils.classLoader.getResource(string);
 		final boolean isResource = res != null;
 		if (isResource)
@@ -110,6 +126,8 @@ public class HardwareStorageUtils implements StorageUtils {
 					return Files.newInputStream(Paths.get(uri));
 			} catch (final java.lang.IllegalArgumentException e) {
 				throw e;
+			} catch (URISyntaxException e) {
+				throw (IOException) new IOException().initCause(e);
 			}
 		else {
 			if (string.length() > 0) {

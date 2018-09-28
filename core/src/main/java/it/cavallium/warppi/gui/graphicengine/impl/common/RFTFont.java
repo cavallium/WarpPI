@@ -102,17 +102,10 @@ public abstract class RFTFont implements BinaryFont {
 	}
 
 	private void loadFont(String string) throws IOException {
-		InputStream res;
-		try {
-			if (!string.startsWith("/")) {
-				string = "/" + string;
-			}
-			res = Engine.getPlatform().getStorageUtils().getResourceStream(string);
-		} catch (final URISyntaxException e) {
-			final IOException ex = new IOException();
-			ex.initCause(e);
-			throw ex;
+		if (!string.startsWith("/")) {
+			string = "/" + string;
 		}
+		InputStream res = Engine.getPlatform().getStorageUtils().getResourceStream(string);
 		final int[] file = Utils.realBytes(Utils.convertStreamToByteArray(res, res.available()));
 		final int filelength = file.length;
 		if (filelength >= 16) {

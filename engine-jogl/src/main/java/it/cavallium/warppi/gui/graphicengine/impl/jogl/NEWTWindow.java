@@ -453,7 +453,7 @@ class NEWTWindow implements GLEventListener {
 		//gl.glEnable(GL.GL_MULTISAMPLE);
 
 		try {
-			renderer.currentTex = ((JOGLSkin) disp.loadSkin("test.png")).t;
+			renderer.currentTex = ((JOGLSkin) disp.loadSkin("/test.png")).t;
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}

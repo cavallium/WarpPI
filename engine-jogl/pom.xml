@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>warppi-engine-jogl</artifactId>
 
-	<packaging>pom</packaging>
+	<packaging>jar</packaging>
 
 	<name>WarpPI Calculator JOGL Engine</name>
 	<description>WarpPI Calculator engine-jogl project</description>

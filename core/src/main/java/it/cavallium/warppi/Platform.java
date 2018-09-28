@@ -133,7 +133,9 @@ public interface Platform {
 		@Deprecated()
 		File getResource(String string) throws IOException, URISyntaxException;
 
-		InputStream getResourceStream(String string) throws IOException, URISyntaxException;
+		boolean doesResourceExist(String string) throws IOException;
+
+		InputStream getResourceStream(String string) throws IOException;
 
 		List<String> readAllLines(File file) throws IOException;
 
