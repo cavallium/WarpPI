@@ -5,15 +5,17 @@ public class TestDrivers {
 		System.out.println("Test started.");
 		String className;
 		className = "jogamp.newt.driver.bcm.vc.iv.DisplayDriver";
-		if (TestDrivers.exists(className))
+		if (TestDrivers.exists(className)) {
 			System.out.println("[FOUND]     " + className);
-		else
+		} else {
 			System.out.println("[NOT FOUND] " + className);
+		}
 		className = ".bcm.vc.iv.DisplayDriver";
-		if (TestDrivers.exists(className))
+		if (TestDrivers.exists(className)) {
 			System.out.println("[FOUND]     " + className);
-		else
+		} else {
 			System.out.println("[NOT FOUND] " + className);
+		}
 		System.out.println("Test finished.");
 	}
 

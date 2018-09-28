@@ -40,8 +40,9 @@ public class BlockReference<T extends Block> {
 	}
 
 	private BlockReference<?> getBlockAtSafe(final int i) {
-		if (isInsideBounds(i))
+		if (isInsideBounds(i)) {
 			return container.getBlockAt(i);
+		}
 		return null;
 	}
 

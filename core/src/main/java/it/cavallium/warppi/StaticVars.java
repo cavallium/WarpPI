@@ -17,10 +17,11 @@ public class StaticVars {
 	public static boolean debugWindow2x = false;
 	public static BehaviorSubject<Float> windowZoom = BehaviorSubject.create(2F);
 	public static Function<Float, Float> windowZoomFunction = (val) -> {
-		if (StaticVars.debugWindow2x)
+		if (StaticVars.debugWindow2x) {
 			return val + 1;
-		else
+		} else {
 			return val;
+		}
 	};
 	public static Observable<Float> windowZoom$ = StaticVars.windowZoom.map(StaticVars.windowZoomFunction);
 	public static StartupArguments startupArguments;

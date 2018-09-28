@@ -115,49 +115,57 @@ public abstract class FunctionOperator implements Function {
 
 	@Override
 	public final ObjectArrayList<Function> simplify(final Rule rule) throws Error, InterruptedException {
-		if (Thread.interrupted())
+		if (Thread.interrupted()) {
 			throw new InterruptedException();
+		}
 
 		final ObjectArrayList<Function> simplifiedParam1 = parameter1.simplify(rule);
 		final ObjectArrayList<Function> simplifiedParam2 = parameter2.simplify(rule);
 		try {
-			if (simplifiedParam1 == null & simplifiedParam2 == null)
+			if (simplifiedParam1 == null & simplifiedParam2 == null) {
 				return rule.execute(this);
+			}
 		} catch (final Exception e) {
 			final Error err = new Error(Errors.ERROR, "Error while executing rule '" + rule.getRuleName() + "'!\n" + e.getMessage());
 			err.initCause(e);
 			throw err;
 		}
 
-		if (Thread.interrupted())
+		if (Thread.interrupted()) {
 			throw new InterruptedException();
+		}
 		final ObjectArrayList<Function> result = new ObjectArrayList<>();
 
 		final ObjectArrayList<Function> l1 = new ObjectArrayList<>();
 		final ObjectArrayList<Function> l2 = new ObjectArrayList<>();
-		if (Thread.interrupted())
+		if (Thread.interrupted()) {
 			throw new InterruptedException();
-		if (simplifiedParam1 == null)
+		}
+		if (simplifiedParam1 == null) {
 			l1.add(parameter1);
-		else {
-			if (Thread.interrupted())
+		} else {
+			if (Thread.interrupted()) {
 				throw new InterruptedException();
+			}
 			l1.addAll(simplifiedParam1);
 		}
-		if (Thread.interrupted())
+		if (Thread.interrupted()) {
 			throw new InterruptedException();
-		if (simplifiedParam2 == null)
+		}
+		if (simplifiedParam2 == null) {
 			l2.add(parameter2);
-		else {
-			if (Thread.interrupted())
+		} else {
+			if (Thread.interrupted()) {
 				throw new InterruptedException();
+			}
 			l2.addAll(simplifiedParam2);
 		}
 
 		final Function[][] results = Utils.joinFunctionsResults(l1, l2);
 
-		for (final Function[] f : results)
+		for (final Function[] f : results) {
 			result.add(setParameter1(f[0]).setParameter2(f[1]));
+		}
 
 		return result;
 	}

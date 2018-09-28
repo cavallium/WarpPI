@@ -19,8 +19,9 @@ public class Sine extends FunctionSingle {
 	public boolean equals(final Object o) {
 		if (o instanceof Sine) {
 			final FunctionSingle f = (FunctionSingle) o;
-			if (parameter.equals(f.getParameter()))
+			if (parameter.equals(f.getParameter())) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -36,8 +37,9 @@ public class Sine extends FunctionSingle {
 		final ObjectArrayList<Block> sub = getParameter(0).toBlock(context);
 		final BlockSine bs = new BlockSine();
 		final BlockContainer bpc = bs.getNumberContainer();
-		for (final Block b : sub)
+		for (final Block b : sub) {
 			bpc.appendBlockUnsafe(b);
+		}
 		bpc.recomputeDimensions();
 		bs.recomputeDimensions();
 		result.add(bs);

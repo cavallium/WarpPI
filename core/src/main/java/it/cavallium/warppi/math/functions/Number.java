@@ -77,14 +77,17 @@ public class Number implements Function {
 		if (Utils.isIntegerValue(f.term)) {
 			final BigInteger bi = f.term.toBigInteger().abs();
 			for (BigInteger i = BigInteger.ZERO; i.compareTo(bi) < 0; i = i.add(BigInteger.ONE)) {
-				if (Thread.interrupted())
+				if (Thread.interrupted()) {
 					throw new InterruptedException();
+				}
 				ret = ret.multiply(new Number(root, getTerm()));
 			}
-			if (f.term.signum() == -1)
+			if (f.term.signum() == -1) {
 				ret = new Number(root, 1).divide(ret);
-		} else
+			}
+		} else {
 			ret.term = BigDecimalMath.pow(term, f.term);
+		}
 		return ret;
 	}
 
@@ -96,13 +99,15 @@ public class Number implements Function {
 		String s = sWith0.indexOf(".") < 0 ? sWith0 : sWith0.replaceAll("0*$", "").replaceAll("\\.$", "");
 		final String sExtended = sExtendedWith0.indexOf(".") < 0 ? sExtendedWith0 : sExtendedWith0.replaceAll("0*$", "").replaceAll("\\.$", "");
 
-		if (sExtended.length() > s.length())
+		if (sExtended.length() > s.length()) {
 			s = s + "…";
+		}
 
 		if (root.exactMode == false) {
 			final String cuttedNumber = s.split("\\.")[0];
-			if (cuttedNumber.length() > 8)
+			if (cuttedNumber.length() > 8) {
 				return cuttedNumber.substring(0, 1) + "," + cuttedNumber.substring(1, 8) + "ℯ℮" + (cuttedNumber.length() - 1);
+			}
 		}
 		return s;
 	}
@@ -132,18 +137,21 @@ public class Number implements Function {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (o != null & term != null)
+		if (o != null & term != null) {
 			if (o instanceof Number) {
 				final BigDecimal nav = ((Number) o).getTerm();
 				final boolean na1 = term.compareTo(BigDecimal.ZERO) == 0;
 				final boolean na2 = nav.compareTo(BigDecimal.ZERO) == 0;
 				if (na1 == na2) {
-					if (na1 == true)
+					if (na1 == true) {
 						return true;
-				} else
+					}
+				} else {
 					return false;
+				}
 				return nav.compareTo(term) == 0;
 			}
+		}
 		return false;
 	}
 
@@ -169,8 +177,9 @@ public class Number implements Function {
 	 */
 
 	public boolean canBeFactorized() {
-		if (Utils.isIntegerValue(getTerm()))
+		if (Utils.isIntegerValue(getTerm())) {
 			return getTerm().toBigIntegerExact().compareTo(BigInteger.valueOf(1)) > 1;
+		}
 		return false;
 	}
 
@@ -186,18 +195,21 @@ public class Number implements Function {
 
 		final int comparedToZero = n.compareTo(zero);
 		final int comparedToTwo = n.compareTo(two);
-		if (comparedToZero == 0)
+		if (comparedToZero == 0) {
 			return fs;
-		if (comparedToTwo < 0)
-			if (comparedToZero > 0)
+		}
+		if (comparedToTwo < 0) {
+			if (comparedToZero > 0) {
 				return fs;
-			else {
+			} else {
 				fs.add(BigInteger.valueOf(-1));
 				n = n.multiply(BigInteger.valueOf(-1));
 			}
+		}
 
-		if (n.compareTo(two) < 0)
+		if (n.compareTo(two) < 0) {
 			throw new IllegalArgumentException("must be greater than one");
+		}
 
 		while (n.mod(two).equals(BigInteger.ZERO)) {
 			fs.add(two);
@@ -206,12 +218,14 @@ public class Number implements Function {
 
 		if (n.compareTo(BigInteger.ONE) > 0) {
 			BigInteger f = BigInteger.valueOf(3);
-			while (f.compareTo(Utils.maxFactor) <= 0 && f.multiply(f).compareTo(n) <= 0)
+			while (f.compareTo(Utils.maxFactor) <= 0 && f.multiply(f).compareTo(n) <= 0) {
 				if (n.mod(f).equals(BigInteger.ZERO)) {
 					fs.add(f);
 					n = n.divide(f);
-				} else
+				} else {
 					f = f.add(two);
+				}
+			}
 			fs.add(n);
 		}
 
@@ -226,17 +240,21 @@ public class Number implements Function {
 			final String[] numberParts = numberString.split("ℯ℮", 2);
 			final BlockPower bp = new BlockExponentialNotation();
 			final BlockContainer bpec = bp.getExponentContainer();
-			for (final char c : numberParts[0].toCharArray())
+			for (final char c : numberParts[0].toCharArray()) {
 				result.add(new BlockChar(c));
-			for (final char c : numberParts[1].toCharArray())
-				bpec.appendBlockUnsafe(new BlockChar(c));;
+			}
+			for (final char c : numberParts[1].toCharArray()) {
+				bpec.appendBlockUnsafe(new BlockChar(c));
+			} ;
 			bpec.recomputeDimensions();
 			bp.recomputeDimensions();
 			result.add(bp);
 			return result;
-		} else
-			for (final char c : numberString.toCharArray())
+		} else {
+			for (final char c : numberString.toCharArray()) {
 				result.add(new BlockChar(c));
+			}
+		}
 		return result;
 	}
 

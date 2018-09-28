@@ -43,8 +43,9 @@ public class MathematicalSymbols {
 	public static final char[] functionsAndSignums = Utils.concat(MathematicalSymbols.functions, MathematicalSymbols.signumsWithMultiplication);
 
 	public static final char[] signums(final boolean withMultiplication) {
-		if (withMultiplication)
+		if (withMultiplication) {
 			return MathematicalSymbols.signumsWithMultiplication;
+		}
 		return MathematicalSymbols.signumsWithoutMultiplication;
 	}
 

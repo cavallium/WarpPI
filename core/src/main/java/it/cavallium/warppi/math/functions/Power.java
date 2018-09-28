@@ -37,8 +37,9 @@ public class Power extends FunctionOperator {
 		final BlockPower bp = new BlockPower();
 		final BlockContainer ec = bp.getExponentContainer();
 		result.addAll(sub1);
-		for (final Block b : sub2)
+		for (final Block b : sub2) {
 			ec.appendBlockUnsafe(b);
+		}
 		ec.recomputeDimensions();
 		bp.recomputeDimensions();
 		result.add(bp);

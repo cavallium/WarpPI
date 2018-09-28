@@ -37,10 +37,12 @@ public class Logarithm extends FunctionOperator {
 		final BlockLogarithm bd = new BlockLogarithm();
 		final BlockContainer uc = bd.getBaseContainer();
 		final BlockContainer lc = bd.getNumberContainer();
-		for (final Block b : sub1)
+		for (final Block b : sub1) {
 			uc.appendBlockUnsafe(b);
-		for (final Block b : sub2)
+		}
+		for (final Block b : sub2) {
 			lc.appendBlockUnsafe(b);
+		}
 		uc.recomputeDimensions();
 		lc.recomputeDimensions();
 		bd.recomputeDimensions();

@@ -43,8 +43,9 @@ class RatPoly {
 	 */
 	public RatPoly(final Vector<Rational> L) {
 		a = new Vector<>();
-		for (int i = 0; i < L.size(); i++)
+		for (int i = 0; i < L.size(); i++) {
 			a.add(L.elementAt(i).clone());
+		}
 		simplify();
 	} /* ctor */
 
@@ -101,14 +102,18 @@ class RatPoly {
 	 */
 	public RatPoly(final Vector<BigInteger> A, final Vector<BigInteger> B) throws Error {
 		BigInteger Nmax = BigInteger.ONE.negate();
-		for (int j = 0; j < A.size(); j++)
-			if (A.elementAt(j).compareTo(BigInteger.ZERO) <= 0)
-				if (Nmax.compareTo(BigInteger.ZERO) < 0)
+		for (int j = 0; j < A.size(); j++) {
+			if (A.elementAt(j).compareTo(BigInteger.ZERO) <= 0) {
+				if (Nmax.compareTo(BigInteger.ZERO) < 0) {
 					Nmax = A.elementAt(j).negate();
-				else
+				} else {
 					Nmax = Nmax.min(A.elementAt(j).negate());
-		if (Nmax.compareTo(BigInteger.ZERO) < 0)
+				}
+			}
+		}
+		if (Nmax.compareTo(BigInteger.ZERO) < 0) {
 			throw new ArithmeticException("Infinite Number of Terms in Series " + Nmax.toString());
+		}
 
 		final int nmax = Nmax.intValue() - 1;
 		init(A, B, nmax);
@@ -167,10 +172,11 @@ class RatPoly {
 	 * @return the polynomial coefficient in front of x^n.
 	 */
 	public Rational at(final int n) {
-		if (n < a.size())
+		if (n < a.size()) {
 			return a.elementAt(n);
-		else
+		} else {
 			return new Rational(0, 1);
+		}
 	} /* at */
 
 	/**
@@ -185,8 +191,9 @@ class RatPoly {
 	public BigComplex valueOf(final BigComplex x, final MathContext mc) {
 		/* result is initialized to zero */
 		BigComplex f = new BigComplex();
-		for (int i = degree(); i >= 0; i--)
+		for (int i = degree(); i >= 0; i--) {
 			f = f.multiply(x, mc).add(a.elementAt(i).BigDecimalValue(mc));
+		}
 		return f;
 	} /* valueOf */
 
@@ -200,8 +207,9 @@ class RatPoly {
 	public Rational valueOf(final Rational x) {
 		/* result is initialized to zero */
 		Rational f = new Rational(0, 1);
-		for (int i = degree(); i >= 0; i--)
+		for (int i = degree(); i >= 0; i--) {
 			f = f.multiply(x).add(a.elementAt(i));
+		}
 		return f;
 	} /* valueOf */
 
@@ -238,14 +246,15 @@ class RatPoly {
 	 * @param value the new value of the coefficient.
 	 */
 	public void set(final int n, final Rational value) {
-		if (n < a.size())
+		if (n < a.size()) {
 			a.set(n, value);
-		else {
+		} else {
 			/*
 			 * fill intermediate powers with coefficients of zero
 			 */
-			while (a.size() < n)
+			while (a.size() < n) {
 				a.add(new Rational(0, 1));
+			}
 			a.add(value);
 		}
 	} /* set */
@@ -292,8 +301,9 @@ class RatPoly {
 	public void setExp(final int nmax) {
 		a.clear();
 		final Factorial factorial = new Factorial();
-		for (int n = 0; n <= nmax; n++)
+		for (int n = 0; n <= nmax; n++) {
 			set(n, new Rational(BigInteger.ONE, factorial.at(n)));
+		}
 	} /* setExp */
 
 	/**
@@ -334,9 +344,11 @@ class RatPoly {
 	 * @since 2010-08-27
 	 */
 	public int ldegree() {
-		for (int n = 0; n < a.size(); n++)
-			if (a.elementAt(n).compareTo(BigInteger.ZERO) != 0)
+		for (int n = 0; n < a.size(); n++) {
+			if (a.elementAt(n).compareTo(BigInteger.ZERO) != 0) {
 				return n;
+			}
+		}
 		return 0;
 	} /* ldegree */
 
@@ -351,9 +363,11 @@ class RatPoly {
 	 */
 	public RatPoly multiply(final Rational val) {
 		final RatPoly resul = new RatPoly();
-		if (val.compareTo(BigInteger.ZERO) != 0)
-			for (int n = 0; n < a.size(); n++)
+		if (val.compareTo(BigInteger.ZERO) != 0) {
+			for (int n = 0; n < a.size(); n++) {
 				resul.set(n, a.elementAt(n).multiply(val));
+			}
+		}
 		return resul;
 	} /* multiply */
 
@@ -369,9 +383,11 @@ class RatPoly {
 	 */
 	public RatPoly multiply(final BigInteger val) {
 		final RatPoly resul = new RatPoly();
-		if (val.compareTo(BigInteger.ZERO) != 0)
-			for (int n = 0; n < a.size(); n++)
+		if (val.compareTo(BigInteger.ZERO) != 0) {
+			for (int n = 0; n < a.size(); n++) {
 				resul.set(n, a.elementAt(n).multiply(val));
+			}
+		}
 		return resul;
 	} /* multiply */
 
@@ -390,8 +406,9 @@ class RatPoly {
 		final int nmax = degree() + val.degree();
 		for (int n = 0; n <= nmax; n++) {
 			Rational coef = new Rational(0, 1);
-			for (int nleft = 0; nleft <= n; nleft++)
+			for (int nleft = 0; nleft <= n; nleft++) {
 				coef = coef.add(at(nleft).multiply(val.at(n - nleft)));
+			}
 			resul.set(n, coef);
 		}
 		resul.simplify();
@@ -407,15 +424,16 @@ class RatPoly {
 	 */
 	public RatPoly pow(final int n) throws ArithmeticException {
 		RatPoly resul = new RatPoly("1");
-		if (n < 0)
+		if (n < 0) {
 			throw new ArithmeticException("negative polynomial power " + n);
-		else {
+		} else {
 			/*
 			 * this ought probably be done with some binary representation
 			 * of the power and a smaller number of multiplications.
 			 */
-			for (int i = 1; i <= n; i++)
+			for (int i = 1; i <= n; i++) {
 				resul = resul.multiply(this);
+			}
 			resul.simplify();
 			return resul;
 		}
@@ -523,11 +541,13 @@ class RatPoly {
 	public RatPoly divide(final Rational val) throws Error {
 		if (val.compareTo(Rational.ZERO) != 0) {
 			final RatPoly resul = new RatPoly();
-			for (int n = 0; n < a.size(); n++)
+			for (int n = 0; n < a.size(); n++) {
 				resul.set(n, a.elementAt(n).divide(val));
+			}
 			return resul;
-		} else
+		} else {
 			throw new ArithmeticException("Cannot divide " + toPString() + " through zero.");
+		}
 	} /* divide */
 
 	/**
@@ -550,8 +570,9 @@ class RatPoly {
 		while (num.at(0).compareTo(BigInteger.ZERO) == 0 && denom.at(0).compareTo(BigInteger.ZERO) == 0) {
 			num.a.remove(0);
 			denom.a.remove(0);
-			if (num.size() <= 1 || denom.size() <= 1)
+			if (num.size() <= 1 || denom.size() <= 1) {
 				break;
+			}
 		}
 
 		final RatPoly resul = new RatPoly();
@@ -561,8 +582,9 @@ class RatPoly {
 		 */
 		for (int n = 0; n <= nmax; n++) {
 			Rational coef = num.at(n);
-			for (int nres = 0; nres < n; nres++)
+			for (int nres = 0; nres < n; nres++) {
 				coef = coef.subtract(resul.at(nres).multiply(denom.at(n - nres)));
+			}
 			coef = coef.divide(denom.at(0));
 			resul.set(n, coef);
 		}
@@ -595,8 +617,9 @@ class RatPoly {
 		/*
 		 * catch the case with val equal to zero
 		 */
-		if (valSimpl.degree() == 0 && valSimpl.a.firstElement().compareTo(Rational.ZERO) == 0)
+		if (valSimpl.degree() == 0 && valSimpl.a.firstElement().compareTo(Rational.ZERO) == 0) {
 			throw new ArithmeticException("Division through zero polynomial");
+		}
 		/*
 		 * degree of this smaller than degree of val: remainder is this
 		 */
@@ -624,9 +647,9 @@ class RatPoly {
 			/*
 			 * any remainder left ?
 			 */
-			if (ret[1].degree() < valSimpl.degree())
+			if (ret[1].degree() < valSimpl.degree()) {
 				;
-			else {
+			} else {
 				final RatPoly rem[] = ret[1].divideAndRemainder(val);
 				ret[0] = ret[0].add(rem[0]);
 				ret[1] = rem[1];
@@ -646,16 +669,19 @@ class RatPoly {
 	@Override
 	public String toString() {
 		String str = new String();
-		for (int n = 0; n < a.size(); n++)
-			if (n == 0)
+		for (int n = 0; n < a.size(); n++) {
+			if (n == 0) {
 				str += a.elementAt(n).toString();
-			else
+			} else {
 				str += "," + a.elementAt(n).toString();
+			}
+		}
 		/*
 		 * print at least a sole zero
 		 */
-		if (str.length() == 0)
+		if (str.length() == 0) {
 			str = "0";
+		}
 		return str;
 	} /* toString */
 
@@ -672,21 +698,24 @@ class RatPoly {
 			final BigInteger num = a.elementAt(n).a;
 			if (num.compareTo(BigInteger.ZERO) != 0) {
 				str += " ";
-				if (num.compareTo(BigInteger.ZERO) > 0)
+				if (num.compareTo(BigInteger.ZERO) > 0) {
 					str += "+";
+				}
 				str += a.elementAt(n).toString();
 				if (n > 0) {
 					str += "*x";
-					if (n > 1)
+					if (n > 1) {
 						str += "^" + n;
+					}
 				}
 			}
 		}
 		/*
 		 * print at least a sole zero
 		 */
-		if (str.length() == 0)
+		if (str.length() == 0) {
 			str = "0";
+		}
 		return str;
 	} /* toPString */
 
@@ -698,12 +727,14 @@ class RatPoly {
 	 */
 	private void simplify() {
 		int n = a.size() - 1;
-		if (n >= 0)
+		if (n >= 0) {
 			while (a.elementAt(n).compareTo(BigInteger.ZERO) == 0) {
 				a.remove(n);
-				if (--n < 0)
+				if (--n < 0) {
 					break;
+				}
 			}
+		}
 	} /* simplify */
 
 	/**
@@ -713,12 +744,12 @@ class RatPoly {
 	 * @since 2008-10-26
 	 */
 	public RatPoly derive() {
-		if (a.size() <= 1)
+		if (a.size() <= 1) {
 			/*
 			 * derivative of the constant is just zero
 			 */
 			return new RatPoly();
-		else {
+		} else {
 			final RatPoly d = new RatPoly();
 			for (int i = 1; i <= degree(); i++) {
 				final Rational c = a.elementAt(i).multiply(i);
@@ -762,11 +793,12 @@ class RatPoly {
 		final RatPoly r = new RatPoly();
 		for (int i = 1; i <= maxdeg; i++) {
 			Rational c = new Rational();
-			for (int d = 1; d <= i && d < a.size(); d++)
+			for (int d = 1; d <= i && d < a.size(); d++) {
 				if (i % d == 0) {
 					final Ifactor m = new Ifactor(i / d);
 					c = c.add(a.elementAt(d).multiply(m.moebius()));
 				}
+			}
 			r.set(i, c);
 		}
 		r.simplify();
@@ -789,9 +821,11 @@ class RatPoly {
 		final RatPoly r = new RatPoly();
 		for (int i = 1; i <= maxdeg; i++) {
 			Rational c = new Rational();
-			for (int d = 1; d <= i && d < a.size(); d++)
-				if (i % d == 0)
+			for (int d = 1; d <= i && d < a.size(); d++) {
+				if (i % d == 0) {
 					c = c.add(a.elementAt(d));
+				}
+			}
 			r.set(i, c);
 		}
 		r.simplify();
@@ -811,8 +845,9 @@ class RatPoly {
 		final RatPoly r = new RatPoly();
 		for (int i = 0; i <= maxdeg; i++) {
 			Rational c = new Rational(0, 1);
-			for (int j = 0; j <= i && j < a.size(); j++)
+			for (int j = 0; j <= i && j < a.size(); j++) {
 				c = c.add(a.elementAt(j).multiply(BigIntegerMath.binomial(i, j)));
+			}
 			r.set(i, c);
 		}
 		r.simplify();
@@ -832,11 +867,13 @@ class RatPoly {
 		final RatPoly r = new RatPoly();
 		for (int i = 0; i <= maxdeg; i++) {
 			Rational c = new Rational(0, 1);
-			for (int j = 0; j <= i && j < a.size(); j++)
-				if ((j + i) % 2 != 0)
+			for (int j = 0; j <= i && j < a.size(); j++) {
+				if ((j + i) % 2 != 0) {
 					c = c.subtract(a.elementAt(j).multiply(BigIntegerMath.binomial(i, j)));
-				else
+				} else {
 					c = c.add(a.elementAt(j).multiply(BigIntegerMath.binomial(i, j)));
+				}
+			}
 			r.set(i, c);
 		}
 		r.simplify();
@@ -859,8 +896,9 @@ class RatPoly {
 	 */
 	public RatPoly trunc(final int newdeg) {
 		final RatPoly t = new RatPoly();
-		for (int i = 0; i <= newdeg; i++)
+		for (int i = 0; i <= newdeg; i++) {
 			t.set(i, at(i));
+		}
 		t.simplify();
 		return t;
 	} /* trunc */
@@ -888,8 +926,9 @@ class RatPoly {
 		for (int i = 0; i <= d; i++) {
 			/* scale coefficient at maximum degree */
 			final double absi = Math.abs(mon.at(i).doubleValue());
-			if (absi > randRad)
+			if (absi > randRad) {
 				randRad = absi;
+			}
 		}
 		randRad += 1.0;
 
@@ -919,19 +958,23 @@ class RatPoly {
 				 */
 				BigComplex thisx = res.elementAt(v);
 				BigComplex nv = mon.valueOf(thisx, mc);
-				for (int j = 0; j < d; j++)
-					if (j != v)
+				for (int j = 0; j < d; j++) {
+					if (j != v) {
 						nv = nv.divide(thisx.subtract(res.elementAt(j)), mc);
+					}
+				}
 
 				/* is this value converged ? */
-				if (nv.abs(mc).doubleValue() > thisx.abs(mc).doubleValue() * Math.pow(10.0, -digits))
+				if (nv.abs(mc).doubleValue() > thisx.abs(mc).doubleValue() * Math.pow(10.0, -digits)) {
 					convr = false;
+				}
 
 				thisx = thisx.subtract(nv);
 
 				/* If unstable, start over */
-				if (thisx.abs(MathContext.DECIMAL32).doubleValue() > randRad)
+				if (thisx.abs(MathContext.DECIMAL32).doubleValue() > randRad) {
 					return roots(digits);
+				}
 
 				resPlus.add(thisx);
 			}
@@ -969,8 +1012,9 @@ class RatPoly {
 		 * start with denominator of first non-zero coefficient.
 		 */
 		BigInteger lcmDeno = a.elementAt(lowd).b;
-		for (int i = lowd + 1; i < degree(); i++)
+		for (int i = lowd + 1; i < degree(); i++) {
 			lcmDeno = BigIntegerMath.lcm(lcmDeno, a.elementAt(i).b);
+		}
 
 		/*
 		 * and eventually get the integer polynomial by ignoring the

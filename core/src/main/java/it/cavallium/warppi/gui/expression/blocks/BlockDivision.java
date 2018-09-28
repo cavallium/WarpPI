@@ -39,8 +39,9 @@ public class BlockDivision extends Block {
 		boolean added = false;
 		added = added | containerUp.putBlock(caret, newBlock);
 		added = added | containerDown.putBlock(caret, newBlock);
-		if (added)
+		if (added) {
 			recomputeDimensions();
+		}
 		return added;
 	}
 
@@ -49,8 +50,9 @@ public class BlockDivision extends Block {
 		boolean removed = false;
 		removed = removed | containerUp.delBlock(caret);
 		removed = removed | containerDown.delBlock(caret);
-		if (removed)
+		if (removed) {
 			recomputeDimensions();
+		}
 		return removed;
 	}
 
@@ -58,8 +60,9 @@ public class BlockDivision extends Block {
 	public BlockReference<?> getBlock(final Caret caret) {
 		BlockReference<?> bl = null;
 		bl = containerUp.getBlock(caret);
-		if (bl != null)
+		if (bl != null) {
 			return bl;
+		}
 		bl = containerDown.getBlock(caret);
 		return bl;
 	}

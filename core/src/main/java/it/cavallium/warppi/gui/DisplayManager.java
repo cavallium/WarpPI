@@ -72,8 +72,9 @@ public final class DisplayManager implements RenderingLoop {
 		try {
 			hud.d = this;
 			hud.create();
-			if (!hud.initialized)
+			if (!hud.initialized) {
 				hud.initialize();
+			}
 		} catch (final Exception e) {
 			e.printStackTrace();
 			Engine.getPlatform().exit(0);
@@ -165,25 +166,29 @@ public final class DisplayManager implements RenderingLoop {
 	}
 
 	public void setScreen(final Screen screen) {
-		if (screen.initialized == false)
+		if (screen.initialized == false) {
 			if (screen.canBeInHistory) {
 				if (currentSession > 0) {
 					final int sl = sessions.length + 5; //TODO: I don't know why if i don't add +5 or more some items disappear
 					sessions = Arrays.copyOfRange(sessions, currentSession, sl);
 				}
 				currentSession = 0;
-				for (int i = sessions.length - 1; i >= 1; i--)
+				for (int i = sessions.length - 1; i >= 1; i--) {
 					sessions[i] = sessions[i - 1];
+				}
 				sessions[0] = screen;
-			} else
+			} else {
 				currentSession = -1;
+			}
+		}
 		screen.d = this;
 		try {
 			screen.create();
 			this.screen = screen;
 			screenChange.release();
-			if (screen.initialized == false)
+			if (screen.initialized == false) {
 				screen.initialize();
+			}
 		} catch (final Exception e) {
 			e.printStackTrace();
 			Engine.getPlatform().exit(0);
@@ -191,21 +196,24 @@ public final class DisplayManager implements RenderingLoop {
 	}
 
 	public void replaceScreen(final Screen screen) {
-		if (screen.initialized == false)
-			if (screen.canBeInHistory)
+		if (screen.initialized == false) {
+			if (screen.canBeInHistory) {
 				sessions[currentSession] = screen;
-			else {
+			} else {
 				currentSession = -1;
-				for (int i = 0; i < sessions.length - 2; i++)
+				for (int i = 0; i < sessions.length - 2; i++) {
 					sessions[i] = sessions[i + 1];
+				}
 			}
+		}
 		screen.d = this;
 		try {
 			screen.create();
 			this.screen = screen;
 			screenChange.release();
-			if (screen.initialized == false)
+			if (screen.initialized == false) {
 				screen.initialize();
+			}
 		} catch (final Exception e) {
 			e.printStackTrace();
 			Engine.getPlatform().exit(0);
@@ -213,45 +221,54 @@ public final class DisplayManager implements RenderingLoop {
 	}
 
 	public boolean canGoBack() {
-		if (currentSession == -1)
+		if (currentSession == -1) {
 			return sessions[0] != null;
+		}
 		if (screen != sessions[currentSession]) {
 
 		} else if (currentSession + 1 < sessions.length) {
 			if (sessions[currentSession + 1] != null) {
 
-			} else
+			} else {
 				return false;
-		} else
+			}
+		} else {
 			return false;
-		if (sessions[currentSession] != null)
+		}
+		if (sessions[currentSession] != null) {
 			return true;
+		}
 		return false;
 	}
 
 	public void goBack() {
 		if (canGoBack()) {
-			if (currentSession >= 0 && screen != sessions[currentSession]) {} else
+			if (currentSession >= 0 && screen != sessions[currentSession]) {} else {
 				currentSession += 1;
+			}
 			screen = sessions[currentSession];
 			screenChange.release();
 		}
 	}
 
 	public boolean canGoForward() {
-		if (currentSession <= 0)
+		if (currentSession <= 0) {
 			return false;
+		}
 		if (screen != sessions[currentSession]) {
 
 		} else if (currentSession > 0) {
 			if (sessions[currentSession - 1] != null) {
 
-			} else
+			} else {
 				return false;
-		} else
+			}
+		} else {
 			return false;
-		if (sessions[currentSession] != null)
+		}
+		if (sessions[currentSession] != null) {
 			return true;
+		}
 		return false;
 	}
 
@@ -259,8 +276,9 @@ public final class DisplayManager implements RenderingLoop {
 		if (canGoForward()) {
 			if (screen != sessions[currentSession]) {
 
-			} else
+			} else {
 				currentSession -= 1;
+			}
 			screen = sessions[currentSession];
 			screenChange.release();
 		}
@@ -291,9 +309,11 @@ public final class DisplayManager implements RenderingLoop {
 	private void draw_init() {
 		if (engine.supportsFontRegistering()) {
 			final List<BinaryFont> fontsIterator = engine.getRegisteredFonts();
-			for (final BinaryFont f : fontsIterator)
-				if (!f.isInitialized())
+			for (final BinaryFont f : fontsIterator) {
+				if (!f.isInitialized()) {
 					f.initialize(engine);
+				}
+			}
 		}
 		renderer.glClear(engine.getWidth(), engine.getHeight());
 	}
@@ -303,8 +323,9 @@ public final class DisplayManager implements RenderingLoop {
 
 		if (error != null) {
 			final BinaryFont fnt = Utils.getFont(false, false);
-			if (fnt != null && fnt != engine.getRenderer().getCurrentFont())
+			if (fnt != null && fnt != engine.getRenderer().getCurrentFont()) {
 				fnt.use(engine);
+			}
 			renderer.glColor3i(129, 28, 22);
 			renderer.glDrawStringRight(StaticVars.screenSize[0] - 2, StaticVars.screenSize[1] - (fnt.getCharacterHeight() + 2), Engine.getPlatform().getSettings().getCalculatorNameUppercase() + " CALCULATOR");
 			renderer.glColor3i(149, 32, 26);
@@ -315,13 +336,15 @@ public final class DisplayManager implements RenderingLoop {
 				renderer.glDrawStringLeft(2, 22 + i, stackPart);
 				i += 11;
 			}
-			if (fonts[0] != null && fonts[0] != engine.getRenderer().getCurrentFont())
+			if (fonts[0] != null && fonts[0] != engine.getRenderer().getCurrentFont()) {
 				fonts[0].use(engine);
+			}
 			renderer.glColor3i(129, 28, 22);
 			renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, 11, "UNEXPECTED EXCEPTION");
 		} else {
-			if (fonts[0] != null && fonts[0] != engine.getRenderer().getCurrentFont())
+			if (fonts[0] != null && fonts[0] != engine.getRenderer().getCurrentFont()) {
 				fonts[0].use(engine);
+			}
 			hud.renderBackground();
 			screen.render();
 			hud.render();
@@ -367,18 +390,20 @@ public final class DisplayManager implements RenderingLoop {
 
 			final Observable<Integer[]> onResizeObservable = engine.onResize();
 			Observable<Pair<Long, Integer[]>> refreshObservable;
-			if (onResizeObservable == null)
+			if (onResizeObservable == null) {
 				refreshObservable = workTimer.map((l) -> Pair.of(l, null));
-			else
+			} else {
 				refreshObservable = Observable.combineChanged(workTimer, engine.onResize());
+			}
 
 			refreshObservable.subscribe((pair) -> {
 				double dt = 0;
 				final long newtime = System.nanoTime();
-				if (precTime == -1)
+				if (precTime == -1) {
 					dt = DisplayManager.tickDuration;
-				else
+				} else {
 					dt = (newtime - precTime) / 1000d / 1000d;
+				}
 				precTime = newtime;
 
 				if (pair.getRight() != null) {
@@ -409,12 +434,13 @@ public final class DisplayManager implements RenderingLoop {
 
 	public void cycleBrightness(final boolean reverse) {
 		final float step = reverse ? -0.1f : 0.1f;
-		if (brightness + step > 1f)
+		if (brightness + step > 1f) {
 			setBrightness(0f);
-		else if (brightness + step <= 0f)
+		} else if (brightness + step <= 0f) {
 			setBrightness(1.0f);
-		else
+		} else {
 			changeBrightness(step);
+		}
 	}
 
 	public float getBrightness() {

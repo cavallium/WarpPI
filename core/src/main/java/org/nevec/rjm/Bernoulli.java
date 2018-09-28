@@ -35,11 +35,12 @@ public class Bernoulli {
 	 */
 	protected void set(final int n, final Rational value) {
 		final int nindx = n / 2;
-		if (nindx < Bernoulli.a.size())
+		if (nindx < Bernoulli.a.size()) {
 			Bernoulli.a.set(nindx, value);
-		else {
-			while (Bernoulli.a.size() < nindx)
+		} else {
+			while (Bernoulli.a.size() < nindx) {
 				Bernoulli.a.add(Rational.ZERO);
+			}
 			Bernoulli.a.add(value);
 		}
 	}
@@ -53,15 +54,17 @@ public class Bernoulli {
 	 * @throws Error
 	 */
 	public Rational at(final int n) throws Error {
-		if (n == 1)
+		if (n == 1) {
 			return new Rational(-1, 2);
-		else if (n % 2 != 0)
+		} else if (n % 2 != 0) {
 			return Rational.ZERO;
-		else {
+		} else {
 			final int nindx = n / 2;
-			if (Bernoulli.a.size() <= nindx)
-				for (int i = 2 * Bernoulli.a.size(); i <= n; i += 2)
+			if (Bernoulli.a.size() <= nindx) {
+				for (int i = 2 * Bernoulli.a.size(); i <= n; i += 2) {
 					set(i, doubleSum(i));
+				}
+			}
 			return Bernoulli.a.elementAt(nindx);
 		}
 	}
@@ -80,10 +83,11 @@ public class Bernoulli {
 			BigInteger bin = BigInteger.ONE;
 			for (int j = 0; j <= k; j++) {
 				final BigInteger jpown = new BigInteger("" + j).pow(n);
-				if (j % 2 == 0)
+				if (j % 2 == 0) {
 					jsum = jsum.add(bin.multiply(jpown));
-				else
+				} else {
 					jsum = jsum.subtract(bin.multiply(jpown));
+				}
 
 				/*
 				 * update binomial(k,j) recursively

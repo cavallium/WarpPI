@@ -36,16 +36,18 @@ public class EulerPhi {
 	 * @return phi(n)
 	 */
 	public BigInteger at(final BigInteger n) {
-		if (n.compareTo(BigInteger.ZERO) <= 0)
+		if (n.compareTo(BigInteger.ZERO) <= 0) {
 			throw new ArithmeticException("negative argument " + n + " of EulerPhi");
+		}
 		final Ifactor prFact = new Ifactor(n);
 		BigInteger phi = n;
-		if (n.compareTo(BigInteger.ONE) > 0)
+		if (n.compareTo(BigInteger.ONE) > 0) {
 			for (int i = 0; i < prFact.primeexp.size(); i += 2) {
 				final BigInteger p = new BigInteger(prFact.primeexp.elementAt(i).toString());
 				final BigInteger p_1 = p.subtract(BigInteger.ONE);
 				phi = phi.multiply(p_1).divide(p);
 			}
+		}
 		return phi;
 	} /* at */
 

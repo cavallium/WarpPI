@@ -86,13 +86,13 @@ public class Prime {
 		/*
 		 * numbers less than 2 are not prime
 		 */
-		if (n.compareTo(two) == -1)
+		if (n.compareTo(two) == -1) {
 			return false;
-		else if (n.compareTo(two) == 0)
+		} else if (n.compareTo(two) == 0) {
 			return true;
-		else if (n.remainder(two).compareTo(BigInteger.ZERO) == 0)
+		} else if (n.remainder(two).compareTo(BigInteger.ZERO) == 0) {
 			return false;
-		else {
+		} else {
 			/*
 			 * q= n- 1 = d *2^s with d odd
 			 */
@@ -103,15 +103,18 @@ public class Prime {
 			/*
 			 * test whether a^d = 1 (mod n)
 			 */
-			if (a.modPow(d, n).compareTo(BigInteger.ONE) == 0)
+			if (a.modPow(d, n).compareTo(BigInteger.ONE) == 0) {
 				return true;
+			}
 
 			/*
 			 * test whether a^(d*2^r) = -1 (mod n), 0<=r<s
 			 */
-			for (int r = 0; r < s; r++)
-				if (a.modPow(d.shiftLeft(r), n).compareTo(q) == 0)
+			for (int r = 0; r < s; r++) {
+				if (a.modPow(d.shiftLeft(r), n).compareTo(q) == 0) {
 					return true;
+				}
+			}
 			return false;
 		}
 	}
@@ -134,24 +137,28 @@ public class Prime {
 		int mrLim = 0;
 		while (mrLim < mr.length) {
 			final int l = n.compareTo(new BigInteger(mr[mrLim]));
-			if (l < 0)
+			if (l < 0) {
 				break;
-			else if (l == 0)
+			} else if (l == 0) {
 				return -1;
+			}
 			mrLim++;
 		}
 		/*
 		 * cannot test candidates larger than the last in the mr list
 		 */
-		if (mrLim == mr.length)
+		if (mrLim == mr.length) {
 			return 0;
+		}
 
 		/*
 		 * test the bases prime(1), prime(2) up to prime(mrLim+1)
 		 */
-		for (int p = 0; p <= mrLim; p++)
-			if (isSPP(n, at(p)) == false)
+		for (int p = 0; p <= mrLim; p++) {
+			if (isSPP(n, at(p)) == false) {
 				return -1;
+			}
+		}
 		return 1;
 	}
 
@@ -167,8 +174,9 @@ public class Prime {
 		 * If the current list is too small, increase in intervals
 		 * of 5 until the list has at least i elements.
 		 */
-		while (i >= Prime.a.size())
+		while (i >= Prime.a.size()) {
 			growto(Prime.nMax.add(new BigInteger("" + 5)));
+		}
 		return Prime.a.elementAt(i);
 	}
 
@@ -186,9 +194,11 @@ public class Prime {
 		 */
 		growto(n);
 		BigInteger r = new BigInteger("0");
-		for (int i = 0; i < Prime.a.size(); i++)
-			if (Prime.a.elementAt(i).compareTo(n) <= 0)
+		for (int i = 0; i < Prime.a.size(); i++) {
+			if (Prime.a.elementAt(i).compareTo(n) <= 0) {
 				r = r.add(BigInteger.ONE);
+			}
+		}
 		return r;
 	}
 
@@ -202,19 +212,23 @@ public class Prime {
 	 */
 	public BigInteger nextprime(final BigInteger n) {
 		/* if n <=1, return 2 */
-		if (n.compareTo(BigInteger.ONE) <= 0)
+		if (n.compareTo(BigInteger.ONE) <= 0) {
 			return Prime.a.elementAt(0);
+		}
 
 		/*
 		 * If the currently largest element in the list is too small, increase
 		 * in intervals
 		 * of 5 until the list has at least i elements.
 		 */
-		while (Prime.a.lastElement().compareTo(n) <= 0)
+		while (Prime.a.lastElement().compareTo(n) <= 0) {
 			growto(Prime.nMax.add(new BigInteger("" + 5)));
-		for (int i = 0; i < Prime.a.size(); i++)
-			if (Prime.a.elementAt(i).compareTo(n) == 1)
+		}
+		for (int i = 0; i < Prime.a.size(); i++) {
+			if (Prime.a.elementAt(i).compareTo(n) == 1) {
 				return Prime.a.elementAt(i);
+			}
+		}
 		return Prime.a.lastElement();
 	}
 
@@ -228,20 +242,24 @@ public class Prime {
 	 */
 	public BigInteger prevprime(final BigInteger n) {
 		/* if n <=2, return 0 */
-		if (n.compareTo(BigInteger.ONE) <= 0)
+		if (n.compareTo(BigInteger.ONE) <= 0) {
 			return BigInteger.ZERO;
+		}
 
 		/*
 		 * If the currently largest element in the list is too small, increase
 		 * in intervals
 		 * of 5 until the list has at least i elements.
 		 */
-		while (Prime.a.lastElement().compareTo(n) < 0)
+		while (Prime.a.lastElement().compareTo(n) < 0) {
 			growto(Prime.nMax.add(new BigInteger("" + 5)));
+		}
 
-		for (int i = 0; i < Prime.a.size(); i++)
-			if (Prime.a.elementAt(i).compareTo(n) >= 0)
+		for (int i = 0; i < Prime.a.size(); i++) {
+			if (Prime.a.elementAt(i).compareTo(n) >= 0) {
 				return Prime.a.elementAt(i - 1);
+			}
+		}
 		return Prime.a.lastElement();
 	}
 
@@ -260,8 +278,9 @@ public class Prime {
 				/*
 				 * Test the list of known primes only up to sqrt(n)
 				 */
-				if (Prime.a.get(p).multiply(Prime.a.get(p)).compareTo(Prime.nMax) == 1)
+				if (Prime.a.get(p).multiply(Prime.a.get(p)).compareTo(Prime.nMax) == 1) {
 					break;
+				}
 
 				/*
 				 * The next case means that the p'th number in the list of known
@@ -273,8 +292,9 @@ public class Prime {
 					break;
 				}
 			}
-			if (isp)
+			if (isp) {
 				Prime.a.add(Prime.nMax);
+			}
 		}
 	}
 
@@ -290,8 +310,9 @@ public class Prime {
 		final Prime a = new Prime();
 		final int n = new Integer(args[0]).intValue();
 		if (n >= 1) {
-			if (n >= 2)
+			if (n >= 2) {
 				System.out.println("prime(" + (n - 1) + ") = " + a.at(n - 1));
+			}
 			System.out.println("prime(" + n + ") = " + a.at(n));
 			System.out.println("prime(" + (n + 1) + ") = " + a.at(n + 1));
 			System.out.println("pi(" + n + ") = " + a.pi(new BigInteger("" + n)));

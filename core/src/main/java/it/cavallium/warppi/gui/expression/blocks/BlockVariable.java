@@ -44,11 +44,13 @@ public class BlockVariable extends Block {
 
 	private void retrieveValue() {
 		type = ic.variableTypes.get(ch);
-		if (type == null)
+		if (type == null) {
 			type = V_TYPE.VARIABLE;
+		}
 		typeDirtyID = ic.variableTypeDirtyID;
-		if (menu != null)
+		if (menu != null) {
 			menu.mustRefreshMenu = true;
+		}
 		mustRefresh = true;
 		System.out.println("retrieve:" + type.toString());
 	}
@@ -67,8 +69,9 @@ public class BlockVariable extends Block {
 
 	@Override
 	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y, final Caret caret) {
-		if (ic.variableTypeDirtyID != typeDirtyID)
+		if (ic.variableTypeDirtyID != typeDirtyID) {
 			retrieveValue();
+		}
 		if (mustRefresh) {
 			mustRefresh = false;
 			switch (type) {
@@ -222,15 +225,19 @@ public class BlockVariable extends Block {
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(ge);
 			int popupX = location[0];
 			int popupY = location[1];
-			if (popupX < 0)
+			if (popupX < 0) {
 				popupX = 0;
-			if (popupY < 0)
+			}
+			if (popupY < 0) {
 				popupY = 0;
+			}
 			final int[] screenSize = ge.getSize();
-			if (popupX + width >= screenSize[0])
+			if (popupX + width >= screenSize[0]) {
 				popupX = screenSize[0] - width - 1;
-			if (popupY + height >= screenSize[1])
+			}
+			if (popupY + height >= screenSize[1]) {
 				popupY = screenSize[1] - height - 1;
+			}
 			r.glFillRect(location[0] + width / 2 - 5, popupY + 1, 10, 5, 163, 16, 10, 5);
 			r.glFillColor(popupX, popupY + 5, width, height);
 			r.glFillColor(popupX + 2, popupY + 4, width - 4, height + 2);

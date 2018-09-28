@@ -84,12 +84,14 @@ public class MathInputScreen extends Screen {
 
 	@Override
 	public void beforeRender(final float dt) {
-		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager().error == null)
+		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager().error == null) {
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xFFc5c2af);
-		else
+		} else {
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xFFDC3C32);
-		if (userInput.beforeRender(dt))
+		}
+		if (userInput.beforeRender(dt)) {
 			mustRefresh = true;
+		}
 		if (computingResult) {
 			computingElapsedTime += dt;
 			computingAnimationElapsedTime += dt;
@@ -98,8 +100,9 @@ public class MathInputScreen extends Screen {
 				computingAnimationIndex = (computingAnimationIndex + 1) % 16;
 				mustRefresh = true;
 			}
-			if (computingElapsedTime > 5)
+			if (computingElapsedTime > 5) {
 				computingBreakTipVisible = true;
+			}
 		} else {
 			computingElapsedTime = 0;
 			computingAnimationElapsedTime = 0;
@@ -131,8 +134,9 @@ public class MathInputScreen extends Screen {
 				renderer.glColor3f(0.75f, 0, 0);
 				renderer.glDrawStringRight(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getWidth() - 4 - size - 4, Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - size / 2 - renderer.getCurrentFont().getCharacterHeight() / 2 - 4, "Press (=) to stop");
 			}
-		} else if (!result.isContentEmpty())
+		} else if (!result.isContentEmpty()) {
 			result.draw(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine, renderer, Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getWidth() - result.getWidth() - 2, Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - result.getHeight() - 2);
+		}
 	}
 
 	@Override
@@ -142,10 +146,11 @@ public class MathInputScreen extends Screen {
 		final int pos = 2;
 		final int spacersNumb = 1;
 		int skinN = 0;
-		if (calc.exactMode)
+		if (calc.exactMode) {
 			skinN = 22;
-		else
+		} else {
 			skinN = 21;
+		}
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		renderer.glFillRect(2 + 18 * pos + 2 * spacersNumb, 2, 16, 16, 16 * skinN, 16 * 0, 16, 16);
 	}
@@ -155,8 +160,9 @@ public class MathInputScreen extends Screen {
 		if (mustRefresh) {
 			mustRefresh = false;
 			return true;
-		} else
+		} else {
 			return false;
+		}
 	}
 
 	@Override
@@ -192,8 +198,9 @@ public class MathInputScreen extends Screen {
 							case STEP:
 								currentStep++;
 							case SIMPLIFY:
-								if (!step)
+								if (!step) {
 									currentStep = 0;
+								}
 								if (Engine.INSTANCE.getHardwareDevice().getDisplayManager().error != null) {
 									//TODO: make the error management a global API rather than being relegated to this screen.
 									Engine.getPlatform().getConsoleUtils().out().println(1, "Resetting after error...");
@@ -222,8 +229,9 @@ public class MathInputScreen extends Screen {
 													final ObjectArrayList<ObjectArrayList<Function>> resultSteps = ms.solveAllSteps();
 													resultSteps.add(0, Utils.newArrayList(expr));
 													final ObjectArrayList<Function> resultExpressions = resultSteps.get(resultSteps.size() - 1);
-													for (final Function rr : resultExpressions)
+													for (final Function rr : resultExpressions) {
 														Engine.getPlatform().getConsoleUtils().out().println(0, "RESULT: " + rr.toString());
+													}
 													final ObjectArrayList<ObjectArrayList<Block>> resultBlocks = MathParser.parseOutput(calc, resultExpressions);
 													result.setContentAsMultipleGroups(resultBlocks);
 													//									showVariablesDialog(() -> {
@@ -234,8 +242,9 @@ public class MathInputScreen extends Screen {
 											} catch (final InterruptedException ex) {
 												Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Computing thread stopped.");
 											} catch (final Exception ex) {
-												if (Engine.getPlatform().getSettings().isDebugEnabled())
+												if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 													ex.printStackTrace();
+												}
 												throw new Error(Errors.SYNTAX_ERROR);
 											}
 										} catch (final Error e) {
@@ -435,12 +444,13 @@ public class MathInputScreen extends Screen {
 								}
 								return false;
 							case DRG_CYCLE:
-								if (calc.angleMode.equals(AngleMode.DEG) == true)
+								if (calc.angleMode.equals(AngleMode.DEG) == true) {
 									calc.angleMode = AngleMode.RAD;
-								else if (calc.angleMode.equals(AngleMode.RAD) == true)
+								} else if (calc.angleMode.equals(AngleMode.RAD) == true) {
 									calc.angleMode = AngleMode.GRA;
-								else
+								} else {
 									calc.angleMode = AngleMode.DEG;
+								}
 								currentStep = 0;
 								return true;
 							default:
@@ -505,7 +515,7 @@ public class MathInputScreen extends Screen {
 						partialResults.clear();
 					}
 				}
-
+		
 				if (results.size() == 0) {
 					calc.resultsCount = 0;
 				} else {
@@ -547,7 +557,7 @@ public class MathInputScreen extends Screen {
 						return;
 					}
 				}
-
+		
 				final ObjectArrayList<Function> results = solveExpression(calc.f);
 				if (results.size() == 0) {
 					calc.resultsCount = 0;
@@ -600,15 +610,16 @@ public class MathInputScreen extends Screen {
 
 	@Override
 	public boolean onKeyReleased(final KeyReleasedEvent k) {
-		if (k.getKey() == Key.OK)
+		if (k.getKey() == Key.OK) {
 			return true;
-		else if (userInput.isExtraOpened() && userInput.getExtraKeyboardEventListener().onKeyReleased(k))
+		} else if (userInput.isExtraOpened() && userInput.getExtraKeyboardEventListener().onKeyReleased(k)) {
 			return true;
-		else
+		} else {
 			switch (k.getKey()) {
 				default:
 					return false;
 			}
+		}
 	}
 
 	public void showVariablesDialog() {
@@ -618,9 +629,11 @@ public class MathInputScreen extends Screen {
 	public void showVariablesDialog(final Runnable runnable) {
 		final Thread ct = new Thread(() -> {
 			final ObjectArrayList<Function> knownVarsInFunctions = getKnownVariables(calc.f.toArray(new Function[calc.f.size()]));
-			for (final VariableValue f : calc.variablesValues)
-				if (knownVarsInFunctions.contains(f.v))
+			for (final VariableValue f : calc.variablesValues) {
+				if (knownVarsInFunctions.contains(f.v)) {
 					knownVarsInFunctions.remove(f.v);
+				}
+			}
 
 			boolean cancelled = false;
 			for (final Function f : knownVarsInFunctions) {
@@ -634,15 +647,19 @@ public class MathInputScreen extends Screen {
 					break;
 				} else {
 					final int is = calc.variablesValues.size();
-					for (int i = 0; i < is; i++)
-						if (calc.variablesValues.get(i).v == f)
+					for (int i = 0; i < is; i++) {
+						if (calc.variablesValues.get(i).v == f) {
 							calc.variablesValues.remove(i);
+						}
+					}
 					calc.variablesValues.add(new VariableValue((Variable) f, (Number) cvs.resultNumberValue));
 				}
 			}
-			if (!cancelled)
-				if (runnable != null)
+			if (!cancelled) {
+				if (runnable != null) {
 					runnable.run();
+				}
+			}
 		});
 		Engine.getPlatform().setThreadName(ct, "Variables user-input queue thread");
 		ct.setPriority(Thread.MIN_PRIORITY);
@@ -652,17 +669,21 @@ public class MathInputScreen extends Screen {
 
 	private ObjectArrayList<Function> getKnownVariables(final Function[] fncs) {
 		final ObjectArrayList<Function> res = new ObjectArrayList<>();
-		for (final Function f : fncs)
-			if (f instanceof FunctionOperator)
+		for (final Function f : fncs) {
+			if (f instanceof FunctionOperator) {
 				res.addAll(getKnownVariables(new Function[] { ((FunctionOperator) f).getParameter1(), ((FunctionOperator) f).getParameter2() }));
-			else if (f instanceof FunctionDynamic)
+			} else if (f instanceof FunctionDynamic) {
 				res.addAll(getKnownVariables(((FunctionDynamic) f).getParameters()));
-			else if (f instanceof FunctionSingle)
+			} else if (f instanceof FunctionSingle) {
 				res.addAll(getKnownVariables(new Function[] { ((FunctionSingle) f).getParameter() }));
-			else if (f instanceof Variable)
-				if (((Variable) f).getType() == Variable.V_TYPE.CONSTANT)
-					if (!res.contains(f))
+			} else if (f instanceof Variable) {
+				if (((Variable) f).getType() == Variable.V_TYPE.CONSTANT) {
+					if (!res.contains(f)) {
 						res.add(f);
+					}
+				}
+			}
+		}
 		return res;
 	}
 

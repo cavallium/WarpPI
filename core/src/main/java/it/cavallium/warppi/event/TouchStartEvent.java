@@ -34,23 +34,30 @@ public class TouchStartEvent implements TouchEvent {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final TouchStartEvent other = (TouchStartEvent) obj;
 		if (changedTouches == null) {
-			if (other.changedTouches != null)
+			if (other.changedTouches != null) {
 				return false;
-		} else if (!changedTouches.equals(other.changedTouches))
+			}
+		} else if (!changedTouches.equals(other.changedTouches)) {
 			return false;
+		}
 		if (touches == null) {
-			if (other.touches != null)
+			if (other.touches != null) {
 				return false;
-		} else if (!touches.equals(other.touches))
+			}
+		} else if (!touches.equals(other.touches)) {
 			return false;
+		}
 		return true;
 	}
 

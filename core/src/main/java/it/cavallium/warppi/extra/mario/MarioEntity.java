@@ -61,8 +61,9 @@ public class MarioEntity {
 	public double computeFutureDY(final double dt) {
 		final double forceY = this.forceY;
 		double y = this.y;
-		if (!collisionDown)
+		if (!collisionDown) {
 			y += dt * forceY;
+		}
 		return y - this.y;
 	}
 
@@ -74,10 +75,11 @@ public class MarioEntity {
 
 	public double computeFutureForceDY(final double dt) {
 		double forceY = this.forceY;
-		if (subjectToGravity && !collisionDown)
+		if (subjectToGravity && !collisionDown) {
 			forceY -= dt * 1569.6 / 16f;
-		else
+		} else {
 			forceY *= 0.75;
+		}
 		return forceY - this.forceY;
 	}
 }

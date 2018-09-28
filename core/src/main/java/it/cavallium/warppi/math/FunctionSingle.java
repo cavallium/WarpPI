@@ -74,18 +74,20 @@ public abstract class FunctionSingle implements Function {
 
 	@Override
 	public FunctionSingle setParameter(final int index, final Function var) throws IndexOutOfBoundsException {
-		if (index == 0)
+		if (index == 0) {
 			return this.setParameter(var);
-		else
+		} else {
 			throw new IndexOutOfBoundsException();
+		}
 	}
 
 	@Override
 	public Function getParameter(final int index) throws IndexOutOfBoundsException {
-		if (index == 0)
+		if (index == 0) {
 			return this.getParameter();
-		else
+		} else {
 			throw new IndexOutOfBoundsException();
+		}
 	}
 
 	@Override
@@ -96,12 +98,14 @@ public abstract class FunctionSingle implements Function {
 	@Override
 	public final ObjectArrayList<Function> simplify(final Rule rule) throws Error, InterruptedException {
 		final ObjectArrayList<Function> simplifiedParam = parameter.simplify(rule);
-		if (simplifiedParam == null)
+		if (simplifiedParam == null) {
 			return rule.execute(this);
+		}
 
 		final ObjectArrayList<Function> result = new ObjectArrayList<>();
-		for (final Function f : simplifiedParam)
+		for (final Function f : simplifiedParam) {
 			result.add(this.setParameter(f));
+		}
 
 		return result;
 	}

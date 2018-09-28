@@ -165,14 +165,16 @@ public class BigComplex {
 		 * and v= +- sqrt((l-re)/2 as the new real and imaginary parts.
 		 */
 		final BigDecimal l = abs(mc);
-		if (l.compareTo(BigDecimal.ZERO) == 0)
+		if (l.compareTo(BigDecimal.ZERO) == 0) {
 			return new BigComplex(BigDecimalMath.scalePrec(BigDecimal.ZERO, mc), BigDecimalMath.scalePrec(BigDecimal.ZERO, mc));
+		}
 		final BigDecimal u = BigDecimalMath.sqrt(l.add(re).divide(half, mc), mc);
 		final BigDecimal v = BigDecimalMath.sqrt(l.subtract(re).divide(half, mc), mc);
-		if (im.compareTo(BigDecimal.ZERO) >= 0)
+		if (im.compareTo(BigDecimal.ZERO) >= 0) {
 			return new BigComplex(u, v);
-		else
+		} else {
 			return new BigComplex(u, v.negate());
+		}
 	}
 
 	/**

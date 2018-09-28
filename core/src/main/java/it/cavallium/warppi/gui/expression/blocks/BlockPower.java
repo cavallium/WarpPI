@@ -29,8 +29,9 @@ public class BlockPower extends Block {
 	public boolean putBlock(final Caret caret, final Block newBlock) {
 		boolean added = false;
 		added = added | containerExponent.putBlock(caret, newBlock);
-		if (added)
+		if (added) {
 			recomputeDimensions();
+		}
 		return added;
 	}
 
@@ -38,8 +39,9 @@ public class BlockPower extends Block {
 	public boolean delBlock(final Caret caret) {
 		boolean removed = false;
 		removed = removed | containerExponent.delBlock(caret);
-		if (removed)
+		if (removed) {
 			recomputeDimensions();
+		}
 		return removed;
 	}
 

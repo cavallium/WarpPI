@@ -32,15 +32,17 @@ public class FeatureNumber implements FeatureBasic {
 	@Override
 	public Number toFunction(final MathContext context) throws Error {
 		String nmbstr = getNumberString();
-		if (nmbstr.charAt(0) == '.')
+		if (nmbstr.charAt(0) == '.') {
 			nmbstr = '0' + nmbstr;
-		else if (nmbstr.charAt(nmbstr.length() - 1) == '.')
+		} else if (nmbstr.charAt(nmbstr.length() - 1) == '.') {
 			nmbstr += "0";
-		else if (nmbstr.length() == 1)
-			if (nmbstr.charAt(0) == MathematicalSymbols.MINUS)
+		} else if (nmbstr.length() == 1) {
+			if (nmbstr.charAt(0) == MathematicalSymbols.MINUS) {
 				nmbstr += "1";
-			else if (nmbstr.charAt(0) == MathematicalSymbols.SUBTRACTION)
+			} else if (nmbstr.charAt(0) == MathematicalSymbols.SUBTRACTION) {
 				nmbstr += "1";
+			}
+		}
 		return new Number(context, nmbstr);
 	}
 }

@@ -60,8 +60,9 @@ public class LoadingScreen extends Screen {
 		if (mustRefresh) {
 			mustRefresh = false;
 			return true;
-		} else
+		} else {
 			return false;
+		}
 	}
 
 }

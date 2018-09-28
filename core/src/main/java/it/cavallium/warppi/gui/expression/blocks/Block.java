@@ -70,18 +70,18 @@ public abstract class Block implements TreeBlock, GraphicalElement {
 	}
 
 	public abstract Feature toFeature(MathContext context) throws Error;
-	
+
 	@Override
 	public TreeContainer getParentContainer() {
 		return parent;
 	}
-	
+
 	@Override
 	public boolean hasParent() {
 		return parent != null;
 	}
 
-	public void setParent(TreeContainer parent) {
+	public void setParent(final TreeContainer parent) {
 		this.parent = parent;
 	}
 }

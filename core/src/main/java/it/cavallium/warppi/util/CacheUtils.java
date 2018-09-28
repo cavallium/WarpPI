@@ -14,9 +14,9 @@ public class CacheUtils {
 	public static <T> T get(final String entryName, final long expireDelta, final Supplier<T> function) {
 		CacheUtils.refreshEntry(entryName);
 		synchronized (CacheUtils.cache) {
-			if (CacheUtils.cache.containsKey(entryName))
+			if (CacheUtils.cache.containsKey(entryName)) {
 				return (T) CacheUtils.cache.get(entryName);
-			else {
+			} else {
 				CacheUtils.time.put(entryName, System.currentTimeMillis() + expireDelta);
 				final T result = function.get();
 				CacheUtils.cache.put(entryName, result);
@@ -28,11 +28,12 @@ public class CacheUtils {
 	private static void refreshEntry(final String entryName) {
 		synchronized (CacheUtils.time) {
 			synchronized (CacheUtils.cache) {
-				if (CacheUtils.time.containsKey(entryName))
+				if (CacheUtils.time.containsKey(entryName)) {
 					if (CacheUtils.time.get(entryName) <= System.currentTimeMillis()) {
 						CacheUtils.time.remove(entryName);
 						CacheUtils.cache.remove(entryName);
 					}
+				}
 			}
 		}
 	}

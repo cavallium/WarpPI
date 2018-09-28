@@ -26,8 +26,9 @@ public abstract class PngSkin implements Skin {
 
 	@Override
 	public void load(String file) throws IOException {
-		if (!file.startsWith("/"))
+		if (!file.startsWith("/")) {
 			file = "/" + file;
+		}
 		try {
 			if (!file.endsWith(".png")) {
 				final File f = File.createTempFile("picalculator-png", ".png");

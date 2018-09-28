@@ -23,9 +23,9 @@ public class Harmonic {
 	 *         For values of n less than 1, zero is returned.
 	 */
 	public Rational at(final int n) {
-		if (n < 1)
+		if (n < 1) {
 			return new Rational(0, 1);
-		else {
+		} else {
 			/*
 			 * start with 1 as the result
 			 */
@@ -34,8 +34,9 @@ public class Harmonic {
 			/*
 			 * add 1/i for i=2..n
 			 */
-			for (int i = 2; i <= n; i++)
+			for (int i = 2; i <= n; i++) {
 				a = a.add(new Rational(1, i));
+			}
 			return a;
 		}
 	}

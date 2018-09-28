@@ -23,14 +23,17 @@ public class BigIntegerMath {
 	 * @return The binomial coefficient
 	 */
 	static public BigInteger binomial(final int n, final int k) {
-		if (k == 0)
+		if (k == 0) {
 			return BigInteger.ONE;
+		}
 		BigInteger bin = new BigInteger("" + n);
 		final BigInteger n2 = bin;
-		for (BigInteger i = new BigInteger("" + (k - 1)); i.compareTo(BigInteger.ONE) >= 0; i = i.subtract(BigInteger.ONE))
+		for (BigInteger i = new BigInteger("" + (k - 1)); i.compareTo(BigInteger.ONE) >= 0; i = i.subtract(BigInteger.ONE)) {
 			bin = bin.multiply(n2.subtract(i));
-		for (BigInteger i = new BigInteger("" + k); i.compareTo(BigInteger.ONE) == 1; i = i.subtract(BigInteger.ONE))
+		}
+		for (BigInteger i = new BigInteger("" + k); i.compareTo(BigInteger.ONE) == 1; i = i.subtract(BigInteger.ONE)) {
 			bin = bin.divide(i);
+		}
 		return bin;
 	} /* binomial */
 
@@ -48,8 +51,9 @@ public class BigIntegerMath {
 		/*
 		 * binomial(n,0) =1
 		 */
-		if (k.compareTo(BigInteger.ZERO) == 0)
+		if (k.compareTo(BigInteger.ZERO) == 0) {
 			return BigInteger.ONE;
+		}
 
 		BigInteger bin = new BigInteger("" + n);
 
@@ -78,8 +82,9 @@ public class BigIntegerMath {
 		 * and in the integer domain. First replace C(n,k) by C(n,n-k) if n-k<k.
 		 */
 		BigInteger truek = new BigInteger(k.toString());
-		if (n.subtract(k).compareTo(k) < 0)
+		if (n.subtract(k).compareTo(k) < 0) {
 			truek = n.subtract(k);
+		}
 
 		/*
 		 * Calculate C(num,truek) where num=n and truek is the smaller of n-k
@@ -170,8 +175,9 @@ public class BigIntegerMath {
 	 * @author Richard J. Mathar
 	 */
 	static public int isqrt(final int n) {
-		if (n < 0)
+		if (n < 0) {
 			throw new ArithmeticException("Negative argument " + n);
+		}
 		final double resul = Math.sqrt(n);
 		return (int) Math.round(resul);
 	}
@@ -187,8 +193,9 @@ public class BigIntegerMath {
 	 * @author Richard J. Mathar
 	 */
 	static public long isqrt(final long n) {
-		if (n < 0)
+		if (n < 0) {
 			throw new ArithmeticException("Negative argument " + n);
+		}
 		final double resul = Math.sqrt(n);
 		return Math.round(resul);
 	}
@@ -204,16 +211,17 @@ public class BigIntegerMath {
 	 * @author Richard J. Mathar
 	 */
 	static public BigInteger isqrt(final BigInteger n) {
-		if (n.compareTo(BigInteger.ZERO) < 0)
+		if (n.compareTo(BigInteger.ZERO) < 0) {
 			throw new ArithmeticException("Negative argument " + n.toString());
+		}
 		/*
 		 * Start with an estimate from a floating point reduction.
 		 */
 		BigInteger x;
 		final int bl = n.bitLength();
-		if (bl > 120)
+		if (bl > 120) {
 			x = n.shiftRight(bl / 2 - 1);
-		else {
+		} else {
 			final double resul = Math.sqrt(n.doubleValue());
 			x = new BigInteger("" + Math.round(resul));
 		}
@@ -225,11 +233,13 @@ public class BigIntegerMath {
 			 */
 			final BigInteger x2 = x.pow(2);
 			BigInteger xplus2 = x.add(BigInteger.ONE).pow(2);
-			if (x2.compareTo(n) <= 0 && xplus2.compareTo(n) > 0)
+			if (x2.compareTo(n) <= 0 && xplus2.compareTo(n) > 0) {
 				return x;
+			}
 			xplus2 = xplus2.subtract(x.shiftLeft(2));
-			if (xplus2.compareTo(n) <= 0 && x2.compareTo(n) > 0)
+			if (xplus2.compareTo(n) <= 0 && x2.compareTo(n) > 0) {
 				return x.subtract(BigInteger.ONE);
+			}
 			/*
 			 * Newton algorithm. This correction is on the
 			 * low side caused by the integer divisions. So the value required
@@ -253,8 +263,9 @@ public class BigIntegerMath {
 	 * @author Richard J. Mathar
 	 */
 	static public BigInteger core(final BigInteger n) {
-		if (n.compareTo(BigInteger.ZERO) < 0)
+		if (n.compareTo(BigInteger.ZERO) < 0) {
 			throw new ArithmeticException("Negative argument " + n);
+		}
 		final Ifactor i = new Ifactor(n);
 		return i.core();
 	}
@@ -280,28 +291,34 @@ public class BigIntegerMath {
 	static public BigInteger[][] minor(final BigInteger[][] A, final int r, final int c) throws ArithmeticException {
 		/* original row count */
 		final int rL = A.length;
-		if (rL == 0)
+		if (rL == 0) {
 			throw new ArithmeticException("zero row count in matrix");
-		if (r < 0 || r >= rL)
+		}
+		if (r < 0 || r >= rL) {
 			throw new ArithmeticException("row number " + r + " out of range 0.." + (rL - 1));
+		}
 		/* original column count */
 		final int cL = A[0].length;
-		if (cL == 0)
+		if (cL == 0) {
 			throw new ArithmeticException("zero column count in matrix");
-		if (c < 0 || c >= cL)
+		}
+		if (c < 0 || c >= cL) {
 			throw new ArithmeticException("column number " + c + " out of range 0.." + (cL - 1));
+		}
 		final BigInteger M[][] = new BigInteger[rL - 1][cL - 1];
 		int imrow = 0;
-		for (int row = 0; row < rL; row++)
+		for (int row = 0; row < rL; row++) {
 			if (row != r) {
 				int imcol = 0;
-				for (int col = 0; col < cL; col++)
+				for (int col = 0; col < cL; col++) {
 					if (col != c) {
 						M[imrow][imcol] = A[row][col];
 						imcol++;
 					}
+				}
 				imrow++;
 			}
+		}
 		return M;
 	}
 
@@ -327,26 +344,32 @@ public class BigIntegerMath {
 			throws ArithmeticException {
 		/* original row count */
 		final int rL = A.length;
-		if (rL == 0)
+		if (rL == 0) {
 			throw new ArithmeticException("zero row count in matrix");
+		}
 		/* original column count */
 		final int cL = A[0].length;
-		if (cL == 0)
+		if (cL == 0) {
 			throw new ArithmeticException("zero column count in matrix");
-		if (c < 0 || c >= cL)
+		}
+		if (c < 0 || c >= cL) {
 			throw new ArithmeticException("column number " + c + " out of range 0.." + (cL - 1));
+		}
 		final BigInteger M[][] = new BigInteger[rL][cL];
-		for (int row = 0; row < rL; row++)
-			for (int col = 0; col < cL; col++)
+		for (int row = 0; row < rL; row++) {
+			for (int col = 0; col < cL; col++) {
 				/*
 				 * currently, v may just be longer than the row count, and
 				 * surplus
 				 * elements will be ignored. Shorter v lead to an exception.
 				 */
-				if (col != c)
+				if (col != c) {
 					M[row][col] = A[row][col];
-				else
+				} else {
 					M[row][col] = v[row];
+				}
+			}
+		}
 		return M;
 	}
 
@@ -365,24 +388,26 @@ public class BigIntegerMath {
 		BigInteger d = BigInteger.ZERO;
 		/* row size */
 		final int rL = A.length;
-		if (rL == 0)
+		if (rL == 0) {
 			throw new ArithmeticException("zero row count in matrix");
+		}
 		/* column size */
 		final int cL = A[0].length;
-		if (cL != rL)
+		if (cL != rL) {
 			throw new ArithmeticException("Non-square matrix dim " + rL + " by " + cL);
+		}
 
 		/*
 		 * Compute the low-order cases directly.
 		 */
-		if (rL == 1)
+		if (rL == 1) {
 			return A[0][0];
-		else if (rL == 2) {
+		} else if (rL == 2) {
 			d = A[0][0].multiply(A[1][1]);
 			return d.subtract(A[0][1].multiply(A[1][0]));
-		} else
+		} else {
 			/* Work arbitrarily along the first column of the matrix */
-			for (int r = 0; r < rL; r++)
+			for (int r = 0; r < rL; r++) {
 				/*
 				 * Do not consider minors that do no contribute anyway
 				 */
@@ -390,11 +415,14 @@ public class BigIntegerMath {
 					final BigInteger M[][] = BigIntegerMath.minor(A, r, 0);
 					final BigInteger m = A[r][0].multiply(BigIntegerMath.det(M));
 					/* recursive call */
-					if (r % 2 == 0)
+					if (r % 2 == 0) {
 						d = d.add(m);
-					else
+					} else {
 						d = d.subtract(m);
+					}
 				}
+			}
+		}
 		return d;
 	}
 
@@ -416,15 +444,18 @@ public class BigIntegerMath {
 	static public Rational[] solve(final BigInteger[][] A, final BigInteger[] rhs) throws ArithmeticException, Error {
 
 		final int rL = A.length;
-		if (rL == 0)
+		if (rL == 0) {
 			throw new ArithmeticException("zero row count in matrix");
+		}
 
 		/* column size */
 		final int cL = A[0].length;
-		if (cL != rL)
+		if (cL != rL) {
 			throw new ArithmeticException("Non-square matrix dim " + rL + " by " + cL);
-		if (rhs.length != rL)
+		}
+		if (rhs.length != rL) {
 			throw new ArithmeticException("Right hand side dim " + rhs.length + " unequal matrix dim " + rL);
+		}
 
 		/*
 		 * Gauss elimination
@@ -434,8 +465,9 @@ public class BigIntegerMath {
 		/*
 		 * copy of r.h.s ito a mutable Rationalright hand side
 		 */
-		for (int c = 0; c < cL; c++)
+		for (int c = 0; c < cL; c++) {
 			x[c] = new Rational(rhs[c]);
+		}
 
 		/*
 		 * Create zeros downwards column c by linear combination of row c and
@@ -448,7 +480,7 @@ public class BigIntegerMath {
 			 */
 			if (A[c][c].compareTo(BigInteger.ZERO) == 0) {
 				boolean swpd = false;
-				for (int r = c + 1; r < rL; r++)
+				for (int r = c + 1; r < rL; r++) {
 					if (A[r][c].compareTo(BigInteger.ZERO) != 0) {
 						for (int cpr = c; cpr < cL; cpr++) {
 							final BigInteger tmp = A[c][cpr];
@@ -461,12 +493,14 @@ public class BigIntegerMath {
 						swpd = true;
 						break;
 					}
+				}
 				/*
 				 * not swapped with a non-zero row: determinant zero and no
 				 * solution
 				 */
-				if (!swpd)
+				if (!swpd) {
 					throw new ArithmeticException("Zero determinant of main matrix");
+				}
 			}
 			/* create zero at A[c+1..cL-1][c] */
 			for (int r = c + 1; r < rL; r++) {
@@ -482,13 +516,15 @@ public class BigIntegerMath {
 				x[r] = tmp;
 			}
 		}
-		if (A[cL - 1][cL - 1].compareTo(BigInteger.ZERO) == 0)
+		if (A[cL - 1][cL - 1].compareTo(BigInteger.ZERO) == 0) {
 			throw new ArithmeticException("Zero determinant of main matrix");
+		}
 		/* backward elimination */
 		for (int r = cL - 1; r >= 0; r--) {
 			x[r] = x[r].divide(A[r][r]);
-			for (int rpr = r - 1; rpr >= 0; rpr--)
+			for (int rpr = r - 1; rpr >= 0; rpr--) {
 				x[rpr] = x[rpr].subtract(x[r].multiply(A[rpr][r]));
+			}
 		}
 
 		return x;
@@ -523,11 +559,13 @@ public class BigIntegerMath {
 	 * @author Richard J. Mathar
 	 */
 	static public BigInteger valueOf(final Vector<BigInteger> c, final BigInteger x) {
-		if (c.size() == 0)
+		if (c.size() == 0) {
 			return BigInteger.ZERO;
+		}
 		BigInteger res = c.lastElement();
-		for (int i = c.size() - 2; i >= 0; i--)
+		for (int i = c.size() - 2; i >= 0; i--) {
 			res = res.multiply(x).add(c.elementAt(i));
+		}
 		return res;
 	}
 
@@ -546,11 +584,11 @@ public class BigIntegerMath {
 	 *      et al, Num. Funct. Anal. Opt. 10 (5)( 1989) 419-488</a>
 	 */
 	static public Rational centrlFactNumt(final int n, final int k) throws Error {
-		if (k > n || k < 0 || k % 2 != n % 2)
+		if (k > n || k < 0 || k % 2 != n % 2) {
 			return Rational.ZERO;
-		else if (k == n)
+		} else if (k == n) {
 			return Rational.ONE;
-		else {
+		} else {
 			/* Proposition 6.2.6 */
 			final Factorial f = new Factorial();
 			Rational jsum = new Rational(0, 1);
@@ -561,17 +599,19 @@ public class BigIntegerMath {
 					Rational t = new Rational(j - 2 * nu, 2);
 					t = t.pow(kprime + j);
 					t = t.multiply(BigIntegerMath.binomial(j, nu));
-					if (nu % 2 != 0)
+					if (nu % 2 != 0) {
 						nusum = nusum.subtract(t);
-					else
+					} else {
 						nusum = nusum.add(t);
+					}
 				}
 				nusum = nusum.divide(f.at(j)).divide(n + j);
 				nusum = nusum.multiply(BigIntegerMath.binomial(2 * kprime, kprime - j));
-				if (j % 2 != 0)
+				if (j % 2 != 0) {
 					jsum = jsum.subtract(nusum);
-				else
+				} else {
 					jsum = jsum.add(nusum);
+				}
 			}
 			return jsum.multiply(k).multiply(BigIntegerMath.binomial(n + kprime, k));
 		}
@@ -591,13 +631,14 @@ public class BigIntegerMath {
 	 *      et al, Num. Funct. Anal. Opt. 10 (5)( 1989) 419-488</a>
 	 */
 	static public Rational centrlFactNumT(final int n, final int k) {
-		if (k > n || k < 0 || k % 2 != n % 2)
+		if (k > n || k < 0 || k % 2 != n % 2) {
 			return Rational.ZERO;
-		else if (k == n)
+		} else if (k == n) {
 			return Rational.ONE;
-		else
+		} else {
 			/* Proposition 2.1 */
 			return BigIntegerMath.centrlFactNumT(n - 2, k - 2).add(BigIntegerMath.centrlFactNumT(n - 2, k).multiply(new Rational(k * k, 4)));
+		}
 	} /* CentralFactNumT */
 
 } /* BigIntegerMath */

@@ -46,8 +46,9 @@ public class MathParser {
 		final ObjectArrayList<ObjectArrayList<Block>> result = new ObjectArrayList<>();
 		for (final Function resultExpression : resultExpressions) {
 			final ObjectArrayList<Block> resultBlocks = resultExpression.toBlock(context);
-			if (resultBlocks == null)
+			if (resultBlocks == null) {
 				throw new Error(Errors.NOT_IMPLEMENTED, "Unknown function " + resultExpression.getClass().getSimpleName());
+			}
 			result.add(resultBlocks);
 		}
 		return result;
@@ -61,15 +62,17 @@ public class MathParser {
 
 		for (final Feature f : features) {
 			final Function fnc = f.toFunction(context);
-			if (fnc == null)
+			if (fnc == null) {
 				throw new Error(Errors.SYNTAX_ERROR, "\"" + f.getClass().getSimpleName() + "\" can't be converted into a Function!");
+			}
 			process.add(fnc);
 		}
 
 		process = MathParser.fixStack(context, process);
 
-		if (process.size() > 1)
+		if (process.size() > 1) {
 			throw new Error(Errors.UNBALANCED_STACK, "The stack is unbalanced. Not all the functions are nested correctly");
+		}
 
 		return process.get(0);
 	}
@@ -82,14 +85,16 @@ public class MathParser {
 
 		if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 			Engine.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "\tStatus: ");
-			for (final Function f : functionsList)
+			for (final Function f : functionsList) {
 				Engine.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, f.toString());
+			}
 			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE);
 		}
 
 		for (final MathParserStep step : steps) {
-			if (Engine.getPlatform().getSettings().isDebugEnabled())
+			if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 				Engine.getPlatform().getConsoleUtils().out().println(2, "Stack fixing step \"" + step.getStepName() + "\"");
+			}
 			final int stepQty = step.requiresReversedIteration() ? -1 : 1,
 					initialIndex = step.requiresReversedIteration() ? functionsList.size() - 1 : 0;
 			do {
@@ -100,8 +105,9 @@ public class MathParser {
 					final int i = curIndex.i;
 					final Function f = functionsList.get(i);
 
-					if (step.eval(curIndex, lastElement, f, functionsList))
+					if (step.eval(curIndex, lastElement, f, functionsList)) {
 						lastLoopDidSomething = true;
+					}
 
 					lastElement = i >= functionsList.size() ? null : functionsList.get(i);
 					curIndex.i += stepQty;
@@ -110,8 +116,9 @@ public class MathParser {
 
 			if (Engine.getPlatform().getSettings().isDebugEnabled()) {
 				Engine.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "\tStatus: ");
-				for (final Function f : functionsList)
+				for (final Function f : functionsList) {
 					Engine.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, f.toString());
+				}
 				Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE);
 			}
 		}
@@ -157,7 +164,7 @@ public class MathParser {
 			final ObjectArrayList<Feature> features) throws Error {
 		final ObjectArrayList<Feature> process = new ObjectArrayList<>();
 
-		for (final Feature f : features)
+		for (final Feature f : features) {
 			if (f instanceof FeatureChar) {
 				final char featureChar = ((FeatureChar) f).ch;
 				Feature result = null;
@@ -179,18 +186,22 @@ public class MathParser {
 						break;
 				}
 
-				for (final char var : MathematicalSymbols.variables)
+				for (final char var : MathematicalSymbols.variables) {
 					if (featureChar == var) {
 						result = new FeatureVariable(featureChar, V_TYPE.VARIABLE);
 						break;
 					}
+				}
 
-				if (result == null)
+				if (result == null) {
 					throw new Error(Errors.SYNTAX_ERROR, "Char " + featureChar + " isn't a known feature");
+				}
 
 				process.add(result);
-			} else
+			} else {
 				process.add(f);
+			}
+		}
 
 		return process;
 	}
@@ -207,31 +218,37 @@ public class MathParser {
 		final ObjectArrayList<Feature> process = new ObjectArrayList<>();
 
 		FeatureNumber numberBuffer = null;
-		for (final Feature f : features)
+		for (final Feature f : features) {
 			if (f instanceof FeatureChar) {
 				final FeatureChar bcf = (FeatureChar) f;
 				final char[] numbers = MathematicalSymbols.numbers;
 				boolean isNumber = false;
-				for (final char n : numbers)
+				for (final char n : numbers) {
 					if (bcf.ch == n) {
 						isNumber = true;
 						break;
 					}
-				if (bcf.ch == MathematicalSymbols.MINUS || bcf.ch == '.')
+				}
+				if (bcf.ch == MathematicalSymbols.MINUS || bcf.ch == '.') {
 					isNumber = true;
+				}
 				if (isNumber) {
 					if (numberBuffer == null) {
 						numberBuffer = new FeatureNumber(bcf.ch);
 						process.add(numberBuffer);
-					} else
+					} else {
 						numberBuffer.append(bcf.ch);
+					}
 				} else {
-					if (numberBuffer != null)
+					if (numberBuffer != null) {
 						numberBuffer = null;
+					}
 					process.add(f);
 				}
-			} else
+			} else {
 				process.add(f);
+			}
+		}
 
 		return process;
 	}
@@ -251,23 +268,26 @@ public class MathParser {
 		for (final Feature f : features) {
 			if (f instanceof FeatureChar && (((FeatureChar) f).ch == MathematicalSymbols.SUBTRACTION || ((FeatureChar) f).ch == MathematicalSymbols.MINUS)) {
 				boolean isNegativeOfNumber = false;
-				if (lastFeature == null)
+				if (lastFeature == null) {
 					isNegativeOfNumber = true;
-				else if (lastFeature instanceof FeatureChar) {
+				} else if (lastFeature instanceof FeatureChar) {
 					final FeatureChar lcf = (FeatureChar) lastFeature;
 					final char[] operators = MathematicalSymbols.functionsAndSignums;
-					for (final char operator : operators)
+					for (final char operator : operators) {
 						if (lcf.ch == operator) {
 							isNegativeOfNumber = true;
 							break;
 						}
+					}
 				}
-				if (isNegativeOfNumber)
+				if (isNegativeOfNumber) {
 					process.add(new FeatureChar(MathematicalSymbols.MINUS));
-				else
+				} else {
 					process.add(new FeatureChar(MathematicalSymbols.SUBTRACTION));
-			} else
+				}
+			} else {
 				process.add(f);
+			}
 			lastFeature = f;
 		}
 		return process;
@@ -288,12 +308,14 @@ public class MathParser {
 		Feature lastFeature = null;
 		for (final Feature f : features) {
 			if (f instanceof FeaturePowerChar) {
-				if (lastFeature != null)
+				if (lastFeature != null) {
 					process.set(process.size() - 1, new FeaturePower(lastFeature.toFunction(context), ((FeaturePowerChar) f).getChild()));
-				else
+				} else {
 					process.add(f);
-			} else
+				}
+			} else {
 				process.add(f);
+			}
 			lastFeature = f;
 		}
 

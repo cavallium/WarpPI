@@ -18,8 +18,9 @@ public class Negative extends FunctionSingle {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (o instanceof Negative)
+		if (o instanceof Negative) {
 			return ((Negative) o).getParameter().equals(parameter);
+		}
 		return false;
 	}
 
@@ -35,12 +36,14 @@ public class Negative extends FunctionSingle {
 		if (new Expression(context, getParameter()).parenthesisNeeded()) {
 			final BlockParenthesis par = new BlockParenthesis();
 			final ObjectArrayList<Block> parBlocks = getParameter().toBlock(context);
-			for (final Block b : parBlocks)
+			for (final Block b : parBlocks) {
 				par.getNumberContainer().appendBlockUnsafe(b); // Skips recomputeDimension
+			}
 			par.recomputeDimensions(); // Recompute dimensions after appendBlockUnsafe
 			blocks.add(par);
-		} else
+		} else {
 			blocks.addAll(getParameter().toBlock(context));
+		}
 		return blocks;
 		// throw new Error(Errors.NOT_IMPLEMENTED, "Unknown function " + getClass().getSimpleName());
 	}

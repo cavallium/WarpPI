@@ -8,8 +8,7 @@ import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class BlockParenthesis extends BlockParenthesisAbstract {
-	public BlockParenthesis() {
-	}
+	public BlockParenthesis() {}
 
 	public BlockParenthesis(final ObjectArrayList<Block> blocks) {
 		super(blocks);

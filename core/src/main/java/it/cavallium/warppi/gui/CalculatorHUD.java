@@ -48,22 +48,25 @@ public class CalculatorHUD extends HUD {
 		renderer.glDrawLine(0, 20, engine.getWidth() - 1, 20);
 		renderer.glColor3i(255, 255, 255);
 		guiSkin.use(engine);
-		if (Keyboard.shift)
+		if (Keyboard.shift) {
 			renderer.glFillRect(2 + 18 * 0, 2, 16, 16, 16 * 2, 16 * 0, 16, 16);
-		else
+		} else {
 			renderer.glFillRect(2 + 18 * 0, 2, 16, 16, 16 * 3, 16 * 0, 16, 16);
-		if (Keyboard.alpha)
+		}
+		if (Keyboard.alpha) {
 			renderer.glFillRect(2 + 18 * 1, 2, 16, 16, 16 * 0, 16 * 0, 16, 16);
-		else
+		} else {
 			renderer.glFillRect(2 + 18 * 1, 2, 16, 16, 16 * 1, 16 * 0, 16, 16);
+		}
 
 		int padding = 2;
 
 		final int brightness = (int) Math.ceil(Engine.INSTANCE.getHardwareDevice().getDisplayManager().getBrightness() * 9);
-		if (brightness <= 10)
+		if (brightness <= 10) {
 			renderer.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * brightness, 16 * 1, 16, 16);
-		else
+		} else {
 			Engine.getPlatform().getConsoleUtils().out().println(1, "Brightness error");
+		}
 
 		padding += 18 + 6;
 
@@ -75,14 +78,15 @@ public class CalculatorHUD extends HUD {
 			padding += 18 + 6;
 		}
 
-		if (canGoBack && canGoForward)
+		if (canGoBack && canGoForward) {
 			renderer.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 14, 16 * 0, 16, 16);
-		else if (canGoBack)
+		} else if (canGoBack) {
 			renderer.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 15, 16 * 0, 16, 16);
-		else if (canGoForward)
+		} else if (canGoForward) {
 			renderer.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 16, 16 * 0, 16, 16);
-		else
+		} else {
 			renderer.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 17, 16 * 0, 16, 16);
+		}
 
 		padding += 18;
 

@@ -146,16 +146,18 @@ public class Wigner3jGUI implements ActionListener, ListSelectionListener {
 		 * lines that start with a hash mark.
 		 */
 		Scanner s = new Scanner(tr);
-		for (int l = 0; l < 3;)
+		for (int l = 0; l < 3;) {
 			try {
 				trias[l] = s.nextLine().trim();
-				if (!trias[l].startsWith("#"))
+				if (!trias[l].startsWith("#")) {
 					l++;
+				}
 			} catch (final Exception e) {
 				s.close();
 				outG.setText("ERROR: less than 3 lines in the triad definition");
 				return;
 			}
+		}
 
 		s.close();
 

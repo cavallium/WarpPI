@@ -14,9 +14,9 @@ public class SerialToParallel {
 	}
 
 	public void write(final boolean[] data) {
-		if (data.length != 8)
+		if (data.length != 8) {
 			return;
-		else {
+		} else {
 			Engine.getPlatform().getGpio().digitalWrite(RCK, Engine.getPlatform().getGpio().valueLow());
 
 			for (int i = 7; i >= 0; i--) {

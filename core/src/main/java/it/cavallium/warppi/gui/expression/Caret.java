@@ -37,15 +37,17 @@ public class Caret {
 	}
 
 	public void flipState() {
-		if (state == CaretState.VISIBLE_ON)
+		if (state == CaretState.VISIBLE_ON) {
 			state = CaretState.VISIBLE_OFF;
-		else if (state == CaretState.VISIBLE_OFF)
+		} else if (state == CaretState.VISIBLE_OFF) {
 			state = CaretState.VISIBLE_ON;
+		}
 	}
 
 	public void turnOn() {
-		if (state == CaretState.VISIBLE_OFF)
+		if (state == CaretState.VISIBLE_OFF) {
 			state = CaretState.VISIBLE_ON;
+		}
 	}
 
 	public void setPosition(final int i) {

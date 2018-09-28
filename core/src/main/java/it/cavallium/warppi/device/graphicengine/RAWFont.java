@@ -69,8 +69,9 @@ public class RAWFont {
 		Object obj = new Object();
 		final WeakReference<Object> ref = new WeakReference<>(obj);
 		obj = null;
-		while (ref.get() != null)
+		while (ref.get() != null) {
 			System.gc();
+		}
 	}
 
 	private void loadFont(final String string) throws IOException {
@@ -85,25 +86,29 @@ public class RAWFont {
 				charIntCount = (int) Math.ceil((double) charS / (double) RAWFont.intBits);
 				minBound = file[0x9] << 24 | file[0xA] << 16 | file[0xB] << 8 | file[0xC];
 				maxBound = file[0xE] << 24 | file[0xF] << 16 | file[0x10] << 8 | file[0x11];
-				if (maxBound <= minBound)
+				if (maxBound <= minBound) {
 					maxBound = 10000; //TODO remove it: temp fix
+				}
 				rawchars = new boolean[maxBound - minBound][];
 				int index = 0x12;
-				while (index < filelength)
+				while (index < filelength) {
 					try {
 						final int charIndex = file[index] << 8 | file[index + 1];
 						final boolean[] rawchar = new boolean[charS];
 						int charbytescount = 0;
-						while (charbytescount * 8 < charS)
+						while (charbytescount * 8 < charS) {
 							charbytescount += 1;
+						}
 						int currentBit = 0;
-						for (int i = 0; i <= charbytescount; i++)
+						for (int i = 0; i <= charbytescount; i++) {
 							for (int bit = 0; bit < 8; bit++) {
-								if (currentBit >= charS)
+								if (currentBit >= charS) {
 									break;
+								}
 								rawchar[currentBit] = (file[index + 2 + i] >> 8 - 1 - bit & 0x1) == 1 ? true : false;
 								currentBit++;
 							}
+						}
 						rawchars[charIndex - minBound] = rawchar;
 						index += 2 + charbytescount;
 					} catch (final Exception ex) {
@@ -111,18 +116,22 @@ public class RAWFont {
 						System.out.println(string);
 						Engine.getPlatform().exit(-1);
 					}
-			} else
+				}
+			} else {
 				throw new IOException();
-		} else
+			}
+		} else {
 			throw new IOException();
+		}
 	}
 
 	public int[] getCharIndexes(final String txt) {
 		final int l = txt.length();
 		final int[] indexes = new int[l];
 		final char[] chars = txt.toCharArray();
-		for (int i = 0; i < l; i++)
+		for (int i = 0; i < l; i++) {
 			indexes[i] = (chars[i] & 0xFFFF) - minBound;
+		}
 		return indexes;
 	}
 
@@ -152,7 +161,7 @@ public class RAWFont {
 		for (int i = 0; i < l; i++) {
 			cpos = i * (charW + 1);
 			final int charIndex = text[i];
-			for (int dy = 0; dy < charH; dy++)
+			for (int dy = 0; dy < charH; dy++) {
 				for (int dx = 0; dx < charW; dx++) {
 					j = x + cpos + dx;
 					if (j > 0 & j < screenSize[0]) {
@@ -161,10 +170,12 @@ public class RAWFont {
 						currentIntBitPosition = bit - currentInt * RAWFont.intBits;
 						bitData = chars32[charIndex * charIntCount + currentInt] >> currentIntBitPosition & 1;
 						screenPos = x + cpos + dx + (y + dy) * screenSize[0];
-						if (bitData == 1 & screenLength > screenPos)
+						if (bitData == 1 & screenLength > screenPos) {
 							screen[screenPos] = color;
+						}
 					}
 				}
+			}
 		}
 	}
 }

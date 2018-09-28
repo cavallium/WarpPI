@@ -28,11 +28,13 @@ public class MarioWorld {
 
 	public byte getBlockIdAt(final int x, final int y) {
 		final int idy = height - 1 - y;
-		if (idy < 0 || idy >= data.length)
+		if (idy < 0 || idy >= data.length) {
 			return 0b0;
+		}
 		final int idx = x;
-		if (idx < 0 || idx >= data[0].length)
+		if (idx < 0 || idx >= data[0].length) {
 			return 0b0;
+		}
 		return data[idy][idx];
 	}
 

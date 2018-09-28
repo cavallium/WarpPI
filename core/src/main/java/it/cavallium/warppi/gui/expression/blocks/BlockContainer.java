@@ -28,46 +28,48 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 	private int line;
 	public final boolean withBorder;
 	private boolean autoMinimums;
-	private TreeBlock parent;
+	private final TreeBlock parent;
 
-	public BlockContainer(TreeBlock parent) {
+	public BlockContainer(final TreeBlock parent) {
 		this(parent, false, BlockContainer.getDefaultCharWidth(false), BlockContainer.getDefaultCharHeight(false), true);
 		autoMinimums = true;
 	}
 
-	public BlockContainer(TreeBlock parent, final boolean small) {
+	public BlockContainer(final TreeBlock parent, final boolean small) {
 		this(parent, small, BlockContainer.getDefaultCharWidth(small), BlockContainer.getDefaultCharHeight(small), true);
 		autoMinimums = true;
 	}
 
-	public BlockContainer(TreeBlock parent, final boolean small, final ObjectArrayList<Block> content) {
+	public BlockContainer(final TreeBlock parent, final boolean small, final ObjectArrayList<Block> content) {
 		this(parent, small, BlockContainer.getDefaultCharWidth(small), BlockContainer.getDefaultCharHeight(small), content, true);
 		autoMinimums = true;
 	}
 
-	public BlockContainer(TreeBlock parent, final boolean small, final boolean withBorder) {
+	public BlockContainer(final TreeBlock parent, final boolean small, final boolean withBorder) {
 		this(parent, small, BlockContainer.getDefaultCharWidth(small), BlockContainer.getDefaultCharHeight(small), withBorder);
 		autoMinimums = true;
 	}
 
-	public BlockContainer(TreeBlock parent, final boolean small, final int minWidth, final int minHeight, final boolean withBorder) {
+	public BlockContainer(final TreeBlock parent, final boolean small, final int minWidth, final int minHeight, final boolean withBorder) {
 		this(parent, small, minWidth, minHeight, new ObjectArrayList<>(), withBorder);
 		autoMinimums = false;
 	}
 
-	public BlockContainer(TreeBlock parent, final boolean small, final int minWidth, final int minHeight, final ObjectArrayList<Block> content, final boolean withBorder) {
+	public BlockContainer(final TreeBlock parent, final boolean small, final int minWidth, final int minHeight, final ObjectArrayList<Block> content, final boolean withBorder) {
 		this.parent = parent;
 		this.small = small;
 		this.minWidth = minWidth;
 		this.minHeight = minHeight;
 		this.withBorder = withBorder;
-		for (final Block b : content)
-			if (b.isSmall() != small)
+		for (final Block b : content) {
+			if (b.isSmall() != small) {
 				b.setSmall(small);
+			}
+		}
 		this.content = content;
 		recomputeDimensions();
 	}
-	
+
 	@Override
 	public TreeBlock getParentBlock() {
 		return parent;
@@ -85,12 +87,14 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 
 	public void addBlockUnsafe(final int position, final Block b) {
 		b.setParent(this);
-		if (b.isSmall() != small)
+		if (b.isSmall() != small) {
 			b.setSmall(small);
-		if (position >= content.size())
+		}
+		if (position >= content.size()) {
 			content.add(b);
-		else
+		} else {
 			content.add(position, b);
+		}
 	}
 
 	public void appendBlock(final Block b) {
@@ -100,8 +104,9 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 
 	public void appendBlockUnsafe(final Block b) {
 		b.setParent(this);
-		if (b.isSmall() != small)
+		if (b.isSmall() != small) {
 			b.setSmall(small);
+		}
 		content.add(b);
 	}
 
@@ -150,11 +155,13 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y, final Caret caret) {
 		int paddingX = 1;
 
-		if (caret.getRemaining() == 0)
-			if (content.size() > 0)
+		if (caret.getRemaining() == 0) {
+			if (content.size() > 0) {
 				BlockContainer.drawCaret(ge, r, caret, small, x, y + line - content.get(0).line, content.get(0).height);
-			else
+			} else {
 				BlockContainer.drawCaret(ge, r, caret, small, x, y, height);
+			}
+		}
 
 		if (withBorder && content.size() == 0) {
 			r.glColor(BlockContainer.getDefaultColor());
@@ -162,15 +169,17 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 			r.glDrawLine(x + paddingX, y, x + paddingX, y + height - 1);
 			r.glDrawLine(x + paddingX + width - 1, y, x + paddingX + width - 1, y + height - 1);
 			r.glDrawLine(x + paddingX, y + height - 1, x + paddingX + width - 1, y + height - 1);
-		} else
+		} else {
 			for (final Block b : content) {
 				caret.skip(1);
 				b.draw(ge, r, x + paddingX, y + line - b.line, caret);
 				paddingX += b.getWidth();
-				if (caret.getRemaining() == 0)
+				if (caret.getRemaining() == 0) {
 					BlockContainer.drawCaret(ge, r, caret, small, x + paddingX, y + line - b.line, b.height);
+				}
 				paddingX += 1;
 			}
+		}
 		caret.skip(1);
 	}
 
@@ -193,8 +202,9 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 			}
 		}
 		caret.skip(1);
-		if (added)
+		if (added) {
 			recomputeDimensions();
+		}
 		return added;
 	}
 
@@ -214,8 +224,9 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 			}
 		}
 		caret.skip(1);
-		if (removed)
+		if (removed) {
 			recomputeDimensions();
+		}
 		return removed;
 	}
 
@@ -229,8 +240,9 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 			final int deltaCaret = caret.getRemaining();
 
 			block = b.getBlock(caret);
-			if (block != null)
+			if (block != null) {
 				return block;
+			}
 			if (caret.getRemaining() == 0 || deltaCaret >= 0 && caret.getRemaining() < 0) {
 				block = getBlockAt(pos - 1);
 				return block;
@@ -252,25 +264,29 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 			final int bl = b.getLine();
 			final int bh = b.getHeight();
 			final int bh2 = bh - bl;
-			if (bl > l)
+			if (bl > l) {
 				l = bl;
-			if (bh2 > h2)
+			}
+			if (bh2 > h2) {
 				h2 = bh2;
+			}
 		}
 
-		if (content.size() > 0)
+		if (content.size() > 0) {
 			w -= 1;
+		}
 
 		h = h2 + l;
 
 		line = l;
-		if (w > minWidth)
+		if (w > minWidth) {
 			width = w;
-		else
+		} else {
 			width = minWidth;
-		if (h > minHeight)
+		}
+		if (h > minHeight) {
 			height = h;
-		else {
+		} else {
 			height = minHeight;
 			line = height / 2;
 		}
@@ -340,8 +356,9 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 			minWidth = BlockContainer.getDefaultCharWidth(small);
 			minHeight = BlockContainer.getDefaultCharHeight(small);
 		}
-		for (final Block b : content)
+		for (final Block b : content) {
 			b.setSmall(small);
+		}
 		recomputeDimensions();
 	}
 
@@ -350,14 +367,16 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 	}
 
 	private static void checkInitialized() {
-		if (!BlockContainer.initialized)
+		if (!BlockContainer.initialized) {
 			Engine.getPlatform().throwNewExceptionInInitializerError("Please initialize BlockContainer by running the method BlockContainer.initialize(...) first!");
+		}
 	}
 
 	public int computeCaretMaxBound() {
 		int maxpos = 0;
-		for (final Block b : content)
+		for (final Block b : content) {
 			maxpos += 1 + b.computeCaretMaxBound();
+		}
 		return maxpos + 1;
 	}
 
@@ -367,8 +386,9 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 
 		for (final Block block : blocks) {
 			final Feature blockFeature = block.toFeature(context);
-			if (blockFeature == null)
+			if (blockFeature == null) {
 				throw new Error(Errors.NOT_IMPLEMENTED, "The block " + block.getClass().getSimpleName() + " isn't a known Block");
+			}
 			blockFeatures.add(blockFeature);
 		}
 

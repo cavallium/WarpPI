@@ -85,11 +85,11 @@ public class StartupArgumentsImpl implements StartupArguments {
 	void setZoomed(final boolean isZoomed) {
 		this.isZoomed = isZoomed;
 	}
-	
+
 	void setCPUEngineForced(final boolean isCPUEngineForced) {
 		this.isCPUEngineForced = isCPUEngineForced;
 	}
-	
+
 	void setGPUEngineForced(final boolean isGPUEngineForced) {
 		this.isGPUEngineForced = isGPUEngineForced;
 	}
@@ -124,12 +124,7 @@ public class StartupArgumentsImpl implements StartupArguments {
 
 	@Override
 	public String toString() {
-		return "StartupArgumentsImpl [isRaspberryModeAllowed=" + isRaspberryModeAllowed + ", isZoomed=" + isZoomed
-				+ ", isCPUEngineForced=" + isCPUEngineForced + ", isGPUEngineForced=" + isGPUEngineForced
-				+ ", isFrameBufferEngineForced=" + isFrameBufferEngineForced + ", isNoGUIEngineForced="
-				+ isNoGUIEngineForced + ", isHTMLEngineForced=" + isHTMLEngineForced + ", isMSDOSModeEnabled="
-				+ isMSDOSModeEnabled + ", isVerboseLoggingEnabled=" + isVerboseLoggingEnabled + ", isDebugEnabled="
-				+ isDebugEnabled + ", isUncached=" + isUncached + "]";
+		return "StartupArgumentsImpl [isRaspberryModeAllowed=" + isRaspberryModeAllowed + ", isZoomed=" + isZoomed + ", isCPUEngineForced=" + isCPUEngineForced + ", isGPUEngineForced=" + isGPUEngineForced + ", isFrameBufferEngineForced=" + isFrameBufferEngineForced + ", isNoGUIEngineForced=" + isNoGUIEngineForced + ", isHTMLEngineForced=" + isHTMLEngineForced + ", isMSDOSModeEnabled=" + isMSDOSModeEnabled + ", isVerboseLoggingEnabled=" + isVerboseLoggingEnabled + ", isDebugEnabled=" + isDebugEnabled + ", isUncached=" + isUncached + "]";
 	}
-	
+
 }

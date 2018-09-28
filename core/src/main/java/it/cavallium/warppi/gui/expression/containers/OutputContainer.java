@@ -35,8 +35,9 @@ public abstract class OutputContainer implements GraphicalElement, OutputLayout,
 	public void setContentAsSingleGroup(final ObjectArrayList<Block> blocks) {
 		roots.clear();
 		final BlockContainer bcnt = new BlockContainer(null);
-		for (final Block block : blocks)
+		for (final Block block : blocks) {
 			bcnt.appendBlockUnsafe(block);
+		}
 		roots.add(bcnt);
 		recomputeDimensions();
 	}
@@ -45,8 +46,9 @@ public abstract class OutputContainer implements GraphicalElement, OutputLayout,
 		this.roots.clear();
 		for (final ObjectArrayList<Block> blocks : roots) {
 			final BlockContainer bcnt = new BlockContainer(null);
-			for (final Block block : blocks)
+			for (final Block block : blocks) {
 				bcnt.appendBlockUnsafe(block);
+			}
 			this.roots.add(bcnt);
 		}
 		recomputeDimensions();
@@ -64,8 +66,9 @@ public abstract class OutputContainer implements GraphicalElement, OutputLayout,
 
 	@Override
 	public void recomputeDimensions() {
-		for (final BlockContainer root : roots)
+		for (final BlockContainer root : roots) {
 			root.recomputeDimensions();
+		}
 	}
 
 	@Override
@@ -73,8 +76,9 @@ public abstract class OutputContainer implements GraphicalElement, OutputLayout,
 		int maxw = 0;
 		for (final BlockContainer root : roots) {
 			final int w = root.getWidth();
-			if (w > maxw)
+			if (w > maxw) {
 				maxw = w;
+			}
 		}
 		return maxw;
 	}
@@ -82,12 +86,14 @@ public abstract class OutputContainer implements GraphicalElement, OutputLayout,
 	@Override
 	public int getHeight() {
 		int h = 0;
-		for (final BlockContainer root : roots)
+		for (final BlockContainer root : roots) {
 			h += root.getHeight() + 2;
-		if (h > 0)
+		}
+		if (h > 0) {
 			return h - 2;
-		else
+		} else {
 			return h;
+		}
 	}
 
 	@Override
@@ -132,8 +138,9 @@ public abstract class OutputContainer implements GraphicalElement, OutputLayout,
 	public boolean isContentEmpty() {
 		for (final BlockContainer root : roots) {
 			final ObjectArrayList<Block> cnt = root.getContent();
-			if (cnt != null && !cnt.isEmpty())
+			if (cnt != null && !cnt.isEmpty()) {
 				return false;
+			}
 		}
 		return true;
 	}

@@ -42,10 +42,12 @@ public class Division extends FunctionOperator {
 		final BlockDivision bd = new BlockDivision();
 		final BlockContainer uc = bd.getUpperContainer();
 		final BlockContainer lc = bd.getLowerContainer();
-		for (final Block b : sub1)
+		for (final Block b : sub1) {
 			uc.appendBlockUnsafe(b);
-		for (final Block b : sub2)
+		}
+		for (final Block b : sub2) {
 			lc.appendBlockUnsafe(b);
+		}
 		uc.recomputeDimensions();
 		lc.recomputeDimensions();
 		bd.recomputeDimensions();

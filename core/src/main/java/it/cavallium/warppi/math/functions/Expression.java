@@ -40,7 +40,7 @@ public class Expression extends FunctionSingle {
 		super(root);
 		this.initialParenthesis = initialParenthesis;
 		boolean isNumber = false;
-
+		
 		// Determine if the expression is already a number:
 		// Determina se l'espressione è già un numero:
 		try {
@@ -49,12 +49,12 @@ public class Expression extends FunctionSingle {
 		} catch (final NumberFormatException ex) {
 			isNumber = false;
 		}
-
+		
 		String processExpression = string;
 		Utils.debug.println(debugSpaces + "•Analyzing expression:" + processExpression);
-
+		
 		isNumber = false; //TODO: rimuovere isNumber, alcune semplificazione come la divisione per zero altrimenti verrebbero saltate.
-
+		
 		if (isNumber) {
 			// If the expression is already a number:
 			// Se l'espressione è già un numero:
@@ -65,10 +65,10 @@ public class Expression extends FunctionSingle {
 			// Else prepare the expression:
 			// Altrimenti prepara l'espressione:
 			debugSpaces += "  ";
-
+		
 			// IF the expression is not a number:
 			// Se l'espressione non è già un numero:
-
+		
 			// Check if there are more than one equal symbol (=)
 			// Controlla se ci sono più di un uguale (=)
 			int equationsFound = 0;
@@ -88,7 +88,7 @@ public class Expression extends FunctionSingle {
 			if (equationsFound != systemsFound) {
 				throw new Error(Errors.SYNTAX_ERROR);
 			}
-
+		
 			//Solve the exceeding symbols ++ and --
 			// Correggi i segni ++ e -- in eccesso
 			Pattern pattern = Pattern.compile("\\+\\++?|\\-\\-+?");
@@ -100,7 +100,7 @@ public class Expression extends FunctionSingle {
 				processExpression = processExpression.substring(0, matcher.start(0)) + correzione + processExpression.substring(matcher.start(0) + matcher.group(0).length(), processExpression.length());
 				matcher = pattern.matcher(processExpression);
 			}
-
+		
 			// Correct the exceeding symbols +- and -+
 			// Correggi i segni +- e -+ in eccesso
 			pattern = Pattern.compile("\\+\\-|\\-\\+");
@@ -111,25 +111,25 @@ public class Expression extends FunctionSingle {
 				processExpression = processExpression.substring(0, matcher.start(0)) + correzione + processExpression.substring(matcher.start(0) + matcher.group(0).length(), processExpression.length());
 				matcher = pattern.matcher(processExpression);
 			}
-
+		
 			// Rimuovi i segni appena dopo le parentesi
 			if (processExpression.contains("(+")) {
 				symbolsChanged = true;
 				processExpression = processExpression.replace("(+", "(");
 			}
-
+		
 		//			// Cambia i segni appena prima le parentesi
 		//			if (processExpression.contains("-(")) {
 		//				symbolsChanged = true;
 		//				processExpression = processExpression.replace("-(", "-1*(");
 		//			}
-
+		
 			// Rimuovi i segni appena dopo l'inizio
 			if (processExpression.startsWith("+")) {
 				symbolsChanged = true;
 				processExpression = processExpression.substring(1, processExpression.length());
 			}
-
+		
 			// Rimuovi i + in eccesso
 			pattern = Pattern.compile("[" + ArrayToRegex(Utils.add(concat(MathematicalSymbols.signums(true), MathematicalSymbols.functions), '(')) + "]\\+[^" + ArrayToRegex(concat(concat(MathematicalSymbols.signums(true), MathematicalSymbols.functions), new char[] { '(', ')' })) + "]+?[" + ArrayToRegex(concat(MathematicalSymbols.signums(true), MathematicalSymbols.functions)) + "]|[" + ArrayToRegex(concat(MathematicalSymbols.signums(true), MathematicalSymbols.functions)) + "]+?\\+[^" + ArrayToRegex(concat(concat(MathematicalSymbols.signums(true), MathematicalSymbols.functions), new char[] { '(', ')' })) + "]");
 			matcher = pattern.matcher(processExpression);
@@ -140,10 +140,10 @@ public class Expression extends FunctionSingle {
 				processExpression = processExpression.substring(0, matcher.start(0) + 1) + correzione + processExpression.substring(matcher.start(0) + matcher.group(0).length(), processExpression.length());
 				matcher = pattern.matcher(processExpression);
 			}
-
+		
 			// Correggi i segni - in −
 			processExpression = processExpression.replace('-', MathematicalSymbols.SUBTRACTION);
-
+		
 			// Correggi i segni − dopo di espressioni o funzioni SN in -
 			pattern = Pattern.compile("[" + Utils.ArrayToRegex(concat(concat(MathematicalSymbols.functions, new char[] { MathematicalSymbols.PARENTHESIS_OPEN }), MathematicalSymbols.signums(true))) + "]" + MathematicalSymbols.SUBTRACTION);
 			matcher = pattern.matcher(processExpression);
@@ -153,17 +153,17 @@ public class Expression extends FunctionSingle {
 				processExpression = processExpression.substring(0, matcher.start(0) + 1) + correzione + processExpression.substring(matcher.start(0) + 2, processExpression.length());
 				matcher = pattern.matcher(processExpression);
 			}
-
+		
 			// Cambia il segno iniziale − in -
 			if (processExpression.startsWith("−")) {
 				symbolsChanged = true;
 				processExpression = "-" + processExpression.substring(1, processExpression.length());
 			}
-
+		
 			if (symbolsChanged) {
 				Utils.debug.println(debugSpaces + "•Resolved signs:" + processExpression);
 			}
-
+		
 		//			// Aggiungi le parentesi implicite per le potenze con una incognita
 		//			pattern = Pattern.compile("(?<!(?:\\(|^))(["+Utils.ArrayToRegex(MathematicalSymbols.variables())+"]+"+MathematicalSymbols.POWER+"[^" + Utils.ArrayToRegex(Utils.add(concat(MathematicalSymbols.functionsNSN(), concat(MathematicalSymbols.signums(true), MathematicalSymbols.genericSyntax())), ")")) + "])(?!\\))");
 		//			matcher = pattern.matcher(processExpression);
@@ -176,7 +176,7 @@ public class Expression extends FunctionSingle {
 		//			}
 		//
 		//			processExpression = processExpression.replace("⑴", MathematicalSymbols.POWER);
-
+		
 			// Aggiungi i segni * accanto alle parentesi
 			pattern = Pattern.compile("\\([^\\(]+?\\)");
 			matcher = pattern.matcher(processExpression);
@@ -197,17 +197,17 @@ public class Expression extends FunctionSingle {
 				processExpression = beforeexp + "⑴" + newexp + "⑵" + afterexp;
 				matcher = pattern.matcher(processExpression);
 			}
-
+		
 			processExpression = processExpression.replace("⑴", "(").replace("⑵", ")");
-
+		
 			if (symbolsChanged) {
 				Utils.debug.println(debugSpaces + "•Added implicit multiplications:" + processExpression);
 			}
-
+		
 			Utils.debug.println(debugSpaces + "•Subdivision in classes:");
-
+		
 			debugSpaces += "  ";
-
+		
 			// Convert the expression to a list of objects
 			Expression imputRawParenthesis = new Expression(root);
 			imputRawParenthesis = (Expression) imputRawParenthesis.setParameter(null);
@@ -217,7 +217,7 @@ public class Expression extends FunctionSingle {
 				// Per ogni carattere cerca se è un numero o una funzione:
 				final char charI = processExpression.charAt(i);
 				if (Utils.isInArray(charI, functions)) {
-
+		
 					// Finds the type of function fron the following list
 					// Cerca il tipo di funzione tra le esistenti
 					Function f = null;
@@ -292,7 +292,7 @@ public class Expression extends FunctionSingle {
 							}
 							startIndex += 1;
 							i = startIndex;
-
+		
 							String tmpExpr = "";
 							while (i < endIndex) {
 								tmpExpr += processExpression.charAt(i);
@@ -378,7 +378,7 @@ public class Expression extends FunctionSingle {
 				}
 				tmp = "";
 			}
-
+		
 			int dsl = debugSpaces.length();
 			debugSpaces = "";
 			for (int i = 0; i < dsl - 2; i++) {
@@ -386,7 +386,7 @@ public class Expression extends FunctionSingle {
 			}
 			Utils.debug.println(debugSpaces + "•Finished the subdivision in classes.");
 			// Fine suddivisione di insieme
-
+		
 			Utils.debug.println(debugSpaces + "•Removing useless parentheses");
 			for (int i = 0; i < imputRawParenthesis.getParametersLength(); i++) {
 				if (imputRawParenthesis.getParameter(i) instanceof Expression) {
@@ -400,10 +400,10 @@ public class Expression extends FunctionSingle {
 					}
 				}
 			}
-
+		
 			// Inizia l'affinazione dell'espressione
 			Utils.debug.println(debugSpaces + "•Pushing classes...");
-
+		
 			final Function[] oldFunctionsArray = imputRawParenthesis.getParameters();
 			final ObjectArrayList<Function> oldFunctionsList = new ObjectArrayList<>();
 			for (int i = 0; i < oldFunctionsArray.length; i++) {
@@ -423,10 +423,10 @@ public class Expression extends FunctionSingle {
 					oldFunctionsList.add(funzione);
 				}
 			}
-
+		
 			if (oldFunctionsList.size() > 1) {
 				Utils.debug.println(debugSpaces + "  •Correcting classes:");
-
+		
 				int before = 0;
 				String step = "SN Functions";
 				int n = 0;
@@ -457,18 +457,18 @@ public class Expression extends FunctionSingle {
 							if (step != "SN Functions") {
 								if ((step == "sums" && (funzioneTMP instanceof Sum || funzioneTMP instanceof SumSubtraction || funzioneTMP instanceof Subtraction) == true && ((funzioneTMP instanceof FunctionSingle && ((FunctionSingle) funzioneTMP).getParameter() == null) || (funzioneTMP instanceof FunctionOperator && ((FunctionOperator) funzioneTMP).getParameter1() == null && ((FunctionOperator) funzioneTMP).getParameter2() == null) || (!(funzioneTMP instanceof FunctionSingle) && !(funzioneTMP instanceof FunctionOperator)))) || (step.equals("multiplications") && ((funzioneTMP instanceof Multiplication) || (funzioneTMP instanceof Division)) && ((FunctionOperator) funzioneTMP).getParameter1() == null && ((FunctionOperator) funzioneTMP).getParameter2() == null) || (step == "NSN Functions" && (funzioneTMP instanceof Sum) == false && (funzioneTMP instanceof SumSubtraction) == false && (funzioneTMP instanceof Subtraction) == false && (funzioneTMP instanceof Multiplication) == false && (funzioneTMP instanceof Division) == false && ((funzioneTMP instanceof FunctionSingle && ((FunctionSingle) funzioneTMP).getParameter() == null) || (funzioneTMP instanceof FunctionOperator && ((FunctionOperator) funzioneTMP).getParameter1() == null && ((FunctionOperator) funzioneTMP).getParameter2() == null) || (!(funzioneTMP instanceof FunctionSingle) && !(funzioneTMP instanceof FunctionOperator))))) {
 									change = true;
-
+		
 									if (i + 1 < oldFunctionsList.size() && i - 1 >= 0) {
 										funzioneTMP = ((FunctionOperator) funzioneTMP).setParameter1(oldFunctionsList.get(i - 1));
 										funzioneTMP = ((FunctionOperator) funzioneTMP).setParameter2(oldFunctionsList.get(i + 1));
 										oldFunctionsList.set(i, funzioneTMP);
-
+		
 										// è importante togliere prima gli elementi
 										// in fondo e poi quelli davanti, perché gli
 										// indici scalano da destra a sinistra.
 										oldFunctionsList.remove(i + 1);
 										oldFunctionsList.remove(i - 1);
-
+		
 										Utils.debug.println(debugSpaces + "  •Set variable to expression:" + funzioneTMP.getClass().getSimpleName());
 										try {
 											Utils.debug.println(debugSpaces + "    " + "var1=" + ((FunctionOperator) funzioneTMP).getParameter1().toString());
@@ -479,7 +479,7 @@ public class Expression extends FunctionSingle {
 										try {
 											Utils.debug.println(debugSpaces + "    " + "(result)=" + ((FunctionOperator) funzioneTMP).toString());
 										} catch (final NullPointerException ex2) {}
-
+		
 									} else {
 										throw new Error(Errors.SYNTAX_ERROR);
 									}
@@ -490,17 +490,17 @@ public class Expression extends FunctionSingle {
 								if (i + 1 < oldFunctionsList.size()) {
 									final Function nextFunc = oldFunctionsList.get(i + 1);
 									if (nextFunc instanceof FunctionSingle && ((FunctionSingle) nextFunc).getParameter() == null) {
-
+		
 									} else {
 										change = true;
 										funzioneTMP = ((FunctionSingle) funzioneTMP).setParameter(nextFunc);
 										oldFunctionsList.set(i, funzioneTMP);
-
+		
 										// è importante togliere prima gli elementi in
 										// fondo e poi quelli davanti, perché gli indici
 										// scalano da destra a sinistra.
 										oldFunctionsList.remove(i + 1);
-
+		
 										Utils.debug.println(debugSpaces + "  •Set variable to expression:" + funzioneTMP.getClass().getSimpleName());
 										final Function var = ((FunctionSingle) funzioneTMP).getParameter();
 										if (var == null) {
@@ -531,14 +531,14 @@ public class Expression extends FunctionSingle {
 			} else {
 				super.functions = oldFunctionsList.toArray(new Function[oldFunctionsList.size()]);
 			}
-
+		
 			dsl = debugSpaces.length();
 			debugSpaces = "";
 			for (int i = 0; i < dsl - 2; i++) {
 				debugSpaces += " ";
 			}
 			Utils.debug.println(debugSpaces + "•Finished correcting classes.");
-
+		
 			final String result = toString();
 			Utils.debug.println(debugSpaces + "•Result:" + result);
 		}
@@ -547,19 +547,22 @@ public class Expression extends FunctionSingle {
 
 	public boolean parenthesisNeeded() {
 		boolean parenthesisneeded = true;
-		if (initialParenthesis)
+		if (initialParenthesis) {
 			parenthesisneeded = false;
-		else {
+		} else {
 			final Function f = getParameter(0);
-			if (f instanceof Number || f instanceof Variable || f instanceof Expression || f instanceof Division || f instanceof Joke || f instanceof Undefined || f instanceof Power || f instanceof Sine || f instanceof Cosine || f instanceof Tangent || f instanceof ArcSine || f instanceof ArcCosine || f instanceof ArcTangent || f instanceof RootSquare)
+			if (f instanceof Number || f instanceof Variable || f instanceof Expression || f instanceof Division || f instanceof Joke || f instanceof Undefined || f instanceof Power || f instanceof Sine || f instanceof Cosine || f instanceof Tangent || f instanceof ArcSine || f instanceof ArcCosine || f instanceof ArcTangent || f instanceof RootSquare) {
 				parenthesisneeded = false;
-			if (f instanceof Multiplication)
-				if (((Multiplication) f).getParameter1() instanceof Number)
+			}
+			if (f instanceof Multiplication) {
+				if (((Multiplication) f).getParameter1() instanceof Number) {
 					parenthesisneeded = !(((Multiplication) f).getParameter2() instanceof Variable);
-				else if (((Multiplication) f).getParameter2() instanceof Number)
+				} else if (((Multiplication) f).getParameter2() instanceof Number) {
 					parenthesisneeded = !(((Multiplication) f).getParameter1() instanceof Variable);
-				else if (((Multiplication) f).getParameter1() instanceof Variable || ((Multiplication) f).getParameter2() instanceof Variable)
+				} else if (((Multiplication) f).getParameter1() instanceof Variable || ((Multiplication) f).getParameter2() instanceof Variable) {
 					parenthesisneeded = false;
+				}
+			}
 		}
 		return parenthesisneeded;
 	}
@@ -570,8 +573,9 @@ public class Expression extends FunctionSingle {
 		final ObjectArrayList<Block> sub = getParameter(0).toBlock(context);
 		final BlockParenthesis bp = new BlockParenthesis();
 		final BlockContainer bpc = bp.getNumberContainer();
-		for (final Block b : sub)
+		for (final Block b : sub) {
 			bpc.appendBlockUnsafe(b);
+		}
 		bpc.recomputeDimensions();
 		bp.recomputeDimensions();
 		result.add(bp);
@@ -581,24 +585,26 @@ public class Expression extends FunctionSingle {
 	@Override
 	public String toString() {
 		String s = "(";
-		if (parameter == null)
+		if (parameter == null) {
 			s += "null";
-		else
+		} else {
 			s += parameter.toString();
+		}
 		s += ")";
 		return s;
 	}
 
 	@Override
 	public boolean equals(final Object o) {
-		if (parameter == null | o == null)
+		if (parameter == null | o == null) {
 			return parameter == o;
-		else {
+		} else {
 			final Function f = (Function) o;
-			if (f instanceof Expression)
+			if (f instanceof Expression) {
 				return getParameter(0).equals(((Expression) f).getParameter(0));
-			else
+			} else {
 				return getParameter(0).equals(f);
+			}
 		}
 	}
 

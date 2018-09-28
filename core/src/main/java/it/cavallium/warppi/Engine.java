@@ -45,9 +45,9 @@ public class Engine {
 	public static void start(final Platform platform, final Screen screen, final HardwareDisplay disp,
 			final HardwareTouchDevice touchdevice, final HUD hud, final StartupArguments args)
 			throws InterruptedException, IOException {
-		if (Engine.running)
+		if (Engine.running) {
 			throw new RuntimeException("Already running!");
-		else {
+		} else {
 			Engine.running = true;
 			Engine.INSTANCE.startInstance(platform, screen, disp, touchdevice, hud, args);
 		}
@@ -84,8 +84,9 @@ public class Engine {
 		ClassUtils.classLoader = this.getClass();
 		StaticVars.startupArguments = args;
 		StaticVars.debugWindow2x = args.isZoomed();
-		if (args.isVerboseLoggingEnabled() || args.isDebugEnabled())
+		if (args.isVerboseLoggingEnabled() || args.isDebugEnabled()) {
 			StaticVars.outputLevel = ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE;
+		}
 		Engine.platform.getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, args);
 		checkDeviceType();
 		if (Engine.getPlatform().isRunningOnRaspberry() && args.isRaspberryModeAllowed()) {

@@ -42,9 +42,11 @@ public class KeyboardDebugScreen extends Screen {
 		}
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[3].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-		for (int i = 0; i < 5; i++)
-			if (KeyboardDebugScreen.log[i] != null)
+		for (int i = 0; i < 5; i++) {
+			if (KeyboardDebugScreen.log[i] != null) {
 				renderer.glDrawStringLeft(10, 230 + 15 * (i + 1), KeyboardDebugScreen.log[i].toUpperCase());
+			}
+		}
 
 		//FROM SERIAL
 		renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
@@ -56,36 +58,39 @@ public class KeyboardDebugScreen extends Screen {
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[3].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		renderer.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 		for (int i = 0; i < 8; i++) {
-			if (KeyboardDebugScreen.pinsA[i] == 1)
+			if (KeyboardDebugScreen.pinsA[i] == 1) {
 				renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			else if (KeyboardDebugScreen.pinsA[i] == 2)
+			} else if (KeyboardDebugScreen.pinsA[i] == 2) {
 				renderer.glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
-			else if (KeyboardDebugScreen.pinsA[i] == -1)
+			} else if (KeyboardDebugScreen.pinsA[i] == -1) {
 				renderer.glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
-			else if (KeyboardDebugScreen.pinsA[i] == 0)
+			} else if (KeyboardDebugScreen.pinsA[i] == 0) {
 				renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+			}
 			renderer.glFillColor(-80 + 103 + 25 * (7 - i), 80, 20, 20);
 			renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 			renderer.glDrawStringCenter(-80 + 113 + 25 * (7 - i), 90 - renderer.getCurrentFont().getCharacterHeight() / 2, "" + (i + 1));
 		}
 		for (int i = 15; i >= 8; i--) {
-			if (KeyboardDebugScreen.pinsA[i] == 1)
+			if (KeyboardDebugScreen.pinsA[i] == 1) {
 				renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			else if (KeyboardDebugScreen.pinsA[i] == 2)
+			} else if (KeyboardDebugScreen.pinsA[i] == 2) {
 				renderer.glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
-			else if (KeyboardDebugScreen.pinsA[i] == -1)
+			} else if (KeyboardDebugScreen.pinsA[i] == -1) {
 				renderer.glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
-			else if (KeyboardDebugScreen.pinsA[i] == 0)
+			} else if (KeyboardDebugScreen.pinsA[i] == 0) {
 				renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+			}
 			renderer.glFillColor(-80 + 103 + 25 * (i - 8), 170, 20, 20);
 			renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 			renderer.glDrawStringCenter(-80 + 113 + 25 * (i - 8), 180 - renderer.getCurrentFont().getCharacterHeight() / 2, "" + (i + 1));
 		}
 		for (int i = 0; i < 8; i++) {
-			if (KeyboardDebugScreen.dataA[i])
+			if (KeyboardDebugScreen.dataA[i]) {
 				renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			else
+			} else {
 				renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+			}
 			renderer.glFillColor(-80 + 160 + 10 * i, 150, 8, 8);
 		}
 
@@ -99,45 +104,49 @@ public class KeyboardDebugScreen extends Screen {
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[3].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		renderer.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 		for (int i = 15; i >= 8; i--) {
-			if (KeyboardDebugScreen.pinsB[i] == 1)
+			if (KeyboardDebugScreen.pinsB[i] == 1) {
 				renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			else if (KeyboardDebugScreen.pinsB[i] == 2)
+			} else if (KeyboardDebugScreen.pinsB[i] == 2) {
 				renderer.glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
-			else if (KeyboardDebugScreen.pinsB[i] == -1)
+			} else if (KeyboardDebugScreen.pinsB[i] == -1) {
 				renderer.glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
-			else if (KeyboardDebugScreen.pinsB[i] == 0)
+			} else if (KeyboardDebugScreen.pinsB[i] == 0) {
 				renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+			}
 			renderer.glFillColor(150 + 103 + 25 * (15 - i), 80, 20, 20);
 			renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 			renderer.glDrawStringCenter(150 + 113 + 25 * (15 - i), 90 - renderer.getCurrentFont().getCharacterHeight() / 2, "" + (i + 1));
 		}
 		for (int i = 7; i >= 0; i--) {
-			if (KeyboardDebugScreen.pinsB[i] == 1)
+			if (KeyboardDebugScreen.pinsB[i] == 1) {
 				renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			else if (KeyboardDebugScreen.pinsB[i] == 2)
+			} else if (KeyboardDebugScreen.pinsB[i] == 2) {
 				renderer.glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
-			else if (KeyboardDebugScreen.pinsB[i] == -1)
+			} else if (KeyboardDebugScreen.pinsB[i] == -1) {
 				renderer.glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
-			else if (KeyboardDebugScreen.pinsB[i] == 0)
+			} else if (KeyboardDebugScreen.pinsB[i] == 0) {
 				renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+			}
 			renderer.glFillColor(150 + 103 + 25 * i, 170, 20, 20);
 			renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 			renderer.glDrawStringCenter(150 + 113 + 25 * i, 180 - renderer.getCurrentFont().getCharacterHeight() / 2, "" + (i + 1));
 		}
 		for (int i = 0; i < 8; i++) {
-			if (KeyboardDebugScreen.dataB[i])
+			if (KeyboardDebugScreen.dataB[i]) {
 				renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			else
+			} else {
 				renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+			}
 			renderer.glFillColor(150 + 160 + 10 * i, 150, 8, 8);
 		}
 
 		//GPIO
 		for (int i = 0; i < 40; i++) {
-			if (KeyboardDebugScreen.gpio[i] == true)
+			if (KeyboardDebugScreen.gpio[i] == true) {
 				renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-			else
+			} else {
 				renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+			}
 			if (i % 2 == 0) {
 				renderer.glFillColor(53 + 15 * (i / 2), 50, 5, 5);
 				renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
@@ -150,14 +159,16 @@ public class KeyboardDebugScreen extends Screen {
 		}
 
 		//KEYS
-		for (int c = 0; c < 8; c++)
+		for (int c = 0; c < 8; c++) {
 			for (int r = 0; r < 8; r++) {
-				if (KeyboardDebugScreen.ks[c][r])
+				if (KeyboardDebugScreen.ks[c][r]) {
 					renderer.glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
-				else
+				} else {
 					renderer.glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+				}
 				renderer.glFillColor(250 + 6 * c, 250 + 6 * r, 5, 5);
 			}
+		}
 	}
 
 	@Override
@@ -204,8 +215,9 @@ public class KeyboardDebugScreen extends Screen {
 
 	public static void log(final String str) {
 		final String[] newlog = KeyboardDebugScreen.log;
-		for (int i = 1; i < 5; i++)
+		for (int i = 1; i < 5; i++) {
 			newlog[i - 1] = newlog[i];
+		}
 		newlog[4] = "[" + System.currentTimeMillis() + "]" + str;
 		KeyboardDebugScreen.log = newlog;
 	}

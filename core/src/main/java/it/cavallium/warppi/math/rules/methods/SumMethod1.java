@@ -38,10 +38,11 @@ public class SumMethod1 {
 
 		final int size = elements.size();
 		Function prec = new Sum(root, elem1, elem2);
-		for (int i = size - 1; i >= 0; i--)
+		for (int i = size - 1; i >= 0; i--) {
 			if (i != workingElementCouple[0] & i != workingElementCouple[1]) {
-				if (Thread.interrupted())
+				if (Thread.interrupted()) {
 					throw new InterruptedException();
+				}
 				final Function a = prec;
 				final Function b = elements.get(i);
 				if (b instanceof Negative) {
@@ -50,9 +51,11 @@ public class SumMethod1 {
 				} else if (b instanceof Number && ((Number) b).getTerm().compareTo(BigDecimal.ZERO) < 0) {
 					prec = new Subtraction(root, a, ((Number) b).multiply(new Number(root, -1)));
 					((FunctionOperator) prec).getParameter2();
-				} else
+				} else {
 					prec = new Sum(root, a, b);
+				}
 			}
+		}
 
 		result = prec;
 
@@ -65,12 +68,14 @@ public class SumMethod1 {
 		final MathContext root = sum.getMathContext();
 		final ObjectArrayList<Function> elements = new ObjectArrayList<>();
 		while (sum instanceof Sum || sum instanceof Subtraction) {
-			if (Thread.interrupted())
+			if (Thread.interrupted()) {
 				throw new InterruptedException();
-			if (sum instanceof Sum)
+			}
+			if (sum instanceof Sum) {
 				elements.add(((FunctionOperator) sum).getParameter2());
-			else
+			} else {
 				elements.add(new Negative(root, ((FunctionOperator) sum).getParameter2()));
+			}
 			sum = ((FunctionOperator) sum).getParameter1();
 		}
 		elements.add(sum);

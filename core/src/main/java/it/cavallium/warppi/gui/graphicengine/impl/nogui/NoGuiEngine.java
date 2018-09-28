@@ -38,8 +38,9 @@ public class NoGuiEngine implements GraphicEngine {
 	@Override
 	public void create(final Runnable onInitialized) {
 		initialized = true;
-		if (onInitialized != null)
+		if (onInitialized != null) {
 			onInitialized.run();
+		}
 	}
 
 	@Override

@@ -22,13 +22,14 @@ public class PIHardwareTouchDevice implements HardwareTouchDevice {
 	public boolean onTouchStart(final TouchStartEvent e) {
 		final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 		boolean refresh = false;
-		if (scr != null && scr.initialized && scr.onTouchStart(e))
+		if (scr != null && scr.initialized && scr.onTouchStart(e)) {
 			refresh = true;
-		else {
+		} else {
 			//Default behavior
 		}
-		if (refresh)
+		if (refresh) {
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
+		}
 		return true;
 	}
 
@@ -36,13 +37,14 @@ public class PIHardwareTouchDevice implements HardwareTouchDevice {
 	public boolean onTouchEnd(final TouchEndEvent e) {
 		final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 		boolean refresh = false;
-		if (scr != null && scr.initialized && scr.onTouchEnd(e))
+		if (scr != null && scr.initialized && scr.onTouchEnd(e)) {
 			refresh = true;
-		else {
+		} else {
 			//Default behavior
 		}
-		if (refresh)
+		if (refresh) {
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
+		}
 		return true;
 	}
 
@@ -50,13 +52,14 @@ public class PIHardwareTouchDevice implements HardwareTouchDevice {
 	public boolean onTouchCancel(final TouchCancelEvent e) {
 		final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 		boolean refresh = false;
-		if (scr != null && scr.initialized && scr.onTouchCancel(e))
+		if (scr != null && scr.initialized && scr.onTouchCancel(e)) {
 			refresh = true;
-		else {
+		} else {
 			//Default behavior
 		}
-		if (refresh)
+		if (refresh) {
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
+		}
 		return true;
 	}
 
@@ -64,13 +67,14 @@ public class PIHardwareTouchDevice implements HardwareTouchDevice {
 	public boolean onTouchMove(final TouchMoveEvent e) {
 		final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 		boolean refresh = false;
-		if (scr != null && scr.initialized && scr.onTouchMove(e))
+		if (scr != null && scr.initialized && scr.onTouchMove(e)) {
 			refresh = true;
-		else {
+		} else {
 			//Default behavior
 		}
-		if (refresh)
+		if (refresh) {
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
+		}
 		return true;
 	}
 
@@ -98,10 +102,12 @@ public class PIHardwareTouchDevice implements HardwareTouchDevice {
 			x = (float) (oldY * screenWidth / screenHeight);
 			y = (float) (oldX * screenHeight / screenWidth);
 		}
-		if (getInvertedX())
+		if (getInvertedX()) {
 			x = screenWidth - x;
-		if (getInvertedY())
+		}
+		if (getInvertedY()) {
 			y = screenHeight - y;
+		}
 		return new TouchPoint(id, x, y, radiusX, radiusY, force, rotationAngle);
 	}
 }

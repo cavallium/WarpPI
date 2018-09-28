@@ -43,8 +43,9 @@ public class BlockLogarithm extends Block implements IParenthesis {
 	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y, final Caret caret) {
 		BlockContainer.getDefaultFont(small).use(ge);
 		r.glColor(BlockContainer.getDefaultColor());
-		if (prefix != null)
+		if (prefix != null) {
 			r.glDrawStringLeft(x + 1, y + line - chh / 2, prefix);
+		}
 		r.glDrawCharLeft(x + bw + prw, y + toph, '╭');
 		r.glDrawCharLeft(x + bw + prw, y + toph + nmbh - chh, '╰');
 		if (small) {
@@ -67,8 +68,9 @@ public class BlockLogarithm extends Block implements IParenthesis {
 		boolean added = false;
 		added = added | containerBase.putBlock(caret, newBlock);
 		added = added | containerNumber.putBlock(caret, newBlock);
-		if (added)
+		if (added) {
 			recomputeDimensions();
+		}
 		return added;
 	}
 
@@ -77,8 +79,9 @@ public class BlockLogarithm extends Block implements IParenthesis {
 		boolean removed = false;
 		removed = removed | containerBase.delBlock(caret);
 		removed = removed | containerNumber.delBlock(caret);
-		if (removed)
+		if (removed) {
 			recomputeDimensions();
+		}
 		return removed;
 	}
 
@@ -86,18 +89,20 @@ public class BlockLogarithm extends Block implements IParenthesis {
 	public BlockReference<?> getBlock(final Caret caret) {
 		BlockReference<?> bl = null;
 		bl = containerBase.getBlock(caret);
-		if (bl != null)
+		if (bl != null) {
 			return bl;
+		}
 		bl = containerNumber.getBlock(caret);
 		return bl;
 	}
 
 	@Override
 	public void recomputeDimensions() {
-		if (prefix == null)
+		if (prefix == null) {
 			prw = 0;
-		else
+		} else {
 			prw = 1 + BlockContainer.getDefaultCharWidth(small) * prefix.length();
+		}
 		bw = containerBase.getWidth();
 		bh = containerBase.getHeight();
 		bl = containerBase.getLine();
@@ -110,18 +115,20 @@ public class BlockLogarithm extends Block implements IParenthesis {
 		if (bl > nmbh) {
 			toph = bl - nmbh;
 			line = toph + nl;
-			if (bl + bh - bl > toph + nmbh)
+			if (bl + bh - bl > toph + nmbh) {
 				height = bl + bh - bl;
-			else
+			} else {
 				height = toph + nmbh;
+			}
 		} else {
 			System.out.println("b");
 			toph = 0;
 			line = toph + nl;
-			if (nmbh + bh - bl > toph + nmbh)
+			if (nmbh + bh - bl > toph + nmbh) {
 				height = nmbh + bh - bl;
-			else
+			} else {
 				height = toph + nmbh;
+			}
 		}
 	}
 

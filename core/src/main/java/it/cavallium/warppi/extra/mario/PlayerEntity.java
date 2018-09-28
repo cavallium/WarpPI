@@ -48,33 +48,35 @@ public class PlayerEntity extends MarioEntity {
 			if (jumptime <= 0.5f && !jumping && collisionDown) {
 				jumping = true;
 				collisionDown = false;
-			} else if (jumptime <= 0.5f) {} else
+			} else if (jumptime <= 0.5f) {} else {
 				jumping = false;
+			}
 		} else {
 			jumping = false;
-			if (collisionDown)
+			if (collisionDown) {
 				jumptime = 0;
-			else
+			} else {
 				jumptime = Float.MAX_VALUE;
+			}
 		}
 		if (!walking & !running & !jumping) {
 			marioSkinPos[0] = 0;
 			marioSkinPos[1] = 0;
-		} else if (collisionDown & walking & !running & !jumping && walkAnimation >= 0.08)
+		} else if (collisionDown & walking & !running & !jumping && walkAnimation >= 0.08) {
 			while (walkAnimation > 0.08) {
 				walkAnimation -= 0.08;
-				if (marioSkinPos[0] == 1 & marioSkinPos[1] == 0)
+				if (marioSkinPos[0] == 1 & marioSkinPos[1] == 0) {
 					marioSkinPos[0] += 2;
-				else if (marioSkinPos[0] == 3 & marioSkinPos[1] == 0)
+				} else if (marioSkinPos[0] == 3 & marioSkinPos[1] == 0) {
 					marioSkinPos[0] -= 1;
-				else if (marioSkinPos[0] == 2 & marioSkinPos[1] == 0)
+				} else if (marioSkinPos[0] == 2 & marioSkinPos[1] == 0) {
 					marioSkinPos[0] -= 1;
-				else {
+				} else {
 					marioSkinPos[0] = 1;
 					marioSkinPos[1] = 0;
 				}
 			}
-		else if (jumping) {
+		} else if (jumping) {
 			marioSkinPos[0] = 5;
 			marioSkinPos[1] = 1;
 		}
@@ -93,12 +95,16 @@ public class PlayerEntity extends MarioEntity {
 	public double computeFutureForceDX(final double dt) {
 		double forceX = this.forceX;
 		if (controllerDX == 0) {} else {
-			if (controllerDX > 0)
-				if (forceX < 500f / 16f)
+			if (controllerDX > 0) {
+				if (forceX < 500f / 16f) {
 					forceX += dt * 500f / 16f;
-			if (controllerDX < 0)
-				if (forceX > -500f / 16f)
+				}
+			}
+			if (controllerDX < 0) {
+				if (forceX > -500f / 16f) {
 					forceX -= dt * 500f / 16f;
+				}
+			}
 		}
 
 		return forceX + super.computeFutureForceDX(dt) - this.forceX;
@@ -109,13 +115,15 @@ public class PlayerEntity extends MarioEntity {
 		float jumptime = this.jumptime;
 		double forceY = this.forceY;
 		if (controllerDY > 0) { //JUMP
-			if (collisionUp)
+			if (collisionUp) {
 				jumptime = Float.MAX_VALUE;
+			}
 			jumptime += dt;
-			if (jumptime <= 0.5f && !jumping && collisionDown)
+			if (jumptime <= 0.5f && !jumping && collisionDown) {
 				forceY = dt * (4 * 1569.6f) / 16f;
-			else if (jumptime <= 0.5f)
+			} else if (jumptime <= 0.5f) {
 				forceY = dt * (4 * 1569.6f) / 16f;
+			}
 		}
 		return forceY + super.computeFutureForceDY(dt) - this.forceY;
 	}

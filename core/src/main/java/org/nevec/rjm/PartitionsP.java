@@ -48,8 +48,9 @@ public class PartitionsP {
 		 * If the current list is too small, increase in intervals
 		 * of 3 until the list has at least i elements.
 		 */
-		while (i > PartitionsP.nMax.intValue())
+		while (i > PartitionsP.nMax.intValue()) {
 			growto(PartitionsP.nMax.add(new BigInteger("" + 3)));
+		}
 		return PartitionsP.a.elementAt(i);
 	} /* at */
 

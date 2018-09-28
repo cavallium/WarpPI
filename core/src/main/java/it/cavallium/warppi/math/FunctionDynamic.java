@@ -15,10 +15,11 @@ public abstract class FunctionDynamic implements Function {
 	}
 
 	public FunctionDynamic(final Function[] values) {
-		if (values.length > 0)
+		if (values.length > 0) {
 			root = values[0].getMathContext();
-		else
+		} else {
 			throw new NullPointerException("Nessun elemento nell'array. Impossibile ricavare il nodo root");
+		}
 		functions = values;
 	}
 
@@ -38,8 +39,9 @@ public abstract class FunctionDynamic implements Function {
 		final FunctionDynamic f = clone();
 		final int vsize = value.size();
 		final Function[] tmp = new Function[vsize];
-		for (int i = 0; i < vsize; i++)
+		for (int i = 0; i < vsize; i++) {
 			tmp[i] = value.get(i);
+		}
 		f.functions = tmp;
 		return f;
 	}
@@ -87,33 +89,37 @@ public abstract class FunctionDynamic implements Function {
 	@Override
 	public final ObjectArrayList<Function> simplify(final Rule rule) throws Error, InterruptedException {
 		final Function[] fncs = getParameters();
-		if (Thread.interrupted())
+		if (Thread.interrupted()) {
 			throw new InterruptedException();
+		}
 		final ObjectArrayList<Function> result = new ObjectArrayList<>();
 
 		final ObjectArrayList<ObjectArrayList<Function>> ln = new ObjectArrayList<>();
 		boolean alreadySolved = true;
 		for (final Function fnc : fncs) {
 			final ObjectArrayList<Function> l = new ObjectArrayList<>();
-			if (Thread.interrupted())
+			if (Thread.interrupted()) {
 				throw new InterruptedException();
+			}
 			final ObjectArrayList<Function> simplifiedFnc = fnc.simplify(rule);
-			if (simplifiedFnc == null)
+			if (simplifiedFnc == null) {
 				l.add(fnc);
-			else {
+			} else {
 				l.addAll(simplifiedFnc);
 				alreadySolved = false;
 			}
 			ln.add(l);
 		}
 
-		if (alreadySolved)
+		if (alreadySolved) {
 			return rule.execute(this);
+		}
 
 		final Function[][] results = Utils.joinFunctionsResults(ln);
 
-		for (final Function[] f : results)
+		for (final Function[] f : results) {
 			result.add(this.setParameters(f));
+		}
 
 		return result;
 	}

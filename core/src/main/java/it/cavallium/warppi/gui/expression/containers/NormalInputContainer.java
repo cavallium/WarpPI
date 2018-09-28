@@ -10,7 +10,6 @@ import it.cavallium.warppi.gui.expression.blocks.BlockDivision;
 import it.cavallium.warppi.gui.expression.blocks.BlockLogarithm;
 import it.cavallium.warppi.gui.expression.blocks.BlockNumericChar;
 import it.cavallium.warppi.gui.expression.blocks.BlockParenthesis;
-import it.cavallium.warppi.gui.expression.blocks.BlockParenthesisAbstract;
 import it.cavallium.warppi.gui.expression.blocks.BlockPower;
 import it.cavallium.warppi.gui.expression.blocks.BlockPower2;
 import it.cavallium.warppi.gui.expression.blocks.BlockReference;
@@ -18,8 +17,6 @@ import it.cavallium.warppi.gui.expression.blocks.BlockSine;
 import it.cavallium.warppi.gui.expression.blocks.BlockSquareRoot;
 import it.cavallium.warppi.gui.expression.blocks.BlockVariable;
 import it.cavallium.warppi.gui.expression.blocks.IParenthesis;
-import it.cavallium.warppi.gui.expression.blocks.TreeBlock;
-import it.cavallium.warppi.gui.expression.blocks.TreeContainer;
 import it.cavallium.warppi.math.MathematicalSymbols;
 
 public class NormalInputContainer extends InputContainer {
@@ -87,9 +84,11 @@ public class NormalInputContainer extends InputContainer {
 			case MathematicalSymbols.EULER_NUMBER:
 				return new BlockVariable(inputContext, c, true);
 			default:
-				for (final char v : MathematicalSymbols.variables)
-					if (c == v)
+				for (final char v : MathematicalSymbols.variables) {
+					if (c == v) {
 						return new BlockVariable(inputContext, c);
+					}
+				}
 				return new BlockChar(c);
 		}
 	}
@@ -99,18 +98,18 @@ public class NormalInputContainer extends InputContainer {
 		super.typeChar(c);
 		switch (c) {
 			case MathematicalSymbols.PARENTHESIS_CLOSE: {
-				BlockReference<?> ref = getSelectedBlock();
+				final BlockReference<?> ref = getSelectedBlock();
 				if (ref == null) {
 					break;
 				} else {
-					Caret newCaret = new Caret(CaretState.HIDDEN, caret.getPosition());
+					final Caret newCaret = new Caret(CaretState.HIDDEN, caret.getPosition());
 					BlockContainer currentContainer;
 					BlockReference<?> newRef = ref;
 					int safeExit = 0;
 					do {
 						currentContainer = (BlockContainer) newRef.get().getParentContainer();
-						int initialRelativeIndex = currentContainer.getContent().indexOf(newRef.get());
-						int newIndex = newCaret.getPosition() + (currentContainer.getContent().size() - initialRelativeIndex);
+						final int initialRelativeIndex = currentContainer.getContent().indexOf(newRef.get());
+						final int newIndex = newCaret.getPosition() + currentContainer.getContent().size() - initialRelativeIndex;
 						newRef = getBlockAtCaretPosition(newIndex);
 						newCaret.setPosition(newIndex);
 						safeExit++;
@@ -134,15 +133,18 @@ public class NormalInputContainer extends InputContainer {
 				int before = 0;
 				while (true) {
 					currentBlock = currentBlock.getPreviousBlock();
-					if (currentBlock == null)
+					if (currentBlock == null) {
 						break;
+					}
 					final Block b = currentBlock.get();
 					if (b instanceof BlockNumericChar || b instanceof BlockVariable) {
-						if (!groupedBefore)
+						if (!groupedBefore) {
 							groupedBefore = true;
+						}
 						before++;
-					} else
+					} else {
 						break;
+					}
 				}
 				if (groupedBefore) {
 					moveLeft();
@@ -154,8 +156,9 @@ public class NormalInputContainer extends InputContainer {
 						moveLeft();
 						moveLeft();
 					}
-					for (int i = 0; i < before + 1; i++)
+					for (int i = 0; i < before + 1; i++) {
 						moveRight();
+					}
 					moveRight();// Move to the divisor
 				}
 				break;

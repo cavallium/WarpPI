@@ -20,10 +20,11 @@ public class RemoveParentheses implements MathParserStep {
 	public boolean eval(final IntWrapper curIndex, final Function lastFunction, final Function currentFunction,
 			final ObjectArrayList<Function> functionsList) {
 		if (currentFunction instanceof Expression) {
-			if (((Expression) currentFunction).getParameter() == null)
+			if (((Expression) currentFunction).getParameter() == null) {
 				functionsList.remove(curIndex.i);
-			else
+			} else {
 				functionsList.set(curIndex.i, ((Expression) currentFunction).getParameter());
+			}
 			return true;
 		}
 		return false;

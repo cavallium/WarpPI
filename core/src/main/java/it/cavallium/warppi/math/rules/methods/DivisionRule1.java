@@ -46,17 +46,20 @@ public class DivisionRule1 {
 		Function prec;
 		for (int part = 0; part < 2; part++) {
 			prec = null;
-			for (int i = size[part] - 1; i >= 0; i--)
-				if (i != workingElementCouple[part])
-					if (prec == null)
+			for (int i = size[part] - 1; i >= 0; i--) {
+				if (i != workingElementCouple[part]) {
+					if (prec == null) {
 						prec = elements[part].get(i);
-					else {
+					} else {
 						final Function a = elements[part].get(i);
 						final Function b = prec;
 						prec = new Multiplication(root, a, b);
 					}
-			if (prec == null)
+				}
+			}
+			if (prec == null) {
 				prec = new Number(root, 1);
+			}
 			resultDivisionArray[part] = prec;
 		}
 
@@ -73,8 +76,9 @@ public class DivisionRule1 {
 		final ObjectArrayList<Function> elementsNumerator = new ObjectArrayList<>();
 		Function numMult = division.getParameter1();
 		while (numMult instanceof Multiplication) {
-			if (Thread.interrupted())
+			if (Thread.interrupted()) {
 				throw new InterruptedException();
+			}
 			elementsNumerator.add(((Multiplication) numMult).getParameter1());
 			numMult = ((Multiplication) numMult).getParameter2();
 		}
@@ -83,8 +87,9 @@ public class DivisionRule1 {
 		final ObjectArrayList<Function> elementsDenominator = new ObjectArrayList<>();
 		Function denomMult = division.getParameter2();
 		while (denomMult instanceof Multiplication) {
-			if (Thread.interrupted())
+			if (Thread.interrupted()) {
 				throw new InterruptedException();
+			}
 			elementsDenominator.add(((Multiplication) denomMult).getParameter1());
 			denomMult = ((Multiplication) denomMult).getParameter2();
 		}

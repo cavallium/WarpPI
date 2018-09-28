@@ -67,8 +67,9 @@ public class Variable implements Function {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (o instanceof Variable)
+		if (o instanceof Variable) {
 			return ((Variable) o).getChar() == var && ((Variable) o).getType() == type;
+		}
 		return false;
 	}
 

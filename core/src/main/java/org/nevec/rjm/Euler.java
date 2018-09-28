@@ -42,16 +42,18 @@ public class Euler {
 			for (int i = thisn - 1; i > 0; i--) {
 				BigInteger f = new BigInteger("" + Euler.a.elementAt(i).toString());
 				f = f.multiply(BigIntegerMath.binomial(2 * thisn, 2 * i));
-				if (sigPos)
+				if (sigPos) {
 					val = val.add(f);
-				else
+				} else {
 					val = val.subtract(f);
+				}
 				sigPos = !sigPos;
 			}
-			if (thisn % 2 == 0)
+			if (thisn % 2 == 0) {
 				val = val.subtract(BigInteger.ONE);
-			else
+			} else {
 				val = val.add(BigInteger.ONE);
+			}
 			Euler.a.add(val);
 		}
 	}

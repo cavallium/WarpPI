@@ -39,8 +39,9 @@ public class BlockSquareRoot extends Block {
 	public boolean putBlock(final Caret caret, final Block newBlock) {
 		boolean added = false;
 		added = added | containerNumber.putBlock(caret, newBlock);
-		if (added)
+		if (added) {
 			recomputeDimensions();
+		}
 		return added;
 	}
 
@@ -48,8 +49,9 @@ public class BlockSquareRoot extends Block {
 	public boolean delBlock(final Caret caret) {
 		boolean removed = false;
 		removed = removed | containerNumber.delBlock(caret);
-		if (removed)
+		if (removed) {
 			recomputeDimensions();
+		}
 		return removed;
 	}
 

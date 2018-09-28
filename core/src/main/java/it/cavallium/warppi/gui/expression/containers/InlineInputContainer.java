@@ -1,15 +1,8 @@
 package it.cavallium.warppi.gui.expression.containers;
 
-import it.cavallium.warppi.gui.expression.Caret;
 import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockChar;
-import it.cavallium.warppi.gui.expression.blocks.BlockReference;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
-import it.cavallium.warppi.gui.graphicengine.Renderer;
-import it.cavallium.warppi.math.MathContext;
-import it.cavallium.warppi.math.parser.features.interfaces.Feature;
-import it.cavallium.warppi.util.Error;
 
 public class InlineInputContainer extends InputContainer {
 

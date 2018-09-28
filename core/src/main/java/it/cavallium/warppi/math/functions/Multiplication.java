@@ -24,10 +24,11 @@ public class Multiplication extends FunctionOperator {
 	public boolean equals(final Object o) {
 		if (o instanceof Multiplication) {
 			final FunctionOperator f = (FunctionOperator) o;
-			if (parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2()))
+			if (parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2())) {
 				return true;
-			else if (parameter1.equals(f.getParameter2()) && parameter2.equals(f.getParameter1()))
+			} else if (parameter1.equals(f.getParameter2()) && parameter2.equals(f.getParameter1())) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -53,26 +54,30 @@ public class Multiplication extends FunctionOperator {
 				final ObjectArrayList<Block> parBlocks = par2.toBlock(context);
 				final BlockParenthesis par = new BlockParenthesis(parBlocks);
 				result.add(par);
-			} else
+			} else {
 				result.addAll(sub2);
+			}
 			return result;
 		} else {
 			if (new Expression(context, par1).parenthesisNeeded()) {
 				final ObjectArrayList<Block> parBlocks = par1.toBlock(context);
 				final BlockParenthesis par = new BlockParenthesis(parBlocks);
 				result.add(par);
-			} else
+			} else {
 				result.addAll(sub1);
+			}
 			if (nearLeft instanceof BlockChar && nearRight instanceof BlockChar && !(par2 instanceof Negative) && !(par1 instanceof Number && par2 instanceof Number)) {
 
-			} else
+			} else {
 				result.add(new BlockChar(MathematicalSymbols.MULTIPLICATION));
+			}
 			if (new Expression(context, par2).parenthesisNeeded()) {
 				final ObjectArrayList<Block> parBlocks = par2.toBlock(context);
 				final BlockParenthesis par = new BlockParenthesis(parBlocks);
 				result.add(par);
-			} else
+			} else {
 				result.addAll(sub2);
+			}
 			return result;
 		}
 	}
@@ -82,12 +87,13 @@ public class Multiplication extends FunctionOperator {
 	}
 
 	public Function toPositive() {
-		if (parameter1.equals(new Number(getMathContext(), -1)))
+		if (parameter1.equals(new Number(getMathContext(), -1))) {
 			return parameter2;
-		else if (parameter2.equals(new Number(getMathContext(), -1)))
+		} else if (parameter2.equals(new Number(getMathContext(), -1))) {
 			return parameter2;
-		else
+		} else {
 			return null;
+		}
 	}
 
 	public static Multiplication newNegative(final MathContext context, final Function value2) {

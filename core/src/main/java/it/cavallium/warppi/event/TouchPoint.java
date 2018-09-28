@@ -64,27 +64,37 @@ public class TouchPoint {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final TouchPoint other = (TouchPoint) obj;
-		if (Float.floatToIntBits(force) != Float.floatToIntBits(other.force))
+		if (Float.floatToIntBits(force) != Float.floatToIntBits(other.force)) {
 			return false;
-		if (id != other.id)
+		}
+		if (id != other.id) {
 			return false;
-		if (Float.floatToIntBits(radiusX) != Float.floatToIntBits(other.radiusX))
+		}
+		if (Float.floatToIntBits(radiusX) != Float.floatToIntBits(other.radiusX)) {
 			return false;
-		if (Float.floatToIntBits(radiusY) != Float.floatToIntBits(other.radiusY))
+		}
+		if (Float.floatToIntBits(radiusY) != Float.floatToIntBits(other.radiusY)) {
 			return false;
-		if (Float.floatToIntBits(rotationAngle) != Float.floatToIntBits(other.rotationAngle))
+		}
+		if (Float.floatToIntBits(rotationAngle) != Float.floatToIntBits(other.rotationAngle)) {
 			return false;
-		if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x))
+		}
+		if (Float.floatToIntBits(x) != Float.floatToIntBits(other.x)) {
 			return false;
-		if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y))
+		}
+		if (Float.floatToIntBits(y) != Float.floatToIntBits(other.y)) {
 			return false;
+		}
 		return true;
 	}
 

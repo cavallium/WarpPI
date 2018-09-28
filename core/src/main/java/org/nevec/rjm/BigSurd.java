@@ -64,8 +64,9 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 		/*
 		 * reject attempts to use a negative b
 		 */
-		if (b.signum() < 0)
+		if (b.signum() < 0) {
 			throw new ProviderException("Not implemented: imaginary surds");
+		}
 		disc = b;
 		try {
 			normalize();
@@ -136,13 +137,14 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 
 	public BigSurdVec add(final BigSurd val) {
 		// zero plus somethings yields something
-		if (signum() == 0)
+		if (signum() == 0) {
 			return new BigSurdVec(val);
-		else if (val.signum() == 0)
+		} else if (val.signum() == 0) {
 			return new BigSurdVec(this);
-		else
+		} else {
 			// let the ctor of BigSurdVec to the work
 			return new BigSurdVec(this, val);
+		}
 	} /* BigSurd.add */
 
 	/**
@@ -216,8 +218,9 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 	 * @since 2011-02-12
 	 */
 	public BigSurd divide(final BigSurd val) throws Error {
-		if (val.signum() == 0)
+		if (val.signum() == 0) {
 			throw new ArithmeticException("Dividing " + toFancyString() + " through zero.");
+		}
 		return new BigSurd(pref.divide(val.pref), disc.divide(val.disc));
 	} /* BigSurd.divide */
 
@@ -225,13 +228,14 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 		final BigSurd bs = this;
 		final BigInteger denominator = pref.b;
 		String s = "";
-		if (denominator.compareTo(BigInteger.ONE) != 0)
+		if (denominator.compareTo(BigInteger.ONE) != 0) {
 			s += "(";
-		if (bs.isBigInteger())
+		}
+		if (bs.isBigInteger()) {
 			s += bs.BigDecimalValue(new MathContext(Utils.scale, Utils.scaleMode2)).toBigInteger().toString();
-		else if (bs.isRational())
+		} else if (bs.isRational()) {
 			s += bs.toRational().toString();
-		else {
+		} else {
 			final BigInteger numerator = bs.pref.a;
 			if (numerator.compareTo(BigInteger.ONE) != 0) {
 				s += numerator.toString();
@@ -239,12 +243,14 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 				s += "(";
 			}
 			s += "2√";
-			if (bs.disc.isInteger())
+			if (bs.disc.isInteger()) {
 				s += bs.disc.toString();
-			else
+			} else {
 				s += "(" + bs.disc.toString() + ")";
-			if (numerator.compareTo(BigInteger.ONE) != 0)
+			}
+			if (numerator.compareTo(BigInteger.ONE) != 0) {
 				s += ")";
+			}
 		}
 		return s;
 	}
@@ -259,8 +265,9 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 	 * @since 2011-02-12
 	 */
 	public BigSurd divide(final BigInteger val) throws Error {
-		if (val.signum() == 0)
+		if (val.signum() == 0) {
 			throw new ArithmeticException("Dividing " + toFancyString() + " through zero.");
+		}
 		return new BigSurd(pref.divide(val), disc);
 	} /* BigSurd.divide */
 
@@ -274,8 +281,9 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 	 * @since 2011-02-12
 	 */
 	public BigSurd divide(final int val) throws Error {
-		if (val == 0)
+		if (val == 0) {
 			throw new ArithmeticException("Dividing " + toFancyString() + " through zero.");
+		}
 		return new BigSurd(pref.divide(val), disc);
 	} /* BigSurd.divide */
 
@@ -322,16 +330,21 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 		 */
 		final int sig = signum();
 		final int sigv = val.signum();
-		if (sig < 0 && sigv >= 0)
+		if (sig < 0 && sigv >= 0) {
 			return -1;
-		if (sig > 0 && sigv <= 0)
+		}
+		if (sig > 0 && sigv <= 0) {
 			return 1;
-		if (sig == 0 && sigv == 0)
+		}
+		if (sig == 0 && sigv == 0) {
 			return 0;
-		if (sig == 0 && sigv > 0)
+		}
+		if (sig == 0 && sigv > 0) {
 			return -1;
-		if (sig == 0 && sigv < 0)
+		}
+		if (sig == 0 && sigv < 0) {
 			return 1;
+		}
 
 		/*
 		 * Work out the cases of equal sign. Compare absolute values by
@@ -342,12 +355,13 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 		final Rational this2 = sqr();
 		final Rational val2 = val.sqr();
 		final int c = this2.compareTo(val2);
-		if (c == 0)
+		if (c == 0) {
 			return 0;
-		else if (sig > 0 && c > 0 || sig < 0 && c < 0)
+		} else if (sig > 0 && c > 0 || sig < 0 && c < 0) {
 			return 1;
-		else
+		} else {
 			return -1;
+		}
 	} /* BigSurd.compareTo */
 
 	/**
@@ -359,10 +373,11 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 	 */
 	@Override
 	public String toString() {
-		if (disc.compareTo(Rational.ONE) != 0 && disc.compareTo(Rational.ZERO) != 0)
+		if (disc.compareTo(Rational.ONE) != 0 && disc.compareTo(Rational.ZERO) != 0) {
 			return "(" + pref.toString() + ")*(" + disc.toString() + ")^(1/2)";
-		else
+		} else {
 			return pref.toString();
+		}
 	} /* BigSurd.toString */
 
 	/**
@@ -421,10 +436,11 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 	 * @since 2012-02-15
 	 */
 	public Rational toRational() {
-		if (isRational())
+		if (isRational()) {
 			return pref;
-		else
+		} else {
 			throw new ArithmeticException("Undefined conversion " + toFancyString() + " to Rational.");
+		}
 	} /* BigSurd.toRational */
 
 	/**
@@ -477,8 +493,9 @@ public class BigSurd implements Cloneable, Comparable<BigSurd> {
 			pref = pref.divide(sqf);
 
 			disc = new Rational(numC, denC);
-		} else
+		} else {
 			pref = Rational.ZERO;
+		}
 	} /* BigSurd.normalize */
 
 	/**

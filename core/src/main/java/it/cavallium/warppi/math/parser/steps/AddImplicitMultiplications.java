@@ -24,12 +24,13 @@ public class AddImplicitMultiplications implements MathParserStep {
 				functionsList.remove(curIndex.i + 1);
 				return true;
 			}
-		} else if (currentFunction instanceof Function)
+		} else if (currentFunction instanceof Function) {
 			if (lastFunction instanceof Function) {
 				functionsList.set(curIndex.i, new Multiplication(context, currentFunction, lastFunction));
 				functionsList.remove(curIndex.i + 1);
 				return true;
 			}
+		}
 		return false;
 	}
 

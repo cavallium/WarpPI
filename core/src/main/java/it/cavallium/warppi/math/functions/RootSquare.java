@@ -34,8 +34,9 @@ public class RootSquare extends FunctionOperator {
 		final ObjectArrayList<Block> result = new ObjectArrayList<>();
 		final BlockSquareRoot bsqr = new BlockSquareRoot();
 		final BlockContainer bsqrc = bsqr.getNumberContainer();
-		for (final Block b : getParameter2().toBlock(context))
+		for (final Block b : getParameter2().toBlock(context)) {
 			bsqrc.appendBlockUnsafe(b);
+		}
 		bsqrc.recomputeDimensions();
 		bsqr.recomputeDimensions();
 		result.add(bsqr);

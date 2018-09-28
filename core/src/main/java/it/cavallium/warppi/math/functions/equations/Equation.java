@@ -33,8 +33,9 @@ public class Equation extends FunctionOperator {
 		for (final SolveMethod t : SolveMethod.techniques) {
 			final ObjectArrayList<Equation> newResults = new ObjectArrayList<>();
 			final int sz = result.size();
-			for (int n = 0; n < sz; n++)
+			for (int n = 0; n < sz; n++) {
 				newResults.addAll(t.solve(result.get(n)));
+			}
 			final Set<Equation> hs = new HashSet<>();
 			hs.addAll(newResults);
 			newResults.clear();

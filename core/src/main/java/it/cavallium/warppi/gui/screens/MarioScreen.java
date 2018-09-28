@@ -44,15 +44,18 @@ public class MarioScreen extends Screen {
 	@Override
 	public void initialized() {
 		try {
-			if (MarioScreen.skin == null)
+			if (MarioScreen.skin == null) {
 				MarioScreen.skin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("marioskin.png");
-			if (MarioScreen.groundskin == null)
+			}
+			if (MarioScreen.groundskin == null) {
 				MarioScreen.groundskin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("marioground.png");
-			if (MarioScreen.gpuTest2 == null)
+			}
+			if (MarioScreen.gpuTest2 == null) {
 				try {
 					MarioScreen.gpuTest2 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("gputest2");
 				} catch (final Exception ex) {}
-			if (MarioScreen.gpuTest1 == null)
+			}
+			if (MarioScreen.gpuTest1 == null) {
 				try {
 					MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("gputest12");
 					MarioScreen.gpuTest12 = true;
@@ -62,12 +65,14 @@ public class MarioScreen extends Screen {
 						MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("gputest1");
 					} catch (final Exception ex2) {}
 				}
-			if (MarioScreen.gpuTest3 == null)
+			}
+			if (MarioScreen.gpuTest3 == null) {
 				try {
 					MarioScreen.gpuTest3 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("font_gputest3.png");
 				} catch (final Exception ex) {
 					ex.printStackTrace();
 				}
+			}
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -75,8 +80,9 @@ public class MarioScreen extends Screen {
 
 	@Override
 	public void created() throws InterruptedException {
-		if (!errored)
+		if (!errored) {
 			g = new MarioGame();
+		}
 	}
 
 	@Override
@@ -105,9 +111,9 @@ public class MarioScreen extends Screen {
 
 	@Override
 	public void render() {
-		if (errored)
+		if (errored) {
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringLeft(0, 20, "ERROR");
-		else {
+		} else {
 			if (MarioScreen.groundskin != null) {
 				final double playerX = g.getPlayer().getX();
 				final double playerY = g.getPlayer().getY();
@@ -120,7 +126,7 @@ public class MarioScreen extends Screen {
 				final float shiftX = -8 + 16 * (float) playerX;
 				final float shiftY = -8 + 16 * (height - (float) playerY);
 				int blue = -1;
-				for (int ix = 0; ix < width; ix++)
+				for (int ix = 0; ix < width; ix++) {
 					for (int iy = 0; iy < height; iy++) {
 						final double distX = Math.abs(playerX - ix);
 						final double distY = Math.abs(playerY - iy - 1.5d);
@@ -141,6 +147,7 @@ public class MarioScreen extends Screen {
 							}
 						}
 					}
+				}
 				if (blue != 0) {
 					blue = 0;
 					Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xffffffff);
