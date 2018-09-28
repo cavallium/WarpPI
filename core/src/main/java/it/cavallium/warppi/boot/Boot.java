@@ -33,7 +33,7 @@ public class Boot {
 
 	public static StartupArguments parseStartupArguments(final String[] a) {
 		final StartupArgumentsImpl args = new StartupArgumentsImpl();
-		Arrays.asList(a).stream().parallel().map(String::toLowerCase).forEach(arg -> Boot.parseArgument(args, arg));
+		Arrays.asList(a).stream().parallel().filter((x) -> x != null).map(String::toLowerCase).forEach(arg -> Boot.parseArgument(args, arg));
 		return args;
 	}
 
@@ -73,7 +73,8 @@ public class Boot {
 				args.setUncached(true);
 				break;
 			default:
-				Engine.getPlatform().getConsoleUtils().out().println("Unrecognized argument " + arg);
+				// Not using ConsoleUtils because it isn't initialized at this point.
+				System.out.println("Unrecognized argument " + arg);
 				break;
 		}
 	}

@@ -96,14 +96,10 @@ class NEWTWindow implements GLEventListener {
 		onRealResize = BehaviorSubject.create(new Integer[] { (int) (StaticVars.screenSize[0] * windowZoom), (int) (StaticVars.screenSize[1] * windowZoom) });
 
 		onRealResize.subscribe((realSize) -> {
-			System.err.println("[[[SET REALWINDOWZOOM");
 			realWindowSize[0] = realSize[0];
 			realWindowSize[1] = realSize[1];
 			disp.size[0] = realSize[0] / (int) windowZoom;
 			disp.size[1] = realSize[1] / (int) windowZoom;
-			System.err.println("[[[" + realWindowSize[0]);
-			System.err.println("[[[" + windowZoom);
-			System.err.println("[[[" + disp.size[0]);
 			onResizeEvent.onNext(new Integer[] { disp.size[0], disp.size[1] });
 			refreshViewport = true;
 		});
@@ -117,10 +113,6 @@ class NEWTWindow implements GLEventListener {
 				disp.size[1] = (int) (realWindowSize[1] / windowZoom);
 				StaticVars.screenSize[0] = disp.size[0];
 				StaticVars.screenSize[1] = disp.size[1];
-				System.err.println("[[[SET WINDOWZOOM");
-				System.err.println("[[[" + realWindowSize[0]);
-				System.err.println("[[[" + windowZoom);
-				System.err.println("[[[A:" + disp.size[0]);
 				refreshViewport = true;
 			}
 		});

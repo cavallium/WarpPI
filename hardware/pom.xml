@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>warppi-hardware</artifactId>
 
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<name>WarpPI Calculator Hardware</name>
 	<description>WarpPI Calculator hardware project</description>

@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>warppi-desktop</artifactId>
 
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<name>WarpPI Calculator Desktop</name>
 	<description>WarpPI Calculator desktop project</description>

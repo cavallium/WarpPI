@@ -9,14 +9,8 @@
 		<version>${project.version}</version>
 	</parent>
 	<artifactId>warppi-teavm</artifactId>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 	
-	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.release>1.8</maven.compiler.release>
-		<java.version>1.8</java.version>
-	</properties>
 		
 	<name>WarpPI Calculator TeaVM</name>
 	<description>WarpPI Calculator teavm project</description>
