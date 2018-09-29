@@ -127,14 +127,14 @@ public final class DisplayManager implements RenderingLoop {
 			Engine.getPlatform().getConsoleUtils().out().println(1, "Using FB Graphic Engine");
 			return d;
 		}
-		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "GPU engine", null);
-		if (d != null && d.isSupported()) {
-			Engine.getPlatform().getConsoleUtils().out().println(1, "Using GPU Graphic Engine");
-			return d;
-		}
 		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "CPU engine", null);
 		if (d != null && d.isSupported()) {
 			Engine.getPlatform().getConsoleUtils().out().println(1, "Using CPU Graphic Engine");
+			return d;
+		}
+		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "GPU engine", null);
+		if (d != null && d.isSupported()) {
+			Engine.getPlatform().getConsoleUtils().out().println(1, "Using GPU Graphic Engine");
 			return d;
 		}
 		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "headless 24 bit engine", null);

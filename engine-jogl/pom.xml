@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>warppi-engine-jogl</artifactId>
 
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 
 	<name>WarpPI Calculator JOGL Engine</name>
 	<description>WarpPI Calculator engine-jogl project</description>
@@ -37,6 +37,18 @@
 	</dependencies>
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Import-Package>*</Import-Package>
+						<Export-Package>it.cavallium.warppi.*</Export-Package>
+						<Bundle-SymbolicName>warppi-engine-jogl</Bundle-SymbolicName>
+					</instructions>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>

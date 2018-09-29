@@ -10,13 +10,6 @@
 	</parent>
 	<artifactId>warppi-teavm</artifactId>
 	<packaging>jar</packaging>
-	
-	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.release>1.8</maven.compiler.release>
-		<java.version>1.8</java.version>
-	</properties>
 		
 	<name>WarpPI Calculator TeaVM</name>
 	<description>WarpPI Calculator teavm project</description>
@@ -71,11 +64,22 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Import-Package>*</Import-Package>
+						<Export-Package>it.cavallium.warppi.*</Export-Package>
+						<Bundle-SymbolicName>warppi-teavm</Bundle-SymbolicName>
+					</instructions>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>${maven.compiler.source}</source>
-					<target>${maven.compiler.target}</target>
+					<release>${maven.compiler.release}</release>
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
@@ -94,6 +98,8 @@
 							<mainPageIncluded>true</mainPageIncluded>
 							<debugInformationGenerated>true</debugInformationGenerated>
 							<sourceMapsGenerated>true</sourceMapsGenerated>
+							<sourceFilesCopied>true</sourceFilesCopied>
+							<optimizationLevel>FULL</optimizationLevel>
 						</configuration>
 					</execution>
 				</executions>

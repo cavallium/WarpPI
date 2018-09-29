@@ -31,7 +31,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.release>1.8</maven.compiler.release>
 		<java.version>1.8</java.version>
 		<src.dir>src/main/java</src.dir>
 		<src.dir2>src/main/java</src.dir2>
@@ -43,7 +42,7 @@
 		<module>core</module>
 		<module>Flow</module>
 		<module>rules</module>
-		<module>hardware</module>
+		<!-- <module>hardware</module>-->
 		<module>desktop</module>
 		<module>engine-jogl</module>
 		<module>teavm</module>
@@ -80,6 +79,11 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
+			<layout>default</layout>
+		</pluginRepository>
+		<pluginRepository>
+			<id>sonatype</id>
+			<url>https://oss.sonatype.org/content/repositories/releases/</url>
 			<layout>default</layout>
 		</pluginRepository>
 	</pluginRepositories>
@@ -134,7 +138,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.8.0</version>
 					<configuration>
-						<release>${maven.compiler.release}</release>
+						<source>${maven.compiler.source}</source>
+						<target>${maven.compiler.target}</target>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -155,16 +160,11 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.22.0</version>
-					<configuration>
-						<argLine>
-							--illegal-access=permit
-						</argLine>
-					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.felix</groupId>
 					<artifactId>maven-bundle-plugin</artifactId>
-					<version>2.5.4</version>
+					<version>3.5.1</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>

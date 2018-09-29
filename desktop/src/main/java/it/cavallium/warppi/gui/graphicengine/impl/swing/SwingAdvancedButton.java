@@ -77,7 +77,7 @@ public class SwingAdvancedButton extends JButton {
 			g2d.setColor(super.getForeground());
 			int y = super.getHeight() / 2 + g.getFontMetrics().getHeight() / 4;
 			if (state == 2) {
-				y += 8;
+				y += 4;
 			}
 			g2d.drawString(getText(), super.getWidth() / 2 - g.getFontMetrics().stringWidth(getText()) / 2, y);
 			g2d.dispose();

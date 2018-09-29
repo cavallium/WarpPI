@@ -9,7 +9,7 @@
 		<version>${project.version}</version>
 	</parent>
 	<artifactId>warppi-rules</artifactId>
-	<packaging>jar</packaging>
+	<packaging>bundle</packaging>
 
 	<name>WarpPI Calculator Rules</name>
 	<description>WarpPI Calculator rules project</description>
@@ -24,6 +24,18 @@
 
 	<build>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Import-Package>*</Import-Package>
+						<Export-Package>it.cavallium.warppi.*</Export-Package>
+						<Bundle-SymbolicName>warppi-rules</Bundle-SymbolicName>
+					</instructions>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
