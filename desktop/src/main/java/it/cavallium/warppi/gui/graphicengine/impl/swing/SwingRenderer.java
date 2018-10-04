@@ -124,17 +124,19 @@ public class SwingRenderer implements Renderer {
 								newColors[idx] = getSkinColorAt(currentSkin.skinData, skinIndex);
 						}
 					newColor = joinColors(newColors);
-					if (transparent) {
-						oldColor = SwingRenderer.canvas2d[index];
-						final float a2 = (newColor >> 24 & 0xFF) / 255f;
-						final float a1 = 1f - a2;
-						final int r = (int) ((oldColor >> 16 & 0xFF) * a1 + (newColor >> 16 & 0xFF) * a2);
-						final int g = (int) ((oldColor >> 8 & 0xFF) * a1 + (newColor >> 8 & 0xFF) * a2);
-						final int b = (int) ((oldColor & 0xFF) * a1 + (newColor & 0xFF) * a2);
-						newColor = 0xFF000000 | r << 16 | g << 8 | b;
+					if (index >= 0 && index < SwingRenderer.canvas2d.length) {
+						if (transparent) {
+								oldColor = SwingRenderer.canvas2d[index];
+								final float a2 = (newColor >> 24 & 0xFF) / 255f;
+								final float a1 = 1f - a2;
+								final int r = (int) ((oldColor >> 16 & 0xFF) * a1 + (newColor >> 16 & 0xFF) * a2);
+								final int g = (int) ((oldColor >> 8 & 0xFF) * a1 + (newColor >> 8 & 0xFF) * a2);
+								final int b = (int) ((oldColor & 0xFF) * a1 + (newColor & 0xFF) * a2);
+								newColor = 0xFF000000 | r << 16 | g << 8 | b;
+						}
+	
+						SwingRenderer.canvas2d[index] = stackColors(SwingRenderer.canvas2d[index], newColor);
 					}
-
-					SwingRenderer.canvas2d[index] = stackColors(SwingRenderer.canvas2d[index], newColor);
 				}
 			}
 	}

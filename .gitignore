@@ -18,6 +18,7 @@ font_gputest4.png
 font_gputest4.xcf
 manager2/
 VBO_Example.java
+math-rules-cache.zip
 
 /target/
 !/target/*.jar

@@ -78,4 +78,9 @@ public class ChooseVariableValueScreen extends Screen {
 		}
 	}
 
+	@Override
+	public String getSessionTitle() {
+		return "Choose a value for the variable.";
+	}
+
 }

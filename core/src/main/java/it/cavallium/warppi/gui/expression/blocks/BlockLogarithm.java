@@ -121,7 +121,6 @@ public class BlockLogarithm extends Block implements IParenthesis {
 				height = toph + nmbh;
 			}
 		} else {
-			System.out.println("b");
 			toph = 0;
 			line = toph + nl;
 			if (nmbh + bh - bl > toph + nmbh) {
@@ -158,6 +157,18 @@ public class BlockLogarithm extends Block implements IParenthesis {
 		final Function base = getBaseContainer().toFunction(context);
 		final Function number = getNumberContainer().toFunction(context);
 		return new FeatureLogarithm(base, number);
+	}
+
+	@Override
+	public ObjectArrayList<Block> getInnerBlocks() {
+		ObjectArrayList<Block> output = containerBase.getContent();
+		output.addAll(containerNumber.getContent());
+		return output;
+	}
+
+	@Override
+	public int getInnerContainersCount() {
+		return 2;
 	}
 
 }

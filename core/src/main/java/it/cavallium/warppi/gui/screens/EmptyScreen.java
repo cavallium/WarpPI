@@ -33,4 +33,9 @@ public class EmptyScreen extends Screen {
 		return true;
 	}
 
+	@Override
+	public String getSessionTitle() {
+		return "empty";
+	}
+
 }

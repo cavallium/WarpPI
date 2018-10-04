@@ -1,5 +1,7 @@
 package it.cavallium.warppi.math;
 
-public enum AngleMode {
+import java.io.Serializable;
+
+public enum AngleMode implements Serializable {
 	DEG, RAD, GRA
 }

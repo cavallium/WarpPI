@@ -11,6 +11,7 @@ public class LoadingScreen extends Screen {
 	public float loadingTextTranslation = 0.0f;
 	public boolean loaded = false;
 	private float previousZoomValue = 1;
+	private volatile boolean ended = false;
 
 	public LoadingScreen() {
 		super();
@@ -28,6 +29,7 @@ public class LoadingScreen extends Screen {
 	@Override
 	public void initialized() throws InterruptedException {
 		previousZoomValue = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue());
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().hide();
 		StaticVars.windowZoom.onNext(1f);
 	}
 
@@ -36,8 +38,10 @@ public class LoadingScreen extends Screen {
 		loadingTextTranslation = GraphicUtils.sinDeg(endLoading * 90f) * 10f;
 
 		endLoading += dt;
-		if (loaded && (Engine.getPlatform().getSettings().isDebugEnabled() || endLoading >= 3.5f)) {
+		if (!ended && loaded && (Engine.getPlatform().getSettings().isDebugEnabled() || endLoading >= 3.5f)) {
+			ended = true;
 			StaticVars.windowZoom.onNext(previousZoomValue);
+			Engine.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().show();
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MathInputScreen());
 		}
 		mustRefresh = true;
@@ -63,6 +67,11 @@ public class LoadingScreen extends Screen {
 		} else {
 			return false;
 		}
+	}
+
+	@Override
+	public String getSessionTitle() {
+		return "Loading...";
 	}
 
 }

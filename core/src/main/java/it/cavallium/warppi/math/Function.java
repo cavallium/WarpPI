@@ -1,11 +1,13 @@
 package it.cavallium.warppi.math;
 
+import java.io.Serializable;
+
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-public interface Function {
+public interface Function extends Serializable {
 
 	/**
 	 * Returns this function and its children in a string form.

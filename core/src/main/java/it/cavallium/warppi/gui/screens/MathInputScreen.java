@@ -1,6 +1,9 @@
 package it.cavallium.warppi.gui.screens;
 
 import java.io.IOException;
+import java.util.HashMap;
+
+import org.apache.commons.lang3.SerializationUtils;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Platform.ConsoleUtils;
@@ -27,6 +30,7 @@ import it.cavallium.warppi.math.MathematicalSymbols;
 import it.cavallium.warppi.math.functions.Expression;
 import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.functions.Variable;
+import it.cavallium.warppi.math.functions.Variable.V_TYPE;
 import it.cavallium.warppi.math.functions.Variable.VariableValue;
 import it.cavallium.warppi.math.parser.MathParser;
 import it.cavallium.warppi.math.solver.MathSolver;
@@ -238,6 +242,7 @@ public class MathInputScreen extends Screen {
 													//										currentExpression = newExpression;
 													//										simplify();
 													//									});
+													this.swapInputScreen();
 												}
 											} catch (final InterruptedException ex) {
 												Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Computing thread stopped.");
@@ -464,6 +469,24 @@ public class MathInputScreen extends Screen {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	private void swapInputScreen() {
+		MathInputScreen mis = new MathInputScreen();
+		mis.calc = SerializationUtils.clone(calc);
+		mis.canBeInHistory = true;
+		mis.currentStep = currentStep;
+		mis.created = created;
+		mis.d = d;
+		mis.errorLevel = errorLevel;
+		mis.ic = SerializationUtils.clone(ic);
+		mis.initialized = initialized;
+		mis.mustRefresh = true;
+		mis.result = SerializationUtils.clone(result);
+		mis.userInput = SerializationUtils.clone(userInput);
+		mis.d = d;
+		Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(mis);
+	}
+
 	@SuppressWarnings("unused")
 	@Deprecated
 	private ObjectArrayList<Function> solveExpression(final ObjectArrayList<Function> f22) {
@@ -688,17 +711,8 @@ public class MathInputScreen extends Screen {
 	}
 
 	@Override
-	@Deprecated
-	public MathInputScreen clone() {
-		throw new UnsupportedOperationException();
-//		final MathInputScreen es = this;
-//		final MathInputScreen es2 = new MathInputScreen();
-//		es2.errorLevel = es.errorLevel;
-//		es2.mustRefresh = es.mustRefresh;
-//		es2.calc = Utils.cloner.deepClone(es.calc);
-//		es2.userInput = Utils.cloner.deepClone(es.userInput);
-//		es2.result = Utils.cloner.deepClone(es.result);
-//		return es2;
+	public String getSessionTitle() {
+		return "Calculator";
 	}
 
 }

@@ -222,4 +222,9 @@ public class KeyboardDebugScreen extends Screen {
 		KeyboardDebugScreen.log = newlog;
 	}
 
+	@Override
+	public String getSessionTitle() {
+		return "Keyboard debug";
+	}
+
 }

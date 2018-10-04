@@ -1,12 +1,13 @@
 package it.cavallium.warppi.gui.expression;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import it.cavallium.warppi.gui.expression.blocks.BlockVariable;
 import it.cavallium.warppi.math.MathematicalSymbols;
 import it.cavallium.warppi.math.functions.Variable.V_TYPE;
 
-public class InputContext {
+public class InputContext implements Serializable {
 	public final HashMap<Character, V_TYPE> variableTypes;
 	public BlockVariable variableTypeDirtyID = null;
 

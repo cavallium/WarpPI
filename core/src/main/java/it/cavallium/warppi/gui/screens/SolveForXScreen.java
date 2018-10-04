@@ -67,4 +67,9 @@ public class SolveForXScreen extends Screen {
 		}
 	}
 
+	@Override
+	public String getSessionTitle() {
+		return "Solve for X";
+	}
+
 }

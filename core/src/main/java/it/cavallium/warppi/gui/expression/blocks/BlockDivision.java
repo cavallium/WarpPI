@@ -8,6 +8,8 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.parser.features.FeatureDivision;
 import it.cavallium.warppi.math.parser.features.interfaces.Feature;
 import it.cavallium.warppi.util.Error;
+import it.unimi.dsi.fastutil.objects.AbstractObjectList;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class BlockDivision extends Block {
 
@@ -117,5 +119,17 @@ public class BlockDivision extends Block {
 		final Function upper = getUpperContainer().toFunction(context);
 		final Function lower = getLowerContainer().toFunction(context);
 		return new FeatureDivision(upper, lower);
+	}
+
+	@Override
+	public ObjectArrayList<Block> getInnerBlocks() {
+		ObjectArrayList<Block> output = containerUp.getContent();
+		output.addAll(containerDown.getContent());
+		return output;
+	}
+
+	@Override
+	public int getInnerContainersCount() {
+		return 2;
 	}
 }

@@ -8,6 +8,7 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.parser.features.FeaturePowerChar;
 import it.cavallium.warppi.math.parser.features.interfaces.Feature;
 import it.cavallium.warppi.util.Error;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class BlockPower extends Block {
 
@@ -79,5 +80,15 @@ public class BlockPower extends Block {
 	public Feature toFeature(final MathContext context) throws Error {
 		final Function exp = getExponentContainer().toFunction(context);
 		return new FeaturePowerChar(exp);
+	}
+
+	@Override
+	public ObjectArrayList<Block> getInnerBlocks() {
+		return this.containerExponent.getContent();
+	}
+
+	@Override
+	public int getInnerContainersCount() {
+		return 1;
 	}
 }

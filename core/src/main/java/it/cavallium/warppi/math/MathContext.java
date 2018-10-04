@@ -1,5 +1,9 @@
 package it.cavallium.warppi.math;
 
+import java.io.Serializable;
+
+import org.apache.commons.lang3.SerializationUtils;
+
 import it.cavallium.warppi.math.functions.Variable.VariableValue;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
@@ -7,7 +11,7 @@ import it.cavallium.warppi.math.rules.RulesManager;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-public class MathContext {
+public class MathContext implements Serializable {
 
 	public AngleMode angleMode = AngleMode.DEG;
 	public boolean exactMode = false;
@@ -125,20 +129,6 @@ public class MathContext {
 			}
 		}
 	}*/
-
-	@Override
-	@Deprecated
-	public MathContext clone() {
-//		MathContext mc = new MathContext();
-//		mc.angleMode = this.angleMode;
-//		mc.exactMode = this.exactMode;
-//		mc.f = this.f;
-//		mc.f2 = this.f2;
-//		mc.variablesValues = this.variablesValues;
-//		mc.resultsCount = this.resultsCount;
-//		return mc;
-		throw new UnsupportedOperationException();
-	}
 
 	public ObjectArrayList<Rule> getAcceptableRules(final RuleType currentAcceptedRules) {
 		return RulesManager.rules[currentAcceptedRules.ordinal()];

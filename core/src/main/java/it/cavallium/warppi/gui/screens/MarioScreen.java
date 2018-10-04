@@ -197,4 +197,9 @@ public class MarioScreen extends Screen {
 		return true;
 	}
 
+	@Override
+	public String getSessionTitle() {
+		return "Absolutely not Super Mario";
+	}
+
 }
