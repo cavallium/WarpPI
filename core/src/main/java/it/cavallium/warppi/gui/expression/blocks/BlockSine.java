@@ -5,6 +5,7 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.parser.features.FeatureSine;
 import it.cavallium.warppi.math.parser.features.interfaces.Feature;
 import it.cavallium.warppi.util.Error;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class BlockSine extends BlockParenthesisAbstract {
 	public BlockSine() {

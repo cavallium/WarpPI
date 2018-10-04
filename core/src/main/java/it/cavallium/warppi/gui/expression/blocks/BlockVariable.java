@@ -14,6 +14,7 @@ import it.cavallium.warppi.math.functions.Variable.V_TYPE;
 import it.cavallium.warppi.math.parser.features.FeatureVariable;
 import it.cavallium.warppi.math.parser.features.interfaces.Feature;
 import it.cavallium.warppi.util.Error;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class BlockVariable extends Block {
 
@@ -254,5 +255,10 @@ public class BlockVariable extends Block {
 	@Override
 	public Feature toFeature(final MathContext context) throws Error {
 		return new FeatureVariable(ch, type);
+	}
+
+	@Override
+	public ObjectArrayList<Block> getAllInnerBlocks() {
+		return null;
 	}
 }

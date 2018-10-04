@@ -14,6 +14,7 @@ import it.cavallium.warppi.math.parser.features.interfaces.Feature;
 import it.cavallium.warppi.util.Error;
 import it.cavallium.warppi.util.Errors;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectListIterator;
 
 public class BlockContainer implements TreeContainer, GraphicalElement {
 
@@ -218,8 +219,18 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 			final int deltaCaret = caret.getRemaining();
 			removed = removed | b.delBlock(caret);
 			if (caret.getRemaining() == 0 || removed == false && deltaCaret >= 0 && caret.getRemaining() < 0) {
+				ObjectArrayList<Block> blocks = this.getBlockAt(pos - 1).get().getAllInnerBlocks();
 				removeAt(pos - 1);
 				caret.setPosition(caret.getPosition() - deltaCaret);
+				if (blocks != null) {
+					ObjectListIterator<Block> blocksIterator = blocks.iterator();
+					int blockNum = 0;
+					while (blocksIterator.hasNext()) {
+						Block block = blocksIterator.next();
+						addBlockUnsafe(pos - 1+blockNum, block);
+						blockNum++;
+					}
+				}
 				removed = true;
 			}
 		}

@@ -7,6 +7,7 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.MathematicalSymbols;
 import it.cavallium.warppi.math.parser.features.FeatureChar;
 import it.cavallium.warppi.math.parser.features.interfaces.Feature;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class BlockUndefined extends Block {
 
@@ -57,6 +58,11 @@ public class BlockUndefined extends Block {
 	@Override
 	public Feature toFeature(final MathContext context) {
 		return new FeatureChar(MathematicalSymbols.UNDEFINED);
+	}
+
+	@Override
+	public ObjectArrayList<Block> getAllInnerBlocks() {
+		return null;
 	}
 
 }

@@ -115,4 +115,10 @@ public abstract class BlockParenthesisAbstract extends Block implements IParenth
 	@Override
 	public abstract Feature toFeature(MathContext context) throws Error;
 
+
+	@Override
+	public ObjectArrayList<Block> getAllInnerBlocks() {
+		return containerNumber.getContent();
+	}
+	
 }

@@ -6,6 +6,7 @@ import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.parser.features.FeatureChar;
 import it.cavallium.warppi.math.parser.features.interfaces.Feature;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class BlockChar extends Block {
 
@@ -63,6 +64,11 @@ public class BlockChar extends Block {
 	@Override
 	public Feature toFeature(final MathContext context) {
 		return new FeatureChar(getChar());
+	}
+
+	@Override
+	public ObjectArrayList<Block> getAllInnerBlocks() {
+		return null;
 	}
 
 }

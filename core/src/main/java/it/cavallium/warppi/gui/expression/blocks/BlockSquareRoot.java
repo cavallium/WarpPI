@@ -8,6 +8,7 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.parser.features.FeatureSquareRoot;
 import it.cavallium.warppi.math.parser.features.interfaces.Feature;
 import it.cavallium.warppi.util.Error;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class BlockSquareRoot extends Block {
 
@@ -94,5 +95,12 @@ public class BlockSquareRoot extends Block {
 	public Feature toFeature(final MathContext context) throws Error {
 		final Function contnt = getNumberContainer().toFunction(context);
 		return new FeatureSquareRoot(contnt);
+	}
+
+	@Override
+	public ObjectArrayList<Block> getAllInnerBlocks() {
+		ObjectArrayList<Block> output = containerNumber.getContent();
+//		output.addAll();
+		return output;
 	}
 }

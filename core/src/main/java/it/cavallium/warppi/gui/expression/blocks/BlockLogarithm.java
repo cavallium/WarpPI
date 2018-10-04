@@ -160,4 +160,11 @@ public class BlockLogarithm extends Block implements IParenthesis {
 		return new FeatureLogarithm(base, number);
 	}
 
+	@Override
+	public ObjectArrayList<Block> getAllInnerBlocks() {
+		ObjectArrayList<Block> output = containerBase.getContent();
+		output.addAll(containerNumber.getContent());
+		return output;
+	}
+
 }

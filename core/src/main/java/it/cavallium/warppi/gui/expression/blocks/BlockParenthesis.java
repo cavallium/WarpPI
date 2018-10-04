@@ -20,4 +20,9 @@ public class BlockParenthesis extends BlockParenthesisAbstract {
 		return new FeatureParenthesis(cont);
 	}
 
+	@Override
+	public ObjectArrayList<Block> getAllInnerBlocks() {
+		return getNumberContainer().getContent();
+	}
+
 }

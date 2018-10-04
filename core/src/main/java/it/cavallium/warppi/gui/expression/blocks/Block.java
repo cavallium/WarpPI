@@ -8,6 +8,7 @@ import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.parser.features.interfaces.Feature;
 import it.cavallium.warppi.util.Error;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public abstract class Block implements TreeBlock, GraphicalElement {
 
@@ -34,6 +35,12 @@ public abstract class Block implements TreeBlock, GraphicalElement {
 	public abstract boolean delBlock(Caret caret);
 
 	public abstract BlockReference<?> getBlock(Caret caret);
+	
+	/**
+	 * Used only to get inner blocks when deleting the parent block.
+	 * @return every block of every inner container, or null if empty
+	 */
+	public abstract ObjectArrayList<Block> getAllInnerBlocks();
 
 	@Override
 	public abstract void recomputeDimensions();
