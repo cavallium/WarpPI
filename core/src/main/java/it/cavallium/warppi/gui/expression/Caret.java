@@ -1,6 +1,8 @@
 package it.cavallium.warppi.gui.expression;
 
-public class Caret {
+import java.io.Serializable;
+
+public class Caret implements Serializable {
 
 	private int pos;
 	private int remaining;

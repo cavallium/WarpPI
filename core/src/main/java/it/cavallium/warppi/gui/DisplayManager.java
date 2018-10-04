@@ -166,7 +166,15 @@ public final class DisplayManager implements RenderingLoop {
 	}
 
 	public void setScreen(final Screen screen) {
-		if (screen.initialized == false) {
+		boolean mustBeAddedToHistory = screen.initialized == false;
+		if (!mustBeAddedToHistory) {
+			boolean found = false;
+			for (Screen s : sessions) {
+				found = found | s == screen;
+			}
+			mustBeAddedToHistory |= !found;
+		}
+		if (mustBeAddedToHistory) {
 			if (screen.canBeInHistory) {
 				if (currentSession > 0) {
 					final int sl = sessions.length + 5; //TODO: I don't know why if i don't add +5 or more some items disappear
@@ -183,7 +191,9 @@ public final class DisplayManager implements RenderingLoop {
 		}
 		screen.d = this;
 		try {
-			screen.create();
+			if (screen.created == false) {
+				screen.create();
+			}
 			this.screen = screen;
 			screenChange.release();
 			if (screen.initialized == false) {
@@ -345,12 +355,14 @@ public final class DisplayManager implements RenderingLoop {
 			if (fonts[0] != null && fonts[0] != engine.getRenderer().getCurrentFont()) {
 				fonts[0].use(engine);
 			}
-			hud.renderBackground();
+			if (hud.visible) hud.renderBackground();
 			screen.render();
-			hud.render();
-			hud.renderTopmostBackground();
+			if (hud.visible) {
+				hud.render();
+				hud.renderTopmostBackground();
+			}
 			screen.renderTopmost();
-			hud.renderTopmost();
+			if (hud.visible) hud.renderTopmost();
 		}
 	}
 

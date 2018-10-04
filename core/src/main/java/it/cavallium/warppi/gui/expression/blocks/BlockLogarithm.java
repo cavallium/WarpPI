@@ -121,7 +121,6 @@ public class BlockLogarithm extends Block implements IParenthesis {
 				height = toph + nmbh;
 			}
 		} else {
-			System.out.println("b");
 			toph = 0;
 			line = toph + nl;
 			if (nmbh + bh - bl > toph + nmbh) {

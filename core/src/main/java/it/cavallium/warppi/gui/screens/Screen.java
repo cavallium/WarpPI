@@ -1,5 +1,7 @@
 package it.cavallium.warppi.gui.screens;
 
+import java.io.Serializable;
+
 import it.cavallium.warppi.event.KeyboardEventListener;
 import it.cavallium.warppi.event.TouchEventListener;
 import it.cavallium.warppi.gui.DisplayManager;
@@ -10,8 +12,13 @@ public abstract class Screen implements KeyboardEventListener, TouchEventListene
 	public boolean created = false;
 	public boolean initialized = false;
 	public boolean canBeInHistory = false;
+	
+	public static long lastDebugScreenID = 1;
+	public final long debugScreenID;
 
-	public Screen() {}
+	public Screen() {
+		debugScreenID = lastDebugScreenID++;
+	}
 
 	@Override
 	public void initialize() throws InterruptedException {
@@ -46,4 +53,6 @@ public abstract class Screen implements KeyboardEventListener, TouchEventListene
 
 	@Override
 	public abstract boolean mustBeRefreshed();
+	
+	public abstract String getSessionTitle();
 }

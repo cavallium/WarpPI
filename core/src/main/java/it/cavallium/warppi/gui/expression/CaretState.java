@@ -1,5 +1,7 @@
 package it.cavallium.warppi.gui.expression;
 
-public enum CaretState {
+import java.io.Serializable;
+
+public enum CaretState implements Serializable {
 	VISIBLE_ON, VISIBLE_OFF, HIDDEN
 }

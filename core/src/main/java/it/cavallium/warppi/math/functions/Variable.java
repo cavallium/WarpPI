@@ -1,5 +1,7 @@
 package it.cavallium.warppi.math.functions;
 
+import java.io.Serializable;
+
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockChar;
 import it.cavallium.warppi.math.Function;
@@ -45,7 +47,8 @@ public class Variable implements Function {
 		return "" + getChar();
 	}
 
-	public static class VariableValue {
+	public static class VariableValue implements Serializable {
+		private static final long serialVersionUID = -5656281021874324571L;
 		public final Variable v;
 		public final Number n;
 

@@ -4,7 +4,8 @@ public abstract class HUD implements GraphicalInterface {
 	public DisplayManager d;
 	public boolean created = false;
 	public boolean initialized = false;
-
+	public boolean visible = true;
+	
 	public HUD() {}
 
 	@Override
@@ -43,6 +44,14 @@ public abstract class HUD implements GraphicalInterface {
 	@Override
 	public boolean mustBeRefreshed() {
 		return true;
+	}
+
+	public void hide() {
+		visible = false;
+	}
+
+	public void show() {
+		visible = true;
 	}
 
 }
