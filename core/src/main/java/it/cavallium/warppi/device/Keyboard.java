@@ -914,6 +914,7 @@ public class Keyboard {
 						Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Keyboard", "Zoom: " + newZoom);
 //						StaticVars.windowZoom = ((StaticVars.windowZoom - 0.5f) % 2f) + 1f;
 						refresh = true;
+						break;
 					case HISTORY_BACK:
 						Engine.INSTANCE.getHardwareDevice().getDisplayManager().goBack();
 						refresh = true;
