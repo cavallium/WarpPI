@@ -27,6 +27,12 @@ public class ArcCosine extends FunctionSingle {
 	}
 
 	@Override
+	public FunctionSingle clone(MathContext c) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
 		// TODO Auto-generated method stub
 		throw new Error(Errors.NOT_IMPLEMENTED, "Unknown function " + getClass().getSimpleName());

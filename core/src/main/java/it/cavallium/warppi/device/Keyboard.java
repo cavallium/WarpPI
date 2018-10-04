@@ -108,7 +108,7 @@ public class Keyboard {
 	public static void debugKeyPressed(final int keyCode) {
 		switch (keyCode) {
 			case KeyEvent.VK_ESCAPE:
-				Keyboard.keyPressed(Key.POWEROFF);
+				Keyboard.keyPressed(Key.BACK);
 				break;
 			case KeyEvent.VK_S:
 				if (Keyboard.shift) {

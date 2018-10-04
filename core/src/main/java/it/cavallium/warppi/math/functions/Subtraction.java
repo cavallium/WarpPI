@@ -26,7 +26,12 @@ public class Subtraction extends FunctionOperator {
 
 	@Override
 	public Subtraction clone() {
-		return new Subtraction(mathContext, parameter1, parameter2);
+		return new Subtraction(mathContext, parameter1 == null ? null : parameter1.clone(), parameter2 == null ? null : parameter2.clone());
+	}
+
+	@Override
+	public Subtraction clone(MathContext c) {
+		return new Subtraction(c, parameter1 == null ? null : parameter1.clone(c), parameter2 == null ? null : parameter2.clone(c));
 	}
 
 	@Override

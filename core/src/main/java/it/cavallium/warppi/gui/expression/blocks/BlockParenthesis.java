@@ -1,5 +1,6 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
+import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.parser.features.FeatureParenthesis;
@@ -12,6 +13,10 @@ public class BlockParenthesis extends BlockParenthesisAbstract {
 
 	public BlockParenthesis(final ObjectArrayList<Block> blocks) {
 		super(blocks);
+	}
+
+	private BlockParenthesis(BlockParenthesis old, InputContext ic) {
+		super(old, ic);
 	}
 
 	@Override
@@ -28,6 +33,11 @@ public class BlockParenthesis extends BlockParenthesisAbstract {
 	@Override
 	public int getInnerContainersCount() {
 		return 1;
+	}
+
+	@Override
+	public BlockParenthesis clone(InputContext ic) {
+		return new BlockParenthesis(this, ic);
 	}
 
 }

@@ -1,5 +1,7 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
+import java.util.Arrays;
+
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
@@ -43,6 +45,18 @@ public class BlockVariable extends Block {
 		recomputeDimensions();
 	}
 
+	private BlockVariable(BlockVariable old, InputContext ic) {
+		this.ic = ic;
+		this.ch = old.ch;
+		type = old.type;
+		color = old.color;
+		typeDirtyID = old.typeDirtyID;
+		this.typeLocked = old.typeLocked;
+		menu = old.menu == null ? null : new VariableMenu(old.menu, this);
+		retrieveValue();
+		recomputeDimensions();
+	}
+
 	private void retrieveValue() {
 		type = ic.variableTypes.get(ch);
 		if (type == null) {
@@ -53,7 +67,6 @@ public class BlockVariable extends Block {
 			menu.mustRefreshMenu = true;
 		}
 		mustRefresh = true;
-		System.out.println("retrieve:" + type.toString());
 	}
 
 	public void pushValue() {
@@ -145,7 +158,11 @@ public class BlockVariable extends Block {
 			super(var);
 		}
 
-		private static final long serialVersionUID = 3941994107852212764L;
+		private VariableMenu(VariableMenu old, BlockVariable newBlockVariable) {
+			super(old, newBlockVariable);
+			this.mustRefreshMenu = old.mustRefreshMenu;
+			this.text = new String(old.text);
+		}
 
 		@Override
 		public void open() {
@@ -250,6 +267,16 @@ public class BlockVariable extends Block {
 			r.glDrawStringCenter(popupX + width / 2, popupY + 2 + 5, text);
 		}
 
+		@Override
+		public VariableMenu clone(BlockVariable newBlockVariable) {
+			return new VariableMenu(this, newBlockVariable);
+		}
+
+		@Override
+		public VariableMenu clone(InputContext ic) {
+			return new VariableMenu(this, block.clone(ic));
+		}
+
 	}
 
 	@Override
@@ -265,5 +292,10 @@ public class BlockVariable extends Block {
 	@Override
 	public int getInnerContainersCount() {
 		return 0;
+	}
+
+	@Override
+	public BlockVariable clone(InputContext ic) {
+		return new BlockVariable(this, ic);
 	}
 }

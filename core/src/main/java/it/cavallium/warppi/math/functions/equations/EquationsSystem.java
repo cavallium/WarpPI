@@ -24,7 +24,20 @@ public class EquationsSystem extends FunctionDynamic {
 
 	@Override
 	public EquationsSystem clone() {
-		return new EquationsSystem(root, functions);
+		Function[] newFuncs = functions.clone();
+		for (int i = 0; i < newFuncs.length; i++) {
+			newFuncs[i] = newFuncs[i].clone();
+		}
+		return new EquationsSystem(root, newFuncs);
+	}
+
+	@Override
+	public EquationsSystem clone(MathContext c) {
+		Function[] newFuncs = new Function[this.functions.length];
+		for (int i = 0; i < newFuncs.length; i++) {
+			newFuncs[i] = this.functions[i] == null ? null : this.functions[i].clone(c);
+		}
+		return new EquationsSystem(c, newFuncs);
 	}
 
 	@Override

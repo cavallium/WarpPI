@@ -26,7 +26,12 @@ public class Negative extends FunctionSingle {
 
 	@Override
 	public Negative clone() {
-		return new Negative(mathContext, parameter);
+		return new Negative(mathContext, parameter == null ? null : parameter.clone());
+	}
+
+	@Override
+	public Negative clone(MathContext c) {
+		return new Negative(c, parameter == null ? null : parameter.clone(c));
 	}
 
 	@Override

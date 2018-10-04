@@ -26,7 +26,12 @@ public class Power extends FunctionOperator {
 
 	@Override
 	public Power clone() {
-		return new Power(mathContext, parameter1, parameter2);
+		return new Power(mathContext, parameter1 == null ? null : parameter1.clone(), parameter2 == null ? null : parameter2.clone());
+	}
+
+	@Override
+	public Power clone(MathContext c) {
+		return new Power(c, parameter1 == null ? null : parameter1.clone(c), parameter2 == null ? null : parameter2.clone(c));
 	}
 
 	@Override

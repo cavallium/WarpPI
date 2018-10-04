@@ -36,6 +36,11 @@ public class EmptyNumber implements Function {
 	}
 
 	@Override
+	public Function clone(MathContext c) {
+		return new EmptyNumber(c);
+	}
+
+	@Override
 	public Function setParameter(final int index, final Function var) throws IndexOutOfBoundsException {
 		throw new IndexOutOfBoundsException();
 	}

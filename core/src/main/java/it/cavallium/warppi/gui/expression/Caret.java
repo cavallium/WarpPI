@@ -1,8 +1,8 @@
 package it.cavallium.warppi.gui.expression;
 
-import java.io.Serializable;
+import java.util.Arrays;
 
-public class Caret implements Serializable {
+public class Caret {
 
 	private int pos;
 	private int remaining;
@@ -20,6 +20,18 @@ public class Caret implements Serializable {
 		remaining = pos;
 		this.lastLocation = lastLocation;
 		this.lastSize = lastSize;
+	}
+
+	/**
+	 * Copy
+	 * @param old
+	 */
+	public Caret(Caret old) {
+		this.pos = old.pos;
+		this.remaining = old.remaining;
+		this.state = old.state;
+		this.lastSize = Arrays.copyOf(old.lastSize, old.lastSize.length);
+		this.lastLocation = Arrays.copyOf(old.lastLocation, old.lastLocation.length);
 	}
 
 	public void skip(final int i) {

@@ -21,8 +21,6 @@ import it.cavallium.warppi.math.MathematicalSymbols;
 
 public class NormalInputContainer extends InputContainer {
 
-	private static final long serialVersionUID = 5236564695997222322L;
-
 	@Deprecated()
 	/**
 	 * Use NormalInputContainer(InputContext) instead
@@ -41,6 +39,16 @@ public class NormalInputContainer extends InputContainer {
 
 	public NormalInputContainer(final InputContext ic, final boolean small, final int minWidth, final int minHeight) {
 		super(ic, small, minWidth, minHeight);
+	}
+
+	/**
+	 * Copy
+	 * @param userInput
+	 * @param ic
+	 */
+	@SuppressWarnings("deprecation")
+	public NormalInputContainer(InputContainer old, InputContext ic) {
+		super(old, ic);
 	}
 
 	@Override

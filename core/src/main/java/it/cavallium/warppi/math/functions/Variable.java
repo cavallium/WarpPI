@@ -1,7 +1,5 @@
 package it.cavallium.warppi.math.functions;
 
-import java.io.Serializable;
-
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockChar;
 import it.cavallium.warppi.math.Function;
@@ -26,6 +24,17 @@ public class Variable implements Function {
 		this(root, s.charAt(0), type);
 	}
 
+	/**
+	 * Copy
+	 * @param old
+	 * @param root
+	 */
+	public Variable(Variable old, MathContext root) {
+		this.root = root;
+		this.type = old.type;
+		this.var = old.var;
+	}
+
 	public char getChar() {
 		return var;
 	}
@@ -47,14 +56,23 @@ public class Variable implements Function {
 		return "" + getChar();
 	}
 
-	public static class VariableValue implements Serializable {
-		private static final long serialVersionUID = -5656281021874324571L;
+	public static class VariableValue {
 		public final Variable v;
 		public final Number n;
 
 		public VariableValue(final Variable v, final Number n) {
 			this.v = v;
 			this.n = n;
+		}
+
+		/**
+		 * Copy
+		 * @param old
+		 * @param newContext
+		 */
+		public VariableValue(VariableValue old, MathContext newContext) {
+			this.v = new Variable(old.v, newContext);
+			this.n = new Number(old.n, newContext);
 		}
 	}
 
@@ -84,6 +102,11 @@ public class Variable implements Function {
 	@Override
 	public Variable clone() {
 		return new Variable(root, var, type);
+	}
+
+	@Override
+	public Variable clone(MathContext c) {
+		return new Variable(c, var, type);
 	}
 
 	public static enum V_TYPE {

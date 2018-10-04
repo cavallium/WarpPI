@@ -1,6 +1,7 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
 import it.cavallium.warppi.gui.expression.Caret;
+import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.math.Function;
@@ -17,6 +18,10 @@ public class BlockPower extends Block {
 	public BlockPower() {
 		containerExponent = new BlockContainer(this, true);
 		recomputeDimensions();
+	}
+
+	private BlockPower(BlockPower old, InputContext ic) {
+		this.containerExponent = old.containerExponent.clone(ic);
 	}
 
 	@Override
@@ -90,5 +95,10 @@ public class BlockPower extends Block {
 	@Override
 	public int getInnerContainersCount() {
 		return 1;
+	}
+
+	@Override
+	public BlockPower clone(InputContext ic) {
+		return new BlockPower(this, ic);
 	}
 }

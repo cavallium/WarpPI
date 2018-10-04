@@ -30,7 +30,12 @@ public class Sum extends FunctionOperator {
 
 	@Override
 	public Sum clone() {
-		return new Sum(mathContext, parameter1, parameter2);
+		return new Sum(mathContext, parameter1 == null ? parameter1 : parameter1.clone(), parameter2 == null ? null : parameter2.clone());
+	}
+
+	@Override
+	public Sum clone(MathContext c) {
+		return new Sum(c, parameter1 == null ? null : parameter1.clone(c), parameter2 == null ? null : parameter2.clone(c));
 	}
 
 	@Override

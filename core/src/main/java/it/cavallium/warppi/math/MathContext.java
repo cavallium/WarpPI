@@ -1,9 +1,5 @@
 package it.cavallium.warppi.math;
 
-import java.io.Serializable;
-
-import org.apache.commons.lang3.SerializationUtils;
-
 import it.cavallium.warppi.math.functions.Variable.VariableValue;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
@@ -11,7 +7,7 @@ import it.cavallium.warppi.math.rules.RulesManager;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-public class MathContext implements Serializable {
+public class MathContext {
 
 	public AngleMode angleMode = AngleMode.DEG;
 	public boolean exactMode = false;
@@ -25,6 +21,24 @@ public class MathContext implements Serializable {
 		f2 = new ObjectArrayList<>();
 		variablesValues = new ObjectArrayList<>();
 		resultsCount = 0;
+	}
+
+	public MathContext(MathContext calc) {
+		this.f = new ObjectArrayList<>();
+		this.f2 = new ObjectArrayList<>();
+		for (Function f : calc.f) {
+			f = f.clone(this);
+			this.f.add(f);
+		}
+		for (Function f : calc.f2) {
+			f = f.clone(this);
+			this.f2.add(f);
+		}
+		this.variablesValues = new ObjectArrayList<>();
+		for (VariableValue varVal : calc.variablesValues) {
+			this.variablesValues.add(new VariableValue(varVal, this));
+		}
+		this.resultsCount = calc.resultsCount;
 	}
 
 	@Deprecated

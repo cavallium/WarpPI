@@ -1,6 +1,7 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
 import it.cavallium.warppi.gui.expression.Caret;
+import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.math.Function;
@@ -23,6 +24,12 @@ public class BlockDivision extends Block {
 	public BlockDivision() {
 		containerUp = new BlockContainer(this, false);
 		containerDown = new BlockContainer(this, false);
+		recomputeDimensions();
+	}
+
+	private BlockDivision(BlockDivision old, InputContext ic) {
+		containerUp = old.containerUp.clone(ic);
+		containerDown = old.containerDown.clone(ic);
 		recomputeDimensions();
 	}
 
@@ -131,5 +138,10 @@ public class BlockDivision extends Block {
 	@Override
 	public int getInnerContainersCount() {
 		return 2;
+	}
+
+	@Override
+	public BlockDivision clone(InputContext ic) {
+		return new BlockDivision(this, ic);
 	}
 }

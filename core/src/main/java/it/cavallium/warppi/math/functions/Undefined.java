@@ -37,6 +37,11 @@ public class Undefined implements Function {
 	}
 
 	@Override
+	public Undefined clone(MathContext c) {
+		return new Undefined(c);
+	}
+
+	@Override
 	public Function setParameter(final int index, final Function var) throws IndexOutOfBoundsException {
 		throw new IndexOutOfBoundsException();
 	}

@@ -1,9 +1,12 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
+import java.util.Arrays;
+
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.gui.GraphicalElement;
 import it.cavallium.warppi.gui.expression.Caret;
 import it.cavallium.warppi.gui.expression.CaretState;
+import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
@@ -30,6 +33,11 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 	public final boolean withBorder;
 	private boolean autoMinimums;
 	private final TreeBlock parent;
+
+	public BlockContainer() {
+		this(null, false, BlockContainer.getDefaultCharWidth(false), BlockContainer.getDefaultCharHeight(false), true);
+		autoMinimums = true;
+	}
 
 	public BlockContainer(final TreeBlock parent) {
 		this(parent, false, BlockContainer.getDefaultCharWidth(false), BlockContainer.getDefaultCharHeight(false), true);
@@ -69,6 +77,26 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 		}
 		this.content = content;
 		recomputeDimensions();
+	}
+
+	private BlockContainer(BlockContainer old, InputContext ic) {
+		this.autoMinimums = old.autoMinimums;
+		this.content = new ObjectArrayList<>();
+		for (Block b : old.content) {
+			this.content.add(b.clone(ic));
+		}
+		this.height = old.height;
+		this.line = old.line;
+		this.minHeight = old.minHeight;
+		this.minWidth = old.minWidth;
+		this.parent = old.parent;
+		this.small = old.small;
+		this.width = old.width;
+		this.withBorder = old.withBorder;
+	}
+	
+	public BlockContainer clone(InputContext ic) {
+		return new BlockContainer(this, ic);
 	}
 
 	@Override

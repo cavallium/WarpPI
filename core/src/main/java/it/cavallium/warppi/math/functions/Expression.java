@@ -610,7 +610,12 @@ public class Expression extends FunctionSingle {
 
 	@Override
 	public Expression clone() {
-		return new Expression(mathContext, parameter);
+		return new Expression(mathContext, parameter == null ? null : parameter.clone());
+	}
+
+	@Override
+	public Expression clone(MathContext newContext) {
+		return new Expression(newContext, parameter == null ? null : parameter.clone(newContext));
 	}
 
 }

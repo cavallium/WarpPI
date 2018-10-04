@@ -1,7 +1,5 @@
 package it.cavallium.warppi.gui.expression.containers;
 
-import java.io.Serializable;
-
 import it.cavallium.warppi.gui.GraphicalElement;
 import it.cavallium.warppi.gui.expression.Caret;
 import it.cavallium.warppi.gui.expression.CaretState;
@@ -12,14 +10,14 @@ import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-public abstract class OutputContainer implements GraphicalElement, OutputLayout, Serializable {
+public abstract class OutputContainer implements GraphicalElement, OutputLayout {
 	private static final long serialVersionUID = -5714825964892683571L;
 	public final ObjectArrayList<BlockContainer> roots;
 	private final Caret caret = new Caret(CaretState.HIDDEN, 0);
 
 	public OutputContainer() {
 		roots = new ObjectArrayList<>();
-		roots.add(new BlockContainer(null));
+		roots.add(new BlockContainer());
 	}
 
 	public OutputContainer(final boolean small) {
@@ -34,7 +32,7 @@ public abstract class OutputContainer implements GraphicalElement, OutputLayout,
 
 	public void setContentAsSingleGroup(final ObjectArrayList<Block> blocks) {
 		roots.clear();
-		final BlockContainer bcnt = new BlockContainer(null);
+		final BlockContainer bcnt = new BlockContainer();
 		for (final Block block : blocks) {
 			bcnt.appendBlockUnsafe(block);
 		}
@@ -45,7 +43,7 @@ public abstract class OutputContainer implements GraphicalElement, OutputLayout,
 	public void setContentAsMultipleGroups(final ObjectArrayList<ObjectArrayList<Block>> roots) {
 		this.roots.clear();
 		for (final ObjectArrayList<Block> blocks : roots) {
-			final BlockContainer bcnt = new BlockContainer(null);
+			final BlockContainer bcnt = new BlockContainer();
 			for (final Block block : blocks) {
 				bcnt.appendBlockUnsafe(block);
 			}
@@ -57,7 +55,7 @@ public abstract class OutputContainer implements GraphicalElement, OutputLayout,
 	public void setContentAsMultipleElements(final ObjectArrayList<Block> elems) {
 		roots.clear();
 		for (final Block block : elems) {
-			final BlockContainer bcnt = new BlockContainer(null);
+			final BlockContainer bcnt = new BlockContainer();
 			bcnt.appendBlockUnsafe(block);
 			roots.add(bcnt);
 		}
@@ -131,7 +129,7 @@ public abstract class OutputContainer implements GraphicalElement, OutputLayout,
 
 	public void clear() {
 		roots.clear();
-		roots.add(new BlockContainer(null));
+		roots.add(new BlockContainer());
 		recomputeDimensions();
 	}
 

@@ -26,7 +26,12 @@ public class Logarithm extends FunctionOperator {
 
 	@Override
 	public Logarithm clone() {
-		return new Logarithm(mathContext, parameter1, parameter2);
+		return new Logarithm(mathContext, parameter1 == null ? null : parameter1.clone(), parameter2 == null ? null : parameter2.clone());
+	}
+	
+	@Override
+	public Logarithm clone(MathContext c) {
+		return new Logarithm(c, parameter1 == null ? null : parameter1.clone(c), parameter2 == null ? null : parameter2.clone(c));
 	}
 
 	@Override

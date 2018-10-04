@@ -1,7 +1,5 @@
 package it.cavallium.warppi.gui.screens;
 
-import java.io.Serializable;
-
 import it.cavallium.warppi.event.KeyboardEventListener;
 import it.cavallium.warppi.event.TouchEventListener;
 import it.cavallium.warppi.gui.DisplayManager;

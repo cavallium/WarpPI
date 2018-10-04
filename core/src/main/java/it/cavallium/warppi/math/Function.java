@@ -1,13 +1,11 @@
 package it.cavallium.warppi.math;
 
-import java.io.Serializable;
-
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-public interface Function extends Serializable {
+public interface Function {
 
 	/**
 	 * Returns this function and its children in a string form.
@@ -26,6 +24,14 @@ public interface Function extends Serializable {
 	 * @return A clone of this function.
 	 */
 	Function clone();
+
+	/**
+	 * Deep clone this function, also change mathContext.
+	 *
+	 * @param mathContext new mathContext
+	 * @return A clone of this function.
+	 */
+	Function clone(MathContext newMathContext);
 
 	/**
 	 * Generic method to change a parameter in a known position.
@@ -53,7 +59,7 @@ public interface Function extends Serializable {
 	 * @return Calculator mathContext
 	 */
 	MathContext getMathContext();
-
+	
 	/**
 	 * Simplify the current function or it's children using the specified
 	 * <b>rule</b>

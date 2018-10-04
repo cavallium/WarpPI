@@ -20,7 +20,12 @@ public class EquationsSystemPart extends FunctionSingle {
 
 	@Override
 	public EquationsSystemPart clone() {
-		return new EquationsSystemPart(mathContext, (Equation) parameter);
+		return new EquationsSystemPart(mathContext, (Equation) (parameter == null ? null : parameter.clone()));
+	}
+
+	@Override
+	public EquationsSystemPart clone(MathContext c) {
+		return new EquationsSystemPart(c, (Equation) (parameter == null ? null : parameter.clone(c)));
 	}
 
 	@Override

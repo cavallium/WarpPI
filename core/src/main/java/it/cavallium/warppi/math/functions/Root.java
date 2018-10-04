@@ -25,7 +25,12 @@ public class Root extends FunctionOperator {
 
 	@Override
 	public Root clone() {
-		return new Root(mathContext, parameter1, parameter2);
+		return new Root(mathContext, parameter1 == null ? null : parameter1.clone(), parameter2 == null ? null : parameter2.clone());
+	}
+
+	@Override
+	public Root clone(MathContext c) {
+		return new Root(c, parameter1 == null ? null : parameter1.clone(c), parameter2 == null ? null : parameter2.clone(c));
 	}
 
 	@Override

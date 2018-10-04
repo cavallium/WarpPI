@@ -63,6 +63,24 @@ public class MathInputScreen extends Screen {
 		canBeInHistory = true;
 	}
 
+	/**
+	 * Create a copy of this element
+	 * @param mathInputScreen
+	 */
+	private MathInputScreen(MathInputScreen old) {
+		this.calc = new MathContext(old.calc);
+		this.canBeInHistory = old.canBeInHistory;
+		this.created = old.created;
+		this.currentStep = old.currentStep;
+		this.d = old.d;
+		this.errorLevel = old.errorLevel;
+		this.ic = new InputContext(old.ic);
+		this.initialized = old.initialized;
+		this.mustRefresh = old.mustRefresh;
+		this.result = new NormalOutputContainer(old.result);
+		this.userInput = new NormalInputContainer(old.userInput, this.ic);
+	}
+
 	@Override
 	public void created() throws InterruptedException {
 		ic = new InputContext();
@@ -471,19 +489,7 @@ public class MathInputScreen extends Screen {
 
 	@SuppressWarnings("unchecked")
 	private void swapInputScreen() {
-		MathInputScreen mis = new MathInputScreen();
-		mis.calc = SerializationUtils.clone(calc);
-		mis.canBeInHistory = true;
-		mis.currentStep = currentStep;
-		mis.created = created;
-		mis.d = d;
-		mis.errorLevel = errorLevel;
-		mis.ic = SerializationUtils.clone(ic);
-		mis.initialized = initialized;
-		mis.mustRefresh = true;
-		mis.result = SerializationUtils.clone(result);
-		mis.userInput = SerializationUtils.clone(userInput);
-		mis.d = d;
+		MathInputScreen mis = new MathInputScreen(this);
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(mis);
 	}
 

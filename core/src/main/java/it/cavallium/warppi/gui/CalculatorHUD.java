@@ -137,6 +137,8 @@ public class CalculatorHUD extends HUD {
 					currentDebugLine++;
 				}
 			}
+			r.glColor(0xFF000000);
+			r.glDrawStringLeft(5, StaticVars.screenSize[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "DEBUG ENABLED");
 		}
 	}
 

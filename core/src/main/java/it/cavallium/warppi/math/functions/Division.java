@@ -26,7 +26,12 @@ public class Division extends FunctionOperator {
 
 	@Override
 	public FunctionOperator clone() {
-		return new Division(getMathContext(), getParameter1(), getParameter2());
+		return new Division(getMathContext(), getParameter1() == null ? null : getParameter1().clone(), getParameter2() == null ? null : getParameter2().clone());
+	}
+
+	@Override
+	public FunctionOperator clone(MathContext c) {
+		return new Division(c, getParameter1() == null ? null : getParameter1().clone(c), getParameter2() == null ? null : getParameter2().clone(c));
 	}
 
 	@Override

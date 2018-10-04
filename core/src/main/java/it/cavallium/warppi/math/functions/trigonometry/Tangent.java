@@ -26,6 +26,12 @@ public class Tangent extends FunctionSingle {
 	}
 
 	@Override
+	public FunctionSingle clone(MathContext c) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
 		// TODO Auto-generated method stub
 		return null;

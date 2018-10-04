@@ -1,8 +1,6 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
-import java.io.Serializable;
-
-public interface TreeBlock extends Serializable {
+public interface TreeBlock {
 	TreeContainer getParentContainer();
 
 	boolean hasParent();

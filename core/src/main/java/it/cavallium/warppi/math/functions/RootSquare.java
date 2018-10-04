@@ -26,7 +26,12 @@ public class RootSquare extends FunctionOperator {
 
 	@Override
 	public RootSquare clone() {
-		return new RootSquare(mathContext, parameter2);
+		return new RootSquare(mathContext, parameter2 == null ? null : parameter2.clone());
+	}
+
+	@Override
+	public RootSquare clone(MathContext c) {
+		return new RootSquare(c, parameter2 == null ? null : parameter2.clone(c));
 	}
 
 	@Override

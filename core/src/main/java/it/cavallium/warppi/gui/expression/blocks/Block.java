@@ -3,6 +3,7 @@ package it.cavallium.warppi.gui.expression.blocks;
 import it.cavallium.warppi.gui.GraphicalElement;
 import it.cavallium.warppi.gui.expression.Caret;
 import it.cavallium.warppi.gui.expression.ExtraMenu;
+import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.math.MathContext;
@@ -93,4 +94,6 @@ public abstract class Block implements TreeBlock, GraphicalElement {
 	public void setParent(final TreeContainer parent) {
 		this.parent = parent;
 	}
+	
+	public abstract Block clone(InputContext ic);
 }

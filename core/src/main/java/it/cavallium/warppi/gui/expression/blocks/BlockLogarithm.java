@@ -1,6 +1,7 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
 import it.cavallium.warppi.gui.expression.Caret;
+import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.math.Function;
@@ -36,6 +37,12 @@ public class BlockLogarithm extends Block implements IParenthesis {
 	public BlockLogarithm(final ObjectArrayList<Block> blocks) {
 		containerBase = new BlockContainer(this, true);
 		containerNumber = new BlockContainer(this, false, blocks);
+		recomputeDimensions();
+	}
+
+	private BlockLogarithm(BlockLogarithm old, InputContext ic) {
+		containerBase = old.containerBase.clone(ic);
+		containerNumber = old.containerNumber.clone(ic);
 		recomputeDimensions();
 	}
 
@@ -169,6 +176,11 @@ public class BlockLogarithm extends Block implements IParenthesis {
 	@Override
 	public int getInnerContainersCount() {
 		return 2;
+	}
+
+	@Override
+	public BlockLogarithm clone(InputContext ic) {
+		return new BlockLogarithm(this, ic);
 	}
 
 }

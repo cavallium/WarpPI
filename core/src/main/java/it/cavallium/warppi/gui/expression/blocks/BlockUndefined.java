@@ -1,6 +1,7 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
 import it.cavallium.warppi.gui.expression.Caret;
+import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.math.MathContext;
@@ -12,6 +13,10 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 public class BlockUndefined extends Block {
 
 	public BlockUndefined() {
+		recomputeDimensions();
+	}
+
+	private BlockUndefined(BlockUndefined old, InputContext ic) {
 		recomputeDimensions();
 	}
 
@@ -68,6 +73,11 @@ public class BlockUndefined extends Block {
 	@Override
 	public int getInnerContainersCount() {
 		return 0;
+	}
+
+	@Override
+	public BlockUndefined clone(InputContext ic) {
+		return new BlockUndefined(this, ic);
 	}
 
 }

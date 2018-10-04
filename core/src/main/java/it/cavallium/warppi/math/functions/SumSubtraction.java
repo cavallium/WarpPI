@@ -26,7 +26,12 @@ public class SumSubtraction extends FunctionOperator {
 
 	@Override
 	public SumSubtraction clone() {
-		return new SumSubtraction(mathContext, parameter1, parameter2);
+		return new SumSubtraction(mathContext, parameter1 == null ? null : parameter1.clone(), parameter2 == null ? null : parameter2.clone());
+	}
+
+	@Override
+	public SumSubtraction clone(MathContext c) {
+		return new SumSubtraction(c, parameter1 == null ? null : parameter1.clone(c), parameter2 == null ? null : parameter2.clone(c));
 	}
 
 	@Override

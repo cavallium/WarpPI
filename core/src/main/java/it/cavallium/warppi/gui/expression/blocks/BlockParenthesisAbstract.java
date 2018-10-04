@@ -1,6 +1,7 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
 import it.cavallium.warppi.gui.expression.Caret;
+import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.math.MathContext;
@@ -27,6 +28,12 @@ public abstract class BlockParenthesisAbstract extends Block implements IParenth
 	public BlockParenthesisAbstract() {
 		containerNumber = new BlockContainer(this, false);
 		prefix = null;
+		recomputeDimensions();
+	}
+
+	BlockParenthesisAbstract(BlockParenthesisAbstract old, InputContext ic) {
+		containerNumber = old.containerNumber.clone(ic);
+		prefix = old.prefix == null ? null : new String(old.prefix);
 		recomputeDimensions();
 	}
 

@@ -35,7 +35,12 @@ public class Multiplication extends FunctionOperator {
 
 	@Override
 	public Multiplication clone() {
-		return new Multiplication(mathContext, parameter1, parameter2);
+		return new Multiplication(mathContext, parameter1 == null ? null : parameter1.clone(), parameter2 == null ? null : parameter2.clone());
+	}
+
+	@Override
+	public Multiplication clone(MathContext c) {
+		return new Multiplication(c, parameter1 == null ? null : parameter1.clone(c), parameter2 == null ? null : parameter2.clone(c));
 	}
 
 	@Override
@@ -66,7 +71,7 @@ public class Multiplication extends FunctionOperator {
 			} else {
 				result.addAll(sub1);
 			}
-			if (nearLeft instanceof BlockChar && nearRight instanceof BlockChar && !(par2 instanceof Negative) && !(par1 instanceof Number && par2 instanceof Number)) {
+			if (nearLeft instanceof BlockChar && nearRight instanceof BlockChar && !(par2 instanceof Negative) && !(par1 instanceof Number && par2 instanceof Number) && !(par1 instanceof Number && par2 instanceof Multiplication && ((Multiplication)par2).getParameter1() instanceof Number)) {
 
 			} else {
 				result.add(new BlockChar(MathematicalSymbols.MULTIPLICATION));

@@ -1,7 +1,5 @@
 package it.cavallium.warppi.gui.expression.containers;
 
-import java.io.Serializable;
-
 import it.cavallium.warppi.event.KeyboardEventListener;
 import it.cavallium.warppi.gui.GraphicalElement;
 import it.cavallium.warppi.gui.expression.Caret;
@@ -19,9 +17,9 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-public abstract class InputContainer implements GraphicalElement, InputLayout, Serializable {
+public abstract class InputContainer implements GraphicalElement, InputLayout {
 	private static final long serialVersionUID = 923589369317765667L;
-	protected final BlockContainer root;
+	protected BlockContainer root;
 	protected Caret caret;
 	private static final float CARET_DURATION = 0.5f;
 	private float caretTime;
@@ -54,6 +52,21 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 		inputContext = ic;
 		caret = new Caret(CaretState.VISIBLE_ON, 0);
 		root = new BlockContainer(null, small, false);
+	}
+	
+	/**
+	 * Copy
+	 * @param old
+	 * @param ic
+	 */
+	protected InputContainer(InputContainer old, InputContext ic) {
+		this.caretTime = old.caretTime;
+		this.extra = old.extra == null ? null : old.extra.clone(ic);
+		this.maxPosition = old.maxPosition;
+		this.caret = old.caret == null ? null : new Caret(old.caret);
+		this.inputContext = ic;
+		this.root = old.root == null ? null : old.root.clone(ic);
+		this.parsed = old.parsed;
 	}
 
 	public void typeChar(final char c) {
@@ -117,6 +130,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout, S
 	}
 
 	public void moveRight(final int delta) {
+		
 		final int curPos = caret.getPosition();
 		if (curPos + delta < maxPosition) {
 			caret.setPosition(curPos + delta);

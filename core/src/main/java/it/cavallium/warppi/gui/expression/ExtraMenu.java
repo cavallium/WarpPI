@@ -1,13 +1,14 @@
 package it.cavallium.warppi.gui.expression;
 
-import java.io.Serializable;
+import java.util.Arrays;
 
 import it.cavallium.warppi.event.KeyboardEventListener;
 import it.cavallium.warppi.gui.expression.blocks.Block;
+import it.cavallium.warppi.gui.expression.blocks.BlockVariable;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 
-public abstract class ExtraMenu<T extends Block> implements Serializable, KeyboardEventListener {
+public abstract class ExtraMenu<T extends Block> implements KeyboardEventListener {
 
 	private static final long serialVersionUID = -6944683477814944299L;
 
@@ -16,6 +17,13 @@ public abstract class ExtraMenu<T extends Block> implements Serializable, Keyboa
 		this.location = new int[] { 0, 0 };
 		this.width = 0;
 		this.height = 0;
+	}
+
+	public ExtraMenu(final ExtraMenu<T> old, final T newBlock) {
+		this.block = newBlock;
+		this.location = Arrays.copyOf(old.location, old.location.length);
+		this.width = old.width;
+		this.height = old.height;
 	}
 
 	public final T block;
@@ -36,5 +44,9 @@ public abstract class ExtraMenu<T extends Block> implements Serializable, Keyboa
 		location[1] = l[1] + cs[1];
 		return false;
 	}
+
+	public abstract ExtraMenu<T> clone(InputContext ic);
+
+	public abstract ExtraMenu<T> clone(T newBlockVariable);
 
 }

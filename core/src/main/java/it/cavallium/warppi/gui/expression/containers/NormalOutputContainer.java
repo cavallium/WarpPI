@@ -1,8 +1,9 @@
 package it.cavallium.warppi.gui.expression.containers;
 
-public class NormalOutputContainer extends OutputContainer {
+import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-	private static final long serialVersionUID = 5087850494875415142L;
+public class NormalOutputContainer extends OutputContainer {
 
 	public NormalOutputContainer() {
 		super();
@@ -14,5 +15,10 @@ public class NormalOutputContainer extends OutputContainer {
 
 	public NormalOutputContainer(final boolean small, final int minWidth, final int minHeight) {
 		super(small, minWidth, minHeight);
+	}
+
+	public NormalOutputContainer(OutputContainer old) {
+		super.roots.clear();
+		super.roots.addAll(old.roots.clone());
 	}
 }

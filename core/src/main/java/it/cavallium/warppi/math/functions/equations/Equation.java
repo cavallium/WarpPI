@@ -48,7 +48,12 @@ public class Equation extends FunctionOperator {
 
 	@Override
 	public Equation clone() {
-		return new Equation(mathContext, parameter1, parameter2);
+		return new Equation(mathContext, parameter1 == null ? null : parameter1.clone(), parameter2 == null ? null : parameter2.clone());
+	}
+
+	@Override
+	public Equation clone(MathContext c) {
+		return new Equation(c, parameter1 == null ? null : parameter1.clone(c), parameter2 == null ? null : parameter2.clone(c));
 	}
 
 	@Override

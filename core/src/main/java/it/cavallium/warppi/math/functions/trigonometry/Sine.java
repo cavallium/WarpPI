@@ -28,7 +28,12 @@ public class Sine extends FunctionSingle {
 
 	@Override
 	public Sine clone() {
-		return new Sine(mathContext, parameter);
+		return new Sine(mathContext, parameter == null ? null : parameter.clone());
+	}
+
+	@Override
+	public Sine clone(MathContext c) {
+		return new Sine(c, parameter == null ? null : parameter.clone(c));
 	}
 
 	@Override

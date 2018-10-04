@@ -49,6 +49,16 @@ public class Number implements Function {
 		this(root, BigDecimal.valueOf(s).setScale(Utils.scale, Utils.scaleMode2));
 	}
 
+	/**
+	 * Copy
+	 * @param n
+	 * @param newContext
+	 */
+	public Number(Number old, MathContext newContext) {
+		this.root = newContext;
+		this.term = old.term;
+	}
+
 	public BigDecimal getTerm() {
 		return term;
 	}
@@ -115,6 +125,11 @@ public class Number implements Function {
 	@Override
 	public Number clone() {
 		return new Number(root, term);
+	}
+
+	@Override
+	public Number clone(MathContext c) {
+		return new Number(c, term);
 	}
 
 	@Override

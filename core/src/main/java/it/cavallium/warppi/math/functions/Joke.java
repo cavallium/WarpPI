@@ -41,6 +41,11 @@ public class Joke implements Function {
 	}
 
 	@Override
+	public Function clone(MathContext c) {
+		return new Joke(c, joke);
+	}
+
+	@Override
 	public Function setParameter(final int index, final Function var) throws IndexOutOfBoundsException {
 		throw new IndexOutOfBoundsException();
 	}
