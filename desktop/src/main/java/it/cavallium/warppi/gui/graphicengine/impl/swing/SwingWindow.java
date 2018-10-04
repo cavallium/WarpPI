@@ -104,7 +104,7 @@ public class SwingWindow extends JFrame {
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
-				onResize.onNext(new Integer[] { c.getWidth(), c.getHeight() });
+				onResize.onNext(new Integer[] { c.getWidth() / mult, c.getHeight() / mult });
 			}
 
 			@Override
