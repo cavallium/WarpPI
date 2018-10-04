@@ -52,23 +52,23 @@ public class MarioScreen extends Screen {
 			}
 			if (MarioScreen.gpuTest2 == null) {
 				try {
-					MarioScreen.gpuTest2 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("/gputest2");
+					MarioScreen.gpuTest2 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("N:\\gputest\\gputest2");
 				} catch (final Exception ex) {}
 			}
 			if (MarioScreen.gpuTest1 == null) {
 				try {
-					MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("/gputest12");
+					MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("N:\\gputest\\gputest12");
 					MarioScreen.gpuTest12 = true;
 				} catch (final Exception ex) {
 					MarioScreen.gpuTest12 = false;
 					try {
-						MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("gputest1");
+						MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("N:\\gputest\\gputest1");
 					} catch (final Exception ex2) {}
 				}
 			}
 			if (MarioScreen.gpuTest3 == null) {
 				try {
-					MarioScreen.gpuTest3 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("font_gputest3.png");
+					MarioScreen.gpuTest3 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("N:\\gputest\\font_gputest3.png");
 				} catch (final Exception ex) {
 					ex.printStackTrace();
 				}
