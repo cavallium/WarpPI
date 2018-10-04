@@ -219,18 +219,22 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 			final int deltaCaret = caret.getRemaining();
 			removed = removed | b.delBlock(caret);
 			if (caret.getRemaining() == 0 || removed == false && deltaCaret >= 0 && caret.getRemaining() < 0) {
-				ObjectArrayList<Block> blocks = this.getBlockAt(pos - 1).get().getAllInnerBlocks();
+				ObjectArrayList<Block> blocks = this.getBlockAt(pos - 1).get().getInnerBlocks();
+				int innerContainersCount = this.getBlockAt(pos - 1).get().getInnerContainersCount();
+				if (innerContainersCount > 0) {
+					innerContainersCount--;
+				}
 				removeAt(pos - 1);
-				caret.setPosition(caret.getPosition() - deltaCaret);
 				if (blocks != null) {
 					ObjectListIterator<Block> blocksIterator = blocks.iterator();
 					int blockNum = 0;
 					while (blocksIterator.hasNext()) {
 						Block block = blocksIterator.next();
-						addBlockUnsafe(pos - 1+blockNum, block);
+						addBlockUnsafe(pos - 1 + blockNum, block);
 						blockNum++;
 					}
 				}
+				caret.setPosition(caret.getPosition() - innerContainersCount);
 				removed = true;
 			}
 		}

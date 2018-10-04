@@ -117,8 +117,13 @@ public abstract class BlockParenthesisAbstract extends Block implements IParenth
 
 
 	@Override
-	public ObjectArrayList<Block> getAllInnerBlocks() {
+	public ObjectArrayList<Block> getInnerBlocks() {
 		return containerNumber.getContent();
+	}
+
+	@Override
+	public int getInnerContainersCount() {
+		return 1;
 	}
 	
 }

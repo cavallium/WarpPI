@@ -122,9 +122,14 @@ public class BlockDivision extends Block {
 	}
 
 	@Override
-	public ObjectArrayList<Block> getAllInnerBlocks() {
+	public ObjectArrayList<Block> getInnerBlocks() {
 		ObjectArrayList<Block> output = containerUp.getContent();
 		output.addAll(containerDown.getContent());
 		return output;
+	}
+
+	@Override
+	public int getInnerContainersCount() {
+		return 2;
 	}
 }

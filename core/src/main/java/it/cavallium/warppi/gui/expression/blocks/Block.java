@@ -40,8 +40,10 @@ public abstract class Block implements TreeBlock, GraphicalElement {
 	 * Used only to get inner blocks when deleting the parent block.
 	 * @return every block of every inner container, or null if empty
 	 */
-	public abstract ObjectArrayList<Block> getAllInnerBlocks();
+	public abstract ObjectArrayList<Block> getInnerBlocks();
 
+	public abstract int getInnerContainersCount();
+	
 	@Override
 	public abstract void recomputeDimensions();
 

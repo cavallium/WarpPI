@@ -258,7 +258,12 @@ public class BlockVariable extends Block {
 	}
 
 	@Override
-	public ObjectArrayList<Block> getAllInnerBlocks() {
+	public ObjectArrayList<Block> getInnerBlocks() {
 		return null;
+	}
+
+	@Override
+	public int getInnerContainersCount() {
+		return 0;
 	}
 }

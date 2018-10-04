@@ -89,7 +89,12 @@ public class BlockPower2 extends Block {
 	}
 
 	@Override
-	public ObjectArrayList<Block> getAllInnerBlocks() {
+	public ObjectArrayList<Block> getInnerBlocks() {
 		return containerExponent.getContent();
+	}
+
+	@Override
+	public int getInnerContainersCount() {
+		return 1;
 	}
 }

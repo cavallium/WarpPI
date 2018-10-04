@@ -161,10 +161,15 @@ public class BlockLogarithm extends Block implements IParenthesis {
 	}
 
 	@Override
-	public ObjectArrayList<Block> getAllInnerBlocks() {
+	public ObjectArrayList<Block> getInnerBlocks() {
 		ObjectArrayList<Block> output = containerBase.getContent();
 		output.addAll(containerNumber.getContent());
 		return output;
+	}
+
+	@Override
+	public int getInnerContainersCount() {
+		return 2;
 	}
 
 }
