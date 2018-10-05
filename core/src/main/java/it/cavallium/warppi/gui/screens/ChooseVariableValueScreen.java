@@ -3,6 +3,7 @@ package it.cavallium.warppi.gui.screens;
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.event.KeyPressedEvent;
+import it.cavallium.warppi.gui.HistoryBehavior;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.functions.Variable.VariableValue;
 import it.cavallium.warppi.util.Utils;
@@ -15,7 +16,7 @@ public class ChooseVariableValueScreen extends Screen {
 
 	public ChooseVariableValueScreen(final MathInputScreen es, final VariableValue variableValue) {
 		super();
-		canBeInHistory = false;
+		historyBehavior = HistoryBehavior.DONT_KEEP_IN_HISTORY;
 
 		this.es = es;
 	}

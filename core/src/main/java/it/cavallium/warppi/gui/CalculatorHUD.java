@@ -112,7 +112,7 @@ public class CalculatorHUD extends HUD {
 				allSessions.add(0, session);
 			}
 			Screen curScreen = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
-			if (curScreen.canBeInHistory == false) {
+			if (curScreen.historyBehavior == HistoryBehavior.DONT_KEEP_IN_HISTORY) {
 				allSessions.add(curScreen);
 			}
 			
@@ -121,8 +121,10 @@ public class CalculatorHUD extends HUD {
 					String title = session.getSessionTitle();
 					if (title != null && title.length() > 0) {
 						Utils.getFont(true).use(engine);
-						if (session.canBeInHistory == false) {
+						if (session.historyBehavior == HistoryBehavior.DONT_KEEP_IN_HISTORY) {
 							r.glColor(0xFF3333FF);
+						} else if (session.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
+							r.glColor(0xFFFF33FF);
 						} else {
 							r.glColor(0xFF990000);
 						}

@@ -4,12 +4,13 @@ import it.cavallium.warppi.event.KeyboardEventListener;
 import it.cavallium.warppi.event.TouchEventListener;
 import it.cavallium.warppi.gui.DisplayManager;
 import it.cavallium.warppi.gui.GraphicalInterface;
+import it.cavallium.warppi.gui.HistoryBehavior;
 
 public abstract class Screen implements KeyboardEventListener, TouchEventListener, GraphicalInterface {
 	public DisplayManager d;
 	public boolean created = false;
 	public boolean initialized = false;
-	public boolean canBeInHistory = false;
+	public HistoryBehavior historyBehavior = HistoryBehavior.NORMAL;
 	
 	public static long lastDebugScreenID = 1;
 	public final long debugScreenID;

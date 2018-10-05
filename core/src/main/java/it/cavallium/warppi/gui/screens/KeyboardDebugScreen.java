@@ -4,6 +4,7 @@ import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
+import it.cavallium.warppi.gui.HistoryBehavior;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 
 public class KeyboardDebugScreen extends Screen {
@@ -17,7 +18,7 @@ public class KeyboardDebugScreen extends Screen {
 
 	public KeyboardDebugScreen() {
 		super();
-		canBeInHistory = false;
+		historyBehavior = HistoryBehavior.DONT_KEEP_IN_HISTORY;
 	}
 
 	@Override

@@ -11,9 +11,9 @@ import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.event.KeyboardEventListener;
+import it.cavallium.warppi.extra.mario.MarioScreen;
 import it.cavallium.warppi.gui.GUIErrorMessage;
 import it.cavallium.warppi.gui.screens.KeyboardDebugScreen;
-import it.cavallium.warppi.gui.screens.MarioScreen;
 import it.cavallium.warppi.gui.screens.Screen;
 
 public class Keyboard {
@@ -921,6 +921,11 @@ public class Keyboard {
 						break;
 					case HISTORY_FORWARD:
 						Engine.INSTANCE.getHardwareDevice().getDisplayManager().goForward();
+						refresh = true;
+						break;
+					case BACK:
+						Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Closing current screen.");
+						Engine.INSTANCE.getHardwareDevice().getDisplayManager().closeScreen();
 						refresh = true;
 						break;
 					default:

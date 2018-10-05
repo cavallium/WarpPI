@@ -2,6 +2,7 @@ package it.cavallium.warppi.gui;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -165,6 +166,31 @@ public final class DisplayManager implements RenderingLoop {
 		throw new UnsupportedOperationException("No graphic engines available.");
 	}
 
+
+
+	public void closeScreen() {
+		boolean isLastSession = sessions[1] == null;
+		if (!isLastSession) {
+			if (currentSession >= 0) {
+				List<Screen> newSessions = new LinkedList<>();
+				int i = 0;
+				for (Screen s : sessions) {
+					if (i != currentSession && s != null) {
+						newSessions.add(s);
+					}
+					i++;
+				}
+				sessions = newSessions.toArray(new Screen[5]);
+				if (currentSession >= newSessions.size()) {
+					currentSession--;
+				}
+			} else {
+				currentSession = 0;
+			}
+			updateCurrentScreen(sessions[currentSession]);	
+		}
+	}
+	
 	public void setScreen(final Screen screen) {
 		boolean mustBeAddedToHistory = screen.initialized == false;
 		if (!mustBeAddedToHistory) {
@@ -175,12 +201,30 @@ public final class DisplayManager implements RenderingLoop {
 			mustBeAddedToHistory |= !found;
 		}
 		if (mustBeAddedToHistory) {
-			if (screen.canBeInHistory) {
+			if (screen.historyBehavior == HistoryBehavior.NORMAL || screen.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
 				if (currentSession > 0) {
-					final int sl = sessions.length + 5; //TODO: I don't know why if i don't add +5 or more some items disappear
-					sessions = Arrays.copyOfRange(sessions, currentSession, sl);
+					final int sl = sessions.length; //TODO: I don't know why if i don't add +5 or more some items disappear
+					List<Screen> newSessions = new LinkedList<>();
+					int i = 0;
+					for (Screen s : sessions) {
+						if (s != null) {
+							if (i < currentSession) {
+								if (s.historyBehavior != HistoryBehavior.DONT_KEEP_IN_HISTORY)
+									newSessions.add(s);
+							} else {
+								if (s.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
+									newSessions.add(s);
+								}
+							}
+						}
+						i++;
+					}
+					sessions = newSessions.toArray(new Screen[5]);
+					currentSession = newSessions.indexOf(screen);
+//					sessions = Arrays.copyOfRange(sessions, currentSession, sl);
+				} else {
+					currentSession = 0;
 				}
-				currentSession = 0;
 				for (int i = sessions.length - 1; i >= 1; i--) {
 					sessions[i] = sessions[i - 1];
 				}
@@ -189,6 +233,10 @@ public final class DisplayManager implements RenderingLoop {
 				currentSession = -1;
 			}
 		}
+		updateCurrentScreen(screen);
+	}
+
+	private void updateCurrentScreen(Screen screen) {
 		screen.d = this;
 		try {
 			if (screen.created == false) {
@@ -207,7 +255,7 @@ public final class DisplayManager implements RenderingLoop {
 
 	public void replaceScreen(final Screen screen) {
 		if (screen.initialized == false) {
-			if (screen.canBeInHistory) {
+			if (screen.historyBehavior == HistoryBehavior.NORMAL || screen.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
 				sessions[currentSession] = screen;
 			} else {
 				currentSession = -1;
@@ -231,7 +279,7 @@ public final class DisplayManager implements RenderingLoop {
 	}
 
 	public boolean canGoBack() {
-		if (currentSession == -1) {
+		if (currentSession <= -1) {
 			return sessions[0] != null;
 		}
 		if (screen != sessions[currentSession]) {

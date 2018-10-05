@@ -3,6 +3,7 @@ package it.cavallium.warppi.gui.screens;
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.gui.GraphicUtils;
+import it.cavallium.warppi.gui.HistoryBehavior;
 
 public class LoadingScreen extends Screen {
 
@@ -15,7 +16,7 @@ public class LoadingScreen extends Screen {
 
 	public LoadingScreen() {
 		super();
-		canBeInHistory = false;
+		historyBehavior = HistoryBehavior.DONT_KEEP_IN_HISTORY;
 	}
 
 	@Override

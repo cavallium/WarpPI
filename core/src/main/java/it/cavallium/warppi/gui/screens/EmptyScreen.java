@@ -1,12 +1,14 @@
 package it.cavallium.warppi.gui.screens;
 
+import it.cavallium.warppi.gui.HistoryBehavior;
+
 public class EmptyScreen extends Screen {
 
 	public float endLoading;
 
 	public EmptyScreen() {
 		super();
-		canBeInHistory = false;
+		historyBehavior = HistoryBehavior.DONT_KEEP_IN_HISTORY;
 	}
 
 	@Override

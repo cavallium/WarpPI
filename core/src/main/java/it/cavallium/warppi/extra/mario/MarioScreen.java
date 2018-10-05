@@ -1,14 +1,16 @@
-package it.cavallium.warppi.gui.screens;
+package it.cavallium.warppi.extra.mario;
 
 import java.io.IOException;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
+import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.device.Keyboard;
-import it.cavallium.warppi.extra.mario.MarioGame;
-import it.cavallium.warppi.extra.mario.MarioWorld;
+import it.cavallium.warppi.event.KeyPressedEvent;
+import it.cavallium.warppi.gui.HistoryBehavior;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.Skin;
+import it.cavallium.warppi.gui.screens.Screen;
 
 public class MarioScreen extends Screen {
 
@@ -38,7 +40,7 @@ public class MarioScreen extends Screen {
 
 	public MarioScreen() {
 		super();
-		canBeInHistory = false;
+		historyBehavior = HistoryBehavior.ALWAYS_KEEP_IN_HISTORY;
 	}
 
 	@Override

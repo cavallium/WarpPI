@@ -11,6 +11,7 @@ import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
+import it.cavallium.warppi.gui.HistoryBehavior;
 import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
@@ -60,7 +61,7 @@ public class MathInputScreen extends Screen {
 
 	public MathInputScreen() {
 		super();
-		canBeInHistory = true;
+		historyBehavior = HistoryBehavior.NORMAL;
 	}
 
 	/**
@@ -69,7 +70,7 @@ public class MathInputScreen extends Screen {
 	 */
 	private MathInputScreen(MathInputScreen old) {
 		this.calc = new MathContext(old.calc);
-		this.canBeInHistory = old.canBeInHistory;
+		this.historyBehavior = old.historyBehavior;
 		this.created = old.created;
 		this.currentStep = old.currentStep;
 		this.d = old.d;

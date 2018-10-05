@@ -3,6 +3,7 @@ package it.cavallium.warppi.gui.screens;
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.event.KeyPressedEvent;
+import it.cavallium.warppi.gui.HistoryBehavior;
 
 public class SolveForXScreen extends Screen {
 
@@ -11,7 +12,7 @@ public class SolveForXScreen extends Screen {
 
 	public SolveForXScreen(final MathInputScreen es) {
 		super();
-		canBeInHistory = false;
+		historyBehavior = HistoryBehavior.DONT_KEEP_IN_HISTORY;
 
 		this.es = es;
 	}
