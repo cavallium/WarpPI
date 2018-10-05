@@ -245,12 +245,21 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 			caret.skip(1);
 			pos++;
 			final int deltaCaret = caret.getRemaining();
+			final int caretOldPos = caret.getPosition();
 			removed = removed | b.delBlock(caret);
 			if (caret.getRemaining() == 0 || removed == false && deltaCaret >= 0 && caret.getRemaining() < 0) {
 				ObjectArrayList<Block> blocks = this.getBlockAt(pos - 1).get().getInnerBlocks();
-				int innerContainersCount = this.getBlockAt(pos - 1).get().getInnerContainersCount();
-				if (innerContainersCount > 0) {
-					innerContainersCount--;
+				ObjectArrayList<BlockContainer> innerContainers = this.getBlockAt(pos - 1).get().getInnerContainers();
+				int innerContainersBeforeCaret = 0;
+				int currentBlockIndex = 0;
+				if (innerContainers != null) {
+					for (BlockContainer c : innerContainers) {
+						currentBlockIndex += c.computeCaretMaxBound();
+						if (currentBlockIndex > deltaCaret) {
+							break;
+						}
+						innerContainersBeforeCaret++;
+					}
 				}
 				removeAt(pos - 1);
 				if (blocks != null) {
@@ -262,7 +271,7 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 						blockNum++;
 					}
 				}
-				caret.setPosition(caret.getPosition() - innerContainersCount);
+				caret.setPosition(caretOldPos - innerContainersBeforeCaret);
 				removed = true;
 			}
 		}

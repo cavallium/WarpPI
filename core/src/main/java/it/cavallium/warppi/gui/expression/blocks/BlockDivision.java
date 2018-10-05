@@ -136,8 +136,11 @@ public class BlockDivision extends Block {
 	}
 
 	@Override
-	public int getInnerContainersCount() {
-		return 2;
+	public ObjectArrayList<BlockContainer> getInnerContainers() {
+		ObjectArrayList<BlockContainer> output = new ObjectArrayList<>();
+		output.add(containerUp);
+		output.add(containerDown);
+		return output;
 	}
 
 	@Override

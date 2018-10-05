@@ -40,9 +40,9 @@ public class BlockPower extends Block {
 		}
 		return added;
 	}
-
+	
 	@Override
-	public boolean delBlock(final Caret caret) {
+	public boolean delBlock(Caret caret) {
 		boolean removed = false;
 		removed = removed | containerExponent.delBlock(caret);
 		if (removed) {
@@ -93,8 +93,10 @@ public class BlockPower extends Block {
 	}
 
 	@Override
-	public int getInnerContainersCount() {
-		return 1;
+	public ObjectArrayList<BlockContainer> getInnerContainers() {
+		ObjectArrayList<BlockContainer> output = new ObjectArrayList<>();
+		output.add(containerExponent);
+		return output;
 	}
 
 	@Override

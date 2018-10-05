@@ -99,8 +99,10 @@ public class BlockPower2 extends Block {
 	}
 
 	@Override
-	public int getInnerContainersCount() {
-		return 1;
+	public ObjectArrayList<BlockContainer> getInnerContainers() {
+		ObjectArrayList<BlockContainer> output = new ObjectArrayList<>();
+		output.add(containerExponent);
+		return output;
 	}
 
 	@Override

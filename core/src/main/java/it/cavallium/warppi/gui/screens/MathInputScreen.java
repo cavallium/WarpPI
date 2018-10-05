@@ -220,77 +220,9 @@ public class MathInputScreen extends Screen {
 
 							case STEP:
 								currentStep++;
+								return simplify(true, false);
 							case SIMPLIFY:
-								if (!step) {
-									currentStep = 0;
-								}
-								if (Engine.INSTANCE.getHardwareDevice().getDisplayManager().error != null) {
-									//TODO: make the error management a global API rather than being relegated to this screen.
-									Engine.getPlatform().getConsoleUtils().out().println(1, "Resetting after error...");
-									Engine.INSTANCE.getHardwareDevice().getDisplayManager().error = null;
-									calc.f = null;
-									calc.f2 = null;
-									calc.resultsCount = 0;
-									return true;
-								} else if (!computingResult) {
-									computingResult = true;
-									computingThread = new Thread(() -> {
-										try {
-											try {
-												if (!userInput.isAlreadyParsed() && !userInput.isEmpty()) {
-													final Expression expr = MathParser.parseInput(calc, userInput);
-													if (calc.f == null | calc.f2 == null) {
-														calc.f = new ObjectArrayList<>();
-														calc.f2 = new ObjectArrayList<>();
-													} else {
-														calc.f.clear();
-														calc.f2.clear();
-													}
-													calc.f.add(expr);
-													Engine.getPlatform().getConsoleUtils().out().println(2, "INPUT: " + expr);
-													final MathSolver ms = new MathSolver(expr);
-													final ObjectArrayList<ObjectArrayList<Function>> resultSteps = ms.solveAllSteps();
-													resultSteps.add(0, Utils.newArrayList(expr));
-													final ObjectArrayList<Function> resultExpressions = resultSteps.get(resultSteps.size() - 1);
-													for (final Function rr : resultExpressions) {
-														Engine.getPlatform().getConsoleUtils().out().println(0, "RESULT: " + rr.toString());
-													}
-													final ObjectArrayList<ObjectArrayList<Block>> resultBlocks = MathParser.parseOutput(calc, resultExpressions);
-													result.setContentAsMultipleGroups(resultBlocks);
-													//									showVariablesDialog(() -> {
-													//										currentExpression = newExpression;
-													//										simplify();
-													//									});
-													this.swapInputScreen();
-												}
-											} catch (final InterruptedException ex) {
-												Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Computing thread stopped.");
-											} catch (final Exception ex) {
-												if (Engine.getPlatform().getSettings().isDebugEnabled()) {
-													ex.printStackTrace();
-												}
-												throw new Error(Errors.SYNTAX_ERROR);
-											}
-										} catch (final Error e) {
-											d.errorStackTrace = Engine.getPlatform().stacktraceToString(e);
-											Engine.INSTANCE.getHardwareDevice().getDisplayManager().error = e.id.toString();
-											System.err.println(e.id);
-										}
-										computingResult = false;
-									});
-									Engine.getPlatform().setThreadName(computingThread, "Computing Thread");
-									Engine.getPlatform().setThreadDaemon(computingThread);
-									computingThread.setPriority(Thread.NORM_PRIORITY + 3);
-									computingThread.start();
-									return true;
-								} else {
-									if (computingThread != null) {
-										computingThread.interrupt();
-										computingResult = false;
-										return true;
-									}
-									return false;
-								}
+								return simplify(false, true);
 							case NUM0:
 								typeChar('0');
 								return true;
@@ -420,7 +352,7 @@ public class MathInputScreen extends Screen {
 								if (!result.isContentEmpty()) {
 									result.clear();
 									currentStep = 0;
-									Keyboard.keyPressed(Key.SIMPLIFY);
+									simplify(false, false);
 								}
 								return true;
 							case debug1:
@@ -576,46 +508,79 @@ public class MathInputScreen extends Screen {
 		*/
 	}
 
-	@Deprecated
-	protected void simplify() {
-		/*
-		try {
-			try {
-				for (final Function f : calc.f) {
-					if (f instanceof Equation) {
-						Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new SolveEquationScreen(this));
-						return;
-					}
-				}
-		
-				final ObjectArrayList<Function> results = solveExpression(calc.f);
-				if (results.size() == 0) {
-					calc.resultsCount = 0;
-				} else {
-					calc.resultsCount = results.size();
-					Collections.reverse(results);
-					// add elements to al, including duplicates
-					final Set<Function> hs = new LinkedHashSet<>();
-					hs.addAll(results);
-					results.clear();
-					results.addAll(hs);
-					calc.f2 = results;
-				}
-			} catch (final Exception ex) {
-				if (Utils.debugOn) {
-					ex.printStackTrace();
-				}
-				throw new Error(Errors.SYNTAX_ERROR);
-			}
-		} catch (final Error e) {
-			final StringWriter sw = new StringWriter();
-			final PrintWriter pw = new PrintWriter(sw);
-			e.printStackTrace(pw);
-			d.errorStackTrace = sw.toString().toUpperCase().replace("\t", "    ").replace("\r", "").split("\n");
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().error = e.id.toString();
-			System.err.println(e.id);
+	protected boolean simplify(final boolean step, final boolean swapScreen) {
+		if (!step) {
+			currentStep = 0;
 		}
-		*/
+		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager().error != null) {
+			//TODO: make the error management a global API rather than being relegated to this screen.
+			Engine.getPlatform().getConsoleUtils().out().println(1, "Resetting after error...");
+			Engine.INSTANCE.getHardwareDevice().getDisplayManager().error = null;
+			calc.f = null;
+			calc.f2 = null;
+			calc.resultsCount = 0;
+			return true;
+		} else if (!computingResult) {
+			computingResult = true;
+			computingThread = new Thread(() -> {
+				try {
+					try {
+						if (!userInput.isAlreadyParsed() && !userInput.isEmpty()) {
+							final Expression expr = MathParser.parseInput(calc, userInput);
+							if (calc.f == null | calc.f2 == null) {
+								calc.f = new ObjectArrayList<>();
+								calc.f2 = new ObjectArrayList<>();
+							} else {
+								calc.f.clear();
+								calc.f2.clear();
+							}
+							calc.f.add(expr);
+							Engine.getPlatform().getConsoleUtils().out().println(2, "INPUT: " + expr);
+							final MathSolver ms = new MathSolver(expr);
+							final ObjectArrayList<ObjectArrayList<Function>> resultSteps = ms.solveAllSteps();
+							resultSteps.add(0, Utils.newArrayList(expr));
+							final ObjectArrayList<Function> resultExpressions = resultSteps.get(resultSteps.size() - 1);
+							for (final Function rr : resultExpressions) {
+								Engine.getPlatform().getConsoleUtils().out().println(0, "RESULT: " + rr.toString());
+							}
+							final ObjectArrayList<ObjectArrayList<Block>> resultBlocks = MathParser.parseOutput(calc, resultExpressions);
+							result.setContentAsMultipleGroups(resultBlocks);
+							//									showVariablesDialog(() -> {
+							//										currentExpression = newExpression;
+							//										simplify();
+							//									});
+							if (swapScreen == true) {
+								this.swapInputScreen();
+							}
+						}
+					} catch (final InterruptedException ex) {
+						Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Computing thread stopped.");
+					} catch (final Exception ex) {
+						if (Engine.getPlatform().getSettings().isDebugEnabled()) {
+							ex.printStackTrace();
+						}
+						throw new Error(Errors.SYNTAX_ERROR);
+					}
+				} catch (final Error e) {
+					d.errorStackTrace = Engine.getPlatform().stacktraceToString(e);
+					Engine.INSTANCE.getHardwareDevice().getDisplayManager().error = e.id.toString();
+					System.err.println(e.id);
+				}
+				computingResult = false;
+			});
+			Engine.getPlatform().setThreadName(computingThread, "Computing Thread");
+			Engine.getPlatform().setThreadDaemon(computingThread);
+			computingThread.setPriority(Thread.NORM_PRIORITY + 3);
+			computingThread.start();
+			return true;
+		} else {
+			if (computingThread != null) {
+				computingThread.interrupt();
+				computingResult = false;
+				return true;
+			}
+			return false;
+		}
 	}
 
 	@SuppressWarnings("unused")

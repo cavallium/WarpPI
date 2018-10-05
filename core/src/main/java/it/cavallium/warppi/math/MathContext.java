@@ -39,6 +39,8 @@ public class MathContext {
 			this.variablesValues.add(new VariableValue(varVal, this));
 		}
 		this.resultsCount = calc.resultsCount;
+		this.exactMode = calc.exactMode;
+		this.angleMode = calc.angleMode;
 	}
 
 	@Deprecated

@@ -43,7 +43,7 @@ public abstract class Block implements TreeBlock, GraphicalElement {
 	 */
 	public abstract ObjectArrayList<Block> getInnerBlocks();
 
-	public abstract int getInnerContainersCount();
+	public abstract ObjectArrayList<BlockContainer> getInnerContainers();
 	
 	@Override
 	public abstract void recomputeDimensions();

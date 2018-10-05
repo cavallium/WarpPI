@@ -78,8 +78,8 @@ public class BlockChar extends Block {
 	}
 
 	@Override
-	public int getInnerContainersCount() {
-		return 0;
+	public ObjectArrayList<BlockContainer> getInnerContainers() {
+		return null;
 	}
 
 	@Override

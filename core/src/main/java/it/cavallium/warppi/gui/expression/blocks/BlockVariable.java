@@ -290,10 +290,10 @@ public class BlockVariable extends Block {
 	}
 
 	@Override
-	public int getInnerContainersCount() {
-		return 0;
+	public ObjectArrayList<BlockContainer> getInnerContainers() {
+		return null;
 	}
-
+	
 	@Override
 	public BlockVariable clone(InputContext ic) {
 		return new BlockVariable(this, ic);

@@ -111,8 +111,10 @@ public class BlockSquareRoot extends Block {
 	}
 
 	@Override
-	public int getInnerContainersCount() {
-		return 1; //2
+	public ObjectArrayList<BlockContainer> getInnerContainers() {
+		ObjectArrayList<BlockContainer> output = new ObjectArrayList<>();
+		output.add(containerNumber);
+		return output;
 	}
 
 	@Override

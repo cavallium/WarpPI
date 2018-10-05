@@ -31,8 +31,10 @@ public class BlockParenthesis extends BlockParenthesisAbstract {
 	}
 
 	@Override
-	public int getInnerContainersCount() {
-		return 1;
+	public ObjectArrayList<BlockContainer> getInnerContainers() {
+		ObjectArrayList<BlockContainer> output = new ObjectArrayList<>();
+		output.add(getNumberContainer());
+		return output;
 	}
 
 	@Override
