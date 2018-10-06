@@ -4,11 +4,12 @@ import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.functions.Subtraction;
 import it.cavallium.warppi.math.functions.Sum;
-import it.cavallium.warppi.math.functions.Variable;
+import it.cavallium.warppi.math.rules.dsl.patterns.NumberPattern;
 import it.cavallium.warppi.math.rules.dsl.patterns.SubFunctionPattern;
 import it.cavallium.warppi.math.rules.dsl.patterns.SumPattern;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Optional;
 
@@ -77,5 +78,18 @@ public class PatternTest {
                 new Number(null, 2)
         );
         assertFalse(pattern.match(shouldNotMatch).isPresent());
+    }
+
+    @Test
+    public void numberPattern() {
+        final Pattern pattern = new NumberPattern(BigDecimal.valueOf(Math.PI));
+
+        final Function shouldNotMatch = new Number(null, 2);
+        assertFalse(pattern.match(shouldNotMatch).isPresent());
+
+        final Function shouldMatch = new Number(null, Math.PI);
+        final Optional<Map<String, Function>> subFunctions = pattern.match(shouldMatch);
+        assertTrue(subFunctions.isPresent());
+        assertEquals(shouldMatch, pattern.replace(subFunctions.get()));
     }
 }
