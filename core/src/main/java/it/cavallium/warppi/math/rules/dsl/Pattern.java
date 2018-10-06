@@ -1,6 +1,7 @@
 package it.cavallium.warppi.math.rules.dsl;
 
 import it.cavallium.warppi.math.Function;
+import it.cavallium.warppi.math.MathContext;
 
 import java.util.Map;
 import java.util.Optional;
@@ -21,8 +22,10 @@ public interface Pattern {
     /**
      * Creates a new function by filling in sub-functions within this pattern.
      *
+     *
+     * @param mathContext The <code>MathContext</code> used to construct <code>Function</code>s.
      * @param subFunctions A map of named sub-functions to be inserted into this pattern.
      * @return The resulting function.
      */
-    Function replace(Map<String, Function> subFunctions);
+    Function replace(MathContext mathContext, Map<String, Function> subFunctions);
 }

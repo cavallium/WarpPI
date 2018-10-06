@@ -1,6 +1,7 @@
 package it.cavallium.warppi.math.rules.dsl.patterns;
 
 import it.cavallium.warppi.math.Function;
+import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
 
 import java.util.HashMap;
@@ -25,7 +26,7 @@ public class SubFunctionPattern implements Pattern {
     }
 
     @Override
-    public Function replace(Map<String, Function> subFunctions) {
+    public Function replace(MathContext mathContext, Map<String, Function> subFunctions) {
         return subFunctions.get(name);
     }
 }

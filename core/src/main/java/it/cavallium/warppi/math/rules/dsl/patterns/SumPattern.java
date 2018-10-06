@@ -1,6 +1,7 @@
 package it.cavallium.warppi.math.rules.dsl.patterns;
 
 import it.cavallium.warppi.math.Function;
+import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Sum;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
@@ -29,11 +30,11 @@ public class SumPattern extends VisitorPattern {
     }
 
     @Override
-    public Function replace(Map<String, Function> subFunctions) {
+    public Function replace(MathContext mathContext, Map<String, Function> subFunctions) {
         return new Sum(
-                null,
-                left.replace(subFunctions),
-                right.replace(subFunctions)
+                mathContext,
+                left.replace(mathContext, subFunctions),
+                right.replace(mathContext, subFunctions)
         );
     }
 }
