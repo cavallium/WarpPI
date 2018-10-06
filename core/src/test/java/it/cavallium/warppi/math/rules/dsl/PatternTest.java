@@ -116,6 +116,19 @@ public class PatternTest {
     }
 
     @Test
+    public void undefinedPattern() {
+        final Pattern pattern = new UndefinedPattern();
+
+        final Function shouldNotMatch = new Number(mathContext, 0);
+        assertFalse(pattern.match(shouldNotMatch).isPresent());
+
+        final Function shouldMatch = new Undefined(mathContext);
+        final Optional<Map<String, Function>> subFunctions = pattern.match(shouldMatch);
+        assertTrue(subFunctions.isPresent());
+        assertTrue(pattern.replace(mathContext, subFunctions.get()) instanceof Undefined);
+    }
+
+    @Test
     public void otherBinaryPatterns() {
         final Number one = new Number(mathContext, 1);
         final Number two = new Number(mathContext, 2);
