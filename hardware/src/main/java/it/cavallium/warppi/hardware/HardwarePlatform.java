@@ -25,6 +25,7 @@ public class HardwarePlatform implements Platform {
 	private final String on;
 	private final Map<String, GraphicEngine> el;
 	private final HardwareSettings settings;
+	private Boolean runningOnRaspberryOverride = null;
 
 	public HardwarePlatform() {
 		cu = new HardwareConsoleUtils();
@@ -195,7 +196,13 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
+	public void setRunningOnRaspberry(boolean b) {
+		runningOnRaspberryOverride = b;
+	}
+	
+	@Override
 	public boolean isRunningOnRaspberry() {
+		if (runningOnRaspberryOverride != null) return runningOnRaspberryOverride;
 		return true;
 		/*
 		return CacheUtils.get("isRunningOnRaspberry", 24 * 60 * 60 * 1000, () -> {

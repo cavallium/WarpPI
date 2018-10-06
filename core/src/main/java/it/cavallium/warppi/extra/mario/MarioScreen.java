@@ -7,6 +7,7 @@ import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.event.KeyPressedEvent;
+import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.gui.HistoryBehavior;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.Skin;
@@ -87,12 +88,49 @@ public class MarioScreen extends Screen {
 		}
 	}
 
+	boolean rightPressed, leftPressed, jumpPressed;
+	
+	@Override
+	public boolean onKeyPressed(KeyPressedEvent k) {
+		switch(k.getKey()) {
+			case OK:
+			case SIMPLIFY:
+			case STEP:
+				jumpPressed = true;
+				return true;
+			case LEFT:
+				leftPressed = true;
+				return true;
+			case RIGHT:
+				rightPressed = true;
+				return true;
+			default:
+				return false;
+		}
+	}
+	
+	@Override
+	public boolean onKeyReleased(KeyReleasedEvent k) {
+		switch(k.getKey()) {
+			case OK:
+			case SIMPLIFY:
+			case STEP:
+				jumpPressed = false;
+				return true;
+			case LEFT:
+				leftPressed = false;
+				return true;
+			case RIGHT:
+				rightPressed = false;
+				return true;
+			default:
+				return false;
+		}
+	}
+	
 	@Override
 	public void beforeRender(final float dt) {
 		if (!errored) {
-			final boolean rightPressed = Keyboard.isKeyDown(2, 5);
-			final boolean leftPressed = Keyboard.isKeyDown(2, 3);
-			final boolean jumpPressed = Keyboard.isKeyDown(2, 1);
 			final boolean upPressed = false, downPressed = false, runPressed = false;
 			g.gameTick(dt, upPressed, downPressed, leftPressed, rightPressed, jumpPressed, runPressed);
 

@@ -12,6 +12,7 @@ import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.event.KeyboardEventListener;
 import it.cavallium.warppi.extra.mario.MarioScreen;
+import it.cavallium.warppi.extra.tetris.TetrisScreen;
 import it.cavallium.warppi.gui.GUIErrorMessage;
 import it.cavallium.warppi.gui.screens.KeyboardDebugScreen;
 import it.cavallium.warppi.gui.screens.Screen;
@@ -41,15 +42,15 @@ public class Keyboard {
 
 	public synchronized void startKeyboard() {
 		final Thread kt = new Thread(() -> {
-			if (Engine.getPlatform().getSettings().isDebugEnabled()) {
+			if (Engine.getPlatform().isRunningOnRaspberry() == false) {
 				try {
 					while (true) {
 						if (Keyboard.debugKeyCode != -1) {
-							Keyboard.debugKeyPressed(Keyboard.debugKeyCode);
+							Keyboard.debugKey(Keyboard.debugKeyCode, false);
 							Keyboard.debugKeyCode = -1;
 						}
 						if (Keyboard.debugKeyCodeRelease != -1) {
-							Keyboard.debugKeyReleased(Keyboard.debugKeyCodeRelease);
+							Keyboard.debugKey(Keyboard.debugKeyCodeRelease, true);
 							Keyboard.debugKeyCodeRelease = -1;
 						}
 						Thread.sleep(50);
@@ -88,9 +89,9 @@ public class Keyboard {
 							if (data[row] == true && Keyboard.precedentStates[row][col] == false) {
 								//								System.out.println("Pressed button at " + (row + 1) + ", " + (col + 1));
 //								KeyboardDebugScreen.log("Pressed button at " + (row + 1) + ", " + (col + 1));
-								Keyboard.keyPressedRaw(row, col);
+								Keyboard.keyRaw(row, col, false);
 							} else if (data[row] == false && Keyboard.precedentStates[row][col] == true) {
-								Keyboard.keyReleasedRaw(row, col);
+								Keyboard.keyRaw(row, col, true);
 							}
 //								KeyboardDebugScreen.log("Released button at " + (row + 1) + ", " + (col + 1));
 							Keyboard.precedentStates[row][col] = data[row];
@@ -105,123 +106,141 @@ public class Keyboard {
 		kt.start();
 	}
 
-	public static void debugKeyPressed(final int keyCode) {
+	/**
+	 * 
+	 * @param k
+	 * @param released true: released, false: pressed
+	 */
+	private static void debugKey(Key k, boolean released) {
+		if (released) {
+			Keyboard.keyReleased(k);
+		} else {
+			Keyboard.keyPressed(k);
+		}
+	}
+	
+	/**
+	 * 
+	 * @param keyCode
+	 * @param released true: released, false: pressed
+	 */
+	public static void debugKey(final int keyCode, boolean released) {
 		switch (keyCode) {
 			case KeyEvent.VK_ESCAPE:
-				Keyboard.keyPressed(Key.BACK);
+				debugKey(Key.BACK, released);
 				break;
 			case KeyEvent.VK_S:
 				if (Keyboard.shift) {
-					Keyboard.keyPressed(Key.ARCSINE);
+					debugKey(Key.ARCSINE, released);
 				} else if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.LETTER_S);
+					debugKey(Key.LETTER_S, released);
 				} else {
-					Keyboard.keyPressed(Key.SINE);
+					debugKey(Key.SINE, released);
 				}
 				break;
 			case KeyEvent.VK_C:
 				if (Keyboard.shift) {
-					Keyboard.keyPressed(Key.ARCCOSINE);
+					debugKey(Key.ARCCOSINE, released);
 				} else if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.LETTER_C);
+					debugKey(Key.LETTER_C, released);
 				} else {
-					Keyboard.keyPressed(Key.COSINE);
+					debugKey(Key.COSINE, released);
 				}
 				break;
 			case KeyEvent.VK_T:
 				if (Keyboard.shift) {
-					Keyboard.keyPressed(Key.ARCTANGENT);
+					debugKey(Key.ARCTANGENT, released);
 				} else if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.LETTER_T);
+					debugKey(Key.LETTER_T, released);
 				} else {
-					Keyboard.keyPressed(Key.TANGENT);
+					debugKey(Key.TANGENT, released);
 				}
 				break;
 			case KeyEvent.VK_D:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.debug_DEG);
+					debugKey(Key.debug_DEG, released);
 				} else if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.LETTER_D);
+					debugKey(Key.LETTER_D, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_R:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.debug_RAD);
+					debugKey(Key.debug_RAD, released);
 				} else if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.LETTER_R);
+					debugKey(Key.LETTER_R, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_G:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.debug_GRA);
+					debugKey(Key.debug_GRA, released);
 				} else if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.LETTER_G);
+					debugKey(Key.LETTER_G, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_X:
 				if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.LETTER_X);
+					debugKey(Key.LETTER_X, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_P:
 				if (Keyboard.shift) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.LETTER_P);
+					debugKey(Key.LETTER_P, released);
 				} else {
-					Keyboard.keyPressed(Key.PI);
+					debugKey(Key.PI, released);
 				}
 				break;
 			case KeyEvent.VK_E:
 				if (Keyboard.shift) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.LETTER_E);
+					debugKey(Key.LETTER_E, released);
 				} else {
-					Keyboard.keyPressed(Key.EULER_NUMBER);
+					debugKey(Key.EULER_NUMBER, released);
 				}
 				break;
 			case KeyEvent.VK_Y:
 				if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.LETTER_Y);
+					debugKey(Key.LETTER_Y, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_B:
 				if (Keyboard.shift) {
-					Keyboard.keyPressed(Key.BRIGHTNESS_CYCLE_REVERSE);
+					debugKey(Key.BRIGHTNESS_CYCLE_REVERSE, released);
 				} else if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.BRIGHTNESS_CYCLE);
+					debugKey(Key.BRIGHTNESS_CYCLE, released);
 				} else {
-					Keyboard.keyPressed(Key.LETTER_B);
+					debugKey(Key.LETTER_B, released);
 				}
 				break;
 			case KeyEvent.VK_L:
 				if (Keyboard.shift) {
-					Keyboard.keyPressed(Key.LOGARITHM);
+					debugKey(Key.LOGARITHM, released);
 				} else if (Keyboard.alpha) {
-					Keyboard.keyPressed(Key.LETTER_L);
+					debugKey(Key.LETTER_L, released);
 				} else {
-					Keyboard.keyPressed(Key.LOGARITHM);
+					debugKey(Key.LOGARITHM, released);
 				}
 				break;
 			case KeyboardJogampValues.VK_ENTER:
 			case KeyEvent.VK_ENTER:
 				if (Keyboard.shift) {
-					Keyboard.keyPressed(Key.STEP);
+					debugKey(Key.STEP, released);
 				} else if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.SIMPLIFY);
+					debugKey(Key.SIMPLIFY, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				int row = 2;
 				int col = 1;
@@ -229,134 +248,134 @@ public class Keyboard {
 				break;
 			case KeyEvent.VK_1:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NUM1);
+					debugKey(Key.NUM1, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_2:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NUM2);
+					debugKey(Key.NUM2, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_3:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NUM3);
+					debugKey(Key.NUM3, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_4:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NUM4);
+					debugKey(Key.NUM4, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_5:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NUM5);
+					debugKey(Key.NUM5, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_6:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NUM6);
+					debugKey(Key.NUM6, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_7:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NUM7);
+					debugKey(Key.NUM7, released);
 				} else if (Keyboard.shift) {
-					if (Engine.getPlatform().getSettings().isDebugEnabled()) {
-						Keyboard.keyPressed(Key.DIVIDE);
+					if (Engine.getPlatform().isRunningOnRaspberry() == false) {
+						debugKey(Key.DIVIDE, released);
 					}
 				}
 				break;
 			case KeyEvent.VK_8:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NUM8);
+					debugKey(Key.NUM8, released);
 				} else if (Keyboard.shift) {
-					Keyboard.keyPressed(Key.PARENTHESIS_OPEN);
+					debugKey(Key.PARENTHESIS_OPEN, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_9:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NUM9);
+					debugKey(Key.NUM9, released);
 				} else if (Keyboard.shift) {
-					Keyboard.keyPressed(Key.PARENTHESIS_CLOSE);
+					debugKey(Key.PARENTHESIS_CLOSE, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_0:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NUM0);
+					debugKey(Key.NUM0, released);
 				} else if (Keyboard.shift) {
-					Keyboard.keyPressed(Key.EQUAL);
+					debugKey(Key.EQUAL, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_M:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.SURD_MODE);
+					debugKey(Key.SURD_MODE, released);
 				} else if (Keyboard.shift) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else {
-					Keyboard.keyPressed(Key.LETTER_M);
+					debugKey(Key.LETTER_M, released);
 				}
 				break;
 			case KeyboardJogampValues.VK_ADD:
 			case KeyEvent.VK_ADD:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.PLUS);
+					debugKey(Key.PLUS, released);
 				} else if (Keyboard.shift) {
-					Keyboard.keyPressed(Key.PLUS_MINUS);
+					debugKey(Key.PLUS_MINUS, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyboardJogampValues.VK_SUBTRACT:
 			case KeyEvent.VK_SUBTRACT:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.MINUS);
+					debugKey(Key.MINUS, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyboardJogampValues.VK_MULTIPLY:
 			case KeyEvent.VK_MULTIPLY:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.MULTIPLY);
+					debugKey(Key.MULTIPLY, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyboardJogampValues.VK_DIVIDE:
 			case KeyEvent.VK_DIVIDE:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.DIVIDE);
+					debugKey(Key.DIVIDE, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_BACK_SPACE:
-				Keyboard.keyPressed(Key.DELETE);
+				debugKey(Key.DELETE, released);
 				break;
 			case KeyboardJogampValues.VK_DELETE:
 			case KeyEvent.VK_DELETE:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.RESET);
+					debugKey(Key.RESET, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyboardJogampValues.VK_LEFT:
@@ -366,9 +385,9 @@ public class Keyboard {
 				col = 3;
 				Keyboard.debugKeysDown[row - 1][col - 1] = true;
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.LEFT);
+					debugKey(Key.LEFT, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyboardJogampValues.VK_RIGHT:
@@ -378,9 +397,9 @@ public class Keyboard {
 				col = 5;
 				Keyboard.debugKeysDown[row - 1][col - 1] = true;
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.RIGHT);
+					debugKey(Key.RIGHT, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyboardJogampValues.VK_UP:
@@ -390,9 +409,9 @@ public class Keyboard {
 				col = 4;
 				Keyboard.debugKeysDown[row - 1][col - 1] = true;
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.UP);
+					debugKey(Key.UP, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyboardJogampValues.VK_DOWN:
@@ -402,9 +421,9 @@ public class Keyboard {
 				col = 4;
 				Keyboard.debugKeysDown[row - 1][col - 1] = true;
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.DOWN);
+					debugKey(Key.DOWN, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case (short) 12:
@@ -413,199 +432,199 @@ public class Keyboard {
 				col = 4;
 				Keyboard.debugKeysDown[row - 1][col - 1] = true;
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.OK);
+					debugKey(Key.OK, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyboardJogampValues.VK_NUMPAD4:
 			case KeyEvent.VK_NUMPAD4:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.HISTORY_BACK);
+					debugKey(Key.HISTORY_BACK, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyboardJogampValues.VK_NUMPAD6:
 			case KeyEvent.VK_NUMPAD6:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.HISTORY_FORWARD);
+					debugKey(Key.HISTORY_FORWARD, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_PERIOD:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.DOT);
+					debugKey(Key.DOT, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_A:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
-					Keyboard.keyPressed(Key.LETTER_A);
+					debugKey(Key.LETTER_A, released);
 				} else if (Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_F:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
-					Keyboard.keyPressed(Key.LETTER_F);
+					debugKey(Key.LETTER_F, released);
 				} else if (Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_H:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
-					Keyboard.keyPressed(Key.LETTER_H);
+					debugKey(Key.LETTER_H, released);
 				} else if (Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_I:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
-					Keyboard.keyPressed(Key.LETTER_I);
+					debugKey(Key.LETTER_I, released);
 				} else if (Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_J:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
-					Keyboard.keyPressed(Key.LETTER_J);
+					debugKey(Key.LETTER_J, released);
 				} else if (Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_K:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
-					Keyboard.keyPressed(Key.LETTER_K);
+					debugKey(Key.LETTER_K, released);
 				} else if (Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_N:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
-					Keyboard.keyPressed(Key.LETTER_N);
+					debugKey(Key.LETTER_N, released);
 				} else if (Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_O:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
-					Keyboard.keyPressed(Key.LETTER_O);
+					debugKey(Key.LETTER_O, released);
 				} else if (Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_Q:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
-					Keyboard.keyPressed(Key.LETTER_Q);
+					debugKey(Key.LETTER_Q, released);
 				} else if (Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_U:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
-					Keyboard.keyPressed(Key.LETTER_U);
+					debugKey(Key.LETTER_U, released);
 				} else if (Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_V:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
-					Keyboard.keyPressed(Key.LETTER_V);
+					debugKey(Key.LETTER_V, released);
 				} else if (Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_W:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
-					Keyboard.keyPressed(Key.LETTER_W);
+					debugKey(Key.LETTER_W, released);
 				} else if (Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyEvent.VK_Z:
 				if (!Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
-					Keyboard.keyPressed(Key.LETTER_Z);
+					debugKey(Key.LETTER_Z, released);
 				} else if (Keyboard.shift && !Keyboard.alpha) {
-					Keyboard.keyPressed(Key.ZOOM_MODE);
+					debugKey(Key.ZOOM_MODE, released);
 				} else {
-					Keyboard.keyPressed(Key.NONE);
+					debugKey(Key.NONE, released);
 				}
 				break;
 			case KeyboardJogampValues.VK_SHIFT:
 			case KeyEvent.VK_SHIFT:
-				Keyboard.keyPressed(Key.SHIFT);
+				debugKey(Key.SHIFT, released);
 				break;
 			case KeyEvent.VK_CONTROL:
-				Keyboard.keyPressed(Key.ALPHA);
+				debugKey(Key.ALPHA, released);
 				break;
 			case KeyboardJogampValues.VK_NUMPAD1:
 			case KeyEvent.VK_NUMPAD1:
-				Keyboard.keyPressed(Key.SQRT);
+				debugKey(Key.SQRT, released);
 				break;
 			case KeyboardJogampValues.VK_NUMPAD2:
 			case KeyEvent.VK_NUMPAD2:
-				Keyboard.keyPressed(Key.ROOT);
+				debugKey(Key.ROOT, released);
 				break;
 			case KeyboardJogampValues.VK_NUMPAD3:
 			case KeyEvent.VK_NUMPAD3:
-				Keyboard.keyPressed(Key.POWER_OF_2);
+				debugKey(Key.POWER_OF_2, released);
 				break;
 			case KeyboardJogampValues.VK_NUMPAD5:
 			case KeyEvent.VK_NUMPAD5:
-				Keyboard.keyPressed(Key.POWER_OF_x);
+				debugKey(Key.POWER_OF_x, released);
 				break;
 		}
 	}
@@ -655,19 +674,18 @@ public class Keyboard {
 		}
 	}
 
+	/**
+	 * 
+	 * @param row
+	 * @param col
+	 * @return
+	 */
+	@Deprecated
 	public static boolean isKeyDown(final int row, final int col) {
-		if (Engine.getPlatform().getSettings().isDebugEnabled() == false) {
+		if (Engine.getPlatform().isRunningOnRaspberry()) {
 			return Keyboard.precedentStates[row - 1][col - 1];
 		} else {
 			return Keyboard.debugKeysDown[row - 1][col - 1];
-		}
-	}
-
-	public synchronized static void keyReleasedRaw(final int row, final int col) {
-//		KeyboardDebugScreen.keyX = row;
-//		KeyboardDebugScreen.keyY = col;
-		if (row == 1 && col == 1) {
-			//keyReleased(Key.BRIGHTNESS_CYCLE);
 		}
 	}
 
@@ -687,8 +705,8 @@ public class Keyboard {
 					{ "⇦", null, null }, /* 1,2 */
 					{ "OK", null, null }, /* 1,3 */
 					{ "⇨", null, null }, /* 1,4 */
-					{ "↤", null, null }, /* 1,5 */
-					{ "↦", null, null }, /* 1,6 */
+					{ "≪", null, null }, /* 1,5 */
+					{ "≫", null, null }, /* 1,6 */
 					{ "", null, null } /* 1,7 */
 			}, { /* ROW 2 */
 					{ "", null, null }, /* 2,0 */
@@ -850,19 +868,33 @@ public class Keyboard {
 		}
 	}
 
-	public static synchronized void keyPressedRaw(final int row, final int col) {
+	/**
+	 * 
+	 * @param row
+	 * @param col
+	 * @param released true: released, false: pressed
+	 */
+	public static synchronized void keyRaw(final int row, final int col, final boolean released) {
 //		KeyboardDebugScreen.keyX = row;
 //		KeyboardDebugScreen.keyY = col;
 		final Key k = Keyboard.keyMap[row][col][Keyboard.shift ? 1 : Keyboard.alpha ? 2 : 0];
 		if (k != null) {
-			Keyboard.keyPressed(k);
+			if (released) {
+				Keyboard.keyReleased(k);
+			} else {
+				Keyboard.keyPressed(k);
+			}
 		} else {
-			Keyboard.keyPressed(Key.NONE);
+			if (released) {
+				Keyboard.keyReleased(Key.NONE);
+			} else {
+				Keyboard.keyPressed(Key.NONE);
+			}
 		}
 	}
 
 	public static void stopKeyboard() {
-		if (Engine.getPlatform().getSettings().isDebugEnabled() == false) {
+		if (Engine.getPlatform().isRunningOnRaspberry()) {
 			Engine.getPlatform().getGpio().digitalWrite(33, false);
 			Engine.getPlatform().getGpio().digitalWrite(35, false);
 			Engine.getPlatform().getGpio().digitalWrite(36, false);
@@ -900,6 +932,7 @@ public class Keyboard {
 					case NONE:
 						break;
 					case BRIGHTNESS_CYCLE:
+						Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new TetrisScreen()); //TODO: rimuovere: prova
 						Engine.INSTANCE.getHardwareDevice().getDisplayManager().cycleBrightness(false);
 						refresh = true;
 						break;

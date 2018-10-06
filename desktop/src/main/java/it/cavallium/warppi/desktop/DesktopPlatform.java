@@ -30,6 +30,7 @@ public class DesktopPlatform implements Platform {
 	private final String on;
 	private final Map<String, GraphicEngine> el;
 	private final DesktopSettings settings;
+	private Boolean runningOnRaspberryOverride = null;
 
 	public DesktopPlatform() {
 		cu = new DesktopConsoleUtils();
@@ -206,7 +207,17 @@ public class DesktopPlatform implements Platform {
 	}
 
 	@Override
+	public void setRunningOnRaspberry(boolean b) {
+		if (isRunningOnRaspberry()) {
+			runningOnRaspberryOverride = b;
+		} else {
+			runningOnRaspberryOverride = false;
+		}
+	}
+	
+	@Override
 	public boolean isRunningOnRaspberry() {
+		if (runningOnRaspberryOverride != null) return runningOnRaspberryOverride;
 		return CacheUtils.get("isRunningOnRaspberry", 24 * 60 * 60 * 1000, () -> {
 			if (Engine.getPlatform().isJavascript())
 				return false;

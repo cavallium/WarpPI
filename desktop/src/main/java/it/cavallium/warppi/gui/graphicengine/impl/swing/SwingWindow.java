@@ -244,21 +244,16 @@ public class SwingWindow extends JFrame {
 		b.setFont(f);
 		b.setBackground(new Color(200, 200, 200));
 		b.setFocusable(true);
-		b.addActionListener(e -> {
-			Keyboard.keyPressedRaw(row, col);
-			Keyboard.keyReleasedRaw(row, col);
-			c.grabFocus();
-		});
 		b.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
+				Keyboard.keyRaw(row, col, true);
+				c.grabFocus();
 			}
 			@Override
 			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
+				Keyboard.keyRaw(row, col, false);
+				c.grabFocus();
 			}
 			@Override
 			public void mouseExited(MouseEvent e) {

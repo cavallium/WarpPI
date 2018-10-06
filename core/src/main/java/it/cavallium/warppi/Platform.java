@@ -36,6 +36,8 @@ public interface Platform {
 
 	boolean isJavascript();
 
+	void setRunningOnRaspberry(boolean b);
+	
 	boolean isRunningOnRaspberry();
 
 	String getOsName();

@@ -70,15 +70,10 @@ public class HtmlEngine implements GraphicEngine {
 	}
 
 	private String previousValue = "";
-	
-	@JSBody(params = { "ctx", "enabled" }, script = ""
-			+ "ctx.mozImageSmoothingEnabled = enabled;"
-			+ "ctx.oImageSmoothingEnabled = enabled;"
-			+ "ctx.webkitImageSmoothingEnabled = enabled;"
-			+ "ctx.msImageSmoothingEnabled = enabled;"
-			+ "ctx.imageSmoothingEnabled = enabled;")
+
+	@JSBody(params = { "ctx", "enabled" }, script = "" + "ctx.mozImageSmoothingEnabled = enabled;" + "ctx.oImageSmoothingEnabled = enabled;" + "ctx.webkitImageSmoothingEnabled = enabled;" + "ctx.msImageSmoothingEnabled = enabled;" + "ctx.imageSmoothingEnabled = enabled;")
 	public static native void setImageSmoothingEnabled(CanvasRenderingContext2D ctx, boolean enabled);
-	
+
 	@Override
 	public void create(final Runnable onInitialized) {
 		exitSemaphore = Engine.getPlatform().newSemaphore(0);
@@ -93,14 +88,14 @@ public class HtmlEngine implements GraphicEngine {
 		onZoom.subscribe((windowZoom) -> {
 			if (windowZoom != 0) {
 				if (suppportsZoom()) {
-					canvas.setWidth((int)(480 / 1));
-					canvas.setHeight((int)(320 / 1));
+					canvas.setWidth((int) (480 / 1));
+					canvas.setHeight((int) (320 / 1));
 					canvas.getStyle().setProperty("zoom", "" + (1 + 1));
 				} else {
-					canvas.setWidth((int)(480 * 2));
-					canvas.setHeight((int)(320 * 2));
+					canvas.setWidth((int) (480 * 2));
+					canvas.setHeight((int) (320 * 2));
 				}
-				canvas.getStyle().setProperty("max-height", (int)(44 / (1+1)) + "vh");
+				canvas.getStyle().setProperty("max-height", (int) (44 / (1 + 1)) + "vh");
 				width = 480 / windowZoom.intValue();
 				height = 320 / windowZoom.intValue();
 				this.mult = windowZoom.intValue();
@@ -114,11 +109,13 @@ public class HtmlEngine implements GraphicEngine {
 		HtmlEngine.document.getElementById("container").appendChild(canvas);
 		HtmlEngine.document.getBody().appendChild(keyInput);
 		keyInput.setTabIndex(0);
+		keyInput.setValue("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 		keyInput.addEventListener("keydown", (final KeyboardEvent evt) -> {
 			evt.preventDefault();
 			new Thread(() -> {
 				previousValue = keyInput.getValue();
-				Keyboard.debugKeyPressed(evt.getKeyCode());
+				Keyboard.debugKey(evt.getKeyCode(), false);
+				Keyboard.debugKey(evt.getKeyCode(), true);
 				System.out.println(evt.getKeyCode());
 				System.out.println("" + (int) evt.getKey().charAt(0));
 			}).start();
@@ -133,14 +130,17 @@ public class HtmlEngine implements GraphicEngine {
 			new Thread(() -> {
 				if (newLen == prevLen) {
 
-				} else if (newLen - prevLen == 1)
-					Keyboard.debugKeyPressed(newValue.toUpperCase().charAt(newLen - 1));
+				} else if (newLen - prevLen == 1) {
+					Keyboard.debugKey(newValue.toUpperCase().charAt(newLen - 1), false);
+					Keyboard.debugKey(newValue.toUpperCase().charAt(newLen - 1), true);}
 				else if (newLen - prevLen > 1)
-					for (int i = 0; i < newLen - prevLen; i++)
-						Keyboard.debugKeyPressed(newValue.toUpperCase().charAt(prevLen + i));
+					for (int i = 0; i < newLen - prevLen; i++) {
+						Keyboard.debugKey(newValue.toUpperCase().charAt(prevLen + i), false);
+						Keyboard.debugKey(newValue.toUpperCase().charAt(prevLen + i), true);}
 				else if (newLen - prevLen < 1)
-					for (int i = 0; i < prevLen - newLen; i++)
-						Keyboard.debugKeyPressed(8);
+					for (int i = 0; i < prevLen - newLen; i++) {
+						Keyboard.debugKey(8, false);
+						Keyboard.debugKey(8, true);}
 			}).start();
 		});
 		canvas.addEventListener("click", (final Event evt) -> {
@@ -163,36 +163,48 @@ public class HtmlEngine implements GraphicEngine {
 								final String[] coordinates = code.split(",", 2);
 								final boolean removeshift = Keyboard.shift && Integer.parseInt(coordinates[0]) != 0 && Integer.parseInt(coordinates[1]) != 0;
 								final boolean removealpha = Keyboard.alpha && Integer.parseInt(coordinates[0]) != 0 && Integer.parseInt(coordinates[1]) != 1;
-								Keyboard.keyPressedRaw(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]));
+								Keyboard.keyRaw(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]), false);
 								if (removeshift)
-									Keyboard.keyPressedRaw(0, 0);
+									Keyboard.keyRaw(0, 0, false);
 								if (removealpha)
-									Keyboard.keyPressedRaw(0, 1);
+									Keyboard.keyRaw(0, 1, false);
 								Thread.sleep(100);
-								Keyboard.keyReleasedRaw(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]));
+								Keyboard.keyRaw(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]), true);
 								if (removeshift)
-									Keyboard.keyReleasedRaw(0, 0);
+									Keyboard.keyRaw(0, 0, true);
 								if (removealpha)
-									Keyboard.keyReleasedRaw(0, 1);
+									Keyboard.keyRaw(0, 1, true);
 							} else if (Keyboard.alpha && !Keyboard.shift) {
-								if (button.hasAttribute("keycodea"))
-									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodea")));
-								else
-									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycode")));
+								if (button.hasAttribute("keycodea")) {
+									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodea")), false);
+									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodea")), true);
+								} else {
+									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), false);
+									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), true);
+								}
 							} else if (!Keyboard.alpha && Keyboard.shift) {
-								if (button.hasAttribute("keycodes"))
-									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodes")));
-								else
-									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycode")));
+								if (button.hasAttribute("keycodes")) {
+									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodes")), false);
+									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodes")), true);
+								} else {
+									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), false);
+									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), true);
+								}
 							} else if (Keyboard.alpha && Keyboard.shift) {
-								if (button.hasAttribute("keycodesa"))
-									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodesa")));
-								else if (button.hasAttribute("keycodes"))
-									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodes")));
-								else
-									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycode")));
-							} else
-								Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycode")));
+								if (button.hasAttribute("keycodesa")) {
+									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodesa")), false);
+									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodesa")), true);
+								} else if (button.hasAttribute("keycodes")) {
+									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodes")), false);
+									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodes")), true);
+								} else {
+									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), false);
+									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), true);
+								}
+							} else {
+								Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), false);
+								Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), true);
+							}
 						} catch (final Exception ex) {
 							ex.printStackTrace();
 						}

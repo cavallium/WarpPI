@@ -23,6 +23,7 @@ public class TeaVMPlatform implements Platform {
 	private final Map<String, GraphicEngine> el;
 	private final TeaVMPngUtils pu;
 	private final TeaVMSettings settings;
+	private Boolean runningOnRaspberryOverride = null;
 
 	public TeaVMPlatform() {
 		cu = new TeaVMConsoleUtils();
@@ -208,6 +209,10 @@ public class TeaVMPlatform implements Platform {
 		throw new java.lang.UnsupportedOperationException("Not implemented.");
 	}
 
+	@Override
+	public void setRunningOnRaspberry(boolean b) {
+	}
+	
 	@Override
 	public boolean isRunningOnRaspberry() {
 		return false;
