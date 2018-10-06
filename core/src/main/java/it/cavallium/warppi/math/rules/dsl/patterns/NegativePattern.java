@@ -15,17 +15,17 @@ import java.util.Optional;
 public class NegativePattern extends VisitorPattern {
     private final Pattern inner;
 
-    public NegativePattern(Pattern inner) {
+    public NegativePattern(final Pattern inner) {
         this.inner = inner;
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Negative negative) {
+    public Optional<Map<String, Function>> visit(final Negative negative) {
         return inner.match(negative.getParameter());
     }
 
     @Override
-    public Function replace(MathContext mathContext, Map<String, Function> subFunctions) {
+    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
         return new Negative(
                 mathContext,
                 inner.replace(mathContext, subFunctions)

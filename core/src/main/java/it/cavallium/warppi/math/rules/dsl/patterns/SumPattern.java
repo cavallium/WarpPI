@@ -16,13 +16,13 @@ public class SumPattern extends VisitorPattern {
     private final Pattern left;
     private final Pattern right;
 
-    public SumPattern(Pattern left, Pattern right) {
+    public SumPattern(final Pattern left, final Pattern right) {
         this.left = left;
         this.right = right;
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Sum sum) {
+    public Optional<Map<String, Function>> visit(final Sum sum) {
         return left.match(sum.getParameter1())
                 .flatMap(leftMatch -> right.match(sum.getParameter2())
                         .flatMap(rightMatch -> mergeMatches(leftMatch, rightMatch))
@@ -30,7 +30,7 @@ public class SumPattern extends VisitorPattern {
     }
 
     @Override
-    public Function replace(MathContext mathContext, Map<String, Function> subFunctions) {
+    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
         return new Sum(
                 mathContext,
                 left.replace(mathContext, subFunctions),

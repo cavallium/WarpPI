@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 public abstract class VisitorPattern implements Pattern, FunctionVisitor<Optional<Map<String, Function>>> {
     @Override
-    public Optional<Map<String, Function>> match(Function function) {
+    public Optional<Map<String, Function>> match(final Function function) {
         return function.accept(this);
     }
 
@@ -33,20 +33,20 @@ public abstract class VisitorPattern implements Pattern, FunctionVisitor<Optiona
      *         non-equal sub-functions in the two matches.
      */
     protected Optional<Map<String, Function>> mergeMatches(
-            Map<String, Function> match1,
-            Map<String, Function> match2
+            final Map<String, Function> match1,
+            final Map<String, Function> match2
     ) {
         if (!checkSubFunctionEquality(match1, match2)) {
             return Optional.empty();
         }
 
-        Map<String, Function> merged = new HashMap<>();
+        final Map<String, Function> merged = new HashMap<>();
         merged.putAll(match1);
         merged.putAll(match2);
         return Optional.of(merged);
     }
 
-    private boolean checkSubFunctionEquality(Map<String, Function> match1, Map<String, Function> match2) {
+    private boolean checkSubFunctionEquality(final Map<String, Function> match1, final Map<String, Function> match2) {
         for (Map.Entry<String, Function> leftSubFunction : match1.entrySet()) {
             final String key = leftSubFunction.getKey();
             if (match2.containsKey(key)
@@ -58,127 +58,127 @@ public abstract class VisitorPattern implements Pattern, FunctionVisitor<Optiona
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(ArcCosine arcCosine) {
+    public Optional<Map<String, Function>> visit(final ArcCosine arcCosine) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(ArcSine arcSine) {
+    public Optional<Map<String, Function>> visit(final ArcSine arcSine) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(ArcTangent arcTangent) {
+    public Optional<Map<String, Function>> visit(final ArcTangent arcTangent) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Cosine cosine) {
+    public Optional<Map<String, Function>> visit(final Cosine cosine) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Division division) {
+    public Optional<Map<String, Function>> visit(final Division division) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(EmptyNumber emptyNumber) {
+    public Optional<Map<String, Function>> visit(final EmptyNumber emptyNumber) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Equation equation) {
+    public Optional<Map<String, Function>> visit(final Equation equation) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(EquationsSystem equationsSystem) {
+    public Optional<Map<String, Function>> visit(final EquationsSystem equationsSystem) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(EquationsSystemPart equationsSystemPart) {
+    public Optional<Map<String, Function>> visit(final EquationsSystemPart equationsSystemPart) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Expression expression) {
+    public Optional<Map<String, Function>> visit(final Expression expression) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Joke joke) {
+    public Optional<Map<String, Function>> visit(final Joke joke) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Logarithm logarithm) {
+    public Optional<Map<String, Function>> visit(final Logarithm logarithm) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Multiplication multiplication) {
+    public Optional<Map<String, Function>> visit(final Multiplication multiplication) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Negative negative) {
+    public Optional<Map<String, Function>> visit(final Negative negative) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Number number) {
+    public Optional<Map<String, Function>> visit(final Number number) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Power power) {
+    public Optional<Map<String, Function>> visit(final Power power) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Root root) {
+    public Optional<Map<String, Function>> visit(final Root root) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(RootSquare rootSquare) {
+    public Optional<Map<String, Function>> visit(final RootSquare rootSquare) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Sine sine) {
+    public Optional<Map<String, Function>> visit(final Sine sine) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Subtraction subtraction) {
+    public Optional<Map<String, Function>> visit(final Subtraction subtraction) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(SumSubtraction sumSubtraction) {
+    public Optional<Map<String, Function>> visit(final SumSubtraction sumSubtraction) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Sum sum) {
+    public Optional<Map<String, Function>> visit(final Sum sum) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Tangent tangent) {
+    public Optional<Map<String, Function>> visit(final Tangent tangent) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Undefined undefined) {
+    public Optional<Map<String, Function>> visit(final Undefined undefined) {
         return Optional.empty();
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Variable variable) {
+    public Optional<Map<String, Function>> visit(final Variable variable) {
         return Optional.empty();
     }
 }

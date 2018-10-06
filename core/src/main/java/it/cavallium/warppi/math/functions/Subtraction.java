@@ -41,7 +41,7 @@ public class Subtraction extends FunctionOperator {
 	}
 
 	@Override
-	public <T> T accept(FunctionVisitor<T> visitor) {
+	public <T> T accept(final FunctionVisitor<T> visitor) {
 		return visitor.visit(this);
 	}
 

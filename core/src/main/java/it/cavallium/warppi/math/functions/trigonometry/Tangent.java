@@ -39,7 +39,7 @@ public class Tangent extends FunctionSingle {
 	}
 
 	@Override
-	public <T> T accept(FunctionVisitor<T> visitor) {
+	public <T> T accept(final FunctionVisitor<T> visitor) {
 		return visitor.visit(this);
 	}
 

@@ -16,12 +16,12 @@ import java.util.Optional;
 public class NumberPattern extends VisitorPattern {
     private final BigDecimal value;
 
-    public NumberPattern(BigDecimal value) {
+    public NumberPattern(final BigDecimal value) {
         this.value = value;
     }
 
     @Override
-    public Optional<Map<String, Function>> visit(Number number) {
+    public Optional<Map<String, Function>> visit(final Number number) {
         if (number.getTerm().compareTo(value) == 0) {
             return Optional.of(new HashMap<>());
         } else {
@@ -30,7 +30,7 @@ public class NumberPattern extends VisitorPattern {
     }
 
     @Override
-    public Function replace(MathContext mathContext, Map<String, Function> subFunctions) {
+    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
         return new Number(mathContext, value);
     }
 }
