@@ -155,16 +155,7 @@ public class PatternTest {
                 )
         );
 
-        for (final ImmutablePair<Pattern, Function> patternAndMatchingFunction : patternsAndMatchingFunctions) {
-            final Pattern pattern = patternAndMatchingFunction.getLeft();
-            final Function shouldMatch = patternAndMatchingFunction.getRight();
-
-            assertFalse(pattern.match(shouldNotMatch).isPresent());
-
-            final Optional<Map<String, Function>> subFunctions = pattern.match(shouldMatch);
-            assertTrue(subFunctions.isPresent());
-            assertEquals(shouldMatch, pattern.replace(mathContext, subFunctions.get()));
-        }
+        testMultiplePatterns(shouldNotMatch, patternsAndMatchingFunctions);
     }
 
     @Test
@@ -201,6 +192,13 @@ public class PatternTest {
                 )
         );
 
+        testMultiplePatterns(shouldNotMatch, patternsAndMatchingFunctions);
+    }
+
+    private void testMultiplePatterns(
+            final Function shouldNotMatch,
+            final List<ImmutablePair<Pattern, Function>> patternsAndMatchingFunctions
+    ) {
         for (final ImmutablePair<Pattern, Function> patternAndMatchingFunction : patternsAndMatchingFunctions) {
             final Pattern pattern = patternAndMatchingFunction.getLeft();
             final Function shouldMatch = patternAndMatchingFunction.getRight();
