@@ -16,7 +16,12 @@ public class Tangent extends FunctionSingle {
 
 	@Override
 	public boolean equals(final Object o) {
-		// TODO Auto-generated method stub
+		if (o instanceof Tangent) {
+			final FunctionSingle f = (FunctionSingle) o;
+			if (parameter.equals(f.getParameter())) {
+				return true;
+			}
+		}
 		return false;
 	}
 

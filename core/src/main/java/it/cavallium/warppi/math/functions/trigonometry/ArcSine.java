@@ -17,7 +17,12 @@ public class ArcSine extends FunctionSingle {
 
 	@Override
 	public boolean equals(final Object o) {
-		// TODO Auto-generated method stub
+		if (o instanceof ArcSine) {
+			final FunctionSingle f = (FunctionSingle) o;
+			if (parameter.equals(f.getParameter())) {
+				return true;
+			}
+		}
 		return false;
 	}
 
