@@ -1,9 +1,11 @@
 package it.cavallium.warppi.math.rules.dsl;
 
 import it.cavallium.warppi.math.Function;
+import it.cavallium.warppi.math.functions.Negative;
 import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.functions.Subtraction;
 import it.cavallium.warppi.math.functions.Sum;
+import it.cavallium.warppi.math.rules.dsl.patterns.NegativePattern;
 import it.cavallium.warppi.math.rules.dsl.patterns.NumberPattern;
 import it.cavallium.warppi.math.rules.dsl.patterns.SubFunctionPattern;
 import it.cavallium.warppi.math.rules.dsl.patterns.SumPattern;
@@ -88,6 +90,24 @@ public class PatternTest {
         assertFalse(pattern.match(shouldNotMatch).isPresent());
 
         final Function shouldMatch = new Number(null, Math.PI);
+        final Optional<Map<String, Function>> subFunctions = pattern.match(shouldMatch);
+        assertTrue(subFunctions.isPresent());
+        assertEquals(shouldMatch, pattern.replace(subFunctions.get()));
+    }
+
+    @Test
+    public void negativePattern() {
+        final Pattern pattern = new NegativePattern(
+                new SubFunctionPattern("x")
+        );
+
+        final Function shouldNotMatch = new Number(null, 1);
+        assertFalse(pattern.match(shouldNotMatch).isPresent());
+
+        final Function shouldMatch = new Negative(
+                null,
+                new Number(null, 2)
+        );
         final Optional<Map<String, Function>> subFunctions = pattern.match(shouldMatch);
         assertTrue(subFunctions.isPresent());
         assertEquals(shouldMatch, pattern.replace(subFunctions.get()));
