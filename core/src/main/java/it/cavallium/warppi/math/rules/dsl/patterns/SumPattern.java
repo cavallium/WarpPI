@@ -4,6 +4,7 @@ import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Sum;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
+import it.cavallium.warppi.math.rules.dsl.PatternUtils;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
@@ -23,10 +24,7 @@ public class SumPattern extends VisitorPattern {
 
     @Override
     public Optional<Map<String, Function>> visit(final Sum sum) {
-        return left.match(sum.getParameter1())
-                .flatMap(leftMatch -> right.match(sum.getParameter2())
-                        .flatMap(rightMatch -> mergeMatches(leftMatch, rightMatch))
-                );
+        return PatternUtils.matchFunctionOperatorParameters(sum, left, right);
     }
 
     @Override

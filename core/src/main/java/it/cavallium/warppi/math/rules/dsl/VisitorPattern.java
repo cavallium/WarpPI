@@ -9,7 +9,6 @@ import it.cavallium.warppi.math.functions.equations.EquationsSystem;
 import it.cavallium.warppi.math.functions.equations.EquationsSystemPart;
 import it.cavallium.warppi.math.functions.trigonometry.*;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -20,41 +19,6 @@ public abstract class VisitorPattern implements Pattern, FunctionVisitor<Optiona
     @Override
     public Optional<Map<String, Function>> match(final Function function) {
         return function.accept(this);
-    }
-
-    /**
-     * Gathers captured sub-functions from two matches, checking for equality
-     * of ones with the same name.
-     *
-     * @param match1 Sub-functions from one match.
-     * @param match2 Sub-functions from the other match.
-     * @return A <code>Map</code> containing all sub-functions, or an empty
-     *         <code>Optional</code> if the same name is used to refer to
-     *         non-equal sub-functions in the two matches.
-     */
-    protected Optional<Map<String, Function>> mergeMatches(
-            final Map<String, Function> match1,
-            final Map<String, Function> match2
-    ) {
-        if (!checkSubFunctionEquality(match1, match2)) {
-            return Optional.empty();
-        }
-
-        final Map<String, Function> merged = new HashMap<>();
-        merged.putAll(match1);
-        merged.putAll(match2);
-        return Optional.of(merged);
-    }
-
-    private boolean checkSubFunctionEquality(final Map<String, Function> match1, final Map<String, Function> match2) {
-        for (Map.Entry<String, Function> leftSubFunction : match1.entrySet()) {
-            final String key = leftSubFunction.getKey();
-            if (match2.containsKey(key)
-                    && !match2.get(key).equals(leftSubFunction.getValue())) {
-                return false;
-            }
-        }
-        return true;
     }
 
     @Override
