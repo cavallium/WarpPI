@@ -4,6 +4,7 @@ import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.*;
 import it.cavallium.warppi.math.functions.Number;
+import it.cavallium.warppi.math.functions.trigonometry.*;
 import it.cavallium.warppi.math.rules.dsl.patterns.*;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
@@ -151,6 +152,52 @@ public class PatternTest {
                 new ImmutablePair<>(
                         new SumSubtractionPattern(x, y),
                         new SumSubtraction(mathContext, one, two)
+                )
+        );
+
+        for (final ImmutablePair<Pattern, Function> patternAndMatchingFunction : patternsAndMatchingFunctions) {
+            final Pattern pattern = patternAndMatchingFunction.getLeft();
+            final Function shouldMatch = patternAndMatchingFunction.getRight();
+
+            assertFalse(pattern.match(shouldNotMatch).isPresent());
+
+            final Optional<Map<String, Function>> subFunctions = pattern.match(shouldMatch);
+            assertTrue(subFunctions.isPresent());
+            assertEquals(shouldMatch, pattern.replace(mathContext, subFunctions.get()));
+        }
+    }
+
+    @Test
+    public void otherUnaryPatterns() {
+        final Number one = new Number(mathContext, 1);
+        final SubFunctionPattern x = new SubFunctionPattern("x");
+
+        final Function shouldNotMatch = new Negative(mathContext, one);
+
+        final List<ImmutablePair<Pattern, Function>> patternsAndMatchingFunctions = Arrays.asList(
+                new ImmutablePair<>(
+                        new ArcCosinePattern(x),
+                        new ArcCosine(mathContext, one)
+                ),
+                new ImmutablePair<>(
+                        new ArcSinePattern(x),
+                        new ArcSine(mathContext, one)
+                ),
+                new ImmutablePair<>(
+                        new ArcTangentPattern(x),
+                        new ArcTangent(mathContext, one)
+                ),
+                new ImmutablePair<>(
+                        new CosinePattern(x),
+                        new Cosine(mathContext, one)
+                ),
+                new ImmutablePair<>(
+                        new SinePattern(x),
+                        new Sine(mathContext, one)
+                ),
+                new ImmutablePair<>(
+                        new TangentPattern(x),
+                        new Tangent(mathContext, one)
                 )
         );
 
