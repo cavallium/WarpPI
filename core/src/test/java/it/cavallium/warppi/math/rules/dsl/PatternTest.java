@@ -2,17 +2,15 @@ package it.cavallium.warppi.math.rules.dsl;
 
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
-import it.cavallium.warppi.math.functions.Negative;
+import it.cavallium.warppi.math.functions.*;
 import it.cavallium.warppi.math.functions.Number;
-import it.cavallium.warppi.math.functions.Subtraction;
-import it.cavallium.warppi.math.functions.Sum;
-import it.cavallium.warppi.math.rules.dsl.patterns.NegativePattern;
-import it.cavallium.warppi.math.rules.dsl.patterns.NumberPattern;
-import it.cavallium.warppi.math.rules.dsl.patterns.SubFunctionPattern;
-import it.cavallium.warppi.math.rules.dsl.patterns.SumPattern;
+import it.cavallium.warppi.math.rules.dsl.patterns.*;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -114,5 +112,57 @@ public class PatternTest {
         final Optional<Map<String, Function>> subFunctions = pattern.match(shouldMatch);
         assertTrue(subFunctions.isPresent());
         assertEquals(shouldMatch, pattern.replace(mathContext, subFunctions.get()));
+    }
+
+    @Test
+    public void otherBinaryPatterns() {
+        final Number one = new Number(mathContext, 1);
+        final Number two = new Number(mathContext, 2);
+        final SubFunctionPattern x = new SubFunctionPattern("x");
+        final SubFunctionPattern y = new SubFunctionPattern("y");
+
+        final Function shouldNotMatch = new Sum(mathContext, one, two);
+
+        final List<ImmutablePair<Pattern, Function>> patternsAndMatchingFunctions = Arrays.asList(
+                new ImmutablePair<>(
+                        new DivisionPattern(x, y),
+                        new Division(mathContext, one, two)
+                ),
+                new ImmutablePair<>(
+                        new LogarithmPattern(x, y),
+                        new Logarithm(mathContext, one, two)
+                ),
+                new ImmutablePair<>(
+                        new MultiplicationPattern(x, y),
+                        new Multiplication(mathContext, one, two)
+                ),
+                new ImmutablePair<>(
+                        new PowerPattern(x, y),
+                        new Power(mathContext, one, two)
+                ),
+                new ImmutablePair<>(
+                        new RootPattern(x, y),
+                        new Root(mathContext, one, two)
+                ),
+                new ImmutablePair<>(
+                        new SubtractionPattern(x, y),
+                        new Subtraction(mathContext, one, two)
+                ),
+                new ImmutablePair<>(
+                        new SumSubtractionPattern(x, y),
+                        new SumSubtraction(mathContext, one, two)
+                )
+        );
+
+        for (final ImmutablePair<Pattern, Function> patternAndMatchingFunction : patternsAndMatchingFunctions) {
+            final Pattern pattern = patternAndMatchingFunction.getLeft();
+            final Function shouldMatch = patternAndMatchingFunction.getRight();
+
+            assertFalse(pattern.match(shouldNotMatch).isPresent());
+
+            final Optional<Map<String, Function>> subFunctions = pattern.match(shouldMatch);
+            assertTrue(subFunctions.isPresent());
+            assertEquals(shouldMatch, pattern.replace(mathContext, subFunctions.get()));
+        }
     }
 }
