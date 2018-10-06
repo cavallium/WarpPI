@@ -80,4 +80,13 @@ public interface Function {
 	 * @throws Error
 	 */
 	ObjectArrayList<Block> toBlock(MathContext context) throws Error;
+
+	/**
+	 * Accepts a <code>FunctionVisitor</code> by calling the correct overload of <code>visit</code>.
+	 *
+	 * @param visitor The visitor to be accepted.
+	 * @param <T> The return type of the <code>visit</code> method.
+	 * @return The value returned by <code>visit</code>.
+	 */
+	<T> T accept(FunctionVisitor<T> visitor);
 }

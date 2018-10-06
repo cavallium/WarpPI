@@ -2,10 +2,7 @@ package it.cavallium.warppi.math.functions;
 
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockChar;
-import it.cavallium.warppi.math.Function;
-import it.cavallium.warppi.math.FunctionOperator;
-import it.cavallium.warppi.math.MathContext;
-import it.cavallium.warppi.math.MathematicalSymbols;
+import it.cavallium.warppi.math.*;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
@@ -41,6 +38,11 @@ public class SumSubtraction extends FunctionOperator {
 		result.add(new BlockChar(MathematicalSymbols.SUM_SUBTRACTION));
 		result.addAll(getParameter2().toBlock(context));
 		return result;
+	}
+
+	@Override
+	public <T> T accept(FunctionVisitor<T> visitor) {
+		return visitor.visit(this);
 	}
 
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.LinkedList;
 
+import it.cavallium.warppi.math.FunctionVisitor;
 import org.nevec.rjm.BigDecimalMath;
 
 import it.cavallium.warppi.gui.expression.blocks.Block;
@@ -271,6 +272,11 @@ public class Number implements Function {
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public <T> T accept(FunctionVisitor<T> visitor) {
+		return visitor.visit(this);
 	}
 
 	@Override

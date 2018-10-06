@@ -3,6 +3,7 @@ package it.cavallium.warppi.math.functions.equations;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionDynamic;
+import it.cavallium.warppi.math.FunctionVisitor;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -44,6 +45,11 @@ public class EquationsSystem extends FunctionDynamic {
 	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public <T> T accept(FunctionVisitor<T> visitor) {
+		return visitor.visit(this);
 	}
 
 }

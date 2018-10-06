@@ -5,6 +5,7 @@ import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
 import it.cavallium.warppi.gui.expression.blocks.BlockParenthesis;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionSingle;
+import it.cavallium.warppi.math.FunctionVisitor;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.trigonometry.ArcCosine;
 import it.cavallium.warppi.math.functions.trigonometry.ArcSine;
@@ -580,6 +581,11 @@ public class Expression extends FunctionSingle {
 		bp.recomputeDimensions();
 		result.add(bp);
 		return result;
+	}
+
+	@Override
+	public <T> T accept(FunctionVisitor<T> visitor) {
+		return visitor.visit(this);
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package it.cavallium.warppi.math.functions.trigonometry;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionSingle;
+import it.cavallium.warppi.math.FunctionVisitor;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.util.Error;
 import it.cavallium.warppi.util.Errors;
@@ -36,6 +37,11 @@ public class ArcSine extends FunctionSingle {
 	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
 		// TODO Auto-generated method stub
 		throw new Error(Errors.NOT_IMPLEMENTED, "Unknown function " + getClass().getSimpleName());
+	}
+
+	@Override
+	public <T> T accept(FunctionVisitor<T> visitor) {
+		return visitor.visit(this);
 	}
 
 }

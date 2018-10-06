@@ -5,6 +5,7 @@ import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
 import it.cavallium.warppi.gui.expression.blocks.BlockSquareRoot;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionOperator;
+import it.cavallium.warppi.math.FunctionVisitor;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -46,6 +47,11 @@ public class RootSquare extends FunctionOperator {
 		bsqr.recomputeDimensions();
 		result.add(bsqr);
 		return result;
+	}
+
+	@Override
+	public <T> T accept(FunctionVisitor<T> visitor) {
+		return visitor.visit(this);
 	}
 
 }
