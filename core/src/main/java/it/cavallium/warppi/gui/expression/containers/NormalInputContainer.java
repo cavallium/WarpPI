@@ -46,7 +46,6 @@ public class NormalInputContainer extends InputContainer {
 	 * @param userInput
 	 * @param ic
 	 */
-	@SuppressWarnings("deprecation")
 	public NormalInputContainer(InputContainer old, InputContext ic) {
 		super(old, ic);
 	}

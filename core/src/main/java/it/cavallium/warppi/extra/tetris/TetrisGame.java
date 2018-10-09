@@ -6,21 +6,26 @@ public class TetrisGame {
 	private BlockType[] grid;
 	private BlockType[] hovergrid;
 	private BlockType[] renderedGrid;
-	private GameStatus gameStatus = GameStatus.INITIAL;
-	private int score = 0;
-	private double currentTime = 0;
+	private GameStatus gameStatus;
+	private int score;
+	private double currentTime;
 	
 	public TetrisGame() {
-		
+		resetVariables();
 	}
 
 	void playAgain() {
+		resetVariables();
+		gameStatus = GameStatus.PLAYING;
+	}
+	
+	private void resetVariables() {
 		grid = new BlockType[WIDTH * HEIGHT];
 		hovergrid = new BlockType[WIDTH * HEIGHT];
 		renderedGrid = new BlockType[WIDTH * HEIGHT];
 		score = 0;
 		currentTime = 0;
-		gameStatus = GameStatus.PLAYING;
+		gameStatus = GameStatus.INITIAL;
 	}
 
 	public void gameTick(float dt, boolean leftPressed, boolean rightPressed, boolean downPressed, boolean okPressed, boolean backPressed) {

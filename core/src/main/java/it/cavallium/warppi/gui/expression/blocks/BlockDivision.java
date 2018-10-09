@@ -27,10 +27,14 @@ public class BlockDivision extends Block {
 		recomputeDimensions();
 	}
 
-	private BlockDivision(BlockDivision old, InputContext ic) {
-		containerUp = old.containerUp.clone(ic);
-		containerDown = old.containerDown.clone(ic);
-		recomputeDimensions();
+	private BlockDivision(final TreeContainer parent, BlockDivision old, InputContext ic) {
+		super(parent, old);
+		containerUp = old.containerUp.clone(this, ic);
+		containerDown = old.containerDown.clone(this, ic);
+		paddingLeftLower = old.paddingLeftLower;
+		paddingLeftUpper = old.paddingLeftUpper;
+		h1 = old.h1;
+		System.out.println(String.join(",", ""+h1, ""+old.h1, ""+line, ""+old.line));
 	}
 
 	@Override
@@ -144,7 +148,7 @@ public class BlockDivision extends Block {
 	}
 
 	@Override
-	public BlockDivision clone(InputContext ic) {
-		return new BlockDivision(this, ic);
+	public BlockDivision clone(final TreeContainer parent, InputContext ic) {
+		return new BlockDivision(parent, this, ic);
 	}
 }

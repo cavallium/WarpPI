@@ -18,7 +18,6 @@ import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public abstract class InputContainer implements GraphicalElement, InputLayout {
-	private static final long serialVersionUID = 923589369317765667L;
 	protected BlockContainer root;
 	protected Caret caret;
 	private static final float CARET_DURATION = 0.5f;
@@ -61,11 +60,11 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 	 */
 	protected InputContainer(InputContainer old, InputContext ic) {
 		this.caretTime = old.caretTime;
-		this.extra = old.extra == null ? null : old.extra.clone(ic);
+		this.extra = old.extra == null ? null : old.extra.clone(null, ic);
 		this.maxPosition = old.maxPosition;
 		this.caret = old.caret == null ? null : new Caret(old.caret);
 		this.inputContext = ic;
-		this.root = old.root == null ? null : old.root.clone(ic);
+		this.root = old.root == null ? null : old.root.clone(null, ic);
 		this.parsed = old.parsed;
 	}
 

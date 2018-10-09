@@ -20,8 +20,9 @@ public class BlockPower extends Block {
 		recomputeDimensions();
 	}
 
-	private BlockPower(BlockPower old, InputContext ic) {
-		this.containerExponent = old.containerExponent.clone(ic);
+	protected BlockPower(final TreeContainer parent, BlockPower old, InputContext ic) {
+		super(parent, old);
+		this.containerExponent = old.containerExponent.clone(this, ic);
 	}
 
 	@Override
@@ -100,7 +101,7 @@ public class BlockPower extends Block {
 	}
 
 	@Override
-	public BlockPower clone(InputContext ic) {
-		return new BlockPower(this, ic);
+	public BlockPower clone(final TreeContainer parent, InputContext ic) {
+		return new BlockPower(parent, this, ic);
 	}
 }

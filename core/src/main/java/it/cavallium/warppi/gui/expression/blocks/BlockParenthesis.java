@@ -15,8 +15,8 @@ public class BlockParenthesis extends BlockParenthesisAbstract {
 		super(blocks);
 	}
 
-	private BlockParenthesis(BlockParenthesis old, InputContext ic) {
-		super(old, ic);
+	private BlockParenthesis(final TreeContainer parent, BlockParenthesis old, InputContext ic) {
+		super(parent, old, ic);
 	}
 
 	@Override
@@ -38,8 +38,8 @@ public class BlockParenthesis extends BlockParenthesisAbstract {
 	}
 
 	@Override
-	public BlockParenthesis clone(InputContext ic) {
-		return new BlockParenthesis(this, ic);
+	public BlockParenthesis clone(final TreeContainer parent, InputContext ic) {
+		return new BlockParenthesis(parent, this, ic);
 	}
 
 }

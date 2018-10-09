@@ -13,8 +13,8 @@ public class BlockSine extends BlockParenthesisAbstract {
 		super("SIN");
 	}
 
-	private BlockSine(BlockSine old, InputContext ic) {
-		super(old, ic);
+	private BlockSine(final TreeContainer parent, BlockSine old, InputContext ic) {
+		super(parent, old, ic);
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class BlockSine extends BlockParenthesisAbstract {
 	}
 
 	@Override
-	public Block clone(InputContext ic) {
-		return new BlockSine(this, ic);
+	public BlockSine clone(final TreeContainer parent, InputContext ic) {
+		return new BlockSine(parent, this, ic);
 	}
 }

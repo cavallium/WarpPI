@@ -40,10 +40,19 @@ public class BlockLogarithm extends Block implements IParenthesis {
 		recomputeDimensions();
 	}
 
-	private BlockLogarithm(BlockLogarithm old, InputContext ic) {
-		containerBase = old.containerBase.clone(ic);
-		containerNumber = old.containerNumber.clone(ic);
-		recomputeDimensions();
+	private BlockLogarithm(final TreeContainer parent, BlockLogarithm old, InputContext ic) {
+		super(parent, old);
+		containerBase = old.containerBase.clone(this, ic);
+		containerNumber = old.containerNumber.clone(this, ic);
+		this.prw = old.prw;
+		this.bw = old.bw;
+		this.bh = old.bh;
+		this.bl = old.bl;
+		this.chw = old.chw;
+		this.chh = old.chh;
+		this.schh = old.schh;
+		this.nmbh = old.nmbh;
+		this.toph = old.toph;
 	}
 
 	@Override
@@ -183,8 +192,8 @@ public class BlockLogarithm extends Block implements IParenthesis {
 	}
 
 	@Override
-	public BlockLogarithm clone(InputContext ic) {
-		return new BlockLogarithm(this, ic);
+	public BlockLogarithm clone(final TreeContainer parent, InputContext ic) {
+		return new BlockLogarithm(parent, this, ic);
 	}
 
 }

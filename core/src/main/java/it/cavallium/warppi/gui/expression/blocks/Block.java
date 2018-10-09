@@ -18,6 +18,22 @@ public abstract class Block implements TreeBlock, GraphicalElement {
 	protected int height;
 	protected int line;
 	protected TreeContainer parent;
+	
+	public Block() {
+		
+	}
+	
+	/**
+	 * Copy
+	 * @param b
+	 */
+	public Block(TreeContainer parent, Block b) {
+		this.small = b.small;
+		this.width = b.width;
+		this.height = b.height;
+		this.line = b.line;
+		this.parent = parent;
+	}
 
 	/**
 	 *
@@ -95,5 +111,5 @@ public abstract class Block implements TreeBlock, GraphicalElement {
 		this.parent = parent;
 	}
 	
-	public abstract Block clone(InputContext ic);
+	public abstract Block clone(TreeContainer parent, InputContext ic);
 }

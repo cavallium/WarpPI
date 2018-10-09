@@ -49,7 +49,7 @@ public class TetrisScreen extends Screen {
 			if (TetrisScreen.skin == null) {
 				TetrisScreen.skin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("/tetrisskin.png");
 			}
-			StaticVars.windowZoom.onNext(1f);
+			StaticVars.windowZoom.onNext(2f);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}

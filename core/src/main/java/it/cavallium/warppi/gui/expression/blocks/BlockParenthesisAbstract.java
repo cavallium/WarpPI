@@ -31,10 +31,18 @@ public abstract class BlockParenthesisAbstract extends Block implements IParenth
 		recomputeDimensions();
 	}
 
-	BlockParenthesisAbstract(BlockParenthesisAbstract old, InputContext ic) {
-		containerNumber = old.containerNumber.clone(ic);
-		prefix = old.prefix == null ? null : new String(old.prefix);
-		recomputeDimensions();
+	/**
+	 * Copy
+	 * @param old
+	 * @param ic
+	 */
+	BlockParenthesisAbstract(final TreeContainer parent, BlockParenthesisAbstract old, InputContext ic) {
+		super(parent, old);
+		containerNumber = old.containerNumber.clone(this, ic);
+		prefix = old.prefix;
+		prw = old.prw;
+		chw = old.chw;
+		chh = old.chh;
 	}
 
 	public BlockParenthesisAbstract(final ObjectArrayList<Block> blocks) {
