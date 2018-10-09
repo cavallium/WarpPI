@@ -18,6 +18,16 @@ public class TetrisScreen extends Screen {
 
 	private TetrisGame g;
 
+	private boolean leftPressed;
+
+	private boolean rightPressed;
+
+	private boolean downPressed;
+
+	private boolean okPressed;
+
+	private boolean backPressed;
+
 	private GraphicEngine e;
 
 	private Renderer r;
@@ -50,6 +60,7 @@ public class TetrisScreen extends Screen {
 	@Override
 	public void beforeRender(final float dt) {
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xff000000);
+			g.gameTick(dt, leftPressed, rightPressed, downPressed, okPressed, backPressed);
 	}
 
 	@Override
@@ -58,7 +69,60 @@ public class TetrisScreen extends Screen {
 			TetrisScreen.skin.use(e);
 		}
 	}
-
+	
+	@Override
+	public boolean onKeyPressed(KeyPressedEvent k) {
+		switch (k.getKey()) {
+			case LEFT: {
+				leftPressed = true;
+				return true;
+			}
+			case RIGHT: {
+				rightPressed = true;
+				return true;
+			}
+			case DOWN: {
+				downPressed = true;
+				return true;
+			}
+			case OK: {
+				okPressed = true;
+				return true;
+			}
+			case BACK: {
+				backPressed = true;
+				return true;
+			}
+			default: return false;
+		}
+	}
+	
+	@Override
+	public boolean onKeyReleased(KeyReleasedEvent k) {
+		switch (k.getKey()) {
+			case LEFT: {
+				leftPressed = false;
+				return true;
+			}
+			case RIGHT: {
+				rightPressed = false;
+				return true;
+			}
+			case DOWN: {
+				downPressed = false;
+				return true;
+			}
+			case OK: {
+				okPressed = false;
+				return true;
+			}
+			case BACK: {
+				backPressed = false;
+				return true;
+			}
+			default: return false;
+		}
+	}	
 	@Override
 	public boolean mustBeRefreshed() {
 		return true;

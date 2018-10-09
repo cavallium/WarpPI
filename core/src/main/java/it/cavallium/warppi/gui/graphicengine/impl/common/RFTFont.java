@@ -19,7 +19,7 @@ import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.util.Utils;
 
 public abstract class RFTFont implements BinaryFont {
-
+	
 	public boolean[][] rawchars;
 	public int[] chars32;
 	public int minBound = 10;
