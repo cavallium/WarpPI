@@ -2,6 +2,8 @@ package it.cavallium.warppi.extra.tetris;
 
 import java.io.IOException;
 
+import org.nevec.rjm.Wigner3j;
+
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.device.Keyboard;
@@ -47,6 +49,7 @@ public class TetrisScreen extends Screen {
 			if (TetrisScreen.skin == null) {
 				TetrisScreen.skin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("/tetrisskin.png");
 			}
+			StaticVars.windowZoom.onNext(1f);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -67,6 +70,20 @@ public class TetrisScreen extends Screen {
 	public void render() {
 		if (TetrisScreen.skin != null) {
 			TetrisScreen.skin.use(e);
+		}
+		r.glColor3f(1, 1, 1);
+		BlockType[] renderedGrid = g.getRenderedGrid();
+		int centerScreen = StaticVars.screenSize[0]/2;
+		int centerGrid = TetrisGame.WIDTH*5/2-1;
+		final int leftOffset = centerScreen - centerGrid;
+		final int topOffset = StaticVars.screenSize[1] - TetrisGame.HEIGHT*5-1;
+		for (int y = 0; y < TetrisGame.HEIGHT; y++) {
+			for (int x = 0; x < TetrisGame.WIDTH; x++) {
+				final int offset = x+y*TetrisGame.WIDTH;
+				final BlockType type = renderedGrid[offset];
+				if (type != null) r.glFillRect(leftOffset + x * 4, y * 4, 4, 4, renderedGrid[offset].ordinal() * 4, 0, 4, 4);
+				else  r.glFillRect(leftOffset + x * 5, topOffset + y * 5, 4, 4, 2 * 4, 0, 4, 4);
+			}
 		}
 	}
 	
@@ -131,17 +148,5 @@ public class TetrisScreen extends Screen {
 	@Override
 	public String getSessionTitle() {
 		return "Absolutely Not Tetris";
-	}
-
-	@Override
-	public boolean onKeyPressed(KeyPressedEvent k) {
-		System.out.println("pr:"+k.getKey());
-		return super.onKeyPressed(k);
-	}
-	
-	@Override
-	public boolean onKeyReleased(KeyReleasedEvent k) {
-		System.out.println("re:"+k.getKey());
-		return super.onKeyReleased(k);
 	}
 }
