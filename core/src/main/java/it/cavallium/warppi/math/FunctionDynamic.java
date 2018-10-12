@@ -9,6 +9,8 @@ import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public abstract class FunctionDynamic implements Function {
+	private boolean simplified;
+	
 	public FunctionDynamic(final MathContext root) {
 		this.root = root;
 		functions = new Function[] {};
@@ -131,7 +133,7 @@ public abstract class FunctionDynamic implements Function {
 
 	@Override
 	public abstract FunctionDynamic clone();
-
+	
 	@Override
 	public int hashCode() {
 		return functions.hashCode() + 883 * super.hashCode();

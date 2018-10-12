@@ -13,6 +13,7 @@ public class Variable implements Function {
 	protected char var;
 	protected final MathContext root;
 	protected V_TYPE type = V_TYPE.CONSTANT;
+	private boolean simplified;
 
 	public Variable(final MathContext root, final char val, final V_TYPE type) {
 		this.root = root;

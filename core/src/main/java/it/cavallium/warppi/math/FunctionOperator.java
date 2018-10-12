@@ -7,7 +7,7 @@ import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public abstract class FunctionOperator implements Function {
-
+	
 	/**
 	 * Create a new instance of FunctionOperator. The Math Context will be the
 	 * same of <strong>value1</strong>'s.
