@@ -1,10 +1,11 @@
 package it.cavallium.warppi.extra.tetris;
 
-public enum BlockType {
+public enum BlockColor {
 	RED,
 	GREEN,
 	BLUE,
 	YELLOW,
 	ORANGE,
-	VIOLET
+	PURPLE,
+	CYAN
 }

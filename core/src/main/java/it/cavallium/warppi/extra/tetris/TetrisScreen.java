@@ -63,7 +63,7 @@ public class TetrisScreen extends Screen {
 	@Override
 	public void beforeRender(final float dt) {
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xff000000);
-			g.gameTick(dt, leftPressed, rightPressed, downPressed, okPressed, backPressed);
+			g.update(dt, leftPressed, rightPressed, downPressed, okPressed, backPressed);
 	}
 
 	@Override
@@ -72,17 +72,20 @@ public class TetrisScreen extends Screen {
 			TetrisScreen.skin.use(e);
 		}
 		r.glColor3f(1, 1, 1);
-		BlockType[] renderedGrid = g.getRenderedGrid();
+		BlockColor[] renderedGrid = g.getRenderedGrid();
 		int centerScreen = StaticVars.screenSize[0]/2;
-		int centerGrid = TetrisGame.WIDTH*5/2-1;
+		int centerGrid = TetrisGame.WIDTH*6/2-1;
 		final int leftOffset = centerScreen - centerGrid;
-		final int topOffset = StaticVars.screenSize[1] - TetrisGame.HEIGHT*5-1;
+		final int topOffset = StaticVars.screenSize[1] - TetrisGame.HEIGHT*6-1;
 		for (int y = 0; y < TetrisGame.HEIGHT; y++) {
 			for (int x = 0; x < TetrisGame.WIDTH; x++) {
 				final int offset = x+y*TetrisGame.WIDTH;
-				final BlockType type = renderedGrid[offset];
-				if (type != null) r.glFillRect(leftOffset + x * 4, y * 4, 4, 4, renderedGrid[offset].ordinal() * 4, 0, 4, 4);
-				else  r.glFillRect(leftOffset + x * 5, topOffset + y * 5, 4, 4, 2 * 4, 0, 4, 4);
+				final BlockColor type = renderedGrid[offset];
+				if (type != null) {
+					r.glFillRect(leftOffset + x * 5, topOffset + (TetrisGame.HEIGHT+3-y) * 5, 5, 5, renderedGrid[offset].ordinal() * 5, 0, 5, 5);
+				} else {
+//					r.glFillRect(leftOffset + x * 5, topOffset + y * 5, 5, 5, 1 * 5, 0, 5, 5);
+				}
 			}
 		}
 	}
