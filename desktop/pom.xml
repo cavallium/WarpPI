@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.cavallium</groupId>
 		<artifactId>warppi</artifactId>
-		<version>${project.version}</version>
+		<version>0.9.0a2</version>
 	</parent>
 	<artifactId>warppi-desktop</artifactId>
 

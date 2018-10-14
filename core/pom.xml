@@ -6,10 +6,9 @@
 	<parent>
 		<groupId>it.cavallium</groupId>
 		<artifactId>warppi</artifactId>
-	<version>${project.version}</version>
+	<version>0.9.0a2</version>
 	</parent>
 	<artifactId>warppi-core</artifactId>
-	<packaging>bundle</packaging>
 
 	<name>WarpPI Calculator Core</name>
 	<description>WarpPI Calculator core project</description>
@@ -46,16 +45,8 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Import-Package>*</Import-Package>
-						<Export-Package>it.cavallium.warppi.*</Export-Package>
-						<Bundle-SymbolicName>warppi-core</Bundle-SymbolicName>
-					</instructions>
-				</configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
