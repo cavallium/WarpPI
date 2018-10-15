@@ -1,7 +1,5 @@
 package it.cavallium.warppi.gui.graphicengine.impl.common;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,8 +7,6 @@ import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.imageio.ImageIO;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Platform.ConsoleUtils;
@@ -220,18 +216,6 @@ public abstract class RFTFont implements BinaryFont {
 			this.intervals[i * 3 + 0] = interval[0];
 			this.intervals[i * 3 + 1] = interval[1];
 			this.intervals[i * 3 + 2] = interval[2];
-		}
-	}
-
-	@SuppressWarnings("unused")
-	private void saveArray(final int[] screen, final int w, final int h, final String coutputpng) {
-		final BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
-		final int[] a = ((DataBufferInt) bi.getRaster().getDataBuffer()).getData();
-		System.arraycopy(screen, 0, a, 0, screen.length);
-		try {
-			ImageIO.write(bi, "PNG", new File(coutputpng));
-		} catch (final IOException ex) {
-			Logger.getLogger(BinaryFont.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 

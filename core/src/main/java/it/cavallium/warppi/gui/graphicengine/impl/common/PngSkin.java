@@ -1,14 +1,10 @@
 package it.cavallium.warppi.gui.graphicengine.impl.common;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-
-import javax.imageio.ImageIO;
 
 import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.Platform.PngUtils.PngReader;
+import it.cavallium.warppi.Platform.ImageUtils.ImageReader;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Skin;
 
@@ -29,14 +25,7 @@ public abstract class PngSkin implements Skin {
 		if (!file.startsWith("/")) {
 			file = "/" + file;
 		}
-		if (!file.endsWith(".png")) {
-			final File f = File.createTempFile("picalculator-png", ".png");
-			f.deleteOnExit();
-			final BufferedImage img = ImageIO.read(Engine.getPlatform().getStorageUtils().getResourceStream(file));
-			ImageIO.write(img, "PNG", f);
-			file = f.toString();
-		}
-		final PngReader r = Engine.getPlatform().getPngUtils().load(Engine.getPlatform().getStorageUtils().getResourceStream(file));
+		final ImageReader r = Engine.getPlatform().getImageUtils().load(Engine.getPlatform().getStorageUtils().getResourceStream(file));
 		if (r == null) {
 			skinData = new int[0];
 			skinSize = new int[] { 0, 0 };

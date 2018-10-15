@@ -26,7 +26,7 @@ public class DesktopPlatform implements Platform {
 	private final DesktopConsoleUtils cu;
 	private final DesktopGpio gi;
 	private final DesktopStorageUtils su;
-	private final PngUtils pu;
+	private final ImageUtils pu;
 	private final String on;
 	private final Map<String, GraphicEngine> el;
 	private final DesktopSettings settings;
@@ -36,7 +36,7 @@ public class DesktopPlatform implements Platform {
 		cu = new DesktopConsoleUtils();
 		gi = new DesktopGpio();
 		su = new DesktopStorageUtils();
-		pu = new DesktopPngUtils();
+		pu = new DesktopImageUtils();
 		on = System.getProperty("os.name").toLowerCase();
 		el = new HashMap<>();
 		el.put("CPU engine", new SwingEngine());
@@ -60,7 +60,7 @@ public class DesktopPlatform implements Platform {
 	}
 
 	@Override
-	public PngUtils getPngUtils() {
+	public ImageUtils getImageUtils() {
 		return pu;
 	}
 

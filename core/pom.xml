@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.cavallium</groupId>
 		<artifactId>warppi</artifactId>
-		<version>0.9.0a2</version>
+		<version>0.9.0a3</version>
 	</parent>
 	<artifactId>warppi-core</artifactId>
 
@@ -17,17 +17,17 @@
 		<dependency>
 			<groupId>it.cavallium</groupId>
 			<artifactId>warppi-flow</artifactId>
-			<version>0.9.0a2</version>
+			<version>0.9.0a3</version>
 		</dependency>
 		<dependency>
 			<groupId>it.cavallium</groupId>
 			<artifactId>warppi-util</artifactId>
-			<version>0.9.0a2</version>
+			<version>0.9.0a3</version>
 		</dependency>
 		<dependency>
 			<groupId>it.cavallium</groupId>
 			<artifactId>bigdecimal-math</artifactId>
-			<version>0.9.0a2</version>
+			<version>0.9.0a3</version>
 		</dependency>
 		<dependency>
 			<groupId>it.unimi.dsi</groupId>

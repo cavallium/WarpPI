@@ -1,16 +1,30 @@
-package it.cavallium.warppi.hardware;
+package it.cavallium.warppi.desktop;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
+import javax.imageio.ImageIO;
+
 import ar.com.hjg.pngj.ImageLineInt;
-import it.cavallium.warppi.Platform.PngUtils.PngReader;
+import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.Platform.ImageUtils.ImageReader;
 
-public class HardwarePngReader implements PngReader {
+public class DesktopImageReader implements ImageReader {
 
-	private final ar.com.hjg.pngj.PngReader r;
+	private ar.com.hjg.pngj.PngReader r;
 
-	public HardwarePngReader(final InputStream resourceStream) {
+	public DesktopImageReader(final InputStream resourceStream) throws IOException {
 		r = new ar.com.hjg.pngj.PngReader(resourceStream);
+		// Try to read image converting it to png
+		if (r == null) {
+			final File f = File.createTempFile("picalculator-png", ".png");
+			f.deleteOnExit();
+			final BufferedImage img = ImageIO.read(resourceStream);
+			ImageIO.write(img, "PNG", f);
+			r = new ar.com.hjg.pngj.PngReader(f);
+		}
 	}
 
 	@Override

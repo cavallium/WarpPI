@@ -1,7 +1,5 @@
 package it.cavallium.warppi.device;
 
-import java.awt.event.KeyEvent;
-
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.StaticVars;
@@ -126,10 +124,10 @@ public class Keyboard {
 	 */
 	public static void debugKey(final int keyCode, boolean released) {
 		switch (keyCode) {
-			case KeyEvent.VK_ESCAPE:
+			case KeyboardAWTValues.VK_ESCAPE:
 				debugKey(Key.BACK, released);
 				break;
-			case KeyEvent.VK_S:
+			case KeyboardAWTValues.VK_S:
 				if (Keyboard.shift) {
 					debugKey(Key.ARCSINE, released);
 				} else if (Keyboard.alpha) {
@@ -138,7 +136,7 @@ public class Keyboard {
 					debugKey(Key.SINE, released);
 				}
 				break;
-			case KeyEvent.VK_C:
+			case KeyboardAWTValues.VK_C:
 				if (Keyboard.shift) {
 					debugKey(Key.ARCCOSINE, released);
 				} else if (Keyboard.alpha) {
@@ -147,7 +145,7 @@ public class Keyboard {
 					debugKey(Key.COSINE, released);
 				}
 				break;
-			case KeyEvent.VK_T:
+			case KeyboardAWTValues.VK_T:
 				if (Keyboard.shift) {
 					debugKey(Key.ARCTANGENT, released);
 				} else if (Keyboard.alpha) {
@@ -156,7 +154,7 @@ public class Keyboard {
 					debugKey(Key.TANGENT, released);
 				}
 				break;
-			case KeyEvent.VK_D:
+			case KeyboardAWTValues.VK_D:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.debug_DEG, released);
 				} else if (Keyboard.alpha) {
@@ -165,7 +163,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_R:
+			case KeyboardAWTValues.VK_R:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.debug_RAD, released);
 				} else if (Keyboard.alpha) {
@@ -174,7 +172,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_G:
+			case KeyboardAWTValues.VK_G:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.debug_GRA, released);
 				} else if (Keyboard.alpha) {
@@ -183,14 +181,14 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_X:
+			case KeyboardAWTValues.VK_X:
 				if (Keyboard.alpha) {
 					debugKey(Key.LETTER_X, released);
 				} else {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_P:
+			case KeyboardAWTValues.VK_P:
 				if (Keyboard.shift) {
 					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha) {
@@ -199,7 +197,7 @@ public class Keyboard {
 					debugKey(Key.PI, released);
 				}
 				break;
-			case KeyEvent.VK_E:
+			case KeyboardAWTValues.VK_E:
 				if (Keyboard.shift) {
 					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha) {
@@ -208,14 +206,14 @@ public class Keyboard {
 					debugKey(Key.EULER_NUMBER, released);
 				}
 				break;
-			case KeyEvent.VK_Y:
+			case KeyboardAWTValues.VK_Y:
 				if (Keyboard.alpha) {
 					debugKey(Key.LETTER_Y, released);
 				} else {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_B:
+			case KeyboardAWTValues.VK_B:
 				if (Keyboard.shift) {
 					debugKey(Key.BRIGHTNESS_CYCLE_REVERSE, released);
 				} else if (!Keyboard.shift && !Keyboard.alpha) {
@@ -224,7 +222,7 @@ public class Keyboard {
 					debugKey(Key.LETTER_B, released);
 				}
 				break;
-			case KeyEvent.VK_L:
+			case KeyboardAWTValues.VK_L:
 				if (Keyboard.shift) {
 					debugKey(Key.LOGARITHM, released);
 				} else if (Keyboard.alpha) {
@@ -234,7 +232,7 @@ public class Keyboard {
 				}
 				break;
 			case KeyboardJogampValues.VK_ENTER:
-			case KeyEvent.VK_ENTER:
+			case KeyboardAWTValues.VK_ENTER:
 				if (Keyboard.shift) {
 					debugKey(Key.STEP, released);
 				} else if (!Keyboard.shift && !Keyboard.alpha) {
@@ -246,49 +244,49 @@ public class Keyboard {
 				int col = 1;
 				Keyboard.debugKeysDown[row - 1][col - 1] = true;
 				break;
-			case KeyEvent.VK_1:
+			case KeyboardAWTValues.VK_1:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NUM1, released);
 				} else {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_2:
+			case KeyboardAWTValues.VK_2:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NUM2, released);
 				} else {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_3:
+			case KeyboardAWTValues.VK_3:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NUM3, released);
 				} else {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_4:
+			case KeyboardAWTValues.VK_4:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NUM4, released);
 				} else {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_5:
+			case KeyboardAWTValues.VK_5:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NUM5, released);
 				} else {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_6:
+			case KeyboardAWTValues.VK_6:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NUM6, released);
 				} else {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_7:
+			case KeyboardAWTValues.VK_7:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NUM7, released);
 				} else if (Keyboard.shift) {
@@ -297,7 +295,7 @@ public class Keyboard {
 					}
 				}
 				break;
-			case KeyEvent.VK_8:
+			case KeyboardAWTValues.VK_8:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NUM8, released);
 				} else if (Keyboard.shift) {
@@ -306,7 +304,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_9:
+			case KeyboardAWTValues.VK_9:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NUM9, released);
 				} else if (Keyboard.shift) {
@@ -315,7 +313,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_0:
+			case KeyboardAWTValues.VK_0:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NUM0, released);
 				} else if (Keyboard.shift) {
@@ -324,7 +322,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_M:
+			case KeyboardAWTValues.VK_M:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.SURD_MODE, released);
 				} else if (Keyboard.shift) {
@@ -334,7 +332,7 @@ public class Keyboard {
 				}
 				break;
 			case KeyboardJogampValues.VK_ADD:
-			case KeyEvent.VK_ADD:
+			case KeyboardAWTValues.VK_ADD:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.PLUS, released);
 				} else if (Keyboard.shift) {
@@ -344,7 +342,7 @@ public class Keyboard {
 				}
 				break;
 			case KeyboardJogampValues.VK_SUBTRACT:
-			case KeyEvent.VK_SUBTRACT:
+			case KeyboardAWTValues.VK_SUBTRACT:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.MINUS, released);
 				} else {
@@ -352,7 +350,7 @@ public class Keyboard {
 				}
 				break;
 			case KeyboardJogampValues.VK_MULTIPLY:
-			case KeyEvent.VK_MULTIPLY:
+			case KeyboardAWTValues.VK_MULTIPLY:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.MULTIPLY, released);
 				} else {
@@ -360,18 +358,18 @@ public class Keyboard {
 				}
 				break;
 			case KeyboardJogampValues.VK_DIVIDE:
-			case KeyEvent.VK_DIVIDE:
+			case KeyboardAWTValues.VK_DIVIDE:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.DIVIDE, released);
 				} else {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_BACK_SPACE:
+			case KeyboardAWTValues.VK_BACK_SPACE:
 				debugKey(Key.DELETE, released);
 				break;
 			case KeyboardJogampValues.VK_DELETE:
-			case KeyEvent.VK_DELETE:
+			case KeyboardAWTValues.VK_DELETE:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.RESET, released);
 				} else {
@@ -379,7 +377,7 @@ public class Keyboard {
 				}
 				break;
 			case KeyboardJogampValues.VK_LEFT:
-			case KeyEvent.VK_LEFT:
+			case KeyboardAWTValues.VK_LEFT:
 				//LEFT
 				row = 2;
 				col = 3;
@@ -391,7 +389,7 @@ public class Keyboard {
 				}
 				break;
 			case KeyboardJogampValues.VK_RIGHT:
-			case KeyEvent.VK_RIGHT:
+			case KeyboardAWTValues.VK_RIGHT:
 				//RIGHT
 				row = 2;
 				col = 5;
@@ -403,7 +401,7 @@ public class Keyboard {
 				}
 				break;
 			case KeyboardJogampValues.VK_UP:
-			case KeyEvent.VK_UP:
+			case KeyboardAWTValues.VK_UP:
 				//UP
 				row = 1;
 				col = 4;
@@ -415,7 +413,7 @@ public class Keyboard {
 				}
 				break;
 			case KeyboardJogampValues.VK_DOWN:
-			case KeyEvent.VK_DOWN:
+			case KeyboardAWTValues.VK_DOWN:
 				//DOWN
 				row = 3;
 				col = 4;
@@ -438,7 +436,7 @@ public class Keyboard {
 				}
 				break;
 			case KeyboardJogampValues.VK_NUMPAD4:
-			case KeyEvent.VK_NUMPAD4:
+			case KeyboardAWTValues.VK_NUMPAD4:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.HISTORY_BACK, released);
 				} else {
@@ -446,21 +444,21 @@ public class Keyboard {
 				}
 				break;
 			case KeyboardJogampValues.VK_NUMPAD6:
-			case KeyEvent.VK_NUMPAD6:
+			case KeyboardAWTValues.VK_NUMPAD6:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.HISTORY_FORWARD, released);
 				} else {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_PERIOD:
+			case KeyboardAWTValues.VK_PERIOD:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.DOT, released);
 				} else {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_A:
+			case KeyboardAWTValues.VK_A:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
@@ -471,7 +469,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_F:
+			case KeyboardAWTValues.VK_F:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
@@ -482,7 +480,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_H:
+			case KeyboardAWTValues.VK_H:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
@@ -493,7 +491,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_I:
+			case KeyboardAWTValues.VK_I:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
@@ -504,7 +502,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_J:
+			case KeyboardAWTValues.VK_J:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
@@ -515,7 +513,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_K:
+			case KeyboardAWTValues.VK_K:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
@@ -526,7 +524,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_N:
+			case KeyboardAWTValues.VK_N:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
@@ -537,7 +535,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_O:
+			case KeyboardAWTValues.VK_O:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
@@ -548,7 +546,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_Q:
+			case KeyboardAWTValues.VK_Q:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
@@ -559,7 +557,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_U:
+			case KeyboardAWTValues.VK_U:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
@@ -570,7 +568,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_V:
+			case KeyboardAWTValues.VK_V:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
@@ -581,7 +579,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_W:
+			case KeyboardAWTValues.VK_W:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
@@ -592,7 +590,7 @@ public class Keyboard {
 					debugKey(Key.NONE, released);
 				}
 				break;
-			case KeyEvent.VK_Z:
+			case KeyboardAWTValues.VK_Z:
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NONE, released);
 				} else if (Keyboard.alpha && !Keyboard.shift) {
@@ -604,26 +602,26 @@ public class Keyboard {
 				}
 				break;
 			case KeyboardJogampValues.VK_SHIFT:
-			case KeyEvent.VK_SHIFT:
+			case KeyboardAWTValues.VK_SHIFT:
 				debugKey(Key.SHIFT, released);
 				break;
-			case KeyEvent.VK_CONTROL:
+			case KeyboardAWTValues.VK_CONTROL:
 				debugKey(Key.ALPHA, released);
 				break;
 			case KeyboardJogampValues.VK_NUMPAD1:
-			case KeyEvent.VK_NUMPAD1:
+			case KeyboardAWTValues.VK_NUMPAD1:
 				debugKey(Key.SQRT, released);
 				break;
 			case KeyboardJogampValues.VK_NUMPAD2:
-			case KeyEvent.VK_NUMPAD2:
+			case KeyboardAWTValues.VK_NUMPAD2:
 				debugKey(Key.ROOT, released);
 				break;
 			case KeyboardJogampValues.VK_NUMPAD3:
-			case KeyEvent.VK_NUMPAD3:
+			case KeyboardAWTValues.VK_NUMPAD3:
 				debugKey(Key.POWER_OF_2, released);
 				break;
 			case KeyboardJogampValues.VK_NUMPAD5:
-			case KeyEvent.VK_NUMPAD5:
+			case KeyboardAWTValues.VK_NUMPAD5:
 				debugKey(Key.POWER_OF_x, released);
 				break;
 		}
@@ -631,20 +629,20 @@ public class Keyboard {
 
 	private synchronized static void debugKeyReleased(final int keyCode) {
 		switch (keyCode) {
-			case KeyEvent.VK_ENTER:
+			case KeyboardAWTValues.VK_ENTER:
 				int row = 2;
 				int col = 1;
 				Keyboard.debugKeysDown[row - 1][col - 1] = false;
 				break;
 			case KeyboardJogampValues.VK_LEFT:
-			case KeyEvent.VK_LEFT:
+			case KeyboardAWTValues.VK_LEFT:
 				//LEFT
 				row = 2;
 				col = 3;
 				Keyboard.debugKeysDown[row - 1][col - 1] = false;
 				break;
 			case KeyboardJogampValues.VK_RIGHT:
-			case KeyEvent.VK_RIGHT:
+			case KeyboardAWTValues.VK_RIGHT:
 				//RIGHT
 				row = 2;
 				col = 5;
@@ -652,14 +650,14 @@ public class Keyboard {
 				System.out.println("RELEASE");
 				break;
 			case KeyboardJogampValues.VK_UP:
-			case KeyEvent.VK_UP:
+			case KeyboardAWTValues.VK_UP:
 				//UP
 				row = 1;
 				col = 4;
 				Keyboard.debugKeysDown[row - 1][col - 1] = false;
 				break;
 			case KeyboardJogampValues.VK_DOWN:
-			case KeyEvent.VK_DOWN:
+			case KeyboardAWTValues.VK_DOWN:
 				//DOWN
 				row = 3;
 				col = 4;

@@ -1,15 +1,15 @@
-package it.cavallium.warppi.desktop;
+package it.cavallium.warppi.hardware;
 
 import java.io.InputStream;
 
 import ar.com.hjg.pngj.ImageLineInt;
-import it.cavallium.warppi.Platform.PngUtils.PngReader;
+import it.cavallium.warppi.Platform.ImageUtils.ImageReader;
 
-public class DesktopPngReader implements PngReader {
+public class HardwareImageReader implements ImageReader {
 
 	private final ar.com.hjg.pngj.PngReader r;
 
-	public DesktopPngReader(final InputStream resourceStream) {
+	public HardwareImageReader(final InputStream resourceStream) {
 		r = new ar.com.hjg.pngj.PngReader(resourceStream);
 	}
 

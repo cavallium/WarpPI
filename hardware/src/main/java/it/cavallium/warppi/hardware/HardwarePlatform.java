@@ -21,7 +21,7 @@ public class HardwarePlatform implements Platform {
 	private final HardwareConsoleUtils cu;
 	private final HardwareGpio gi;
 	private final HardwareStorageUtils su;
-	private final PngUtils pu;
+	private final ImageUtils pu;
 	private final String on;
 	private final Map<String, GraphicEngine> el;
 	private final HardwareSettings settings;
@@ -31,7 +31,7 @@ public class HardwarePlatform implements Platform {
 		cu = new HardwareConsoleUtils();
 		gi = new HardwareGpio();
 		su = new HardwareStorageUtils();
-		pu = new HardwarePngUtils();
+		pu = new HardwareImageUtils();
 		on = System.getProperty("os.name").toLowerCase();
 		el = new HashMap<>();
 		el.put("GPU engine", new JOGLEngine());
@@ -55,7 +55,7 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public PngUtils getPngUtils() {
+	public ImageUtils getImageUtils() {
 		return pu;
 	}
 

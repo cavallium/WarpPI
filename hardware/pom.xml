@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.cavallium</groupId>
 		<artifactId>warppi</artifactId>
-		<version>0.9.0a2</version>
+		<version>0.9.0a3</version>
 	</parent>
 	<artifactId>warppi-hardware</artifactId>
 
@@ -18,12 +18,12 @@
 		<dependency>
 			<groupId>it.cavallium</groupId>
 			<artifactId>warppi-core</artifactId>
-			<version>0.9.0a2</version>
+			<version>0.9.0a3</version>
 		</dependency>
 		<dependency>
 			<groupId>it.cavallium</groupId>
 			<artifactId>warppi-engine-jogl</artifactId>
-			<version>0.9.0a2</version>
+			<version>0.9.0a3</version>
 		</dependency>
 		<dependency>
 			<groupId>com.pi4j</groupId>

@@ -5,14 +5,13 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.Platform.Semaphore;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.flow.Observable;
+import it.cavallium.warppi.flow.Pair;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
