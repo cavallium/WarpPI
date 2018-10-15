@@ -39,6 +39,8 @@
 
 	<modules>
 		<module>core</module>
+		<module>util</module>
+		<module>bigdecimal-math</module>
 		<module>Flow</module>
 		<module>rules</module>
 		<!-- <module>hardware</module>-->

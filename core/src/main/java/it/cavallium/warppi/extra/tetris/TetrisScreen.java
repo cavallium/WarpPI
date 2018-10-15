@@ -2,8 +2,6 @@ package it.cavallium.warppi.extra.tetris;
 
 import java.io.IOException;
 
-import org.nevec.rjm.Wigner3j;
-
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.device.Keyboard;
