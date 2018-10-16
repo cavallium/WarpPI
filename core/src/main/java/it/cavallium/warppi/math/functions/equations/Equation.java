@@ -59,7 +59,14 @@ public class Equation extends FunctionOperator {
 
 	@Override
 	public boolean equals(final Object o) {
-		// TODO Auto-generated method stub
+		if (o instanceof Equation) {
+			final FunctionOperator f = (FunctionOperator) o;
+			if (parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2())) {
+				return true;
+			} else if (parameter1.equals(f.getParameter2()) && parameter2.equals(f.getParameter1())) {
+				return true;
+			}
+		}
 		return false;
 	}
 
