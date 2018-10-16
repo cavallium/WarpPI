@@ -5,6 +5,7 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.*;
 import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.functions.equations.Equation;
+import it.cavallium.warppi.math.functions.equations.EquationsSystem;
 import it.cavallium.warppi.math.functions.trigonometry.*;
 import it.cavallium.warppi.math.rules.dsl.patterns.*;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -127,6 +128,36 @@ public class PatternTest {
         final Optional<Map<String, Function>> subFunctions = pattern.match(shouldMatch);
         assertTrue(subFunctions.isPresent());
         assertTrue(pattern.replace(mathContext, subFunctions.get()) instanceof Undefined);
+    }
+
+    @Test
+    public void equationsSystemPattern() {
+        final Pattern pattern = new EquationsSystemPattern(new Pattern[]{
+                new SubFunctionPattern("x"),
+                new SubFunctionPattern("y"),
+                new SubFunctionPattern("z")
+        });
+
+        final Function shouldNotMatch = new EquationsSystem(
+                mathContext,
+                new Function[]{
+                        new Number(mathContext, 1),
+                        new Number(mathContext, 2),
+                }
+        );
+        assertFalse(pattern.match(shouldNotMatch).isPresent());
+
+        final Function shouldMatch = new EquationsSystem(
+                mathContext,
+                new Function[]{
+                        new Number(mathContext, 1),
+                        new Number(mathContext, 2),
+                        new Number(mathContext, 3)
+                }
+        );
+        final Optional<Map<String, Function>> subFunctions = pattern.match(shouldMatch);
+        assertTrue(subFunctions.isPresent());
+        assertEquals(shouldMatch, pattern.replace(mathContext, subFunctions.get()));
     }
 
     @Test
