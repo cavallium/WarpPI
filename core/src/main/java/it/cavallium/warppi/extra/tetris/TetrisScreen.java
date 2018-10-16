@@ -85,7 +85,7 @@ public class TetrisScreen extends Screen {
 				if (type != null) {
 					r.glFillRect(leftOffset + x * 5, topOffset + (y+3) * 5, 5, 5, renderedGrid[offset].ordinal() * 5, 0, 5, 5);
 				} else {
-					r.glFillRect(leftOffset + x * 5, topOffset + (y+3) * 5, 5, 5, 1 * 5, 0, 2, 2);
+					r.glFillRect(leftOffset + x * 5, topOffset + (y+3) * 5, 5, 5, 7 * 5, 0, 5, 5);
 				}
 			}
 		}
@@ -93,22 +93,26 @@ public class TetrisScreen extends Screen {
 		
 		Tetromino nextTetromino = g.getNextTetromino();
 		if (nextTetromino != null) {
+			r.glColor3f(0.25f, 0.25f, 0.25f);
+			r.glFillColor(leftOffset + (TetrisGame.WIDTH + 3) * 5, topOffset + 3 * 5, 5*4, 5*4);
+			r.glColor3f(1,1,1);
 			boolean[] renderedNextTetromino = nextTetromino.getRenderedBlock();
 			final BlockColor type = nextTetromino.getColor();
 			int nextTetrominoGridSize = nextTetromino.getTetrominoGridSize();
+			int nextGridOffset = 4*5/2 - nextTetrominoGridSize*5/2;
 			for (int y = 0; y < nextTetrominoGridSize; y++) {
 				for (int x = 0; x < nextTetrominoGridSize; x++) {
 					final int offset = x+y*nextTetrominoGridSize;
 					if (renderedNextTetromino[offset]) {
 						if (type != null) {
-							r.glFillRect(leftOffset + (TetrisGame.WIDTH + 3 + x) * 5, topOffset + (3 - y) * 5, 5, 5, type.ordinal() * 5, 0, 5, 5);
-						} else {
-							//r.glFillRect(leftOffset + x * 5, topOffset + (TetrisGame.HEIGHT+3-y) * 5, 5, 5, 1 * 5, 0, 2, 2);
+							r.glFillRect(leftOffset + nextGridOffset + (TetrisGame.WIDTH + 3 + x) * 5, topOffset + nextGridOffset + (3 + y) * 5, 5, 5, type.ordinal() * 5, 0, 5, 5);
 						}
 					}
 				}
 			}
 		}
+		r.glColor3f(1,1,1);
+		r.glDrawStringLeft(leftOffset + (TetrisGame.WIDTH + 3) * 5, topOffset + (3+5) * 5, "SCORE:"+g.getScore());
 	}
 	
 	@Override
@@ -132,6 +136,7 @@ public class TetrisScreen extends Screen {
 			}
 			case OK: {
 				okPressed = true;
+				g.playAgain();
 				return true;
 			}
 			case BACK: {
@@ -179,6 +184,6 @@ public class TetrisScreen extends Screen {
 
 	@Override
 	public String getSessionTitle() {
-		return "Absolutely Not Tetris";
+		return "Tetris";
 	}
 }

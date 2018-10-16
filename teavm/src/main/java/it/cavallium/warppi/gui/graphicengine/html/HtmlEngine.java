@@ -24,6 +24,7 @@ import it.cavallium.warppi.flow.BehaviorSubject;
 import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 
 public class HtmlEngine implements GraphicEngine {
 
@@ -70,6 +71,15 @@ public class HtmlEngine implements GraphicEngine {
 	}
 
 	private String previousValue = "";
+	private static final Object2IntArrayMap<String> keyNames = new Object2IntArrayMap<>();
+	
+	static {
+		keyNames.put(" ", 32);
+		keyNames.put("ArrowUp", 38);
+		keyNames.put("ArrowDown", 40);
+		keyNames.put("ArrowLeft", 37);
+		keyNames.put("ArrowRight", 39);
+	}
 
 	@JSBody(params = { "ctx", "enabled" }, script = "" + "ctx.mozImageSmoothingEnabled = enabled;" + "ctx.oImageSmoothingEnabled = enabled;" + "ctx.webkitImageSmoothingEnabled = enabled;" + "ctx.msImageSmoothingEnabled = enabled;" + "ctx.imageSmoothingEnabled = enabled;")
 	public static native void setImageSmoothingEnabled(CanvasRenderingContext2D ctx, boolean enabled);
@@ -110,12 +120,18 @@ public class HtmlEngine implements GraphicEngine {
 		HtmlEngine.document.getBody().appendChild(keyInput);
 		keyInput.setTabIndex(0);
 		keyInput.setValue("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-		keyInput.addEventListener("keydown", (final KeyboardEvent evt) -> {
+		HtmlEngine.document.addEventListener("keydown", (final KeyboardEvent evt) -> {
 			evt.preventDefault();
 			new Thread(() -> {
-				previousValue = keyInput.getValue();
-				Keyboard.debugKey(evt.getKeyCode(), false);
-				Keyboard.debugKey(evt.getKeyCode(), true);
+				Keyboard.debugKey(keyNames .getOrDefault(evt.getKey(), evt.getKeyCode()), false);
+				System.out.println(evt.getKeyCode());
+				System.out.println("" + (int) evt.getKey().charAt(0));
+			}).start();
+		});
+		HtmlEngine.document.addEventListener("keyup", (final KeyboardEvent evt) -> {
+			evt.preventDefault();
+			new Thread(() -> {
+				Keyboard.debugKey(keyNames .getOrDefault(evt.getKey(), evt.getKeyCode()), true);
 				System.out.println(evt.getKeyCode());
 				System.out.println("" + (int) evt.getKey().charAt(0));
 			}).start();

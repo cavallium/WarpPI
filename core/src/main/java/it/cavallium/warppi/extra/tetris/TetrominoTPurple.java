@@ -2,7 +2,7 @@ package it.cavallium.warppi.extra.tetris;
 
 public class TetrominoTPurple extends Tetromino {
 	public TetrominoTPurple(byte x, byte y, byte rotation) {
-		super(x, y, rotation, TetrominoType.I_CYAN);
+		super(x, y, rotation, TetrominoType.T_PURPLE);
 	}
 	
 	@Override

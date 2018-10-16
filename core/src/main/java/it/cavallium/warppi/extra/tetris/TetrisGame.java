@@ -78,6 +78,7 @@ public class TetrisGame {
 			if (move(this.currentTetromino, 0, 0, 0) == false) {
 				// Lose
 				this.gameStatus = GameStatus.LOST;
+				playAgain();
 			}
 		}
 	}
@@ -95,9 +96,9 @@ public class TetrisGame {
 				if (scored) {
 					this.score += WIDTH;
 					for (int x = 0; x < WIDTH; x++) {
-						int y = HEIGHT - i - 2;
-						while (i + y > 0) {
-								this.grid[x + (i + y + 1) * WIDTH] = this.grid[x + (i + y) * WIDTH];
+						int y = i;
+						while (y > 0) {
+							this.grid[x + (y) * WIDTH] = this.grid[x + (y-1) * WIDTH];	
 							y--;
 						}
 					}
@@ -184,5 +185,9 @@ public class TetrisGame {
 
 	public BlockColor[] getRenderedGrid() {
 		return renderedGrid;
+	}
+
+	public int getScore() {
+		return this.score;
 	}
 }
