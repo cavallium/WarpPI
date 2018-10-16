@@ -18,17 +18,17 @@ public class TetrisScreen extends Screen {
 
 	private TetrisGame g;
 
-	private boolean leftPressed;
+	private ButtonInfo leftPressed = new ButtonInfo();
 
-	private boolean rightPressed;
+	private ButtonInfo rightPressed = new ButtonInfo();
 
-	private boolean upPressed;
+	private ButtonInfo upPressed = new ButtonInfo();
 
-	private boolean downPressed;
+	private ButtonInfo downPressed = new ButtonInfo();
 
-	private boolean okPressed;
+	private ButtonInfo okPressed = new ButtonInfo();
 
-	private boolean backPressed;
+	private ButtonInfo backPressed = new ButtonInfo();
 
 	private GraphicEngine e;
 
@@ -64,7 +64,6 @@ public class TetrisScreen extends Screen {
 	public void beforeRender(final float dt) {
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xff000000);
 			g.update(dt, leftPressed, rightPressed, downPressed, upPressed, okPressed, backPressed);
-			upPressed = false;
 	}
 
 	@Override
@@ -119,28 +118,28 @@ public class TetrisScreen extends Screen {
 	public boolean onKeyPressed(KeyPressedEvent k) {
 		switch (k.getKey()) {
 			case LEFT: {
-				leftPressed = true;
+				leftPressed.press();
 				return true;
 			}
 			case RIGHT: {
-				rightPressed = true;
+				rightPressed.press();
 				return true;
 			}
 			case UP: {
-				upPressed = true;
+				upPressed.press();
 				return true;
 			}
 			case DOWN: {
-				downPressed = true;
+				downPressed.press();
 				return true;
 			}
 			case OK: {
-				okPressed = true;
+				okPressed.press();
 				g.playAgain();
 				return true;
 			}
 			case BACK: {
-				backPressed = true;
+				backPressed.press();
 				return true;
 			}
 			default: return false;
@@ -151,27 +150,27 @@ public class TetrisScreen extends Screen {
 	public boolean onKeyReleased(KeyReleasedEvent k) {
 		switch (k.getKey()) {
 			case LEFT: {
-				leftPressed = false;
+				leftPressed.release();
 				return true;
 			}
 			case RIGHT: {
-				rightPressed = false;
+				rightPressed.release();
 				return true;
 			}
 			case UP: {
-				upPressed = false;
+				upPressed.release();
 				return true;
 			}
 			case DOWN: {
-				downPressed = false;
+				downPressed.release();
 				return true;
 			}
 			case OK: {
-				okPressed = false;
+				okPressed.release();
 				return true;
 			}
 			case BACK: {
-				backPressed = false;
+				backPressed.release();
 				return true;
 			}
 			default: return false;
