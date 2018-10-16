@@ -12,7 +12,6 @@ public class ButtonInfo {
 	
 	public void press() {
 		if (pressedCount <= releasedCount)  {
-		System.out.println("press");
 			pressedCount = releasedCount + 1;
 			unreadCount++;
 		}
@@ -21,7 +20,6 @@ public class ButtonInfo {
 	public void release() {
 		releasedCount++;
 		pressedCount = releasedCount;
-		System.out.println("release" + releasedCount);
 	}
 	
 	public int readPressed() {

@@ -124,16 +124,12 @@ public class HtmlEngine implements GraphicEngine {
 			evt.preventDefault();
 			new Thread(() -> {
 				Keyboard.debugKey(keyNames .getOrDefault(evt.getKey(), evt.getKeyCode()), false);
-				System.out.println(evt.getKeyCode());
-				System.out.println("" + (int) evt.getKey().charAt(0));
 			}).start();
 		});
 		HtmlEngine.document.addEventListener("keyup", (final KeyboardEvent evt) -> {
 			evt.preventDefault();
 			new Thread(() -> {
 				Keyboard.debugKey(keyNames .getOrDefault(evt.getKey(), evt.getKeyCode()), true);
-				System.out.println(evt.getKeyCode());
-				System.out.println("" + (int) evt.getKey().charAt(0));
 			}).start();
 		});
 		keyInput.addEventListener("input", (final Event evt) -> {
