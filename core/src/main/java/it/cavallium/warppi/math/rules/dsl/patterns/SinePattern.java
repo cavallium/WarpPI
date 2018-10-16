@@ -13,22 +13,22 @@ import java.util.Optional;
  * Matches and generates the sine of another pattern.
  */
 public class SinePattern extends VisitorPattern {
-    private final Pattern argument;
+	private final Pattern argument;
 
-    public SinePattern(final Pattern argument) {
-        this.argument = argument;
-    }
+	public SinePattern(final Pattern argument) {
+		this.argument = argument;
+	}
 
-    @Override
-    public Optional<Map<String, Function>> visit(final Sine sine) {
-        return argument.match(sine.getParameter());
-    }
+	@Override
+	public Optional<Map<String, Function>> visit(final Sine sine) {
+		return argument.match(sine.getParameter());
+	}
 
-    @Override
-    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
-        return new Sine(
-                mathContext,
-                argument.replace(mathContext, subFunctions)
-        );
-    }
+	@Override
+	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
+		return new Sine(
+				mathContext,
+				argument.replace(mathContext, subFunctions)
+		);
+	}
 }

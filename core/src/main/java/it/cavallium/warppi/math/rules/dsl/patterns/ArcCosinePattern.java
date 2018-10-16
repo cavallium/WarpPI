@@ -13,22 +13,22 @@ import java.util.Optional;
  * Matches and generates the arccosine of another pattern.
  */
 public class ArcCosinePattern extends VisitorPattern {
-    private final Pattern argument;
+	private final Pattern argument;
 
-    public ArcCosinePattern(final Pattern argument) {
-        this.argument = argument;
-    }
+	public ArcCosinePattern(final Pattern argument) {
+		this.argument = argument;
+	}
 
-    @Override
-    public Optional<Map<String, Function>> visit(final ArcCosine arcCosine) {
-        return argument.match(arcCosine.getParameter());
-    }
+	@Override
+	public Optional<Map<String, Function>> visit(final ArcCosine arcCosine) {
+		return argument.match(arcCosine.getParameter());
+	}
 
-    @Override
-    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
-        return new ArcCosine(
-                mathContext,
-                argument.replace(mathContext, subFunctions)
-        );
-    }
+	@Override
+	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
+		return new ArcCosine(
+				mathContext,
+				argument.replace(mathContext, subFunctions)
+		);
+	}
 }

@@ -16,35 +16,35 @@ import java.util.Optional;
  * Matches and generates a system of equations of multiple other patterns.
  */
 public class EquationsSystemPattern extends VisitorPattern {
-    final Pattern[] patterns;
+	final Pattern[] patterns;
 
-    public EquationsSystemPattern(final Pattern[] patterns) {
-        this.patterns = patterns;
-    }
+	public EquationsSystemPattern(final Pattern[] patterns) {
+		this.patterns = patterns;
+	}
 
-    @Override
-    public Optional<Map<String, Function>> visit(final EquationsSystem equationsSystem) {
-        if (patterns.length != equationsSystem.getParametersLength()) {
-            return Optional.empty();
-        }
+	@Override
+	public Optional<Map<String, Function>> visit(final EquationsSystem equationsSystem) {
+		if (patterns.length != equationsSystem.getParametersLength()) {
+			return Optional.empty();
+		}
 
-        Optional<Map<String, Function>> subFunctions = Optional.of(new HashMap<>());
-        for (int i = 0; i < patterns.length && subFunctions.isPresent(); i++) {
-            final Pattern curPattern = patterns[i];
-            final Function curFunction = equationsSystem.getParameter(i);
-            subFunctions = subFunctions
-                    .flatMap(prevMatch -> curPattern.match(curFunction)
-                            .flatMap(curMatch -> PatternUtils.mergeMatches(prevMatch, curMatch))
-                    );
-        }
-        return subFunctions;
-    }
+		Optional<Map<String, Function>> subFunctions = Optional.of(new HashMap<>());
+		for (int i = 0; i < patterns.length && subFunctions.isPresent(); i++) {
+			final Pattern curPattern = patterns[i];
+			final Function curFunction = equationsSystem.getParameter(i);
+			subFunctions = subFunctions
+					.flatMap(prevMatch -> curPattern.match(curFunction)
+							.flatMap(curMatch -> PatternUtils.mergeMatches(prevMatch, curMatch))
+					);
+		}
+		return subFunctions;
+	}
 
-    @Override
-    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
-        final Function[] functions = Arrays.stream(patterns)
-                .map(pattern -> pattern.replace(mathContext, subFunctions))
-                .toArray(Function[]::new);
-        return new EquationsSystem(mathContext, functions);
-    }
+	@Override
+	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
+		final Function[] functions = Arrays.stream(patterns)
+				.map(pattern -> pattern.replace(mathContext, subFunctions))
+				.toArray(Function[]::new);
+		return new EquationsSystem(mathContext, functions);
+	}
 }

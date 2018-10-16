@@ -12,21 +12,21 @@ import java.util.Optional;
  * Matches and generates any function as a named sub-function.
  */
 public class SubFunctionPattern implements Pattern {
-    private final String name;
+	private final String name;
 
-    public SubFunctionPattern(final String name) {
-        this.name = name;
-    }
+	public SubFunctionPattern(final String name) {
+		this.name = name;
+	}
 
-    @Override
-    public Optional<Map<String, Function>> match(final Function function) {
-        final HashMap<String, Function> subFunctions = new HashMap<>();
-        subFunctions.put(name, function);
-        return Optional.of(subFunctions);
-    }
+	@Override
+	public Optional<Map<String, Function>> match(final Function function) {
+		final HashMap<String, Function> subFunctions = new HashMap<>();
+		subFunctions.put(name, function);
+		return Optional.of(subFunctions);
+	}
 
-    @Override
-    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
-        return subFunctions.get(name);
-    }
+	@Override
+	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
+		return subFunctions.get(name);
+	}
 }

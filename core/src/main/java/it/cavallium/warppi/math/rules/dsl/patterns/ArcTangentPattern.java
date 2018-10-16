@@ -13,22 +13,22 @@ import java.util.Optional;
  * Matches and generates the arctangent of another pattern.
  */
 public class ArcTangentPattern extends VisitorPattern {
-    private final Pattern argument;
+	private final Pattern argument;
 
-    public ArcTangentPattern(final Pattern argument) {
-        this.argument = argument;
-    }
+	public ArcTangentPattern(final Pattern argument) {
+		this.argument = argument;
+	}
 
-    @Override
-    public Optional<Map<String, Function>> visit(final ArcTangent arcTangent) {
-        return argument.match(arcTangent.getParameter());
-    }
+	@Override
+	public Optional<Map<String, Function>> visit(final ArcTangent arcTangent) {
+		return argument.match(arcTangent.getParameter());
+	}
 
-    @Override
-    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
-        return new ArcTangent(
-                mathContext,
-                argument.replace(mathContext, subFunctions)
-        );
-    }
+	@Override
+	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
+		return new ArcTangent(
+				mathContext,
+				argument.replace(mathContext, subFunctions)
+		);
+	}
 }

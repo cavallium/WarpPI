@@ -14,25 +14,25 @@ import java.util.Optional;
  * Matches and generates a sum/subtraction (±) of two other patterns.
  */
 public class SumSubtractionPattern extends VisitorPattern {
-    private final Pattern left;
-    private final Pattern right;
+	private final Pattern left;
+	private final Pattern right;
 
-    public SumSubtractionPattern(final Pattern left, final Pattern right) {
-        this.left = left;
-        this.right = right;
-    }
+	public SumSubtractionPattern(final Pattern left, final Pattern right) {
+		this.left = left;
+		this.right = right;
+	}
 
-    @Override
-    public Optional<Map<String, Function>> visit(final SumSubtraction sumSubtraction) {
-        return PatternUtils.matchFunctionOperatorParameters(sumSubtraction, left, right);
-    }
+	@Override
+	public Optional<Map<String, Function>> visit(final SumSubtraction sumSubtraction) {
+		return PatternUtils.matchFunctionOperatorParameters(sumSubtraction, left, right);
+	}
 
-    @Override
-    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
-        return new SumSubtraction(
-                mathContext,
-                left.replace(mathContext, subFunctions),
-                right.replace(mathContext, subFunctions)
-        );
-    }
+	@Override
+	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
+		return new SumSubtraction(
+				mathContext,
+				left.replace(mathContext, subFunctions),
+				right.replace(mathContext, subFunctions)
+		);
+	}
 }

@@ -13,13 +13,13 @@ import java.util.Optional;
  * Matches and generates <code>Undefined</code>.
  */
 public class UndefinedPattern extends VisitorPattern {
-    @Override
-    public Optional<Map<String, Function>> visit(Undefined undefined) {
-        return Optional.of(new HashMap<>());
-    }
+	@Override
+	public Optional<Map<String, Function>> visit(Undefined undefined) {
+		return Optional.of(new HashMap<>());
+	}
 
-    @Override
-    public Function replace(MathContext mathContext, Map<String, Function> subFunctions) {
-        return new Undefined(mathContext);
-    }
+	@Override
+	public Function replace(MathContext mathContext, Map<String, Function> subFunctions) {
+		return new Undefined(mathContext);
+	}
 }

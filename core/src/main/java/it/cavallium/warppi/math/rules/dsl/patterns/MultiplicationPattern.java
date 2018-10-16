@@ -14,25 +14,25 @@ import java.util.Optional;
  * Matches and generates a multiplication of two other patterns.
  */
 public class MultiplicationPattern extends VisitorPattern {
-    private final Pattern left;
-    private final Pattern right;
+	private final Pattern left;
+	private final Pattern right;
 
-    public MultiplicationPattern(final Pattern left, final Pattern right) {
-        this.left = left;
-        this.right = right;
-    }
+	public MultiplicationPattern(final Pattern left, final Pattern right) {
+		this.left = left;
+		this.right = right;
+	}
 
-    @Override
-    public Optional<Map<String, Function>> visit(final Multiplication multiplication) {
-        return PatternUtils.matchFunctionOperatorParameters(multiplication, left, right);
-    }
+	@Override
+	public Optional<Map<String, Function>> visit(final Multiplication multiplication) {
+		return PatternUtils.matchFunctionOperatorParameters(multiplication, left, right);
+	}
 
-    @Override
-    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
-        return new Multiplication(
-                mathContext,
-                left.replace(mathContext, subFunctions),
-                right.replace(mathContext, subFunctions)
-        );
-    }
+	@Override
+	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
+		return new Multiplication(
+				mathContext,
+				left.replace(mathContext, subFunctions),
+				right.replace(mathContext, subFunctions)
+		);
+	}
 }

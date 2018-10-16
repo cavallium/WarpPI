@@ -15,25 +15,25 @@ import java.util.Optional;
  * Matches and generates an equation of two other patterns.
  */
 public class EquationPattern extends VisitorPattern {
-    private final Pattern left;
-    private final Pattern right;
+	private final Pattern left;
+	private final Pattern right;
 
-    public EquationPattern(final Pattern left, final Pattern right) {
-        this.left = left;
-        this.right = right;
-    }
+	public EquationPattern(final Pattern left, final Pattern right) {
+		this.left = left;
+		this.right = right;
+	}
 
-    @Override
-    public Optional<Map<String, Function>> visit(final Equation equation) {
-        return PatternUtils.matchFunctionOperatorParameters(equation, left, right);
-    }
+	@Override
+	public Optional<Map<String, Function>> visit(final Equation equation) {
+		return PatternUtils.matchFunctionOperatorParameters(equation, left, right);
+	}
 
-    @Override
-    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
-        return new Equation(
-                mathContext,
-                left.replace(mathContext, subFunctions),
-                right.replace(mathContext, subFunctions)
-        );
-    }
+	@Override
+	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
+		return new Equation(
+				mathContext,
+				left.replace(mathContext, subFunctions),
+				right.replace(mathContext, subFunctions)
+		);
+	}
 }

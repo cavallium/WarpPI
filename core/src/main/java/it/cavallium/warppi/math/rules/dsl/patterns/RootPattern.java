@@ -19,34 +19,34 @@ import java.util.Optional;
  * Also matches and generates functions of type <code>RootSquare</code>.
  */
 public class RootPattern extends VisitorPattern {
-    private final Pattern degree;
-    private final Pattern radicand;
+	private final Pattern degree;
+	private final Pattern radicand;
 
-    public RootPattern(final Pattern degree, final Pattern radicand) {
-        this.degree = degree;
-        this.radicand = radicand;
-    }
+	public RootPattern(final Pattern degree, final Pattern radicand) {
+		this.degree = degree;
+		this.radicand = radicand;
+	}
 
-    @Override
-    public Optional<Map<String, Function>> visit(final Root root) {
-        return PatternUtils.matchFunctionOperatorParameters(root, degree, radicand);
-    }
+	@Override
+	public Optional<Map<String, Function>> visit(final Root root) {
+		return PatternUtils.matchFunctionOperatorParameters(root, degree, radicand);
+	}
 
-    @Override
-    public Optional<Map<String, Function>> visit(RootSquare rootSquare) {
-        return PatternUtils.matchFunctionOperatorParameters(rootSquare, degree, radicand);
-    }
+	@Override
+	public Optional<Map<String, Function>> visit(RootSquare rootSquare) {
+		return PatternUtils.matchFunctionOperatorParameters(rootSquare, degree, radicand);
+	}
 
-    @Override
-    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
-        final Function newDegree = degree.replace(mathContext, subFunctions);
-        final Function newRadicand = radicand.replace(mathContext, subFunctions);
+	@Override
+	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
+		final Function newDegree = degree.replace(mathContext, subFunctions);
+		final Function newRadicand = radicand.replace(mathContext, subFunctions);
 
-        if (newDegree instanceof Number
-                && ((Number) newDegree).getTerm().compareTo(new BigDecimal(2)) == 0) {
-            return new RootSquare(mathContext, newRadicand);
-        } else {
-            return new Root(mathContext, newDegree, newRadicand);
-        }
-    }
+		if (newDegree instanceof Number
+				&& ((Number) newDegree).getTerm().compareTo(new BigDecimal(2)) == 0) {
+			return new RootSquare(mathContext, newRadicand);
+		} else {
+			return new Root(mathContext, newDegree, newRadicand);
+		}
+	}
 }

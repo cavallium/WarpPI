@@ -13,22 +13,22 @@ import java.util.Optional;
  * Matches and generates the cosine of another pattern.
  */
 public class CosinePattern extends VisitorPattern {
-    private final Pattern argument;
+	private final Pattern argument;
 
-    public CosinePattern(final Pattern argument) {
-        this.argument = argument;
-    }
+	public CosinePattern(final Pattern argument) {
+		this.argument = argument;
+	}
 
-    @Override
-    public Optional<Map<String, Function>> visit(final Cosine cosine) {
-        return argument.match(cosine.getParameter());
-    }
+	@Override
+	public Optional<Map<String, Function>> visit(final Cosine cosine) {
+		return argument.match(cosine.getParameter());
+	}
 
-    @Override
-    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
-        return new Cosine(
-                mathContext,
-                argument.replace(mathContext, subFunctions)
-        );
-    }
+	@Override
+	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
+		return new Cosine(
+				mathContext,
+				argument.replace(mathContext, subFunctions)
+		);
+	}
 }

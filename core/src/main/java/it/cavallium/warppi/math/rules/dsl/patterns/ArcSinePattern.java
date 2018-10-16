@@ -13,22 +13,22 @@ import java.util.Optional;
  * Matches and generates the arcsine of another pattern.
  */
 public class ArcSinePattern extends VisitorPattern {
-    private final Pattern argument;
+	private final Pattern argument;
 
-    public ArcSinePattern(final Pattern argument) {
-        this.argument = argument;
-    }
+	public ArcSinePattern(final Pattern argument) {
+		this.argument = argument;
+	}
 
-    @Override
-    public Optional<Map<String, Function>> visit(final ArcSine arcSine) {
-        return argument.match(arcSine.getParameter());
-    }
+	@Override
+	public Optional<Map<String, Function>> visit(final ArcSine arcSine) {
+		return argument.match(arcSine.getParameter());
+	}
 
-    @Override
-    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
-        return new ArcSine(
-                mathContext,
-                argument.replace(mathContext, subFunctions)
-        );
-    }
+	@Override
+	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
+		return new ArcSine(
+				mathContext,
+				argument.replace(mathContext, subFunctions)
+		);
+	}
 }

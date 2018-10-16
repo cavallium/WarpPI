@@ -14,23 +14,23 @@ import java.util.Optional;
  * Matches and generates a specific number.
  */
 public class NumberPattern extends VisitorPattern {
-    private final BigDecimal value;
+	private final BigDecimal value;
 
-    public NumberPattern(final BigDecimal value) {
-        this.value = value;
-    }
+	public NumberPattern(final BigDecimal value) {
+		this.value = value;
+	}
 
-    @Override
-    public Optional<Map<String, Function>> visit(final Number number) {
-        if (number.getTerm().compareTo(value) == 0) {
-            return Optional.of(new HashMap<>());
-        } else {
-            return Optional.empty();
-        }
-    }
+	@Override
+	public Optional<Map<String, Function>> visit(final Number number) {
+		if (number.getTerm().compareTo(value) == 0) {
+			return Optional.of(new HashMap<>());
+		} else {
+			return Optional.empty();
+		}
+	}
 
-    @Override
-    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
-        return new Number(mathContext, value);
-    }
+	@Override
+	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
+		return new Number(mathContext, value);
+	}
 }

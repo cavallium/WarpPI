@@ -13,22 +13,22 @@ import java.util.Optional;
  * Matches and generates the negative of another pattern.
  */
 public class NegativePattern extends VisitorPattern {
-    private final Pattern inner;
+	private final Pattern inner;
 
-    public NegativePattern(final Pattern inner) {
-        this.inner = inner;
-    }
+	public NegativePattern(final Pattern inner) {
+		this.inner = inner;
+	}
 
-    @Override
-    public Optional<Map<String, Function>> visit(final Negative negative) {
-        return inner.match(negative.getParameter());
-    }
+	@Override
+	public Optional<Map<String, Function>> visit(final Negative negative) {
+		return inner.match(negative.getParameter());
+	}
 
-    @Override
-    public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
-        return new Negative(
-                mathContext,
-                inner.replace(mathContext, subFunctions)
-        );
-    }
+	@Override
+	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
+		return new Negative(
+				mathContext,
+				inner.replace(mathContext, subFunctions)
+		);
+	}
 }
