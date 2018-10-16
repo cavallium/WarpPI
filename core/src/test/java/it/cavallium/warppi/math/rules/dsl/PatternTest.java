@@ -161,6 +161,34 @@ public class PatternTest {
     }
 
     @Test
+    public void rootPatternForRootSquare() {
+        final Pattern pattern = new RootPattern(
+                new SubFunctionPattern("x"),
+                new SubFunctionPattern("y")
+        );
+
+        final Function root = new Root(
+                mathContext,
+                new Number(mathContext, 2),
+                new Number(mathContext, 1)
+        );
+        final Optional<Map<String, Function>> rootSubFunctions = pattern.match(root);
+        assertTrue(rootSubFunctions.isPresent());
+
+        final Function rootSquare = new RootSquare(
+                mathContext,
+                new Number(mathContext, 1)
+        );
+        final Optional<Map<String, Function>> rootSquareSubFunctions = pattern.match(rootSquare);
+        assertTrue(rootSquareSubFunctions.isPresent());
+        assertEquals(rootSubFunctions.get(), rootSquareSubFunctions.get());
+
+        final Function replacement = pattern.replace(mathContext, rootSubFunctions.get());
+        assertTrue(replacement instanceof RootSquare);
+        assertEquals(rootSquare, replacement);
+    }
+
+    @Test
     public void otherBinaryPatterns() {
         final Number one = new Number(mathContext, 1);
         final Number two = new Number(mathContext, 2);

@@ -2,16 +2,21 @@ package it.cavallium.warppi.math.rules.dsl.patterns;
 
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
+import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.functions.Root;
+import it.cavallium.warppi.math.functions.RootSquare;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
 import it.cavallium.warppi.math.rules.dsl.PatternUtils;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Optional;
 
 /**
  * Matches and generates a root of degree and radicand patterns.
+ * <p>
+ * Also matches and generates functions of type <code>RootSquare</code>.
  */
 public class RootPattern extends VisitorPattern {
     private final Pattern degree;
@@ -28,11 +33,20 @@ public class RootPattern extends VisitorPattern {
     }
 
     @Override
+    public Optional<Map<String, Function>> visit(RootSquare rootSquare) {
+        return PatternUtils.matchFunctionOperatorParameters(rootSquare, degree, radicand);
+    }
+
+    @Override
     public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
-        return new Root(
-                mathContext,
-                degree.replace(mathContext, subFunctions),
-                radicand.replace(mathContext, subFunctions)
-        );
+        final Function newDegree = degree.replace(mathContext, subFunctions);
+        final Function newRadicand = radicand.replace(mathContext, subFunctions);
+
+        if (newDegree instanceof Number
+                && ((Number) newDegree).getTerm().compareTo(new BigDecimal(2)) == 0) {
+            return new RootSquare(mathContext, newRadicand);
+        } else {
+            return new Root(mathContext, newDegree, newRadicand);
+        }
     }
 }
