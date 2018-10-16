@@ -167,69 +167,71 @@ public class HtmlEngine implements GraphicEngine {
 		});
 		final NodeList<? extends HTMLElement> buttons = HtmlEngine.document.getBody().getElementsByTagName("button");
 		for (int i = 0; i < buttons.getLength(); i++)
-			if (buttons.item(i).hasAttribute("keycode"))
-				buttons.item(i).addEventListener("click", (final Event evt) -> {
-					evt.preventDefault();
-					final EventTarget target = evt.getCurrentTarget();
-					final HTMLButtonElement button = target.cast();
-					new Thread(() -> {
-						try {
-							if (button.hasAttribute("keycode") && button.getAttribute("keycode").contains(",")) {
-								final String code = button.getAttribute("keycode");
-								final String[] coordinates = code.split(",", 2);
-								final boolean removeshift = Keyboard.shift && Integer.parseInt(coordinates[0]) != 0 && Integer.parseInt(coordinates[1]) != 0;
-								final boolean removealpha = Keyboard.alpha && Integer.parseInt(coordinates[0]) != 0 && Integer.parseInt(coordinates[1]) != 1;
-								Keyboard.keyRaw(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]), false);
-								if (removeshift)
-									Keyboard.keyRaw(0, 0, false);
-								if (removealpha)
-									Keyboard.keyRaw(0, 1, false);
-								Thread.sleep(100);
-								Keyboard.keyRaw(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]), true);
-								if (removeshift)
-									Keyboard.keyRaw(0, 0, true);
-								if (removealpha)
-									Keyboard.keyRaw(0, 1, true);
-							} else if (Keyboard.alpha && !Keyboard.shift) {
-								if (button.hasAttribute("keycodea")) {
-									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodea")), false);
-									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodea")), true);
-								} else {
-									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), false);
-									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), true);
-								}
-							} else if (!Keyboard.alpha && Keyboard.shift) {
-								if (button.hasAttribute("keycodes")) {
-									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodes")), false);
-									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodes")), true);
-								} else {
-									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), false);
-									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), true);
-								}
-							} else if (Keyboard.alpha && Keyboard.shift) {
-								if (button.hasAttribute("keycodesa")) {
-									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodesa")), false);
-									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodesa")), true);
-								} else if (button.hasAttribute("keycodes")) {
-									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodes")), false);
-									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodes")), true);
-								} else {
-									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), false);
-									Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), true);
-								}
-							} else {
-								Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), false);
-								Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), true);
-							}
-						} catch (final Exception ex) {
-							ex.printStackTrace();
-						}
-					}).start();
+			if (buttons.item(i).hasAttribute("keycode")) {
+				buttons.item(i).addEventListener("touchstart", (final Event evt) -> {
+					buttonEvent(evt, false);
 				});
+				buttons.item(i).addEventListener("touchend", (final Event evt) -> {
+					buttonEvent(evt, true);
+				});
+				buttons.item(i).addEventListener("mousedown", (final Event evt) -> {
+					buttonEvent(evt, false);
+				});
+				buttons.item(i).addEventListener("mouseup", (final Event evt) -> {
+					buttonEvent(evt, true);
+				});
+			}
 		renderer = new HtmlRenderer(this, g);
 		initialized = true;
 		if (onInitialized != null)
 			onInitialized.run();
+	}
+
+	private void buttonEvent(Event evt, boolean released) {
+		evt.preventDefault();
+		final EventTarget target = evt.getCurrentTarget();
+		final HTMLButtonElement button = target.cast();
+		new Thread(() -> {
+			try {
+				if (button.hasAttribute("keycode") && button.getAttribute("keycode").contains(",")) {
+					final String code = button.getAttribute("keycode");
+					final String[] coordinates = code.split(",", 2);
+					final boolean removeshift = Keyboard.shift && Integer.parseInt(coordinates[0]) != 0 && Integer.parseInt(coordinates[1]) != 0;
+					final boolean removealpha = Keyboard.alpha && Integer.parseInt(coordinates[0]) != 0 && Integer.parseInt(coordinates[1]) != 1;
+					Keyboard.keyRaw(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]), released);
+					if (released) {
+						if (removeshift)
+							Keyboard.keyRaw(0, 0, false);
+						if (removealpha)
+							Keyboard.keyRaw(0, 1, false);
+					}
+				} else if (Keyboard.alpha && !Keyboard.shift) {
+					if (button.hasAttribute("keycodea")) {
+						Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodea")), released);
+					} else {
+						Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), released);
+					}
+				} else if (!Keyboard.alpha && Keyboard.shift) {
+					if (button.hasAttribute("keycodes")) {
+						Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodes")), released);
+					} else {
+						Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), released);
+					}
+				} else if (Keyboard.alpha && Keyboard.shift) {
+					if (button.hasAttribute("keycodesa")) {
+						Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodesa")), released);
+					} else if (button.hasAttribute("keycodes")) {
+						Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodes")), released);
+					} else {
+						Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), released);
+					}
+				} else {
+					Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), released);
+				}
+			} catch (final Exception ex) {
+				ex.printStackTrace();
+			}
+		}).start();
 	}
 
 	@JSBody(params = {}, script = "return CSS.supports(\"zoom:2\")")

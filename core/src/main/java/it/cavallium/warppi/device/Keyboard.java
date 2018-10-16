@@ -767,7 +767,7 @@ public class Keyboard {
 					{ Key.SHIFT, Key.SHIFT, Key.SHIFT }, /* 0,0 */
 					{ Key.ALPHA, Key.ALPHA, Key.ALPHA }, /* 0,1 */
 					{ Key.NONE, Key.NONE, Key.NONE }, /* 0,2 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 0,3 */
+					{ Key.UP, Key.NONE, Key.NONE }, /* 0,3 */
 					{ Key.NONE, Key.NONE, Key.NONE }, /* 0,4 */
 					{ Key.SETTINGS, Key.NONE, Key.NONE }, /* 0,5 */
 					{ Key.BRIGHTNESS_CYCLE, Key.BRIGHTNESS_CYCLE_REVERSE, Key.ZOOM_MODE }, /* 0,6 */
