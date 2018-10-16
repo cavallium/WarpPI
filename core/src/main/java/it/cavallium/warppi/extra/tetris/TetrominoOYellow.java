@@ -10,7 +10,7 @@ public class TetrominoOYellow extends Tetromino {
 	}
 	
 	@Override
-	public boolean[] getRenderedBlock() {
+	public boolean[] getRenderedBlock(byte rotation) {
 		return new boolean[] {
 				w,w,
 				w,w,

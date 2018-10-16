@@ -39,9 +39,22 @@ public class TetrisGame {
 		nextTetromino.fixInitialPosition();
 	}
 
-	public void update(float dt, boolean leftPressed, boolean rightPressed, boolean downPressed, boolean okPressed, boolean backPressed) {
+	public void update(float dt, boolean leftPressed, boolean rightPressed, boolean downPressed, boolean upPressed, boolean okPressed, boolean backPressed) {
 		currentTime += dt;
 		tickTimer += dt;
+		if (!(leftPressed && rightPressed)) {
+			if (leftPressed) {
+				move(this.currentTetromino, -1, 0, 0);
+			} else if (rightPressed) {
+				move(this.currentTetromino, 1, 0, 0);
+			}
+		}
+		if (downPressed) {
+			move(this.currentTetromino, 0, -1, 0);
+		}
+		if (upPressed) {
+			move(this.currentTetromino, 0, 0, 1);
+		}
 		while (tickTimer >= TICK_TIME) {
 			tickTimer -= TICK_TIME;
 			gameTick(leftPressed, rightPressed, downPressed, okPressed, backPressed);
@@ -55,9 +68,72 @@ public class TetrisGame {
 	}
 
 	public void gameTick(boolean leftPressed, boolean rightPressed, boolean downPressed, boolean okPressed, boolean backPressed) {
-		this.currentTetromino.setY((byte) (this.currentTetromino.getY() - 1));
+		if (move(this.currentTetromino, 0, -1, 0)) {
+			
+		} else {
+			// Spawn new tetromino and write the old to the permanent grid
+			drawCurrentTetromino(grid);
+			checkLines();
+			placeNextTetromino();
+			if (move(this.currentTetromino, 0, 0, 0) == false) {
+				// Lose
+				this.gameStatus = GameStatus.LOST;
+			}
+		}
 	}
 	
+	private void checkLines() {
+		for(int i = 0; i < HEIGHT; i++) {
+			boolean scored = true;
+			for (int x = 0; x < WIDTH; x++) {
+				if (this.grid[x + i * WIDTH] == null) {
+					scored = false;
+					break;
+				}
+			}
+			if (scored) {
+				this.score += WIDTH;
+				for (int x = 0; x < WIDTH; x++) {
+					int y = 1;
+					while (i + y < HEIGHT) {
+						this.grid[x + (i + y - 1) * WIDTH] = this.grid[x + (i + y) * WIDTH];
+						y++;
+					}
+				}
+			}
+		}
+	}
+
+	private boolean move(Tetromino t, int dX, int dY, int dRotation) {
+		byte rot = (byte) ((t.getRotation() + dRotation) % 4);
+		boolean[] block = t.getRenderedBlock(rot);
+		int blockSize = t.getTetrominoGridSize();
+		int half1 = (int) Math.floor(((double)t.getTetrominoGridSize())/2d);
+		int half2 = blockSize - half1;
+		byte aX = (byte)(t.getX()+dX), aY = (byte)(t.getY()+dY);
+		int blockX = 0, blockY = 0;
+		for (int x = aX - half1; x < aX + half2; x++) {
+			for (int y = aY - half1; y < aY + half2; y++) {
+				if (block[blockX + blockY * blockSize] == true) {
+					if (x >= 0 & y >= 0 & x < WIDTH & (x + y * WIDTH) < this.grid.length) {
+						if (this.grid[x + y * WIDTH] != null) {
+							return false;
+						}
+					} else {
+						return false;
+					}
+				}
+				blockY++;
+			}	
+			blockY = 0;
+			blockX++;
+		}
+		t.setRotation(rot);
+		t.setX(aX);
+		t.setY(aY);
+		return true;
+	}
+
 	public void renderGrid() {
 		this.renderedGrid = Arrays.copyOf(grid, grid.length);
 		drawCurrentTetromino(this.renderedGrid);
@@ -94,6 +170,10 @@ public class TetrisGame {
 			default:
 				return new TetrominoZRed(middleX, middleY, rotation);
 		}
+	}
+	
+	public Tetromino getNextTetromino() {
+		return this.nextTetromino;
 	}
 
 	private void drawCurrentTetromino(BlockColor[] grid) {

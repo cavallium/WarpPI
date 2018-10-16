@@ -22,6 +22,8 @@ public class TetrisScreen extends Screen {
 
 	private boolean rightPressed;
 
+	private boolean upPressed;
+
 	private boolean downPressed;
 
 	private boolean okPressed;
@@ -61,7 +63,8 @@ public class TetrisScreen extends Screen {
 	@Override
 	public void beforeRender(final float dt) {
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xff000000);
-			g.update(dt, leftPressed, rightPressed, downPressed, okPressed, backPressed);
+			g.update(dt, leftPressed, rightPressed, downPressed, upPressed, okPressed, backPressed);
+			upPressed = false;
 	}
 
 	@Override
@@ -82,7 +85,27 @@ public class TetrisScreen extends Screen {
 				if (type != null) {
 					r.glFillRect(leftOffset + x * 5, topOffset + (TetrisGame.HEIGHT+3-y) * 5, 5, 5, renderedGrid[offset].ordinal() * 5, 0, 5, 5);
 				} else {
-//					r.glFillRect(leftOffset + x * 5, topOffset + y * 5, 5, 5, 1 * 5, 0, 5, 5);
+					//r.glFillRect(leftOffset + x * 5, topOffset + (TetrisGame.HEIGHT+3-y) * 5, 5, 5, 1 * 5, 0, 2, 2);
+				}
+			}
+		}
+		
+		
+		Tetromino nextTetromino = g.getNextTetromino();
+		if (nextTetromino != null) {
+			boolean[] renderedNextTetromino = nextTetromino.getRenderedBlock();
+			final BlockColor type = nextTetromino.getColor();
+			int nextTetrominoGridSize = nextTetromino.getTetrominoGridSize();
+			for (int y = 0; y < nextTetrominoGridSize; y++) {
+				for (int x = 0; x < nextTetrominoGridSize; x++) {
+					final int offset = x+y*nextTetrominoGridSize;
+					if (renderedNextTetromino[offset]) {
+						if (type != null) {
+							r.glFillRect(leftOffset + (TetrisGame.WIDTH + 3 + x) * 5, topOffset + (3 - y) * 5, 5, 5, type.ordinal() * 5, 0, 5, 5);
+						} else {
+							//r.glFillRect(leftOffset + x * 5, topOffset + (TetrisGame.HEIGHT+3-y) * 5, 5, 5, 1 * 5, 0, 2, 2);
+						}
+					}
 				}
 			}
 		}
@@ -97,6 +120,10 @@ public class TetrisScreen extends Screen {
 			}
 			case RIGHT: {
 				rightPressed = true;
+				return true;
+			}
+			case UP: {
+				upPressed = true;
 				return true;
 			}
 			case DOWN: {
@@ -124,6 +151,10 @@ public class TetrisScreen extends Screen {
 			}
 			case RIGHT: {
 				rightPressed = false;
+				return true;
+			}
+			case UP: {
+				upPressed = false;
 				return true;
 			}
 			case DOWN: {

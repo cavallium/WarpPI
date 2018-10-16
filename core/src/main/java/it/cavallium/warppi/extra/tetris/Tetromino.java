@@ -84,7 +84,11 @@ public abstract class Tetromino {
 	}
 	
 	public abstract int getTetrominoGridSize();
-	protected abstract boolean[] getRenderedBlock();
+	protected abstract boolean[] getRenderedBlock(byte dRotation);
+	protected boolean[] getRenderedBlock() {
+		return getRenderedBlock(this.rotation);
+	}
+	
 	
 	@Override
 	public int hashCode() {

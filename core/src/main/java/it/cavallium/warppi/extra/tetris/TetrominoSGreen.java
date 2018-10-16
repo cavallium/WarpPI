@@ -11,8 +11,8 @@ public class TetrominoSGreen extends Tetromino {
 	}
 	
 	@Override
-	public boolean[] getRenderedBlock() {
-		switch(getRotation()) {
+	public boolean[] getRenderedBlock(final byte rotation) {
+		switch(rotation) {
 			case 0:
 				return new boolean[] {
 						o,w,w,
