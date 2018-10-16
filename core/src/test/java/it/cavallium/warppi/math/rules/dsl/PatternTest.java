@@ -4,6 +4,7 @@ import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.*;
 import it.cavallium.warppi.math.functions.Number;
+import it.cavallium.warppi.math.functions.equations.Equation;
 import it.cavallium.warppi.math.functions.trigonometry.*;
 import it.cavallium.warppi.math.rules.dsl.patterns.*;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -141,6 +142,10 @@ public class PatternTest {
                 new ImmutablePair<>(
                         new DivisionPattern(x, y),
                         new Division(mathContext, one, two)
+                ),
+                new ImmutablePair<>(
+                        new EquationPattern(x, y),
+                        new Equation(mathContext, one, two)
                 ),
                 new ImmutablePair<>(
                         new LogarithmPattern(x, y),
