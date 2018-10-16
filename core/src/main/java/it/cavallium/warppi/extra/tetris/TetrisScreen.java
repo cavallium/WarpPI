@@ -83,9 +83,9 @@ public class TetrisScreen extends Screen {
 				final int offset = x+y*TetrisGame.WIDTH;
 				final BlockColor type = renderedGrid[offset];
 				if (type != null) {
-					r.glFillRect(leftOffset + x * 5, topOffset + (TetrisGame.HEIGHT+3-y) * 5, 5, 5, renderedGrid[offset].ordinal() * 5, 0, 5, 5);
+					r.glFillRect(leftOffset + x * 5, topOffset + (y+3) * 5, 5, 5, renderedGrid[offset].ordinal() * 5, 0, 5, 5);
 				} else {
-					//r.glFillRect(leftOffset + x * 5, topOffset + (TetrisGame.HEIGHT+3-y) * 5, 5, 5, 1 * 5, 0, 2, 2);
+					r.glFillRect(leftOffset + x * 5, topOffset + (y+3) * 5, 5, 5, 1 * 5, 0, 2, 2);
 				}
 			}
 		}

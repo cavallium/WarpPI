@@ -80,7 +80,7 @@ public abstract class Tetromino {
 	}
 
 	public void fixInitialPosition() {
-		this.y -= (byte) (this.getTetrominoGridSize()/2);
+		this.y += (byte) (this.getTetrominoGridSize()/2);
 	}
 	
 	public abstract int getTetrominoGridSize();

@@ -50,7 +50,7 @@ public class TetrisGame {
 			}
 		}
 		if (downPressed) {
-			move(this.currentTetromino, 0, -1, 0);
+			move(this.currentTetromino, 0, 1, 0);
 		}
 		if (upPressed) {
 			move(this.currentTetromino, 0, 0, 1);
@@ -68,7 +68,7 @@ public class TetrisGame {
 	}
 
 	public void gameTick(boolean leftPressed, boolean rightPressed, boolean downPressed, boolean okPressed, boolean backPressed) {
-		if (move(this.currentTetromino, 0, -1, 0)) {
+		if (move(this.currentTetromino, 0, 1, 0)) {
 			
 		} else {
 			// Spawn new tetromino and write the old to the permanent grid
@@ -83,21 +83,23 @@ public class TetrisGame {
 	}
 	
 	private void checkLines() {
-		for(int i = 0; i < HEIGHT; i++) {
+		for(int i = HEIGHT - 1; i >= 0; i--) {
 			boolean scored = true;
-			for (int x = 0; x < WIDTH; x++) {
-				if (this.grid[x + i * WIDTH] == null) {
-					scored = false;
-					break;
-				}
-			}
-			if (scored) {
-				this.score += WIDTH;
+			while (scored) {
 				for (int x = 0; x < WIDTH; x++) {
-					int y = 1;
-					while (i + y < HEIGHT) {
-						this.grid[x + (i + y - 1) * WIDTH] = this.grid[x + (i + y) * WIDTH];
-						y++;
+					if (this.grid[x + i * WIDTH] == null) {
+						scored = false;
+						break;
+					}
+				}
+				if (scored) {
+					this.score += WIDTH;
+					for (int x = 0; x < WIDTH; x++) {
+						int y = HEIGHT - i - 2;
+						while (i + y > 0) {
+								this.grid[x + (i + y + 1) * WIDTH] = this.grid[x + (i + y) * WIDTH];
+							y--;
+						}
 					}
 				}
 			}
@@ -153,7 +155,7 @@ public class TetrisGame {
 	
 	private Tetromino generateRandomTetromino() {
 		int s = (int) (Math.random() * 7);
-		final byte middleX = (byte)((WIDTH - 1)/2), middleY = (byte)(HEIGHT - 1), rotation = (byte) (Math.random() * 4);
+		final byte middleX = (byte)((WIDTH - 1)/2), middleY = 0, rotation = (byte) (Math.random() * 4);
 		switch (s) {
 			case 0:
 				return new TetrominoICyan(middleX, middleY, rotation);
