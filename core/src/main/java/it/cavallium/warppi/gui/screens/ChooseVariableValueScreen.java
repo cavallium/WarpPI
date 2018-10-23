@@ -28,6 +28,9 @@ public class ChooseVariableValueScreen extends Screen {
 	public void initialized() throws InterruptedException {}
 
 	@Override
+	public void graphicInitialized() throws InterruptedException {}
+
+	@Override
 	public void render() {
 		Utils.getFont(false, true).use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor4i(0, 0, 0, 64);

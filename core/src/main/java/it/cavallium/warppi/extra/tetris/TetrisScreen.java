@@ -43,13 +43,17 @@ public class TetrisScreen extends Screen {
 
 	@Override
 	public void initialized() {
+		StaticVars.windowZoom.onNext(2f);
+	}
+
+	@Override
+	public void graphicInitialized() {
 		try {
 			e = d.engine;
 			r = d.renderer;
 			if (TetrisScreen.skin == null) {
 				TetrisScreen.skin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("/tetrisskin.png");
 			}
-			StaticVars.windowZoom.onNext(2f);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}

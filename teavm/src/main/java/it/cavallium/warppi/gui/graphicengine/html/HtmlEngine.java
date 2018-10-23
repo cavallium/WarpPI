@@ -119,7 +119,7 @@ public class HtmlEngine implements GraphicEngine {
 		HtmlEngine.document.getElementById("container").appendChild(canvas);
 		HtmlEngine.document.getBody().appendChild(keyInput);
 		keyInput.setTabIndex(0);
-		keyInput.setValue("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+		keyInput.setValue("");
 		HtmlEngine.document.addEventListener("keydown", (final KeyboardEvent evt) -> {
 			evt.preventDefault();
 			new Thread(() -> {

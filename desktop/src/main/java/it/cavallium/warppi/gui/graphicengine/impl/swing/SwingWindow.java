@@ -372,6 +372,7 @@ public class SwingWindow extends JFrame {
 			if (renderingLoop != null) {
 				renderingLoop.refresh();
 
+
 				final int[] a = ((DataBufferInt) display.g.getRaster().getDataBuffer()).getData();
 				SwingRenderer.canvas2d = a;
 				g.clearRect(0, 0, display.r.size[0] * mult, display.r.size[1] * mult);

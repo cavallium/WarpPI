@@ -33,6 +33,9 @@ public class LoadingScreen extends Screen {
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().hide();
 		StaticVars.windowZoom.onNext(1f);
 	}
+	
+	@Override
+	public void graphicInitialized() throws InterruptedException {}
 
 	@Override
 	public void beforeRender(final float dt) {

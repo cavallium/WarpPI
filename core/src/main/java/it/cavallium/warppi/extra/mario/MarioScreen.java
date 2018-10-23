@@ -45,6 +45,43 @@ public class MarioScreen extends Screen {
 	}
 
 	@Override
+	public void graphicInitialized() {
+		try {
+			if (MarioScreen.skin == null) {
+				MarioScreen.skin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("/marioskin.png");
+			}
+			if (MarioScreen.groundskin == null) {
+				MarioScreen.groundskin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("/marioground.png");
+			}
+			if (MarioScreen.gpuTest2 == null) {
+				try {
+					MarioScreen.gpuTest2 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("N:\\gputest\\gputest2");
+				} catch (final Exception ex) {}
+			}
+			if (MarioScreen.gpuTest1 == null) {
+				try {
+					MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("N:\\gputest\\gputest12");
+					MarioScreen.gpuTest12 = true;
+				} catch (final Exception ex) {
+					MarioScreen.gpuTest12 = false;
+					try {
+						MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("N:\\gputest\\gputest1");
+					} catch (final Exception ex2) {}
+				}
+			}
+			if (MarioScreen.gpuTest3 == null) {
+				try {
+					MarioScreen.gpuTest3 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("N:\\gputest\\font_gputest3.png");
+				} catch (final Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
 	public void initialized() {
 		try {
 			if (MarioScreen.skin == null) {

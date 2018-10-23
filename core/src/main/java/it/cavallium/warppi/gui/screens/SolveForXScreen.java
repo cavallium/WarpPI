@@ -24,6 +24,9 @@ public class SolveForXScreen extends Screen {
 	public void initialized() throws InterruptedException {}
 
 	@Override
+	public void graphicInitialized() throws InterruptedException {}
+
+	@Override
 	public void render() {
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor4i(0, 0, 0, 64);
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2 + 1, StaticVars.screenSize[1] / 4, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");

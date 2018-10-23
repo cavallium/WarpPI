@@ -5,9 +5,9 @@ import java.util.Queue;
 
 public class TeaVMSemaphore implements it.cavallium.warppi.Platform.Semaphore {
 
-	private final Queue<Object> q;
+	private volatile Queue<Object> q;
 
-	private int freePermits = 0;
+	private volatile int freePermits = 0;
 
 	public TeaVMSemaphore(final int i) {
 		q = new LinkedList<>();

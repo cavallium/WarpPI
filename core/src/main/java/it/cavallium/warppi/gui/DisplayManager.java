@@ -242,10 +242,10 @@ public final class DisplayManager implements RenderingLoop {
 				screen.create();
 			}
 			this.screen = screen;
-			screenChange.release();
 			if (screen.initialized == false) {
 				screen.initialize();
 			}
+			screenChange.release();
 		} catch (final Exception e) {
 			e.printStackTrace();
 			Engine.getPlatform().exit(0);
@@ -267,10 +267,10 @@ public final class DisplayManager implements RenderingLoop {
 		try {
 			screen.create();
 			this.screen = screen;
-			screenChange.release();
 			if (screen.initialized == false) {
 				screen.initialize();
 			}
+			screenChange.release();
 		} catch (final Exception e) {
 			e.printStackTrace();
 			Engine.getPlatform().exit(0);
@@ -372,6 +372,13 @@ public final class DisplayManager implements RenderingLoop {
 				}
 			}
 		}
+		if (!screen.graphicInitialized) {
+			try {
+				screen.initializeGraphic();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		renderer.glClear(engine.getWidth(), engine.getHeight());
 	}
 
@@ -439,7 +446,6 @@ public final class DisplayManager implements RenderingLoop {
 					setScreen(initialScreen);
 					initialScreen = null;
 				}
-				screen.initialize();
 			} catch (final Exception e) {
 				e.printStackTrace();
 				Engine.getPlatform().exit(0);

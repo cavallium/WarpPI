@@ -20,6 +20,9 @@ public class EmptyScreen extends Screen {
 	public void initialized() throws InterruptedException {}
 
 	@Override
+	public void graphicInitialized() throws InterruptedException {}
+
+	@Override
 	public void render() {
 		// TODO Auto-generated method stub
 
