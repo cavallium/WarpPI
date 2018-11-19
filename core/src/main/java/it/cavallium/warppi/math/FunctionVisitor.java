@@ -18,7 +18,6 @@ public interface FunctionVisitor<T> {
 	T visit(ArcTangent arcTangent);
 	T visit(Cosine cosine);
 	T visit(Division division);
-	T visit(EmptyNumber emptyNumber);
 	T visit(Equation equation);
 	T visit(EquationsSystem equationsSystem);
 	T visit(EquationsSystemPart equationsSystemPart);

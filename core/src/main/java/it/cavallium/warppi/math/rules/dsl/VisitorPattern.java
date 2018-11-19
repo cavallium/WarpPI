@@ -47,11 +47,6 @@ public abstract class VisitorPattern implements Pattern, FunctionVisitor<Optiona
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final EmptyNumber emptyNumber) {
-		return Optional.empty();
-	}
-
-	@Override
 	public Optional<Map<String, Function>> visit(final Equation equation) {
 		return Optional.empty();
 	}
