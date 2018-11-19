@@ -21,14 +21,15 @@ public class TeaVMPlatform implements Platform {
 	private final TeaVMStorageUtils su;
 	private final String on;
 	private final Map<String, GraphicEngine> el;
-	private final TeaVMPngUtils pu;
+	private final TeaVMImageUtils pu;
 	private final TeaVMSettings settings;
+	private Boolean runningOnRaspberryOverride = null;
 
 	public TeaVMPlatform() {
 		cu = new TeaVMConsoleUtils();
 		gi = new TeaVMGpio();
 		su = new TeaVMStorageUtils();
-		pu = new TeaVMPngUtils();
+		pu = new TeaVMImageUtils();
 		on = "JavaScript";
 		el = new HashMap<>();
 		el.put("HTML5 engine", new HtmlEngine());
@@ -51,7 +52,7 @@ public class TeaVMPlatform implements Platform {
 	}
 
 	@Override
-	public PngUtils getPngUtils() {
+	public ImageUtils getImageUtils() {
 		return pu;
 	}
 
@@ -208,6 +209,10 @@ public class TeaVMPlatform implements Platform {
 		throw new java.lang.UnsupportedOperationException("Not implemented.");
 	}
 
+	@Override
+	public void setRunningOnRaspberry(boolean b) {
+	}
+	
 	@Override
 	public boolean isRunningOnRaspberry() {
 		return false;

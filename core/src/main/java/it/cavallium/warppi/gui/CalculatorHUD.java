@@ -25,6 +25,12 @@ public class CalculatorHUD extends HUD {
 	}
 
 	@Override
+	public void graphicInitialized() throws InterruptedException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
 	public void render() {
 		// TODO Auto-generated method stub
 

@@ -45,7 +45,8 @@ public class BlockVariable extends Block {
 		recomputeDimensions();
 	}
 
-	private BlockVariable(BlockVariable old, InputContext ic) {
+	private BlockVariable(final TreeContainer parent, BlockVariable old, InputContext ic) {
+		super(parent, old);
 		this.ic = ic;
 		this.ch = old.ch;
 		type = old.type;
@@ -53,8 +54,7 @@ public class BlockVariable extends Block {
 		typeDirtyID = old.typeDirtyID;
 		this.typeLocked = old.typeLocked;
 		menu = old.menu == null ? null : new VariableMenu(old.menu, this);
-		retrieveValue();
-		recomputeDimensions();
+		mustRefresh = old.mustRefresh;
 	}
 
 	private void retrieveValue() {
@@ -273,8 +273,8 @@ public class BlockVariable extends Block {
 		}
 
 		@Override
-		public VariableMenu clone(InputContext ic) {
-			return new VariableMenu(this, block.clone(ic));
+		public VariableMenu clone(final TreeContainer parent, InputContext ic) {
+			return new VariableMenu(this, block.clone(parent, ic));
 		}
 
 	}
@@ -295,7 +295,7 @@ public class BlockVariable extends Block {
 	}
 	
 	@Override
-	public BlockVariable clone(InputContext ic) {
-		return new BlockVariable(this, ic);
+	public BlockVariable clone(final TreeContainer parent, InputContext ic) {
+		return new BlockVariable(parent, this, ic);
 	}
 }

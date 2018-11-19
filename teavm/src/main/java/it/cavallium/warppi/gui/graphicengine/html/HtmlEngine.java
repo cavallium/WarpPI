@@ -24,6 +24,7 @@ import it.cavallium.warppi.flow.BehaviorSubject;
 import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 
 public class HtmlEngine implements GraphicEngine {
 
@@ -70,15 +71,19 @@ public class HtmlEngine implements GraphicEngine {
 	}
 
 	private String previousValue = "";
+	private static final Object2IntArrayMap<String> keyNames = new Object2IntArrayMap<>();
 	
-	@JSBody(params = { "ctx", "enabled" }, script = ""
-			+ "ctx.mozImageSmoothingEnabled = enabled;"
-			+ "ctx.oImageSmoothingEnabled = enabled;"
-			+ "ctx.webkitImageSmoothingEnabled = enabled;"
-			+ "ctx.msImageSmoothingEnabled = enabled;"
-			+ "ctx.imageSmoothingEnabled = enabled;")
+	static {
+		keyNames.put(" ", 32);
+		keyNames.put("ArrowUp", 38);
+		keyNames.put("ArrowDown", 40);
+		keyNames.put("ArrowLeft", 37);
+		keyNames.put("ArrowRight", 39);
+	}
+
+	@JSBody(params = { "ctx", "enabled" }, script = "" + "ctx.mozImageSmoothingEnabled = enabled;" + "ctx.oImageSmoothingEnabled = enabled;" + "ctx.webkitImageSmoothingEnabled = enabled;" + "ctx.msImageSmoothingEnabled = enabled;" + "ctx.imageSmoothingEnabled = enabled;")
 	public static native void setImageSmoothingEnabled(CanvasRenderingContext2D ctx, boolean enabled);
-	
+
 	@Override
 	public void create(final Runnable onInitialized) {
 		exitSemaphore = Engine.getPlatform().newSemaphore(0);
@@ -93,14 +98,14 @@ public class HtmlEngine implements GraphicEngine {
 		onZoom.subscribe((windowZoom) -> {
 			if (windowZoom != 0) {
 				if (suppportsZoom()) {
-					canvas.setWidth((int)(480 / 1));
-					canvas.setHeight((int)(320 / 1));
+					canvas.setWidth((int) (480 / 1));
+					canvas.setHeight((int) (320 / 1));
 					canvas.getStyle().setProperty("zoom", "" + (1 + 1));
 				} else {
-					canvas.setWidth((int)(480 * 2));
-					canvas.setHeight((int)(320 * 2));
+					canvas.setWidth((int) (480 * 2));
+					canvas.setHeight((int) (320 * 2));
 				}
-				canvas.getStyle().setProperty("max-height", (int)(44 / (1+1)) + "vh");
+				canvas.getStyle().setProperty("max-height", (int) (44 / (1 + 1)) + "vh");
 				width = 480 / windowZoom.intValue();
 				height = 320 / windowZoom.intValue();
 				this.mult = windowZoom.intValue();
@@ -114,13 +119,17 @@ public class HtmlEngine implements GraphicEngine {
 		HtmlEngine.document.getElementById("container").appendChild(canvas);
 		HtmlEngine.document.getBody().appendChild(keyInput);
 		keyInput.setTabIndex(0);
-		keyInput.addEventListener("keydown", (final KeyboardEvent evt) -> {
+		keyInput.setValue("");
+		HtmlEngine.document.addEventListener("keydown", (final KeyboardEvent evt) -> {
 			evt.preventDefault();
 			new Thread(() -> {
-				previousValue = keyInput.getValue();
-				Keyboard.debugKeyPressed(evt.getKeyCode());
-				System.out.println(evt.getKeyCode());
-				System.out.println("" + (int) evt.getKey().charAt(0));
+				Keyboard.debugKey(keyNames .getOrDefault(evt.getKey(), evt.getKeyCode()), false);
+			}).start();
+		});
+		HtmlEngine.document.addEventListener("keyup", (final KeyboardEvent evt) -> {
+			evt.preventDefault();
+			new Thread(() -> {
+				Keyboard.debugKey(keyNames .getOrDefault(evt.getKey(), evt.getKeyCode()), true);
 			}).start();
 		});
 		keyInput.addEventListener("input", (final Event evt) -> {
@@ -133,14 +142,17 @@ public class HtmlEngine implements GraphicEngine {
 			new Thread(() -> {
 				if (newLen == prevLen) {
 
-				} else if (newLen - prevLen == 1)
-					Keyboard.debugKeyPressed(newValue.toUpperCase().charAt(newLen - 1));
+				} else if (newLen - prevLen == 1) {
+					Keyboard.debugKey(newValue.toUpperCase().charAt(newLen - 1), false);
+					Keyboard.debugKey(newValue.toUpperCase().charAt(newLen - 1), true);}
 				else if (newLen - prevLen > 1)
-					for (int i = 0; i < newLen - prevLen; i++)
-						Keyboard.debugKeyPressed(newValue.toUpperCase().charAt(prevLen + i));
+					for (int i = 0; i < newLen - prevLen; i++) {
+						Keyboard.debugKey(newValue.toUpperCase().charAt(prevLen + i), false);
+						Keyboard.debugKey(newValue.toUpperCase().charAt(prevLen + i), true);}
 				else if (newLen - prevLen < 1)
-					for (int i = 0; i < prevLen - newLen; i++)
-						Keyboard.debugKeyPressed(8);
+					for (int i = 0; i < prevLen - newLen; i++) {
+						Keyboard.debugKey(8, false);
+						Keyboard.debugKey(8, true);}
 			}).start();
 		});
 		canvas.addEventListener("click", (final Event evt) -> {
@@ -151,57 +163,71 @@ public class HtmlEngine implements GraphicEngine {
 		});
 		final NodeList<? extends HTMLElement> buttons = HtmlEngine.document.getBody().getElementsByTagName("button");
 		for (int i = 0; i < buttons.getLength(); i++)
-			if (buttons.item(i).hasAttribute("keycode"))
-				buttons.item(i).addEventListener("click", (final Event evt) -> {
-					evt.preventDefault();
-					final EventTarget target = evt.getCurrentTarget();
-					final HTMLButtonElement button = target.cast();
-					new Thread(() -> {
-						try {
-							if (button.hasAttribute("keycode") && button.getAttribute("keycode").contains(",")) {
-								final String code = button.getAttribute("keycode");
-								final String[] coordinates = code.split(",", 2);
-								final boolean removeshift = Keyboard.shift && Integer.parseInt(coordinates[0]) != 0 && Integer.parseInt(coordinates[1]) != 0;
-								final boolean removealpha = Keyboard.alpha && Integer.parseInt(coordinates[0]) != 0 && Integer.parseInt(coordinates[1]) != 1;
-								Keyboard.keyPressedRaw(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]));
-								if (removeshift)
-									Keyboard.keyPressedRaw(0, 0);
-								if (removealpha)
-									Keyboard.keyPressedRaw(0, 1);
-								Thread.sleep(100);
-								Keyboard.keyReleasedRaw(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]));
-								if (removeshift)
-									Keyboard.keyReleasedRaw(0, 0);
-								if (removealpha)
-									Keyboard.keyReleasedRaw(0, 1);
-							} else if (Keyboard.alpha && !Keyboard.shift) {
-								if (button.hasAttribute("keycodea"))
-									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodea")));
-								else
-									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycode")));
-							} else if (!Keyboard.alpha && Keyboard.shift) {
-								if (button.hasAttribute("keycodes"))
-									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodes")));
-								else
-									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycode")));
-							} else if (Keyboard.alpha && Keyboard.shift) {
-								if (button.hasAttribute("keycodesa"))
-									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodesa")));
-								else if (button.hasAttribute("keycodes"))
-									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycodes")));
-								else
-									Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycode")));
-							} else
-								Keyboard.debugKeyPressed(Integer.parseInt(button.getAttribute("keycode")));
-						} catch (final Exception ex) {
-							ex.printStackTrace();
-						}
-					}).start();
+			if (buttons.item(i).hasAttribute("keycode")) {
+				buttons.item(i).addEventListener("touchstart", (final Event evt) -> {
+					buttonEvent(evt, false);
 				});
+				buttons.item(i).addEventListener("touchend", (final Event evt) -> {
+					buttonEvent(evt, true);
+				});
+				buttons.item(i).addEventListener("mousedown", (final Event evt) -> {
+					buttonEvent(evt, false);
+				});
+				buttons.item(i).addEventListener("mouseup", (final Event evt) -> {
+					buttonEvent(evt, true);
+				});
+			}
 		renderer = new HtmlRenderer(this, g);
 		initialized = true;
 		if (onInitialized != null)
 			onInitialized.run();
+	}
+
+	private void buttonEvent(Event evt, boolean released) {
+		evt.preventDefault();
+		final EventTarget target = evt.getCurrentTarget();
+		final HTMLButtonElement button = target.cast();
+		new Thread(() -> {
+			try {
+				if (button.hasAttribute("keycode") && button.getAttribute("keycode").contains(",")) {
+					final String code = button.getAttribute("keycode");
+					final String[] coordinates = code.split(",", 2);
+					final boolean removeshift = Keyboard.shift && Integer.parseInt(coordinates[0]) != 0 && Integer.parseInt(coordinates[1]) != 0;
+					final boolean removealpha = Keyboard.alpha && Integer.parseInt(coordinates[0]) != 0 && Integer.parseInt(coordinates[1]) != 1;
+					Keyboard.keyRaw(Integer.parseInt(coordinates[0]), Integer.parseInt(coordinates[1]), released);
+					if (released) {
+						if (removeshift)
+							Keyboard.keyRaw(0, 0, false);
+						if (removealpha)
+							Keyboard.keyRaw(0, 1, false);
+					}
+				} else if (Keyboard.alpha && !Keyboard.shift) {
+					if (button.hasAttribute("keycodea")) {
+						Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodea")), released);
+					} else {
+						Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), released);
+					}
+				} else if (!Keyboard.alpha && Keyboard.shift) {
+					if (button.hasAttribute("keycodes")) {
+						Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodes")), released);
+					} else {
+						Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), released);
+					}
+				} else if (Keyboard.alpha && Keyboard.shift) {
+					if (button.hasAttribute("keycodesa")) {
+						Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodesa")), released);
+					} else if (button.hasAttribute("keycodes")) {
+						Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycodes")), released);
+					} else {
+						Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), released);
+					}
+				} else {
+					Keyboard.debugKey(Integer.parseInt(button.getAttribute("keycode")), released);
+				}
+			} catch (final Exception ex) {
+				ex.printStackTrace();
+			}
+		}).start();
 	}
 
 	@JSBody(params = {}, script = "return CSS.supports(\"zoom:2\")")

@@ -7,7 +7,7 @@ import it.cavallium.warppi.gui.graphicengine.Renderer;
 
 public class HtmlRenderer implements Renderer {
 	private String currentColor = "#000000ff";
-	private String clearColor = "#000000ff";
+	private String clearColor = "#c5c2afff";
 	HtmlFont f = null;
 	HtmlSkin currentSkin = null;
 	private final CanvasRenderingContext2D g;

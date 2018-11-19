@@ -483,7 +483,6 @@ class NEWTWindow implements GLEventListener {
 
 		final boolean linear = windowZoom % (int) windowZoom != 0f;
 		if (refreshViewport) {
-			System.err.println("[[[REFVP");
 			refreshViewport = false;
 			gl.glViewport(0, 0, realWindowSize[0], realWindowSize[1]);
 

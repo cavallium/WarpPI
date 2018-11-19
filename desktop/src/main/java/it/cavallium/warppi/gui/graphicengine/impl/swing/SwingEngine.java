@@ -54,7 +54,7 @@ public class SwingEngine implements GraphicEngine {
 		exitSemaphore = new Semaphore(0);
 		INSTANCE = new SwingWindow(this);
 		setResizable(Engine.getPlatform().getSettings().isDebugEnabled());
-		setDisplayMode(StaticVars.screenSize[0], StaticVars.screenSize[1]);
+		setDisplayMode((int) (StaticVars.screenSize[0] / StaticVars.windowZoom.getLastValue()), (int) (StaticVars.screenSize[1] / StaticVars.windowZoom.getLastValue()));
 		INSTANCE.setVisible(true);
 		initialized = true;
 		if (onInitialized != null)

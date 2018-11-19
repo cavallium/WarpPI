@@ -6,6 +6,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public abstract class FunctionSingle implements Function {
 
+	private boolean simplified;
+	
 	/**
 	 * Create a new instance of FunctionSingle. The Math Context will be the
 	 * same of <strong>value</strong>'s.

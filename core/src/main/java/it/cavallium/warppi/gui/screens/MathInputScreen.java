@@ -106,6 +106,11 @@ public class MathInputScreen extends Screen {
 	}
 
 	@Override
+	public void graphicInitialized() throws InterruptedException {
+		/* Fine caricamento */
+	}
+
+	@Override
 	public void beforeRender(final float dt) {
 		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager().error == null) {
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xFFc5c2af);

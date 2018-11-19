@@ -10,6 +10,7 @@ public abstract class Screen implements KeyboardEventListener, TouchEventListene
 	public DisplayManager d;
 	public boolean created = false;
 	public boolean initialized = false;
+	public boolean graphicInitialized = false;
 	public HistoryBehavior historyBehavior = HistoryBehavior.NORMAL;
 	
 	public static long lastDebugScreenID = 1;
@@ -19,6 +20,14 @@ public abstract class Screen implements KeyboardEventListener, TouchEventListene
 		debugScreenID = lastDebugScreenID++;
 	}
 
+	@Override
+	public void initializeGraphic() throws InterruptedException {
+		if (!graphicInitialized) {
+			graphicInitialized = true;
+			graphicInitialized();
+		}
+	}
+	
 	@Override
 	public void initialize() throws InterruptedException {
 		if (!initialized) {
@@ -35,9 +44,29 @@ public abstract class Screen implements KeyboardEventListener, TouchEventListene
 		}
 	}
 
+	/**
+	 * Called when creating the screen
+	 * Called before initialized()
+	 * Called before graphicInitialized()
+	 * @throws InterruptedException
+	 */
 	public abstract void created() throws InterruptedException;
 
+	/**
+	 * Load everything except skins, etc...
+	 * Called after created()
+	 * Called after graphicInitialized()
+	 * @throws InterruptedException
+	 */
 	public abstract void initialized() throws InterruptedException;
+
+	/**
+	 * Load skins, etc...
+	 * Called after created()
+	 * Called before initialized()
+	 * @throws InterruptedException
+	 */
+	public abstract void graphicInitialized() throws InterruptedException;
 
 	@Override
 	public abstract void render();

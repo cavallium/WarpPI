@@ -7,6 +7,7 @@ import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.event.KeyPressedEvent;
+import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.gui.HistoryBehavior;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.Skin;
@@ -41,6 +42,43 @@ public class MarioScreen extends Screen {
 	public MarioScreen() {
 		super();
 		historyBehavior = HistoryBehavior.ALWAYS_KEEP_IN_HISTORY;
+	}
+
+	@Override
+	public void graphicInitialized() {
+		try {
+			if (MarioScreen.skin == null) {
+				MarioScreen.skin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("/marioskin.png");
+			}
+			if (MarioScreen.groundskin == null) {
+				MarioScreen.groundskin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("/marioground.png");
+			}
+			if (MarioScreen.gpuTest2 == null) {
+				try {
+					MarioScreen.gpuTest2 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("N:\\gputest\\gputest2");
+				} catch (final Exception ex) {}
+			}
+			if (MarioScreen.gpuTest1 == null) {
+				try {
+					MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("N:\\gputest\\gputest12");
+					MarioScreen.gpuTest12 = true;
+				} catch (final Exception ex) {
+					MarioScreen.gpuTest12 = false;
+					try {
+						MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("N:\\gputest\\gputest1");
+					} catch (final Exception ex2) {}
+				}
+			}
+			if (MarioScreen.gpuTest3 == null) {
+				try {
+					MarioScreen.gpuTest3 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("N:\\gputest\\font_gputest3.png");
+				} catch (final Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -87,12 +125,49 @@ public class MarioScreen extends Screen {
 		}
 	}
 
+	boolean rightPressed, leftPressed, jumpPressed;
+	
+	@Override
+	public boolean onKeyPressed(KeyPressedEvent k) {
+		switch(k.getKey()) {
+			case OK:
+			case SIMPLIFY:
+			case STEP:
+				jumpPressed = true;
+				return true;
+			case LEFT:
+				leftPressed = true;
+				return true;
+			case RIGHT:
+				rightPressed = true;
+				return true;
+			default:
+				return false;
+		}
+	}
+	
+	@Override
+	public boolean onKeyReleased(KeyReleasedEvent k) {
+		switch(k.getKey()) {
+			case OK:
+			case SIMPLIFY:
+			case STEP:
+				jumpPressed = false;
+				return true;
+			case LEFT:
+				leftPressed = false;
+				return true;
+			case RIGHT:
+				rightPressed = false;
+				return true;
+			default:
+				return false;
+		}
+	}
+	
 	@Override
 	public void beforeRender(final float dt) {
 		if (!errored) {
-			final boolean rightPressed = Keyboard.isKeyDown(2, 5);
-			final boolean leftPressed = Keyboard.isKeyDown(2, 3);
-			final boolean jumpPressed = Keyboard.isKeyDown(2, 1);
 			final boolean upPressed = false, downPressed = false, runPressed = false;
 			g.gameTick(dt, upPressed, downPressed, leftPressed, rightPressed, jumpPressed, runPressed);
 

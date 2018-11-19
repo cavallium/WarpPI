@@ -22,9 +22,10 @@ public class BlockSquareRoot extends Block {
 		recomputeDimensions();
 	}
 
-	private BlockSquareRoot(BlockSquareRoot old, InputContext ic) {
-		this.containerNumber = old.containerNumber.clone(ic);
-		recomputeDimensions();
+	private BlockSquareRoot(final TreeContainer parent, BlockSquareRoot old, InputContext ic) {
+		super(parent, old);
+		this.containerNumber = old.containerNumber.clone(this, ic);
+		this.h1 = old.h1;
 	}
 
 	@Override
@@ -118,7 +119,7 @@ public class BlockSquareRoot extends Block {
 	}
 
 	@Override
-	public BlockSquareRoot clone(InputContext ic) {
-		return new BlockSquareRoot(this, ic);
+	public BlockSquareRoot clone(final TreeContainer parent, InputContext ic) {
+		return new BlockSquareRoot(parent, this, ic);
 	}
 }

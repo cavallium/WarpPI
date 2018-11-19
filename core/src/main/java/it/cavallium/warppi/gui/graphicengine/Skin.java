@@ -13,7 +13,15 @@ public interface Skin {
 
 	void use(GraphicEngine d);
 
+	/**
+	 * May not be available before initialization
+	 * @return skin width
+	 */
 	int getSkinWidth();
 
+	/**
+	 * May not be available before initialization
+	 * @return skin height
+	 */
 	int getSkinHeight();
 }

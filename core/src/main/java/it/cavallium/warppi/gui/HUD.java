@@ -3,6 +3,7 @@ package it.cavallium.warppi.gui;
 public abstract class HUD implements GraphicalInterface {
 	public DisplayManager d;
 	public boolean created = false;
+	public boolean graphicInitialized = false;
 	public boolean initialized = false;
 	public boolean visible = true;
 	
@@ -17,6 +18,14 @@ public abstract class HUD implements GraphicalInterface {
 	}
 
 	@Override
+	public void initializeGraphic() throws InterruptedException {
+		if (!graphicInitialized) {
+			graphicInitialized = true;
+			graphicInitialized();
+		}
+	}
+
+	@Override
 	public void create() throws InterruptedException {
 		if (!created) {
 			created = true;
@@ -26,6 +35,8 @@ public abstract class HUD implements GraphicalInterface {
 
 	public abstract void created() throws InterruptedException;
 
+	public abstract void graphicInitialized() throws InterruptedException;
+	
 	public abstract void initialized() throws InterruptedException;
 
 	public abstract void renderBackground();

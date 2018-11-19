@@ -28,6 +28,9 @@ public class KeyboardDebugScreen extends Screen {
 	public void initialized() throws InterruptedException {}
 
 	@Override
+	public void graphicInitialized() throws InterruptedException {}
+
+	@Override
 	public void render() {
 		final Renderer renderer = Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer;
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[2].use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);

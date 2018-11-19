@@ -5,14 +5,13 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.Platform.Semaphore;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.flow.Observable;
+import it.cavallium.warppi.flow.Pair;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
@@ -243,10 +242,10 @@ public final class DisplayManager implements RenderingLoop {
 				screen.create();
 			}
 			this.screen = screen;
-			screenChange.release();
 			if (screen.initialized == false) {
 				screen.initialize();
 			}
+			screenChange.release();
 		} catch (final Exception e) {
 			e.printStackTrace();
 			Engine.getPlatform().exit(0);
@@ -268,10 +267,10 @@ public final class DisplayManager implements RenderingLoop {
 		try {
 			screen.create();
 			this.screen = screen;
-			screenChange.release();
 			if (screen.initialized == false) {
 				screen.initialize();
 			}
+			screenChange.release();
 		} catch (final Exception e) {
 			e.printStackTrace();
 			Engine.getPlatform().exit(0);
@@ -373,6 +372,13 @@ public final class DisplayManager implements RenderingLoop {
 				}
 			}
 		}
+		if (!screen.graphicInitialized) {
+			try {
+				screen.initializeGraphic();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 		renderer.glClear(engine.getWidth(), engine.getHeight());
 	}
 
@@ -440,7 +446,6 @@ public final class DisplayManager implements RenderingLoop {
 					setScreen(initialScreen);
 					initialScreen = null;
 				}
-				screen.initialize();
 			} catch (final Exception e) {
 				e.printStackTrace();
 				Engine.getPlatform().exit(0);

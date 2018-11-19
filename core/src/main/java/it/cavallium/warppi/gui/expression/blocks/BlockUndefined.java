@@ -16,8 +16,8 @@ public class BlockUndefined extends Block {
 		recomputeDimensions();
 	}
 
-	private BlockUndefined(BlockUndefined old, InputContext ic) {
-		recomputeDimensions();
+	private BlockUndefined(final TreeContainer parent, BlockUndefined old, InputContext ic) {
+		super(parent, old);
 	}
 
 	@Override
@@ -76,8 +76,8 @@ public class BlockUndefined extends Block {
 	}
 
 	@Override
-	public BlockUndefined clone(InputContext ic) {
-		return new BlockUndefined(this, ic);
+	public BlockUndefined clone(final TreeContainer parent, InputContext ic) {
+		return new BlockUndefined(parent, this, ic);
 	}
 
 }

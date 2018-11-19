@@ -26,16 +26,17 @@ public class DesktopPlatform implements Platform {
 	private final DesktopConsoleUtils cu;
 	private final DesktopGpio gi;
 	private final DesktopStorageUtils su;
-	private final PngUtils pu;
+	private final ImageUtils pu;
 	private final String on;
 	private final Map<String, GraphicEngine> el;
 	private final DesktopSettings settings;
+	private Boolean runningOnRaspberryOverride = null;
 
 	public DesktopPlatform() {
 		cu = new DesktopConsoleUtils();
 		gi = new DesktopGpio();
 		su = new DesktopStorageUtils();
-		pu = new DesktopPngUtils();
+		pu = new DesktopImageUtils();
 		on = System.getProperty("os.name").toLowerCase();
 		el = new HashMap<>();
 		el.put("CPU engine", new SwingEngine());
@@ -59,7 +60,7 @@ public class DesktopPlatform implements Platform {
 	}
 
 	@Override
-	public PngUtils getPngUtils() {
+	public ImageUtils getImageUtils() {
 		return pu;
 	}
 
@@ -206,7 +207,17 @@ public class DesktopPlatform implements Platform {
 	}
 
 	@Override
+	public void setRunningOnRaspberry(boolean b) {
+		if (isRunningOnRaspberry()) {
+			runningOnRaspberryOverride = b;
+		} else {
+			runningOnRaspberryOverride = false;
+		}
+	}
+	
+	@Override
 	public boolean isRunningOnRaspberry() {
+		if (runningOnRaspberryOverride != null) return runningOnRaspberryOverride;
 		return CacheUtils.get("isRunningOnRaspberry", 24 * 60 * 60 * 1000, () -> {
 			if (Engine.getPlatform().isJavascript())
 				return false;

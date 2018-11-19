@@ -71,7 +71,7 @@ public interface Function {
 	 * @throws InterruptedException
 	 */
 	ObjectArrayList<Function> simplify(Rule rule) throws Error, InterruptedException;
-
+	
 	/**
 	 *
 	 * @param context

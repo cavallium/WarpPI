@@ -5,6 +5,7 @@ import java.util.Arrays;
 import it.cavallium.warppi.event.KeyboardEventListener;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockVariable;
+import it.cavallium.warppi.gui.expression.blocks.TreeContainer;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 
@@ -45,7 +46,7 @@ public abstract class ExtraMenu<T extends Block> implements KeyboardEventListene
 		return false;
 	}
 
-	public abstract ExtraMenu<T> clone(InputContext ic);
+	public abstract ExtraMenu<T> clone(final TreeContainer parent, InputContext ic);
 
 	public abstract ExtraMenu<T> clone(T newBlockVariable);
 

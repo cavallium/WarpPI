@@ -1,15 +1,11 @@
 package it.cavallium.warppi.device.graphicengine;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.imageio.ImageIO;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.util.ClassUtils;
@@ -133,18 +129,6 @@ public class RAWFont {
 			indexes[i] = (chars[i] & 0xFFFF) - minBound;
 		}
 		return indexes;
-	}
-
-	@SuppressWarnings("unused")
-	private void saveArray(final int[] screen, final String coutputpng) {
-		final BufferedImage bi = new BufferedImage(300, 200, BufferedImage.TYPE_INT_RGB);
-		final int[] a = ((DataBufferInt) bi.getRaster().getDataBuffer()).getData();
-		System.arraycopy(screen, 0, a, 0, screen.length);
-		try {
-			ImageIO.write(bi, "PNG", new File(coutputpng));
-		} catch (final IOException ex) {
-			Logger.getLogger(RAWFont.class.getName()).log(Level.SEVERE, null, ex);
-		}
 	}
 
 	public void drawText(final int[] screen, final int[] screenSize, final int x, final int y, final int[] text,

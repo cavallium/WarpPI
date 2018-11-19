@@ -79,24 +79,25 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 		recomputeDimensions();
 	}
 
-	private BlockContainer(BlockContainer old, InputContext ic) {
+	private BlockContainer(final TreeBlock parent, BlockContainer old, InputContext ic) {
 		this.autoMinimums = old.autoMinimums;
 		this.content = new ObjectArrayList<>();
 		for (Block b : old.content) {
-			this.content.add(b.clone(ic));
+			this.content.add(b.clone(this, ic));
 		}
+		
 		this.height = old.height;
 		this.line = old.line;
 		this.minHeight = old.minHeight;
 		this.minWidth = old.minWidth;
-		this.parent = old.parent;
+		this.parent = parent;
 		this.small = old.small;
 		this.width = old.width;
 		this.withBorder = old.withBorder;
 	}
 	
-	public BlockContainer clone(InputContext ic) {
-		return new BlockContainer(this, ic);
+	public BlockContainer clone(final TreeBlock parent, InputContext ic) {
+		return new BlockContainer(parent, this, ic);
 	}
 
 	@Override
@@ -261,18 +262,21 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 						innerContainersBeforeCaret++;
 					}
 				}
-				removeAt(pos - 1);
-				if (blocks != null) {
-					ObjectListIterator<Block> blocksIterator = blocks.iterator();
-					int blockNum = 0;
-					while (blocksIterator.hasNext()) {
-						Block block = blocksIterator.next();
-						addBlockUnsafe(pos - 1 + blockNum, block);
-						blockNum++;
+				// If the caret is at the end of a block with inner containers don't delete anything and enter into that block.
+				if (innerContainers == null || (innerContainers.size() - innerContainersBeforeCaret != 0)) {
+					removeAt(pos - 1);
+					if (blocks != null) {
+						ObjectListIterator<Block> blocksIterator = blocks.iterator();
+						int blockNum = 0;
+						while (blocksIterator.hasNext()) {
+							Block block = blocksIterator.next();
+							addBlockUnsafe(pos - 1 + blockNum, block);
+							blockNum++;
+						}
 					}
+					caret.setPosition(caretOldPos - innerContainersBeforeCaret);
+					removed = true;
 				}
-				caret.setPosition(caretOldPos - innerContainersBeforeCaret);
-				removed = true;
 			}
 		}
 		caret.skip(1);

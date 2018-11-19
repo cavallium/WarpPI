@@ -7,7 +7,7 @@ public class TeaVMSettings implements Settings {
 	private boolean debug;
 
 	public TeaVMSettings() {
-		debug = true;
+		debug = false;
 	}
 
 	@Override

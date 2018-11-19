@@ -20,7 +20,7 @@ public interface Platform {
 
 	StorageUtils getStorageUtils();
 
-	PngUtils getPngUtils();
+	ImageUtils getImageUtils();
 
 	Settings getSettings();
 
@@ -36,6 +36,8 @@ public interface Platform {
 
 	boolean isJavascript();
 
+	void setRunningOnRaspberry(boolean b);
+	
 	boolean isRunningOnRaspberry();
 
 	String getOsName();
@@ -169,19 +171,17 @@ public interface Platform {
 
 		void close() throws IOException;
 	}
-
-	public interface PngUtils {
-
-		PngReader load(InputStream resourceStream);
-
-		public interface PngReader {
-
+	
+	public interface ImageUtils {
+		
+		ImageReader load(InputStream resourceStream) throws IOException;
+		
+		public interface ImageReader {
+			
 			int[] getImageMatrix();
 
 			int[] getSize();
-
 		}
-
 	}
 
 	public interface Settings {

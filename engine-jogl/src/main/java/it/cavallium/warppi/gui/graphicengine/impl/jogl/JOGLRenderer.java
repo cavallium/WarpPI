@@ -261,7 +261,7 @@ public class JOGLRenderer implements Renderer {
 	}
 
 	static OpenedTextureData openTexture(final String file, final boolean isResource) throws GLException, IOException {
-		BufferedImage img = ImageIO.read(isResource ? JOGLRenderer.class.getResource("/" + file) : new File(file).toURI().toURL());
+		BufferedImage img = ImageIO.read(isResource ? JOGLRenderer.class.getResource(file) : new File(file).toURI().toURL());
 		File f;
 		if (isResource) {
 			f = Files.createTempFile("texture-", ".png").toFile();

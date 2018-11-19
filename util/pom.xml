@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>it.cavallium</groupId>
+		<artifactId>warppi</artifactId>
+		<version>0.9.0a3</version>
+	</parent>
+    <artifactId>warppi-util</artifactId>
+
+    <name>warppi-util</name>
+    <description>WarpPI Util</description>
+
+    <developers>
+        <developer>
+            <id>cavallium</id>
+            <name>Andrea Cavalli</name>
+            <email>andrea@warp.ovh</email>
+            <url>https://cavallium.it/</url>
+        </developer>
+    </developers>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+        </plugins>
+    </build>
+</project>

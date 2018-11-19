@@ -21,16 +21,17 @@ public class HardwarePlatform implements Platform {
 	private final HardwareConsoleUtils cu;
 	private final HardwareGpio gi;
 	private final HardwareStorageUtils su;
-	private final PngUtils pu;
+	private final ImageUtils pu;
 	private final String on;
 	private final Map<String, GraphicEngine> el;
 	private final HardwareSettings settings;
+	private Boolean runningOnRaspberryOverride = null;
 
 	public HardwarePlatform() {
 		cu = new HardwareConsoleUtils();
 		gi = new HardwareGpio();
 		su = new HardwareStorageUtils();
-		pu = new HardwarePngUtils();
+		pu = new HardwareImageUtils();
 		on = System.getProperty("os.name").toLowerCase();
 		el = new HashMap<>();
 		el.put("GPU engine", new JOGLEngine());
@@ -54,7 +55,7 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public PngUtils getPngUtils() {
+	public ImageUtils getImageUtils() {
 		return pu;
 	}
 
@@ -195,7 +196,13 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
+	public void setRunningOnRaspberry(boolean b) {
+		runningOnRaspberryOverride = b;
+	}
+	
+	@Override
 	public boolean isRunningOnRaspberry() {
+		if (runningOnRaspberryOverride != null) return runningOnRaspberryOverride;
 		return true;
 		/*
 		return CacheUtils.get("isRunningOnRaspberry", 24 * 60 * 60 * 1000, () -> {

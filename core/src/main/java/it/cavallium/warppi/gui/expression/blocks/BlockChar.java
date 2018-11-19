@@ -18,9 +18,14 @@ public class BlockChar extends Block {
 		recomputeDimensions();
 	}
 
-	public BlockChar(final char ch, InputContext ic) {
-		this.ch = ch;
-		recomputeDimensions();
+	/**
+	 * Copy
+	 * @param b
+	 * @param ic
+	 */
+	protected BlockChar(final TreeContainer parent, final BlockChar b, InputContext ic) {
+		super(parent, b);
+		this.ch = b.ch;
 	}
 
 	@Override
@@ -83,8 +88,8 @@ public class BlockChar extends Block {
 	}
 
 	@Override
-	public BlockChar clone(InputContext ic) {
-		return new BlockChar(ch, ic);
+	public BlockChar clone(final TreeContainer parent, InputContext ic) {
+		return new BlockChar(parent, this, ic);
 	}
 
 }

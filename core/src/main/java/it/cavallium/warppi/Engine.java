@@ -89,12 +89,17 @@ public class Engine {
 		}
 		Engine.platform.getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, args);
 		checkDeviceType();
-		if (Engine.getPlatform().isRunningOnRaspberry() && args.isRaspberryModeAllowed()) {
+		if (args.isRaspberryModeAllowed() == false) {
+			Engine.getPlatform().setRunningOnRaspberry(false);
+		}
+		if (Engine.getPlatform().isRunningOnRaspberry()) {
 			Engine.getPlatform().getGpio().wiringPiSetupPhys();
 			Engine.getPlatform().getGpio().pinMode(12, Engine.getPlatform().getGpio().valuePwmOutput());
 		} else {
 			StaticVars.screenPos = new int[] { 0, 0 };
-			Engine.getPlatform().getSettings().setDebugEnabled(true);
+			if (Engine.getPlatform().isJavascript() == false) {
+				Engine.getPlatform().getSettings().setDebugEnabled(true);
+			}
 		}
 	}
 

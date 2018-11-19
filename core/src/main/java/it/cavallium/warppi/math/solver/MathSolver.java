@@ -1,6 +1,7 @@
 package it.cavallium.warppi.math.solver;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import it.cavallium.warppi.Engine;
@@ -9,6 +10,9 @@ import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
 import it.cavallium.warppi.util.Error;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMaps;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class MathSolver {
@@ -17,6 +21,7 @@ public class MathSolver {
 	private final AtomicInteger stepState = new AtomicInteger(0);
 	private int stepStateRepetitions = 0;
 	private int consecutiveNullSteps = 0;
+	private final Object2ObjectOpenHashMap<Function, ObjectArrayList<Rule>> simplificationCache;
 
 	private enum StepState {
 		_1_CALCULATION, _2_EXPANSION, _3_CALCULATION, _4_REDUCTION
@@ -28,6 +33,7 @@ public class MathSolver {
 
 	public MathSolver(final Function initialFunction) {
 		this.initialFunction = initialFunction;
+		this.simplificationCache = new Object2ObjectOpenHashMap<Function, ObjectArrayList<Rule>>();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -214,15 +220,18 @@ public class MathSolver {
 		for (final Function fnc : fncs) {
 			boolean didSomething = false;
 			for (final Rule rule : rules) {
-				final List<Function> ruleResults = fnc.simplify(rule);
-				if (ruleResults != null && !ruleResults.isEmpty()) {
-					if (results == null) {
-						results = new ObjectArrayList<>();
+				if (isSimplified(fnc, rule) == false) {
+					final List<Function> ruleResults = fnc.simplify(rule);
+					if (ruleResults != null && !ruleResults.isEmpty()) {
+						if (results == null) {
+							results = new ObjectArrayList<>();
+						}
+						results.addAll(ruleResults);
+						appliedRules.add(rule);
+						setSimplified(fnc, rule);
+						didSomething = true;
+						break;
 					}
-					results.addAll(ruleResults);
-					appliedRules.add(rule);
-					didSomething = true;
-					break;
 				}
 			}
 			if (!didSomething && fncs.size() > 1) {
@@ -247,5 +256,31 @@ public class MathSolver {
 			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", currentAcceptedRules.toString(), "Applied rules: " + rulesStr);
 		}
 		return results;
+	}
+
+	private boolean isSimplified(Function fnc, Rule rule) {
+		if (simplificationCache.containsKey(fnc)) {
+			List<Rule> alreadySimplifiedRules = simplificationCache.get(fnc);
+			if (alreadySimplifiedRules.contains(rule)) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			simplificationCache.put(fnc, new ObjectArrayList<Rule>());
+		}
+		return false;
+	}
+	
+	private void setSimplified(Function fnc, Rule rule) {
+		ObjectArrayList<Rule> oar;
+		if (simplificationCache.containsKey(fnc)) {
+			oar = new ObjectArrayList<>();
+			simplificationCache.put(fnc, oar);
+		} else {
+			oar = simplificationCache.get(fnc);
+			if (oar.contains(rule)) return;
+		}
+		oar.add(rule);
 	}
 }
