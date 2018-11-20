@@ -2,6 +2,7 @@ package it.cavallium.warppi.math.rules.dsl;
 
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
+import it.cavallium.warppi.math.MathematicalSymbols;
 import it.cavallium.warppi.math.functions.*;
 import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.functions.equations.Equation;
@@ -186,6 +187,27 @@ public class PatternTest {
 		final Function replacement = pattern.replace(mathContext, rootSubFunctions.get());
 		assertTrue(replacement instanceof RootSquare);
 		assertEquals(rootSquare, replacement);
+	}
+
+	@Test
+	public void constantPattern() {
+		final Pattern pattern = new ConstantPattern(MathematicalSymbols.PI);
+
+		final Function shouldNotMatch = new Variable(
+				mathContext,
+				MathematicalSymbols.EULER_NUMBER,
+				Variable.V_TYPE.CONSTANT
+		);
+		assertFalse(pattern.match(shouldNotMatch).isPresent());
+
+		final Function shouldMatch = new Variable(
+				mathContext,
+				MathematicalSymbols.PI,
+				Variable.V_TYPE.CONSTANT
+		);
+		final Optional<Map<String, Function>> subFunctions = pattern.match(shouldMatch);
+		assertTrue(subFunctions.isPresent());
+		assertEquals(shouldMatch, pattern.replace(mathContext, subFunctions.get()));
 	}
 
 	@Test
