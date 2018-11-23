@@ -52,7 +52,6 @@ public class Lexer {
 			case ']': emitToken(RIGHT_BRACKET); break;
 			case '=': emitToken(EQUALS); break;
 			case '*': emitToken(TIMES); break;
-			case '/': emitToken(DIVIDE); break;
 			case '^': emitToken(POWER); break;
 
 			case '+':
@@ -71,6 +70,16 @@ public class Lexer {
 				}
 				break;
 
+			case '/':
+				if (matchChar('/')) {
+					singleLineComment();
+				} else if (matchChar('*')) {
+					multiLineComment();
+				} else {
+					emitToken(DIVIDE);
+				}
+				break;
+
 			default:
 				if (isAsciiDigit(current)) {
 					number();
@@ -79,6 +88,16 @@ public class Lexer {
 				} else if (!Character.isWhitespace(current)) {
 					throw new RuntimeException("Unexpected character " + current);
 				}
+		}
+	}
+
+	private void singleLineComment() {
+		matchWhile(c -> c != '\n');
+	}
+
+	private void multiLineComment() {
+		while (!(matchChar('*') && matchChar('/'))) {
+			popChar();
 		}
 	}
 

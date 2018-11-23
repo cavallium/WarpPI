@@ -14,9 +14,9 @@ public class LexerTest {
 		final Lexer lexer = new Lexer(
 				"reduction TestRule_123:\n" +
 						"  x + y * z = -(a_123 +- 3 / 2.2) -> [\n" +
-						"    x^a_123 = cos(pi) - log(e, e),\n" +
-						"    undefined,\n" +
-						"]\n"
+						"    x^a_123 = cos(pi) - log(e, e), // comment\n" +
+						"    undefined, /*\n" +
+						"comment */ ]\n"
 		);
 		final List<Token> expected = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
@@ -54,10 +54,10 @@ public class LexerTest {
 				new Token(E, "e", 94),
 				new Token(RIGHT_PAREN, ")", 95),
 				new Token(COMMA, ",", 96),
-				new Token(UNDEFINED, "undefined", 102),
-				new Token(COMMA, ",", 111),
-				new Token(RIGHT_BRACKET, "]", 113),
-				new Token(EOF, "", 115)
+				new Token(UNDEFINED, "undefined", 113),
+				new Token(COMMA, ",", 122),
+				new Token(RIGHT_BRACKET, "]", 138),
+				new Token(EOF, "", 140)
 		);
 		assertEquals(expected, lexer.lex());
 	}
