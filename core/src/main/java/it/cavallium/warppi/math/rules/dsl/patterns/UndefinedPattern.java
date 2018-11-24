@@ -22,4 +22,14 @@ public class UndefinedPattern extends VisitorPattern {
 	public Function replace(MathContext mathContext, Map<String, Function> subFunctions) {
 		return new Undefined(mathContext);
 	}
+
+	@Override
+	public boolean equals(final Object o) {
+		return o instanceof UndefinedPattern;
+	}
+
+	@Override
+	public int hashCode() {
+		return UndefinedPattern.class.hashCode();
+	}
 }

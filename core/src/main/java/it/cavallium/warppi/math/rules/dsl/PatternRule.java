@@ -10,6 +10,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -66,5 +67,22 @@ public class PatternRule implements Rule {
 		return replacements.stream()
 				.map(replacement -> replacement.replace(mathContext, subFunctions))
 				.collect(Collectors.toCollection(ObjectArrayList::new));
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (!(o instanceof PatternRule)) {
+			return false;
+		}
+		final PatternRule other = (PatternRule) o;
+		return ruleName.equals(other.ruleName)
+				&& ruleType == other.ruleType
+				&& target.equals(other.target)
+				&& replacements.equals(other.replacements);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(ruleName, ruleType, target, replacements);
 	}
 }

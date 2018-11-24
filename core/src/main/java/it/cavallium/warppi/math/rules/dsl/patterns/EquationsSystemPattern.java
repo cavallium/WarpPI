@@ -47,4 +47,18 @@ public class EquationsSystemPattern extends VisitorPattern {
 				.toArray(Function[]::new);
 		return new EquationsSystem(mathContext, functions);
 	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (!(o instanceof EquationsSystemPattern)) {
+			return false;
+		}
+		final EquationsSystemPattern other = (EquationsSystemPattern) o;
+		return Arrays.equals(patterns, other.patterns);
+	}
+
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode(patterns);
+	}
 }

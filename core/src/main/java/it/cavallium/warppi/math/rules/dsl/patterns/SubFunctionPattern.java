@@ -6,6 +6,7 @@ import it.cavallium.warppi.math.rules.dsl.Pattern;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -28,5 +29,19 @@ public class SubFunctionPattern implements Pattern {
 	@Override
 	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
 		return subFunctions.get(name);
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (!(o instanceof SubFunctionPattern)) {
+			return false;
+		}
+		final SubFunctionPattern other = (SubFunctionPattern) o;
+		return name.equals(other.name);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name);
 	}
 }

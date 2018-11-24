@@ -8,6 +8,7 @@ import it.cavallium.warppi.math.rules.dsl.PatternUtils;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -34,5 +35,19 @@ public class DivisionPattern extends VisitorPattern {
 				dividend.replace(mathContext, subFunctions),
 				divisor.replace(mathContext, subFunctions)
 		);
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (!(o instanceof DivisionPattern)) {
+			return false;
+		}
+		final DivisionPattern other = (DivisionPattern) o;
+		return dividend.equals(other.dividend) && divisor.equals(other.divisor);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(dividend, divisor);
 	}
 }

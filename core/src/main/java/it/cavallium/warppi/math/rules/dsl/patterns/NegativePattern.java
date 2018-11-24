@@ -7,6 +7,7 @@ import it.cavallium.warppi.math.rules.dsl.Pattern;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -30,5 +31,19 @@ public class NegativePattern extends VisitorPattern {
 				mathContext,
 				inner.replace(mathContext, subFunctions)
 		);
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (!(o instanceof NegativePattern)) {
+			return false;
+		}
+		final NegativePattern other = (NegativePattern) o;
+		return inner.equals(other.inner);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(inner);
 	}
 }

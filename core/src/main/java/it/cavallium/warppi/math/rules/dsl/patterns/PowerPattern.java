@@ -8,6 +8,7 @@ import it.cavallium.warppi.math.rules.dsl.PatternUtils;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -34,5 +35,19 @@ public class PowerPattern extends VisitorPattern {
 				base.replace(mathContext, subFunctions),
 				exponent.replace(mathContext, subFunctions)
 		);
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (!(o instanceof PowerPattern)) {
+			return false;
+		}
+		final PowerPattern other = (PowerPattern) o;
+		return base.equals(other.base) && exponent.equals(other.exponent);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(base, exponent);
 	}
 }

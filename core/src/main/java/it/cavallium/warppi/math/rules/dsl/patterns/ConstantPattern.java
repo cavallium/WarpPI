@@ -7,6 +7,7 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -32,5 +33,19 @@ public class ConstantPattern extends VisitorPattern {
 	@Override
 	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
 		return new Variable(mathContext, symbol, Variable.V_TYPE.CONSTANT);
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (!(o instanceof ConstantPattern)) {
+			return false;
+		}
+		final ConstantPattern other = (ConstantPattern) o;
+		return symbol == other.symbol;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(symbol);
 	}
 }

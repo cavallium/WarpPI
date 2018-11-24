@@ -8,6 +8,7 @@ import it.cavallium.warppi.math.rules.dsl.PatternUtils;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -34,5 +35,19 @@ public class SumPattern extends VisitorPattern {
 				left.replace(mathContext, subFunctions),
 				right.replace(mathContext, subFunctions)
 		);
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (!(o instanceof SumPattern)) {
+			return false;
+		}
+		final SumPattern other = (SumPattern) o;
+		return left.equals(other.left) && right.equals(other.right);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(left, right);
 	}
 }

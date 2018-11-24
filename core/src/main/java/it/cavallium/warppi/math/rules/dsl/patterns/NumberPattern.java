@@ -8,6 +8,7 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -32,5 +33,19 @@ public class NumberPattern extends VisitorPattern {
 	@Override
 	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
 		return new Number(mathContext, value);
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (!(o instanceof NumberPattern)) {
+			return false;
+		}
+		final NumberPattern other = (NumberPattern) o;
+		return value.compareTo(other.value) == 0;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(value);
 	}
 }

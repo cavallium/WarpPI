@@ -7,6 +7,7 @@ import it.cavallium.warppi.math.rules.dsl.Pattern;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -30,5 +31,19 @@ public class SinePattern extends VisitorPattern {
 				mathContext,
 				argument.replace(mathContext, subFunctions)
 		);
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (!(o instanceof SinePattern)) {
+			return false;
+		}
+		final SinePattern other = (SinePattern) o;
+		return argument.equals(other.argument);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(argument);
 	}
 }

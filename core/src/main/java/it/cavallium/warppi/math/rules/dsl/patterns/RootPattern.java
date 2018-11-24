@@ -11,6 +11,7 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -48,5 +49,19 @@ public class RootPattern extends VisitorPattern {
 		} else {
 			return new Root(mathContext, newDegree, newRadicand);
 		}
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (!(o instanceof RootPattern)) {
+			return false;
+		}
+		final RootPattern other = (RootPattern) o;
+		return degree.equals(other.degree) && radicand.equals(other.radicand);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(degree, radicand);
 	}
 }

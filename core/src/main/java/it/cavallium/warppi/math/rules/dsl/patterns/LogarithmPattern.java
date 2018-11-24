@@ -8,6 +8,7 @@ import it.cavallium.warppi.math.rules.dsl.PatternUtils;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -34,5 +35,19 @@ public class LogarithmPattern extends VisitorPattern {
 				base.replace(mathContext, subFunctions),
 				argument.replace(mathContext, subFunctions)
 		);
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+		if (!(o instanceof LogarithmPattern)) {
+			return false;
+		}
+		final LogarithmPattern other = (LogarithmPattern) o;
+		return base.equals(other.base) && argument.equals(other.argument);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(base, argument);
 	}
 }
