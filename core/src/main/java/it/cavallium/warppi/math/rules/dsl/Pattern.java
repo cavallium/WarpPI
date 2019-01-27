@@ -2,9 +2,11 @@ package it.cavallium.warppi.math.rules.dsl;
 
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
+import it.cavallium.warppi.math.rules.dsl.patterns.SubFunctionPattern;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Recognizes and generates functions of some specific shape.
@@ -27,4 +29,10 @@ public interface Pattern {
 	 * @return The resulting function.
 	 */
 	Function replace(MathContext mathContext, Map<String, Function> subFunctions);
+
+	/**
+	 * @return The (possibly empty) <code>Set</code> of all sub-function patterns
+	 *         found within this pattern and its children.
+	 */
+	Set<SubFunctionPattern> getSubFunctions();
 }

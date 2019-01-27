@@ -10,6 +10,7 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Matches and generates a division of two other patterns.
@@ -35,6 +36,11 @@ public class DivisionPattern extends VisitorPattern {
 				dividend.replace(mathContext, subFunctions),
 				divisor.replace(mathContext, subFunctions)
 		);
+	}
+
+	@Override
+	public Set<SubFunctionPattern> getSubFunctions() {
+		return PatternUtils.getSubFunctionsFrom(dividend, divisor);
 	}
 
 	@Override

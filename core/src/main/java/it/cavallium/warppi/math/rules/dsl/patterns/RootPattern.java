@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Matches and generates a root of degree and radicand patterns.
@@ -49,6 +50,11 @@ public class RootPattern extends VisitorPattern {
 		} else {
 			return new Root(mathContext, newDegree, newRadicand);
 		}
+	}
+
+	@Override
+	public Set<SubFunctionPattern> getSubFunctions() {
+		return PatternUtils.getSubFunctionsFrom(degree, radicand);
 	}
 
 	@Override

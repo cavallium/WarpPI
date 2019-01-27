@@ -10,6 +10,7 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Matches and generates a logarithm of base and argument patterns.
@@ -35,6 +36,11 @@ public class LogarithmPattern extends VisitorPattern {
 				base.replace(mathContext, subFunctions),
 				argument.replace(mathContext, subFunctions)
 		);
+	}
+
+	@Override
+	public Set<SubFunctionPattern> getSubFunctions() {
+		return PatternUtils.getSubFunctionsFrom(base, argument);
 	}
 
 	@Override

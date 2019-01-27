@@ -4,10 +4,7 @@ import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Matches and generates any function as a named sub-function.
@@ -29,6 +26,11 @@ public class SubFunctionPattern implements Pattern {
 	@Override
 	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
 		return subFunctions.get(name);
+	}
+
+	@Override
+	public Set<SubFunctionPattern> getSubFunctions() {
+		return Collections.singleton(this);
 	}
 
 	@Override

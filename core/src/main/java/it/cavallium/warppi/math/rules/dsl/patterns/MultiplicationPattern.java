@@ -10,6 +10,7 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Matches and generates a multiplication of two other patterns.
@@ -35,6 +36,11 @@ public class MultiplicationPattern extends VisitorPattern {
 				left.replace(mathContext, subFunctions),
 				right.replace(mathContext, subFunctions)
 		);
+	}
+
+	@Override
+	public Set<SubFunctionPattern> getSubFunctions() {
+		return PatternUtils.getSubFunctionsFrom(left, right);
 	}
 
 	@Override

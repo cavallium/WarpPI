@@ -10,6 +10,7 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Matches and generates a power (exponentiation) of base and exponent patterns.
@@ -35,6 +36,11 @@ public class PowerPattern extends VisitorPattern {
 				base.replace(mathContext, subFunctions),
 				exponent.replace(mathContext, subFunctions)
 		);
+	}
+
+	@Override
+	public Set<SubFunctionPattern> getSubFunctions() {
+		return PatternUtils.getSubFunctionsFrom(base, exponent);
 	}
 
 	@Override

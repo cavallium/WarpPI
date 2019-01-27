@@ -9,6 +9,7 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Matches and generates the arcsine of another pattern.
@@ -31,6 +32,11 @@ public class ArcSinePattern extends VisitorPattern {
 				mathContext,
 				argument.replace(mathContext, subFunctions)
 		);
+	}
+
+	@Override
+	public Set<SubFunctionPattern> getSubFunctions() {
+		return argument.getSubFunctions();
 	}
 
 	@Override
