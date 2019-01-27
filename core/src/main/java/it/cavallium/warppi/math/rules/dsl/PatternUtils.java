@@ -12,6 +12,8 @@ import java.util.Optional;
  * Contains helper methods which are useful for writing patterns.
  */
 public class PatternUtils {
+	private PatternUtils() {}
+
 	/**
 	 * Gathers captured sub-functions from two matches, checking for equality
 	 * of ones with the same name.
