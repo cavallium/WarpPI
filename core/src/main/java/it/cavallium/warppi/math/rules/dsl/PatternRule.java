@@ -53,6 +53,14 @@ public class PatternRule implements Rule {
 		return ruleType;
 	}
 
+	Pattern getTarget() {
+		return target;
+	}
+
+	List<Pattern> getReplacements() {
+		return replacements;
+	}
+
 	@Override
 	public ObjectArrayList<Function> execute(final Function func) throws Error, InterruptedException {
 		return target.match(func)

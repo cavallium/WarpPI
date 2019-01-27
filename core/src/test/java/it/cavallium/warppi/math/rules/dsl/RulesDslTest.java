@@ -61,4 +61,9 @@ public class RulesDslTest {
 	public void parserError() {
 		RulesDsl.makeRules("existence test: x + y ->");
 	}
+
+	@Test(expected = RuntimeException.class)
+	public void undefinedSubFunction() {
+		RulesDsl.makeRules("expansion test: x -> x + y");
+	}
 }
