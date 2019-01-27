@@ -4,7 +4,6 @@ import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
-import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.Arrays;
@@ -62,7 +61,7 @@ public class PatternRule implements Rule {
 	}
 
 	@Override
-	public ObjectArrayList<Function> execute(final Function func) throws Error, InterruptedException {
+	public ObjectArrayList<Function> execute(final Function func) {
 		return target.match(func)
 				.map(subFunctions -> applyReplacements(func.getMathContext(), subFunctions))
 				.orElse(null);
