@@ -13,10 +13,10 @@ public class LexerTest {
 	public void validRule() {
 		final Lexer lexer = new Lexer(
 				"reduction TestRule_123:\n" +
-						"  x + y * z = -(a_123 +- 3 / 2.2) -> [\n" +
-						"    x^a_123 = cos(pi) - log(e, e), // comment\n" +
-						"    undefined, /*\n" +
-						"comment */ ]\n"
+				"  x + y * z = -(a_123 +- 3 / 2.2) -> [\n" +
+				"    x^a_123 = cos(pi) - log(e, e), // comment\n" +
+				"    undefined, /*\n" +
+				"comment */ ]\n"
 		);
 		final List<Token> expected = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
