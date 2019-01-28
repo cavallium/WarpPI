@@ -21,6 +21,7 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Expression;
 import it.cavallium.warppi.math.functions.Variable;
 import it.cavallium.warppi.math.functions.Variable.V_TYPE;
+import it.cavallium.warppi.math.rules.dsl.RulesDsl;
 import it.cavallium.warppi.math.solver.MathSolver;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -38,7 +39,10 @@ public class RulesManager {
 		for (final RuleType val : RuleType.values()) {
 			RulesManager.rules[val.ordinal()] = new ObjectArrayList<>();
 		}
+
 		try {
+			loadDslRules();
+
 			boolean compiledSomething = false;
 			InputStream defaultRulesList;
 			try {
@@ -148,9 +152,37 @@ public class RulesManager {
 			if (cacheFileStream != null) {
 				cacheFileStream.close();
 			}
-		} catch (URISyntaxException | IOException e) {
+		} catch (URISyntaxException | IOException | RuntimeException e) {
 			e.printStackTrace();
 			Engine.getPlatform().exit(1);
+		}
+	}
+
+	private static void loadDslRules() throws IOException {
+		final StorageUtils storageUtils = Engine.getPlatform().getStorageUtils();
+
+		final File dslRulesPath = storageUtils.get("rules/dsl/");
+		if (!dslRulesPath.exists()) {
+			return;
+		}
+
+		for (final File file : storageUtils.walk(dslRulesPath)) {
+			if (!file.toString().endsWith(".rules")) {
+				continue;
+			}
+
+			Engine.getPlatform().getConsoleUtils().out().println(
+					ConsoleUtils.OUTPUTLEVEL_NODEBUG,
+					"RulesManager",
+					"Found DSL rules file: " + file.getAbsolutePath()
+			);
+
+			final String source;
+			try (final InputStream resource = storageUtils.getResourceStream(file.toString())) {
+				source = storageUtils.read(resource);
+			}
+
+			RulesDsl.makeRules(source).forEach(RulesManager::addRule);
 		}
 	}
 
