@@ -5,6 +5,7 @@ import it.cavallium.warppi.math.rules.dsl.frontend.Lexer;
 import it.cavallium.warppi.math.rules.dsl.frontend.Parser;
 import it.cavallium.warppi.math.rules.dsl.patterns.SubFunctionPattern;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -13,12 +14,18 @@ public class RulesDsl {
 	private RulesDsl() {}
 
 	public static List<Rule> makeRules(final String source) {
-		final Lexer lexer = new Lexer(source);
+		final List<DslException> errors = new ArrayList<>();
+
+		final Lexer lexer = new Lexer(source, errors::add);
 		final Parser parser = new Parser(lexer.lex());
 		final List<PatternRule> rules = parser.parse();
 
 		for (final PatternRule rule : rules) {
 			checkSubFunctionsDefined(rule);
+		}
+
+		if (!errors.isEmpty()) {
+			throw new RuntimeException("Errors in DSL source code");
 		}
 
 		return Collections.unmodifiableList(rules);

@@ -1,14 +1,25 @@
 package it.cavallium.warppi.math.rules.dsl.frontend;
 
+import it.cavallium.warppi.math.rules.dsl.DslException;
+import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static it.cavallium.warppi.math.rules.dsl.frontend.TokenType.*;
 import static org.junit.Assert.*;
 
 public class LexerTest {
+	private final List<DslException> errors = new ArrayList<>();
+
+	@Before
+	public void setUp() {
+		errors.clear();
+	}
+
 	@Test
 	public void validRule() {
 		final Lexer lexer = new Lexer(
@@ -16,7 +27,8 @@ public class LexerTest {
 				"  x + y * z = -(a_123 +- 3 / 2.2) -> [\n" +
 				"    x^a_123 = cos(pi) - log(e, e), // comment\n" +
 				"    undefined, /*\n" +
-				"comment */ ]\n"
+				"comment */ ]\n",
+				errors::add
 		);
 		final List<Token> expected = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
@@ -60,23 +72,75 @@ public class LexerTest {
 				new Token(EOF, "", 140)
 		);
 		assertEquals(expected, lexer.lex());
+		assertTrue(errors.isEmpty());
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void incompleteNumberOtherChar() {
-		final Lexer lexer = new Lexer("2. 5");
-		lexer.lex();
+		final Lexer lexer = new Lexer("2. 5 + 3", errors::add);
+
+		final List<Token> expectedTokens = Arrays.asList(
+				new Token(NUMBER, "5", 3),
+				new Token(PLUS, "+", 5),
+				new Token(NUMBER, "3", 7),
+				new Token(EOF, "", 8)
+		);
+		assertEquals(expectedTokens, lexer.lex());
+
+		final List<DslException> expectedErrors = Collections.singletonList(
+				new IncompleteNumberLiteralException(0, "2.")
+		);
+		assertEquals(expectedErrors, errors);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void incompleteNumberEof() {
-		final Lexer lexer = new Lexer("2.");
-		lexer.lex();
+		final Lexer lexer = new Lexer("2.", errors::add);
+
+		final List<Token> expectedTokens = Collections.singletonList(
+				new Token(EOF, "", 2)
+		);
+		assertEquals(expectedTokens, lexer.lex());
+
+		final List<DslException> expectedErrors = Collections.singletonList(
+				new IncompleteNumberLiteralException(0, "2.")
+		);
+		assertEquals(expectedErrors, errors);
 	}
 
-	@Test(expected = RuntimeException.class)
-	public void meaninglessCharacter() {
-		final Lexer lexer = new Lexer("@");
-		lexer.lex();
+	@Test
+	public void unexpectedCharacters() {
+		final Lexer lexer = new Lexer("reduction @| .: {}", errors::add);
+
+		final List<Token> expectedTokens = Arrays.asList(
+				new Token(REDUCTION, "reduction", 0),
+				new Token(COLON, ":", 14),
+				new Token(EOF, "", 18)
+		);
+		assertEquals(expectedTokens, lexer.lex());
+
+		final List<DslException> expectedErrors = Arrays.asList(
+				new UnexpectedCharactersException(10, "@|"),
+				new UnexpectedCharactersException(13, "."),
+				new UnexpectedCharactersException(16, "{}")
+		);
+		assertEquals(expectedErrors, errors);
+	}
+
+	@Test
+	public void errorOrder() {
+		final Lexer lexer = new Lexer(".2. @", errors::add);
+
+		final List<Token> expectedTokens = Collections.singletonList(
+				new Token(EOF, "", 5)
+		);
+		assertEquals(expectedTokens, lexer.lex());
+
+		final List<DslException> expectedErrors = Arrays.asList(
+				new UnexpectedCharactersException(0, "."),
+				new IncompleteNumberLiteralException(1, "2."),
+				new UnexpectedCharactersException(4, "@")
+		);
+		assertEquals(expectedErrors, errors);
 	}
 }

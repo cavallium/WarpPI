@@ -54,7 +54,7 @@ public class RulesDslTest {
 
 	@Test(expected = RuntimeException.class)
 	public void lexerError() {
-		RulesDsl.makeRules("2. 5");
+		RulesDsl.makeRules("reduction test: 2. 5 -> 1");
 	}
 
 	@Test(expected = RuntimeException.class)
