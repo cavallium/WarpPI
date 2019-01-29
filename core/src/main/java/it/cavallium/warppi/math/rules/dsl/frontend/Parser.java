@@ -2,18 +2,16 @@ package it.cavallium.warppi.math.rules.dsl.frontend;
 
 import it.cavallium.warppi.math.MathematicalSymbols;
 import it.cavallium.warppi.math.rules.RuleType;
+import it.cavallium.warppi.math.rules.dsl.DslException;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
 import it.cavallium.warppi.math.rules.dsl.PatternRule;
 import it.cavallium.warppi.math.rules.dsl.patterns.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static it.cavallium.warppi.math.rules.dsl.frontend.TokenType.*;
 
@@ -21,11 +19,20 @@ import static it.cavallium.warppi.math.rules.dsl.frontend.TokenType.*;
  * Converts a list of tokens to a list of <code>PatternRule</code>s.
  */
 public class Parser {
+	private static final Map<TokenType, RuleType> ruleTypes = Map.ofEntries(
+			Map.entry(REDUCTION, RuleType.REDUCTION),
+			Map.entry(EXPANSION, RuleType.EXPANSION),
+			Map.entry(CALCULATION, RuleType.CALCULATION),
+			Map.entry(EXISTENCE, RuleType.EXISTENCE)
+	);
+
 	private final List<Token> tokens;
+	private final Consumer<? super DslException> errorReporter;
 	private int current = 0;
 
-	public Parser(List<Token> tokens) {
+	public Parser(final List<Token> tokens, final Consumer<? super DslException> errorReporter) {
 		this.tokens = tokens;
+		this.errorReporter = errorReporter;
 	}
 
 	public List<PatternRule> parse() {
@@ -34,9 +41,14 @@ public class Parser {
 
 	// rules = { rule } , EOF ;
 	private List<PatternRule> rules() {
-		List<PatternRule> rules = new ArrayList<>();
+		final List<PatternRule> rules = new ArrayList<>();
 		while (!atEnd()) {
-			rules.add(rule());
+			try {
+				rules.add(rule());
+			} catch (UnexpectedTokenException e) {
+				errorReporter.accept(e);
+				synchronizeTo(ruleTypes.keySet()); // Skip to the next rule to minimize "false" errors
+			}
 		}
 		return rules;
 	}
@@ -44,40 +56,34 @@ public class Parser {
 	// rule = rule header , rule body ;
 	// rule header = rule type , IDENTIFIER , COLON ;
 	// rule body = pattern , ARROW , replacements ;
-	private PatternRule rule() {
-		RuleType type = ruleType();
-		String name = matchOrFail(IDENTIFIER).lexeme;
+	private PatternRule rule() throws UnexpectedTokenException {
+		final RuleType type = ruleType();
+		final String name = matchOrFail(IDENTIFIER).lexeme;
 		matchOrFail(COLON);
-		Pattern target = pattern();
+		final Pattern target = pattern();
 		matchOrFail(ARROW);
-		List<Pattern> replacements = replacements();
+		final List<Pattern> replacements = replacements();
 		return new PatternRule(name, type, target, replacements);
 	}
 
 	// rule type = REDUCTION | EXPANSION | CALCULATION | EXISTENCE ;
-	private RuleType ruleType() {
-		switch (pop().type) {
-			case REDUCTION:
-				return RuleType.REDUCTION;
-			case EXPANSION:
-				return RuleType.EXPANSION;
-			case CALCULATION:
-				return RuleType.CALCULATION;
-			case EXISTENCE:
-				return RuleType.EXISTENCE;
+	private RuleType ruleType() throws UnexpectedTokenException {
+		final Token curToken = pop();
+		if (!ruleTypes.containsKey(curToken.type)) {
+			throw new UnexpectedTokenException(curToken, ruleTypes.keySet());
 		}
-		throw new RuntimeException("Expected rule type");
+		return ruleTypes.get(curToken.type);
 	}
 
 	// pattern = equation ;
-	private Pattern pattern() {
+	private Pattern pattern() throws UnexpectedTokenException {
 		return equation();
 	}
 
 	// replacements = pattern
 	//              | LEFT_BRACKET , patterns , RIGHT_BRACKET ;
 	// patterns = [ pattern , { COMMA , pattern } , [ COMMA ] ] ;
-	private List<Pattern> replacements() {
+	private List<Pattern> replacements() throws UnexpectedTokenException {
 		if (match(LEFT_BRACKET) == null) {
 			return Collections.singletonList(pattern());
 		}
@@ -85,7 +91,7 @@ public class Parser {
 		if (match(RIGHT_BRACKET) != null) {
 			return Collections.emptyList();
 		} else {
-			List<Pattern> pats = new ArrayList<>();
+			final List<Pattern> pats = new ArrayList<>();
 			do {
 				pats.add(pattern());
 			} while (match(COMMA) != null && peek().type != RIGHT_BRACKET);
@@ -95,7 +101,7 @@ public class Parser {
 	}
 
 	// equation = sum , [ EQUALS , sum ] ;
-	private Pattern equation() {
+	private Pattern equation() throws UnexpectedTokenException {
 		Pattern pat = sum();
 		if (match(EQUALS) != null) {
 			pat = new EquationPattern(pat, sum());
@@ -104,7 +110,7 @@ public class Parser {
 	}
 
 	// sum = product , { ( PLUS | MINUS | PLUS_MINUS ) product } ;
-	private Pattern sum() {
+	private Pattern sum() throws UnexpectedTokenException {
 		return matchLeftAssoc(this::product, Map.ofEntries(
 				Map.entry(PLUS, SumPattern::new),
 				Map.entry(MINUS, SubtractionPattern::new),
@@ -113,7 +119,7 @@ public class Parser {
 	}
 
 	// product = unary , { ( TIMES | DIVIDE ) unary } ;
-	private Pattern product() {
+	private Pattern product() throws UnexpectedTokenException {
 		return matchLeftAssoc(this::unary, Map.ofEntries(
 				Map.entry(TIMES, MultiplicationPattern::new),
 				Map.entry(DIVIDE, DivisionPattern::new)
@@ -122,7 +128,7 @@ public class Parser {
 
 	// unary = ( PLUS | MINUS ) unary
 	//       | power ;
-	private Pattern unary() {
+	private Pattern unary() throws UnexpectedTokenException {
 		if (match(PLUS) != null) {
 			return unary();
 		} else if (match(MINUS) != null) {
@@ -133,7 +139,7 @@ public class Parser {
 	}
 
 	// power = ( function | primary ) , [ POWER , power ] ;
-	private Pattern power() {
+	private Pattern power() throws UnexpectedTokenException {
 		Pattern pat = functionOrPrimary();
 		if (match(POWER) != null) {
 			pat = new PowerPattern(pat, power());
@@ -141,14 +147,14 @@ public class Parser {
 		return pat;
 	}
 
-	private Pattern functionOrPrimary() {
-		Pattern function = tryFunction();
+	private Pattern functionOrPrimary() throws UnexpectedTokenException {
+		final Pattern function = tryFunction();
 		return function != null ? function : primary();
 	}
 
 	// function = ( ARCCOS | ARCSIN | ARCTAN | COS | SIN | SQRT | TAN ) , LEFT_PAREN , sum , RIGHT_PAREN
 	//          | ( LOG | ROOT ) LEFT_PAREN , sum , COMMA , sum , RIGHT_PAREN ;
-	private Pattern tryFunction() {
+	private Pattern tryFunction() throws UnexpectedTokenException {
 		final Map<TokenType, Function<Pattern, Pattern>> oneArg = Map.ofEntries(
 				Map.entry(ARCCOS, ArcCosinePattern::new),
 				Map.entry(ARCSIN, ArcSinePattern::new),
@@ -175,14 +181,14 @@ public class Parser {
 		return null;
 	}
 
-	private Pattern oneArgFunction(final Function<Pattern, Pattern> constructor) {
+	private Pattern oneArgFunction(final Function<Pattern, Pattern> constructor) throws UnexpectedTokenException {
 		matchOrFail(LEFT_PAREN);
 		final Pattern arg = pattern();
 		matchOrFail(RIGHT_PAREN);
 		return constructor.apply(arg);
 	}
 
-	private Pattern twoArgFunction(final BiFunction<Pattern, Pattern, Pattern> constructor) {
+	private Pattern twoArgFunction(final BiFunction<Pattern, Pattern, Pattern> constructor) throws UnexpectedTokenException {
 		matchOrFail(LEFT_PAREN);
 		final Pattern firstArg = pattern();
 		matchOrFail(COMMA);
@@ -194,8 +200,8 @@ public class Parser {
 	// primary = NUMBER | constant | IDENTIFIER | UNDEFINED
 	//         | LEFT_PAREN sum RIGHT_PAREN ;
 	// constant = PI | E ;
-	private Pattern primary() {
-		Token curToken = pop();
+	private Pattern primary() throws UnexpectedTokenException {
+		final Token curToken = pop();
 		switch (curToken.type) {
 			case PI:
 				return new ConstantPattern(MathematicalSymbols.PI);
@@ -212,42 +218,50 @@ public class Parser {
 				matchOrFail(RIGHT_PAREN);
 				return grouped;
 		}
-		throw new RuntimeException("Unexpected " + curToken);
+		throw new UnexpectedTokenException(curToken);
 	}
 
 	private Pattern matchLeftAssoc(
-			final Supplier<Pattern> operandParser,
+			final PatternParser operandParser,
 			final Map<TokenType, BiFunction<Pattern, Pattern, Pattern>> operators
-	) {
-		Pattern pat = operandParser.get();
+	) throws UnexpectedTokenException {
+		Pattern pat = operandParser.parse();
 		while (operators.containsKey(peek().type)) {
 			final Token operatorToken = pop();
 			final BiFunction<Pattern, Pattern, Pattern> constructor = operators.get(operatorToken.type);
-			pat = constructor.apply(pat, operandParser.get());
+			pat = constructor.apply(pat, operandParser.parse());
 		}
 		return pat;
 	}
 
-	private Token matchOrFail(final TokenType expectedType) {
+	private Token matchOrFail(final TokenType expectedType) throws UnexpectedTokenException {
 		final Token matched = match(expectedType);
 		if (matched == null) {
-			throw new RuntimeException("Expected " + expectedType);
+			throw new UnexpectedTokenException(tokens.get(current), expectedType);
 		}
 		return matched;
 	}
 
 	private Token match(final TokenType expectedType) {
 		final Token curToken = tokens.get(current);
-		if (curToken.type == expectedType) {
-			current++;
-			return curToken;
-		} else {
+		if (curToken.type != expectedType) {
 			return null;
+		}
+		current++;
+		return curToken;
+	}
+
+	private void synchronizeTo(final Set<TokenType> types) {
+		while (!atEnd() && !types.contains(tokens.get(current).type)) {
+			current++;
 		}
 	}
 
-	private Token pop() {
+	private Token pop() throws UnexpectedTokenException {
 		final Token curToken = tokens.get(current);
+		if (atEnd()) {
+			throw new UnexpectedTokenException(curToken); // Avoid popping EOF
+		}
 		current++;
 		return curToken;
 	}
@@ -258,5 +272,10 @@ public class Parser {
 
 	private boolean atEnd() {
 		return tokens.get(current).type == EOF;
+	}
+
+	@FunctionalInterface
+	private interface PatternParser {
+		Pattern parse() throws UnexpectedTokenException;
 	}
 }

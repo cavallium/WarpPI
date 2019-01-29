@@ -2,12 +2,15 @@ package it.cavallium.warppi.math.rules.dsl.frontend;
 
 import it.cavallium.warppi.math.MathematicalSymbols;
 import it.cavallium.warppi.math.rules.RuleType;
+import it.cavallium.warppi.math.rules.dsl.DslException;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
 import it.cavallium.warppi.math.rules.dsl.PatternRule;
 import it.cavallium.warppi.math.rules.dsl.patterns.*;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -16,12 +19,19 @@ import static it.cavallium.warppi.math.rules.dsl.frontend.TokenType.*;
 import static org.junit.Assert.*;
 
 public class ParserTest {
+	private final List<DslException> errors = new ArrayList<>();
+
+	@Before
+	public void setUp() {
+		errors.clear();
+	}
+
 	@Test
 	public void noRules() {
 		final List<Token> tokens = Collections.singletonList(
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
+		final Parser parser = new Parser(tokens, errors::add);
 		assertEquals(Collections.emptyList(), parser.parse());
 	}
 
@@ -68,7 +78,7 @@ public class ParserTest {
 				new Token(RIGHT_BRACKET, "]", 138),
 				new Token(EOF, "", 140)
 		);
-		final Parser parser = new Parser(tokens);
+		final Parser parser = new Parser(tokens, errors::add);
 
 		// x + y * z = -(a_123 +- 3 / 2.2)
 		final Pattern target = new EquationPattern(
@@ -127,7 +137,7 @@ public class ParserTest {
 				new Token(RIGHT_BRACKET, "]", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
+		final Parser parser = new Parser(tokens, errors::add);
 
 		final List<PatternRule> expected = Collections.singletonList(new PatternRule(
 				"test",
@@ -157,7 +167,7 @@ public class ParserTest {
 				new Token(NUMBER, "2", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
+		final Parser parser = new Parser(tokens, errors::add);
 
 		final List<PatternRule> expected = Collections.singletonList(new PatternRule(
 				"test",
@@ -191,7 +201,7 @@ public class ParserTest {
 				new Token(RIGHT_BRACKET, "]", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
+		final Parser parser = new Parser(tokens, errors::add);
 
 		final List<PatternRule> expected = Collections.singletonList(new PatternRule(
 				"test",
@@ -239,7 +249,7 @@ public class ParserTest {
 
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
+		final Parser parser = new Parser(tokens, errors::add);
 
 		final List<PatternRule> expected = Arrays.asList(
 				new PatternRule(
@@ -282,11 +292,11 @@ public class ParserTest {
 				new Token(LEFT_BRACKET, "[", 0),
 				new Token(RIGHT_BRACKET, "]", 0)
 		);
-		final Parser parser = new Parser(tokens);
+		final Parser parser = new Parser(tokens, errors::add);
 		parser.parse();
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void incompleteRule() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
@@ -298,21 +308,34 @@ public class ParserTest {
 				new Token(ARROW, "->", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
-		parser.parse();
+		final Parser parser = new Parser(tokens, errors::add);
+
+		assertTrue(parser.parse().isEmpty());
+
+		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+				new Token(EOF, "", 0)
+		));
+		assertEquals(expectedErrors, errors);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void missingRuleType() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(IDENTIFIER, "test", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
-		parser.parse();
+		final Parser parser = new Parser(tokens, errors::add);
+
+		assertTrue(parser.parse().isEmpty());
+
+		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+				new Token(IDENTIFIER, "test", 0),
+				REDUCTION, EXPANSION, CALCULATION, EXISTENCE
+		));
+		assertEquals(expectedErrors, errors);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void unexpectedTokenPrimary() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
@@ -326,22 +349,35 @@ public class ParserTest {
 				new Token(RIGHT_BRACKET, "]", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
-		parser.parse();
+		final Parser parser = new Parser(tokens, errors::add);
+
+		assertTrue(parser.parse().isEmpty());
+
+		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+				new Token(CALCULATION, "calculation", 0)
+		));
+		assertEquals(expectedErrors, errors);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void missingRuleName() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
 				new Token(COLON, ":", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
-		parser.parse();
+		final Parser parser = new Parser(tokens, errors::add);
+
+		assertTrue(parser.parse().isEmpty());
+
+		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+				new Token(COLON, ":", 0),
+				IDENTIFIER
+		));
+		assertEquals(expectedErrors, errors);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void missingColon() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
@@ -351,25 +387,39 @@ public class ParserTest {
 				new Token(IDENTIFIER, "x", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
-		parser.parse();
+		final Parser parser = new Parser(tokens, errors::add);
+
+		assertTrue(parser.parse().isEmpty());
+
+		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+				new Token(IDENTIFIER, "x", 0),
+				COLON
+		));
+		assertEquals(expectedErrors, errors);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void missingArrow() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
 				new Token(IDENTIFIER, "test", 0),
 				new Token(COLON, ":", 0),
 				new Token(IDENTIFIER, "x", 0),
-				new Token(IDENTIFIER, "x", 0),
+				new Token(IDENTIFIER, "y", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
-		parser.parse();
+		final Parser parser = new Parser(tokens, errors::add);
+
+		assertTrue(parser.parse().isEmpty());
+
+		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+				new Token(IDENTIFIER, "y", 0),
+				ARROW
+		));
+		assertEquals(expectedErrors, errors);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void missingRightBracket() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
@@ -381,11 +431,18 @@ public class ParserTest {
 				new Token(IDENTIFIER, "x", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
-		parser.parse();
+		final Parser parser = new Parser(tokens, errors::add);
+
+		assertTrue(parser.parse().isEmpty());
+
+		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+				new Token(EOF, "", 0),
+				RIGHT_BRACKET
+		));
+		assertEquals(expectedErrors, errors);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void missingOneArgFunctionLeftParen() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
@@ -399,11 +456,18 @@ public class ParserTest {
 				new Token(RIGHT_BRACKET, "]", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
-		parser.parse();
+		final Parser parser = new Parser(tokens, errors::add);
+
+		assertTrue(parser.parse().isEmpty());
+
+		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+				new Token(IDENTIFIER, "x", 0),
+				LEFT_PAREN
+		));
+		assertEquals(expectedErrors, errors);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void missingOneArgFunctionRightParen() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
@@ -417,11 +481,18 @@ public class ParserTest {
 				new Token(RIGHT_BRACKET, "]", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
-		parser.parse();
+		final Parser parser = new Parser(tokens, errors::add);
+
+		assertTrue(parser.parse().isEmpty());
+
+		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+				new Token(ARROW, "->", 0),
+				RIGHT_PAREN
+		));
+		assertEquals(expectedErrors, errors);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void missingTwoArgFunctionLeftParen() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
@@ -437,11 +508,18 @@ public class ParserTest {
 				new Token(RIGHT_BRACKET, "]", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
-		parser.parse();
+		final Parser parser = new Parser(tokens, errors::add);
+
+		assertTrue(parser.parse().isEmpty());
+
+		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+				new Token(IDENTIFIER, "x", 0),
+				LEFT_PAREN
+		));
+		assertEquals(expectedErrors, errors);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void missingTwoArgFunctionComma() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
@@ -457,11 +535,18 @@ public class ParserTest {
 				new Token(RIGHT_BRACKET, "]", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
-		parser.parse();
+		final Parser parser = new Parser(tokens, errors::add);
+
+		assertTrue(parser.parse().isEmpty());
+
+		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+				new Token(IDENTIFIER, "y", 0),
+				COMMA
+		));
+		assertEquals(expectedErrors, errors);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void missingTwoArgFunctionRightParen() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
@@ -477,11 +562,18 @@ public class ParserTest {
 				new Token(RIGHT_BRACKET, "]", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
-		parser.parse();
+		final Parser parser = new Parser(tokens, errors::add);
+
+		assertTrue(parser.parse().isEmpty());
+
+		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+				new Token(ARROW, "->", 0),
+				RIGHT_PAREN
+		));
+		assertEquals(expectedErrors, errors);
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void missingExpressionRightParen() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
@@ -494,7 +586,64 @@ public class ParserTest {
 				new Token(RIGHT_BRACKET, "]", 0),
 				new Token(EOF, "", 0)
 		);
-		final Parser parser = new Parser(tokens);
-		parser.parse();
+		final Parser parser = new Parser(tokens, errors::add);
+
+		assertTrue(parser.parse().isEmpty());
+
+		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+				new Token(ARROW, "->", 0),
+				RIGHT_PAREN
+		));
+		assertEquals(expectedErrors, errors);
+	}
+
+	@Test
+	public void recoveryToNextRule() {
+		final List<Token> tokens = Arrays.asList(
+				new Token(REDUCTION, "reduction", 0),
+				new Token(IDENTIFIER, "test1", 0),
+				new Token(COLON, ":", 0),
+				new Token(IDENTIFIER, "x", 0),
+				new Token(TIMES, "+", 0),
+				new Token(ARROW, "->", 0),
+				new Token(IDENTIFIER, "x", 0),
+
+				new Token(EXPANSION, "expansion", 0),
+				new Token(IDENTIFIER, "test2", 0),
+				new Token(IDENTIFIER, "x", 0),
+				new Token(ARROW, "->", 0),
+				new Token(MINUS, "-", 0),
+				new Token(MINUS, "-", 0),
+				new Token(IDENTIFIER, "x", 0),
+
+				new Token(CALCULATION, "calculation", 0),
+				new Token(IDENTIFIER, "test3", 0),
+				new Token(COLON, ":", 0),
+				new Token(NUMBER, "1", 0),
+				new Token(PLUS, "+", 0),
+				new Token(NUMBER, "1", 0),
+				new Token(ARROW, "->", 0),
+				new Token(NUMBER, "2", 0),
+
+				new Token(EOF, "", 0)
+		);
+		final Parser parser = new Parser(tokens, errors::add);
+
+		final List<PatternRule> expectedRules = Collections.singletonList(new PatternRule(
+				"test3",
+				RuleType.CALCULATION,
+				new SumPattern(
+						new NumberPattern(new BigDecimal(1)),
+						new NumberPattern(new BigDecimal(1))
+				),
+				new NumberPattern(new BigDecimal(2))
+		));
+		assertEquals(expectedRules, parser.parse());
+
+		final List<DslException> expectedErrors = Arrays.asList(
+				new UnexpectedTokenException(new Token(ARROW, "->", 0)),
+				new UnexpectedTokenException(new Token(IDENTIFIER, "x", 0), COLON)
+		);
+		assertEquals(expectedErrors, errors);
 	}
 }

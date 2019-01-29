@@ -17,7 +17,7 @@ public class RulesDsl {
 		final List<DslException> errors = new ArrayList<>();
 
 		final Lexer lexer = new Lexer(source, errors::add);
-		final Parser parser = new Parser(lexer.lex());
+		final Parser parser = new Parser(lexer.lex(), errors::add);
 		final List<PatternRule> rules = parser.parse();
 
 		for (final PatternRule rule : rules) {
