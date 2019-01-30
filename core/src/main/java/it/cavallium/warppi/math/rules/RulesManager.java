@@ -21,6 +21,7 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Expression;
 import it.cavallium.warppi.math.functions.Variable;
 import it.cavallium.warppi.math.functions.Variable.V_TYPE;
+import it.cavallium.warppi.math.rules.dsl.DslAggregateException;
 import it.cavallium.warppi.math.rules.dsl.RulesDsl;
 import it.cavallium.warppi.math.solver.MathSolver;
 import it.cavallium.warppi.util.Error;
@@ -152,13 +153,13 @@ public class RulesManager {
 			if (cacheFileStream != null) {
 				cacheFileStream.close();
 			}
-		} catch (URISyntaxException | IOException | RuntimeException e) {
+		} catch (URISyntaxException | IOException | DslAggregateException e) {
 			e.printStackTrace();
 			Engine.getPlatform().exit(1);
 		}
 	}
 
-	private static void loadDslRules() throws IOException {
+	private static void loadDslRules() throws IOException, DslAggregateException {
 		final StorageUtils storageUtils = Engine.getPlatform().getStorageUtils();
 
 		final File dslRulesPath = storageUtils.get("rules/dsl/");

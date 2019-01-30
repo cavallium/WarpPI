@@ -10,7 +10,7 @@ import java.util.*;
 public class RulesDsl {
 	private RulesDsl() {}
 
-	public static List<Rule> makeRules(final String source) {
+	public static List<Rule> makeRules(final String source) throws DslAggregateException {
 		final List<DslException> errors = new ArrayList<>();
 
 		final Lexer lexer = new Lexer(source, errors::add);
@@ -25,7 +25,7 @@ public class RulesDsl {
 		}
 
 		if (!errors.isEmpty()) {
-			throw new RuntimeException("Errors in DSL source code");
+			throw new DslAggregateException(errors);
 		}
 
 		return Collections.unmodifiableList(rules);

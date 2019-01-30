@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 
 public class RulesDslTest {
 	@Test
-	public void validRules() {
+	public void validRules() throws DslAggregateException {
 		final List<Rule> rules = RulesDsl.makeRules(
 				"reduction test1: x -> x\n" +
 				"expansion test2:\n" +
@@ -52,18 +52,18 @@ public class RulesDslTest {
 		assertEquals(expected, rules);
 	}
 
-	@Test(expected = RuntimeException.class)
-	public void lexerError() {
+	@Test(expected = DslAggregateException.class)
+	public void lexerError() throws DslAggregateException {
 		RulesDsl.makeRules("reduction test: 2. 5 -> 1");
 	}
 
-	@Test(expected = RuntimeException.class)
-	public void parserError() {
+	@Test(expected = DslAggregateException.class)
+	public void parserError() throws DslAggregateException {
 		RulesDsl.makeRules("existence test: x + y ->");
 	}
 
-	@Test(expected = RuntimeException.class)
-	public void undefinedSubFunction() {
+	@Test(expected = DslAggregateException.class)
+	public void undefinedSubFunction() throws DslAggregateException {
 		RulesDsl.makeRules("expansion test: x -> x + y");
 	}
 }
