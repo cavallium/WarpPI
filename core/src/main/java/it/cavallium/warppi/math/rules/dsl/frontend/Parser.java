@@ -30,6 +30,10 @@ public class Parser {
 	private final Consumer<? super DslException> errorReporter;
 	private int current = 0;
 
+	// For error reporting
+	private String currentRuleName;
+	private final Map<String, Map<SubFunctionPattern, List<Token>>> subFunctionIdentifiers = new HashMap<>();
+
 	public Parser(final List<Token> tokens, final Consumer<? super DslException> errorReporter) {
 		this.tokens = tokens;
 		this.errorReporter = errorReporter;
@@ -37,6 +41,10 @@ public class Parser {
 
 	public List<PatternRule> parse() {
 		return rules();
+	}
+
+	public List<Token> getSubFunctionIdentifiers(final String ruleName, final SubFunctionPattern subFunction) {
+		return subFunctionIdentifiers.get(ruleName).get(subFunction);
 	}
 
 	// rules = { rule } , EOF ;
@@ -59,6 +67,7 @@ public class Parser {
 	private PatternRule rule() throws UnexpectedTokenException {
 		final RuleType type = ruleType();
 		final String name = matchOrFail(IDENTIFIER).lexeme;
+		currentRuleName = name; // This field must be set before calling pattern() and replacements()
 		matchOrFail(COLON);
 		final Pattern target = pattern();
 		matchOrFail(ARROW);
@@ -212,13 +221,27 @@ public class Parser {
 			case NUMBER:
 				return new NumberPattern(new BigDecimal(curToken.lexeme));
 			case IDENTIFIER:
-				return new SubFunctionPattern(curToken.lexeme);
+				final SubFunctionPattern subFunction = new SubFunctionPattern(curToken.lexeme);
+				saveSubFunctionIdentifier(subFunction, curToken);
+				return subFunction;
 			case LEFT_PAREN:
 				final Pattern grouped = sum();
 				matchOrFail(RIGHT_PAREN);
 				return grouped;
 		}
 		throw new UnexpectedTokenException(curToken);
+	}
+
+	private void saveSubFunctionIdentifier(final SubFunctionPattern subFunction, final Token curToken) {
+		final Map<SubFunctionPattern, List<Token>> ruleMap = subFunctionIdentifiers.computeIfAbsent(
+				currentRuleName,
+				key -> new HashMap<>()
+		);
+		final List<Token> subFunctionList = ruleMap.computeIfAbsent(
+				subFunction,
+				key -> new ArrayList<>()
+		);
+		subFunctionList.add(curToken);
 	}
 
 	private Pattern matchLeftAssoc(
