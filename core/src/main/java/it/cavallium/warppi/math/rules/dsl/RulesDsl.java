@@ -5,10 +5,7 @@ import it.cavallium.warppi.math.rules.dsl.frontend.Lexer;
 import it.cavallium.warppi.math.rules.dsl.frontend.Parser;
 import it.cavallium.warppi.math.rules.dsl.patterns.SubFunctionPattern;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class RulesDsl {
 	private RulesDsl() {}
@@ -21,7 +18,10 @@ public class RulesDsl {
 		final List<PatternRule> rules = parser.parse();
 
 		for (final PatternRule rule : rules) {
-			checkSubFunctionsDefined(rule);
+			undefinedSubFunctions(rule).stream()
+					.flatMap(subFunc -> parser.getSubFunctionIdentifiers(rule.getRuleName(), subFunc).stream())
+					.map(UndefinedSubFunctionException::new)
+					.forEach(errors::add);
 		}
 
 		if (!errors.isEmpty()) {
@@ -32,18 +32,21 @@ public class RulesDsl {
 	}
 
 	/**
-	 * Verifies that all sub-functions in the replacement patterns of a <code>PatternRule</code>
-	 * are defined (captured) in the target pattern.
+	 * Finds any sub-functions that are used in the replacement patterns of a <code>PatternRule</code>
+	 * without being defined (captured) in the target pattern.
 	 *
-	 * @param rule The rule to check.
-	 * @throws RuntimeException if any replacement pattern uses undefined sub-functions.
+	 * @param rule The rule to analyze.
+	 * @return The (possibly empty) set of undefined sub-functions.
 	 */
-	private static void checkSubFunctionsDefined(final PatternRule rule) {
+	private static Set<SubFunctionPattern> undefinedSubFunctions(final PatternRule rule) {
 		final Set<SubFunctionPattern> defined = rule.getTarget().getSubFunctions();
+		final Set<SubFunctionPattern> undefined = new HashSet<>();
 		for (final Pattern replacement : rule.getReplacements()) {
-			if (!defined.containsAll(replacement.getSubFunctions())) {
-				throw new RuntimeException("Undefined sub-function(s) in replacements for " + rule.getRuleName());
-			}
+			undefined.addAll(replacement.getSubFunctions());
 		}
+		undefined.removeAll(defined);
+		return undefined;
 	}
+
+
 }
