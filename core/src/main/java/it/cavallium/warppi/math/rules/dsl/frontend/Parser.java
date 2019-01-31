@@ -149,11 +149,11 @@ public class Parser {
 		}
 	}
 
-	// power = ( function | primary ) , [ POWER , power ] ;
+	// power = ( function | primary ) , [ POWER , unary ] ;
 	private Pattern power() throws SyntaxException {
 		Pattern pat = functionOrPrimary();
 		if (match(POWER) != null) {
-			pat = new PowerPattern(pat, power());
+			pat = new PowerPattern(pat, unary());
 		}
 		return pat;
 	}

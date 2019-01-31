@@ -190,13 +190,18 @@ public class ParserTest {
 				new Token(REDUCTION, "reduction", 0),
 				new Token(IDENTIFIER, "test", 0),
 				new Token(COLON, ":", 0),
+				new Token(NUMBER, "1", 0),
+				new Token(DIVIDE, "/", 0),
+				new Token(LEFT_PAREN, "(", 0),
 				new Token(IDENTIFIER, "x", 0),
 				new Token(TIMES, "*", 0),
 				new Token(IDENTIFIER, "x", 0),
+				new Token(RIGHT_PAREN, ")", 0),
 				new Token(ARROW, "->", 0),
 				new Token(LEFT_BRACKET, "[", 0),
 				new Token(IDENTIFIER, "x", 0),
 				new Token(POWER, "^", 0),
+				new Token(MINUS, "-", 0),
 				new Token(NUMBER, "2", 0),
 				new Token(RIGHT_BRACKET, "]", 0),
 				new Token(EOF, "", 0)
@@ -206,13 +211,18 @@ public class ParserTest {
 		final List<PatternRule> expected = Collections.singletonList(new PatternRule(
 				"test",
 				RuleType.REDUCTION,
-				new MultiplicationPattern(
-						new SubFunctionPattern("x"),
-						new SubFunctionPattern("x")
+				new DivisionPattern(
+						new NumberPattern(new BigDecimal(1)),
+						new MultiplicationPattern(
+								new SubFunctionPattern("x"),
+								new SubFunctionPattern("x")
+						)
 				),
 				new PowerPattern(
 						new SubFunctionPattern("x"),
-						new NumberPattern(new BigDecimal(2))
+						new NegativePattern(
+								new NumberPattern(new BigDecimal(2))
+						)
 				)
 		));
 		assertEquals(expected, parser.parse());
