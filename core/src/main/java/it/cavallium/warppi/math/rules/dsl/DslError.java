@@ -1,16 +1,16 @@
 package it.cavallium.warppi.math.rules.dsl;
 
 /**
- * The superclass of all exceptions which represent errors in DSL code.
+ * Represents an error in DSL code.
  */
-public abstract class DslException extends Exception {
+public interface DslError {
 	/**
 	 * @return The index at which the error starts in the source string.
 	 */
-	public abstract int getPosition();
+	int getPosition();
 
 	/**
 	 * @return The length of the error in the source string.
 	 */
-	public abstract int getLength();
+	int getLength();
 }

@@ -5,23 +5,23 @@ import java.util.List;
 /**
  * Thrown when processing DSL code which contains one or more errors.
  *
- * Contains a list of {@link DslException}s, which should not be empty.
+ * Contains a list of {@link DslError}s, which should not be empty.
  */
 public class DslAggregateException extends Exception {
-	private final List<DslException> exceptions;
+	private final List<DslError> errors;
 
 	/**
-	 * Constructs a <code>DslAggregateException</code> containing the specified list of exceptions.
-	 * @param exceptions The list of exceptions. Should not be empty.
+	 * Constructs a <code>DslAggregateException</code> containing the specified list of errors.
+	 * @param errors The list of errors. Should not be empty.
 	 */
-	public DslAggregateException(final List<DslException> exceptions) {
-		this.exceptions = exceptions;
+	public DslAggregateException(final List<DslError> errors) {
+		this.errors = errors;
 	}
 
 	/**
 	 * @return The list of errors detected in the DSL code.
 	 */
-	public List<DslException> getExceptions() {
-		return exceptions;
+	public List<DslError> getErrors() {
+		return errors;
 	}
 }

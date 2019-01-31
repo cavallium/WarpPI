@@ -1,23 +1,23 @@
 package it.cavallium.warppi.math.rules.dsl.frontend;
 
-import it.cavallium.warppi.math.rules.dsl.DslException;
+import it.cavallium.warppi.math.rules.dsl.DslError;
 
 import java.util.Objects;
 import java.util.Set;
 
 /**
- * Thrown when DSL source code contains a token which doesn't match the grammar.
+ * Occurs when DSL source code contains a token which doesn't match the grammar.
  */
-public class UnexpectedTokenException extends DslException {
+public class UnexpectedToken implements DslError {
 	private final Token unexpected;
 	private final Set<TokenType> suggested;
 
-	public UnexpectedTokenException(final Token unexpected, final Set<TokenType> suggested) {
+	public UnexpectedToken(final Token unexpected, final Set<TokenType> suggested) {
 		this.unexpected = unexpected;
 		this.suggested = suggested;
 	}
 
-	public UnexpectedTokenException(final Token unexpected, final TokenType... suggested) {
+	public UnexpectedToken(final Token unexpected, final TokenType... suggested) {
 		this.unexpected = unexpected;
 		this.suggested = Set.of(suggested);
 	}
@@ -50,10 +50,10 @@ public class UnexpectedTokenException extends DslException {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (!(o instanceof UnexpectedTokenException)) {
+		if (!(o instanceof UnexpectedToken)) {
 			return false;
 		}
-		final UnexpectedTokenException other = (UnexpectedTokenException) o;
+		final UnexpectedToken other = (UnexpectedToken) o;
 		return this.unexpected.equals(other.unexpected) && this.suggested.equals(other.suggested);
 	}
 

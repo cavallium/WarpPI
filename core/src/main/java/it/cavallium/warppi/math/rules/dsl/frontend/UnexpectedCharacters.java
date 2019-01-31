@@ -1,17 +1,17 @@
 package it.cavallium.warppi.math.rules.dsl.frontend;
 
-import it.cavallium.warppi.math.rules.dsl.DslException;
+import it.cavallium.warppi.math.rules.dsl.DslError;
 
 import java.util.Objects;
 
 /**
- * Thrown when DSL source code contains one or more (consecutive) characters which are not expected by the lexer.
+ * Occurs when DSL source code contains one or more (consecutive) characters which are not expected by the lexer.
  */
-public class UnexpectedCharactersException extends DslException {
+public class UnexpectedCharacters implements DslError {
 	private final int position;
 	private final String unexpectedCharacters;
 
-	public UnexpectedCharactersException(final int position, final String unexpectedCharacters) {
+	public UnexpectedCharacters(final int position, final String unexpectedCharacters) {
 		this.position = position;
 		this.unexpectedCharacters = unexpectedCharacters;
 	}
@@ -33,16 +33,16 @@ public class UnexpectedCharactersException extends DslException {
 		return unexpectedCharacters;
 	}
 
-	UnexpectedCharactersException concat(UnexpectedCharactersException other) {
-		return new UnexpectedCharactersException(this.position, this.unexpectedCharacters + other.unexpectedCharacters);
+	UnexpectedCharacters concat(UnexpectedCharacters other) {
+		return new UnexpectedCharacters(this.position, this.unexpectedCharacters + other.unexpectedCharacters);
 	}
 
 	@Override
 	public boolean equals(final Object o) {
-		if (!(o instanceof UnexpectedCharactersException)) {
+		if (!(o instanceof UnexpectedCharacters)) {
 			return false;
 		}
-		final UnexpectedCharactersException other = (UnexpectedCharactersException) o;
+		final UnexpectedCharacters other = (UnexpectedCharacters) o;
 		return this.position == other.position && this.unexpectedCharacters.equals(other.unexpectedCharacters);
 	}
 

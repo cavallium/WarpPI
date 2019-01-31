@@ -11,7 +11,7 @@ public class RulesDsl {
 	private RulesDsl() {}
 
 	public static List<Rule> makeRules(final String source) throws DslAggregateException {
-		final List<DslException> errors = new ArrayList<>();
+		final List<DslError> errors = new ArrayList<>();
 
 		final Lexer lexer = new Lexer(source, errors::add);
 		final Parser parser = new Parser(lexer.lex(), errors::add);
@@ -20,7 +20,7 @@ public class RulesDsl {
 		for (final PatternRule rule : rules) {
 			undefinedSubFunctions(rule).stream()
 					.flatMap(subFunc -> parser.getSubFunctionIdentifiers(rule.getRuleName(), subFunc).stream())
-					.map(UndefinedSubFunctionException::new)
+					.map(UndefinedSubFunction::new)
 					.forEach(errors::add);
 		}
 

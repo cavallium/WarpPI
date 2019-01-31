@@ -2,7 +2,7 @@ package it.cavallium.warppi.math.rules.dsl.frontend;
 
 import it.cavallium.warppi.math.MathematicalSymbols;
 import it.cavallium.warppi.math.rules.RuleType;
-import it.cavallium.warppi.math.rules.dsl.DslException;
+import it.cavallium.warppi.math.rules.dsl.DslError;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
 import it.cavallium.warppi.math.rules.dsl.PatternRule;
 import it.cavallium.warppi.math.rules.dsl.patterns.*;
@@ -27,14 +27,14 @@ public class Parser {
 	);
 
 	private final List<Token> tokens;
-	private final Consumer<? super DslException> errorReporter;
+	private final Consumer<? super DslError> errorReporter;
 	private int current = 0;
 
 	// For error reporting
 	private String currentRuleName;
 	private final Map<String, Map<SubFunctionPattern, List<Token>>> subFunctionIdentifiers = new HashMap<>();
 
-	public Parser(final List<Token> tokens, final Consumer<? super DslException> errorReporter) {
+	public Parser(final List<Token> tokens, final Consumer<? super DslError> errorReporter) {
 		this.tokens = tokens;
 		this.errorReporter = errorReporter;
 	}
@@ -53,8 +53,8 @@ public class Parser {
 		while (!atEnd()) {
 			try {
 				rules.add(rule());
-			} catch (UnexpectedTokenException e) {
-				errorReporter.accept(e);
+			} catch (final SyntaxException e) {
+				errorReporter.accept(e.getError());
 				synchronizeTo(ruleTypes.keySet()); // Skip to the next rule to minimize "false" errors
 			}
 		}
@@ -64,7 +64,7 @@ public class Parser {
 	// rule = rule header , rule body ;
 	// rule header = rule type , IDENTIFIER , COLON ;
 	// rule body = pattern , ARROW , replacements ;
-	private PatternRule rule() throws UnexpectedTokenException {
+	private PatternRule rule() throws SyntaxException {
 		final RuleType type = ruleType();
 		final String name = matchOrFail(IDENTIFIER).lexeme;
 		currentRuleName = name; // This field must be set before calling pattern() and replacements()
@@ -76,23 +76,25 @@ public class Parser {
 	}
 
 	// rule type = REDUCTION | EXPANSION | CALCULATION | EXISTENCE ;
-	private RuleType ruleType() throws UnexpectedTokenException {
+	private RuleType ruleType() throws SyntaxException {
 		final Token curToken = pop();
 		if (!ruleTypes.containsKey(curToken.type)) {
-			throw new UnexpectedTokenException(curToken, ruleTypes.keySet());
+			throw new SyntaxException(
+					new UnexpectedToken(curToken, ruleTypes.keySet())
+			);
 		}
 		return ruleTypes.get(curToken.type);
 	}
 
 	// pattern = equation ;
-	private Pattern pattern() throws UnexpectedTokenException {
+	private Pattern pattern() throws SyntaxException {
 		return equation();
 	}
 
 	// replacements = pattern
 	//              | LEFT_BRACKET , patterns , RIGHT_BRACKET ;
 	// patterns = [ pattern , { COMMA , pattern } , [ COMMA ] ] ;
-	private List<Pattern> replacements() throws UnexpectedTokenException {
+	private List<Pattern> replacements() throws SyntaxException {
 		if (match(LEFT_BRACKET) == null) {
 			return Collections.singletonList(pattern());
 		}
@@ -110,7 +112,7 @@ public class Parser {
 	}
 
 	// equation = sum , [ EQUALS , sum ] ;
-	private Pattern equation() throws UnexpectedTokenException {
+	private Pattern equation() throws SyntaxException {
 		Pattern pat = sum();
 		if (match(EQUALS) != null) {
 			pat = new EquationPattern(pat, sum());
@@ -119,7 +121,7 @@ public class Parser {
 	}
 
 	// sum = product , { ( PLUS | MINUS | PLUS_MINUS ) product } ;
-	private Pattern sum() throws UnexpectedTokenException {
+	private Pattern sum() throws SyntaxException {
 		return matchLeftAssoc(this::product, Map.ofEntries(
 				Map.entry(PLUS, SumPattern::new),
 				Map.entry(MINUS, SubtractionPattern::new),
@@ -128,7 +130,7 @@ public class Parser {
 	}
 
 	// product = unary , { ( TIMES | DIVIDE ) unary } ;
-	private Pattern product() throws UnexpectedTokenException {
+	private Pattern product() throws SyntaxException {
 		return matchLeftAssoc(this::unary, Map.ofEntries(
 				Map.entry(TIMES, MultiplicationPattern::new),
 				Map.entry(DIVIDE, DivisionPattern::new)
@@ -137,7 +139,7 @@ public class Parser {
 
 	// unary = ( PLUS | MINUS ) unary
 	//       | power ;
-	private Pattern unary() throws UnexpectedTokenException {
+	private Pattern unary() throws SyntaxException {
 		if (match(PLUS) != null) {
 			return unary();
 		} else if (match(MINUS) != null) {
@@ -148,7 +150,7 @@ public class Parser {
 	}
 
 	// power = ( function | primary ) , [ POWER , power ] ;
-	private Pattern power() throws UnexpectedTokenException {
+	private Pattern power() throws SyntaxException {
 		Pattern pat = functionOrPrimary();
 		if (match(POWER) != null) {
 			pat = new PowerPattern(pat, power());
@@ -156,14 +158,14 @@ public class Parser {
 		return pat;
 	}
 
-	private Pattern functionOrPrimary() throws UnexpectedTokenException {
+	private Pattern functionOrPrimary() throws SyntaxException {
 		final Pattern function = tryFunction();
 		return function != null ? function : primary();
 	}
 
 	// function = ( ARCCOS | ARCSIN | ARCTAN | COS | SIN | SQRT | TAN ) , LEFT_PAREN , sum , RIGHT_PAREN
 	//          | ( LOG | ROOT ) LEFT_PAREN , sum , COMMA , sum , RIGHT_PAREN ;
-	private Pattern tryFunction() throws UnexpectedTokenException {
+	private Pattern tryFunction() throws SyntaxException {
 		final Map<TokenType, Function<Pattern, Pattern>> oneArg = Map.ofEntries(
 				Map.entry(ARCCOS, ArcCosinePattern::new),
 				Map.entry(ARCSIN, ArcSinePattern::new),
@@ -190,14 +192,14 @@ public class Parser {
 		return null;
 	}
 
-	private Pattern oneArgFunction(final Function<Pattern, Pattern> constructor) throws UnexpectedTokenException {
+	private Pattern oneArgFunction(final Function<Pattern, Pattern> constructor) throws SyntaxException {
 		matchOrFail(LEFT_PAREN);
 		final Pattern arg = pattern();
 		matchOrFail(RIGHT_PAREN);
 		return constructor.apply(arg);
 	}
 
-	private Pattern twoArgFunction(final BiFunction<Pattern, Pattern, Pattern> constructor) throws UnexpectedTokenException {
+	private Pattern twoArgFunction(final BiFunction<Pattern, Pattern, Pattern> constructor) throws SyntaxException {
 		matchOrFail(LEFT_PAREN);
 		final Pattern firstArg = pattern();
 		matchOrFail(COMMA);
@@ -209,7 +211,7 @@ public class Parser {
 	// primary = NUMBER | constant | IDENTIFIER | UNDEFINED
 	//         | LEFT_PAREN sum RIGHT_PAREN ;
 	// constant = PI | E ;
-	private Pattern primary() throws UnexpectedTokenException {
+	private Pattern primary() throws SyntaxException {
 		final Token curToken = pop();
 		switch (curToken.type) {
 			case PI:
@@ -229,7 +231,7 @@ public class Parser {
 				matchOrFail(RIGHT_PAREN);
 				return grouped;
 		}
-		throw new UnexpectedTokenException(curToken);
+		throw new SyntaxException(new UnexpectedToken(curToken));
 	}
 
 	private void saveSubFunctionIdentifier(final SubFunctionPattern subFunction, final Token curToken) {
@@ -247,7 +249,7 @@ public class Parser {
 	private Pattern matchLeftAssoc(
 			final PatternParser operandParser,
 			final Map<TokenType, BiFunction<Pattern, Pattern, Pattern>> operators
-	) throws UnexpectedTokenException {
+	) throws SyntaxException {
 		Pattern pat = operandParser.parse();
 		while (operators.containsKey(peek().type)) {
 			final Token operatorToken = pop();
@@ -257,10 +259,12 @@ public class Parser {
 		return pat;
 	}
 
-	private Token matchOrFail(final TokenType expectedType) throws UnexpectedTokenException {
+	private Token matchOrFail(final TokenType expectedType) throws SyntaxException {
 		final Token matched = match(expectedType);
 		if (matched == null) {
-			throw new UnexpectedTokenException(tokens.get(current), expectedType);
+			throw new SyntaxException(
+					new UnexpectedToken(tokens.get(current), expectedType)
+			);
 		}
 		return matched;
 	}
@@ -280,10 +284,10 @@ public class Parser {
 		}
 	}
 
-	private Token pop() throws UnexpectedTokenException {
+	private Token pop() throws SyntaxException {
 		final Token curToken = tokens.get(current);
 		if (atEnd()) {
-			throw new UnexpectedTokenException(curToken); // Avoid popping EOF
+			throw new SyntaxException(new UnexpectedToken(curToken)); // Avoid popping EOF
 		}
 		current++;
 		return curToken;
@@ -299,6 +303,6 @@ public class Parser {
 
 	@FunctionalInterface
 	private interface PatternParser {
-		Pattern parse() throws UnexpectedTokenException;
+		Pattern parse() throws SyntaxException;
 	}
 }

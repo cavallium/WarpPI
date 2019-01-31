@@ -1,6 +1,6 @@
 package it.cavallium.warppi.math.rules.dsl.frontend;
 
-import it.cavallium.warppi.math.rules.dsl.DslException;
+import it.cavallium.warppi.math.rules.dsl.DslError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +27,14 @@ public class Lexer {
 	));
 
 	private final String source;
-	private final Consumer<? super DslException> errorReporter;
+	private final Consumer<? super DslError> errorReporter;
 
 	private final List<Token> tokens = new ArrayList<>();
 	private int startOfLexeme = 0;
 	private int curPosition = 0;
-	private UnexpectedCharactersException unexpectedCharacters = null;
+	private UnexpectedCharacters unexpectedCharacters = null;
 
-	public Lexer(final String source, final Consumer<? super DslException> errorReporter) {
+	public Lexer(final String source, final Consumer<? super DslError> errorReporter) {
 		this.source = source;
 		this.errorReporter = errorReporter;
 	}
@@ -55,16 +55,23 @@ public class Lexer {
 		try {
 			lexToken();
 			reportAndClearUnexpectedCharacters(); // After finding some expected characters
-		} catch (UnexpectedCharactersException e) {
-			if (unexpectedCharacters == null) {
-				unexpectedCharacters = e;
+		} catch (final SyntaxException e) {
+			final DslError error = e.getError();
+			if (error instanceof UnexpectedCharacters) {
+				addUnexpectedCharacters((UnexpectedCharacters) error);
 			} else {
-				unexpectedCharacters = unexpectedCharacters.concat(e);
+				// If there are multiple errors, report them in the order in which they occur in the source
+				reportAndClearUnexpectedCharacters();
+				errorReporter.accept(error);
 			}
-		} catch (IncompleteNumberLiteralException e) {
-			// If there are multiple errors, report them in the order in which they occur in the source
-			reportAndClearUnexpectedCharacters();
-			errorReporter.accept(e);
+		}
+	}
+
+	private void addUnexpectedCharacters(final UnexpectedCharacters unexpected) {
+		if (unexpectedCharacters == null) {
+			unexpectedCharacters = unexpected;
+		} else {
+			unexpectedCharacters = unexpectedCharacters.concat(unexpected);
 		}
 	}
 
@@ -76,7 +83,7 @@ public class Lexer {
 		unexpectedCharacters = null;
 	}
 
-	private void lexToken() throws UnexpectedCharactersException, IncompleteNumberLiteralException {
+	private void lexToken() throws SyntaxException {
 		char current = popChar();
 		switch (current) {
 			case ':': emitToken(COLON); break;
@@ -121,7 +128,9 @@ public class Lexer {
 				} else if (Character.isJavaIdentifierStart(current)) {
 					keywordOrIdentifier();
 				} else if (!Character.isWhitespace(current)) {
-					throw new UnexpectedCharactersException(curPosition - 1, String.valueOf(current));
+					throw new SyntaxException(
+							new UnexpectedCharacters(curPosition - 1, String.valueOf(current))
+					);
 				}
 		}
 	}
@@ -136,10 +145,12 @@ public class Lexer {
 		}
 	}
 
-	private void number() throws IncompleteNumberLiteralException {
+	private void number() throws SyntaxException {
 		matchWhile(Lexer::isAsciiDigit);
 		if (matchChar('.') && matchWhile(Lexer::isAsciiDigit) == 0) {
-			throw new IncompleteNumberLiteralException(startOfLexeme, currentLexeme());
+			throw new SyntaxException(
+					new IncompleteNumberLiteral(startOfLexeme, currentLexeme())
+			);
 		}
 		emitToken(NUMBER);
 	}

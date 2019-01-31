@@ -1,6 +1,6 @@
 package it.cavallium.warppi.math.rules.dsl.frontend;
 
-import it.cavallium.warppi.math.rules.dsl.DslException;
+import it.cavallium.warppi.math.rules.dsl.DslError;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,7 +13,7 @@ import static it.cavallium.warppi.math.rules.dsl.frontend.TokenType.*;
 import static org.junit.Assert.*;
 
 public class LexerTest {
-	private final List<DslException> errors = new ArrayList<>();
+	private final List<DslError> errors = new ArrayList<>();
 
 	@Before
 	public void setUp() {
@@ -87,8 +87,8 @@ public class LexerTest {
 		);
 		assertEquals(expectedTokens, lexer.lex());
 
-		final List<DslException> expectedErrors = Collections.singletonList(
-				new IncompleteNumberLiteralException(0, "2.")
+		final List<DslError> expectedErrors = Collections.singletonList(
+				new IncompleteNumberLiteral(0, "2.")
 		);
 		assertEquals(expectedErrors, errors);
 	}
@@ -102,8 +102,8 @@ public class LexerTest {
 		);
 		assertEquals(expectedTokens, lexer.lex());
 
-		final List<DslException> expectedErrors = Collections.singletonList(
-				new IncompleteNumberLiteralException(0, "2.")
+		final List<DslError> expectedErrors = Collections.singletonList(
+				new IncompleteNumberLiteral(0, "2.")
 		);
 		assertEquals(expectedErrors, errors);
 	}
@@ -119,10 +119,10 @@ public class LexerTest {
 		);
 		assertEquals(expectedTokens, lexer.lex());
 
-		final List<DslException> expectedErrors = Arrays.asList(
-				new UnexpectedCharactersException(10, "@|"),
-				new UnexpectedCharactersException(13, "."),
-				new UnexpectedCharactersException(16, "{}")
+		final List<DslError> expectedErrors = Arrays.asList(
+				new UnexpectedCharacters(10, "@|"),
+				new UnexpectedCharacters(13, "."),
+				new UnexpectedCharacters(16, "{}")
 		);
 		assertEquals(expectedErrors, errors);
 	}
@@ -136,10 +136,10 @@ public class LexerTest {
 		);
 		assertEquals(expectedTokens, lexer.lex());
 
-		final List<DslException> expectedErrors = Arrays.asList(
-				new UnexpectedCharactersException(0, "."),
-				new IncompleteNumberLiteralException(1, "2."),
-				new UnexpectedCharactersException(4, "@")
+		final List<DslError> expectedErrors = Arrays.asList(
+				new UnexpectedCharacters(0, "."),
+				new IncompleteNumberLiteral(1, "2."),
+				new UnexpectedCharacters(4, "@")
 		);
 		assertEquals(expectedErrors, errors);
 	}

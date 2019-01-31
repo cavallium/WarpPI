@@ -2,7 +2,7 @@ package it.cavallium.warppi.math.rules.dsl.frontend;
 
 import it.cavallium.warppi.math.MathematicalSymbols;
 import it.cavallium.warppi.math.rules.RuleType;
-import it.cavallium.warppi.math.rules.dsl.DslException;
+import it.cavallium.warppi.math.rules.dsl.DslError;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
 import it.cavallium.warppi.math.rules.dsl.PatternRule;
 import it.cavallium.warppi.math.rules.dsl.patterns.*;
@@ -19,7 +19,7 @@ import static it.cavallium.warppi.math.rules.dsl.frontend.TokenType.*;
 import static org.junit.Assert.*;
 
 public class ParserTest {
-	private final List<DslException> errors = new ArrayList<>();
+	private final List<DslError> errors = new ArrayList<>();
 
 	@Before
 	public void setUp() {
@@ -312,7 +312,7 @@ public class ParserTest {
 
 		assertTrue(parser.parse().isEmpty());
 
-		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+		final List<DslError> expectedErrors = Collections.singletonList(new UnexpectedToken(
 				new Token(EOF, "", 0)
 		));
 		assertEquals(expectedErrors, errors);
@@ -328,7 +328,7 @@ public class ParserTest {
 
 		assertTrue(parser.parse().isEmpty());
 
-		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+		final List<DslError> expectedErrors = Collections.singletonList(new UnexpectedToken(
 				new Token(IDENTIFIER, "test", 0),
 				REDUCTION, EXPANSION, CALCULATION, EXISTENCE
 		));
@@ -353,7 +353,7 @@ public class ParserTest {
 
 		assertTrue(parser.parse().isEmpty());
 
-		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+		final List<DslError> expectedErrors = Collections.singletonList(new UnexpectedToken(
 				new Token(CALCULATION, "calculation", 0)
 		));
 		assertEquals(expectedErrors, errors);
@@ -370,7 +370,7 @@ public class ParserTest {
 
 		assertTrue(parser.parse().isEmpty());
 
-		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+		final List<DslError> expectedErrors = Collections.singletonList(new UnexpectedToken(
 				new Token(COLON, ":", 0),
 				IDENTIFIER
 		));
@@ -391,7 +391,7 @@ public class ParserTest {
 
 		assertTrue(parser.parse().isEmpty());
 
-		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+		final List<DslError> expectedErrors = Collections.singletonList(new UnexpectedToken(
 				new Token(IDENTIFIER, "x", 0),
 				COLON
 		));
@@ -412,7 +412,7 @@ public class ParserTest {
 
 		assertTrue(parser.parse().isEmpty());
 
-		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+		final List<DslError> expectedErrors = Collections.singletonList(new UnexpectedToken(
 				new Token(IDENTIFIER, "y", 0),
 				ARROW
 		));
@@ -435,7 +435,7 @@ public class ParserTest {
 
 		assertTrue(parser.parse().isEmpty());
 
-		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+		final List<DslError> expectedErrors = Collections.singletonList(new UnexpectedToken(
 				new Token(EOF, "", 0),
 				RIGHT_BRACKET
 		));
@@ -460,7 +460,7 @@ public class ParserTest {
 
 		assertTrue(parser.parse().isEmpty());
 
-		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+		final List<DslError> expectedErrors = Collections.singletonList(new UnexpectedToken(
 				new Token(IDENTIFIER, "x", 0),
 				LEFT_PAREN
 		));
@@ -485,7 +485,7 @@ public class ParserTest {
 
 		assertTrue(parser.parse().isEmpty());
 
-		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+		final List<DslError> expectedErrors = Collections.singletonList(new UnexpectedToken(
 				new Token(ARROW, "->", 0),
 				RIGHT_PAREN
 		));
@@ -512,7 +512,7 @@ public class ParserTest {
 
 		assertTrue(parser.parse().isEmpty());
 
-		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+		final List<DslError> expectedErrors = Collections.singletonList(new UnexpectedToken(
 				new Token(IDENTIFIER, "x", 0),
 				LEFT_PAREN
 		));
@@ -539,7 +539,7 @@ public class ParserTest {
 
 		assertTrue(parser.parse().isEmpty());
 
-		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+		final List<DslError> expectedErrors = Collections.singletonList(new UnexpectedToken(
 				new Token(IDENTIFIER, "y", 0),
 				COMMA
 		));
@@ -566,7 +566,7 @@ public class ParserTest {
 
 		assertTrue(parser.parse().isEmpty());
 
-		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+		final List<DslError> expectedErrors = Collections.singletonList(new UnexpectedToken(
 				new Token(ARROW, "->", 0),
 				RIGHT_PAREN
 		));
@@ -590,7 +590,7 @@ public class ParserTest {
 
 		assertTrue(parser.parse().isEmpty());
 
-		final List<DslException> expectedErrors = Collections.singletonList(new UnexpectedTokenException(
+		final List<DslError> expectedErrors = Collections.singletonList(new UnexpectedToken(
 				new Token(ARROW, "->", 0),
 				RIGHT_PAREN
 		));
@@ -640,9 +640,9 @@ public class ParserTest {
 		));
 		assertEquals(expectedRules, parser.parse());
 
-		final List<DslException> expectedErrors = Arrays.asList(
-				new UnexpectedTokenException(new Token(ARROW, "->", 0)),
-				new UnexpectedTokenException(new Token(IDENTIFIER, "x", 0), COLON)
+		final List<DslError> expectedErrors = Arrays.asList(
+				new UnexpectedToken(new Token(ARROW, "->", 0)),
+				new UnexpectedToken(new Token(IDENTIFIER, "x", 0), COLON)
 		);
 		assertEquals(expectedErrors, errors);
 	}
