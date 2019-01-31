@@ -13,7 +13,7 @@ import java.util.*;
  * Matches and generates a system of equations of multiple other patterns.
  */
 public class EquationsSystemPattern extends VisitorPattern {
-	final Pattern[] patterns;
+	private final Pattern[] patterns;
 
 	public EquationsSystemPattern(final Pattern[] patterns) {
 		this.patterns = patterns;
