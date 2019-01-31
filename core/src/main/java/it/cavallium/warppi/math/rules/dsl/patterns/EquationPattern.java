@@ -2,7 +2,6 @@ package it.cavallium.warppi.math.rules.dsl.patterns;
 
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
-import it.cavallium.warppi.math.functions.Sum;
 import it.cavallium.warppi.math.functions.equations.Equation;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
 import it.cavallium.warppi.math.rules.dsl.PatternUtils;

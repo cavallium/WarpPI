@@ -9,7 +9,6 @@ import it.cavallium.warppi.math.functions.SumSubtraction;
 import it.cavallium.warppi.math.rules.RuleType;
 import it.cavallium.warppi.math.rules.dsl.patterns.*;
 import it.cavallium.warppi.util.Error;
-import it.cavallium.warppi.util.Errors;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.junit.Test;
 

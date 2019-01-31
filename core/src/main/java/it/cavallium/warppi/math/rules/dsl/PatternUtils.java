@@ -2,7 +2,6 @@ package it.cavallium.warppi.math.rules.dsl;
 
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionOperator;
-import it.cavallium.warppi.math.functions.Subtraction;
 import it.cavallium.warppi.math.rules.dsl.patterns.SubFunctionPattern;
 
 import java.util.*;
