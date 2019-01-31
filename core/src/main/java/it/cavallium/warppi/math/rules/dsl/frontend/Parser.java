@@ -31,8 +31,10 @@ public class Parser {
 	private int current = 0;
 
 	// For error reporting
-	private String currentRuleName;
-	private final Map<String, Map<SubFunctionPattern, List<Token>>> subFunctionIdentifiers = new HashMap<>();
+	private Map<SubFunctionPattern, List<Token>> ruleSubFunctionIdentifiers;
+	// An IdentityHashMap is used to distinguish rules even if they're identical (equal)
+	private final IdentityHashMap<PatternRule, Map<SubFunctionPattern, List<Token>>> subFunctionIdentifiers =
+			new IdentityHashMap<>();
 
 	public Parser(final List<Token> tokens, final Consumer<? super DslError> errorReporter) {
 		this.tokens = tokens;
@@ -43,8 +45,8 @@ public class Parser {
 		return rules();
 	}
 
-	public List<Token> getSubFunctionIdentifiers(final String ruleName, final SubFunctionPattern subFunction) {
-		return subFunctionIdentifiers.get(ruleName).get(subFunction);
+	public List<Token> getSubFunctionIdentifiers(final PatternRule rule, final SubFunctionPattern subFunction) {
+		return subFunctionIdentifiers.get(rule).get(subFunction);
 	}
 
 	// rules = { rule } , EOF ;
@@ -67,12 +69,14 @@ public class Parser {
 	private PatternRule rule() throws SyntaxException {
 		final RuleType type = ruleType();
 		final String name = matchOrFail(IDENTIFIER).lexeme;
-		currentRuleName = name; // This field must be set before calling pattern() and replacements()
+		ruleSubFunctionIdentifiers = new HashMap<>(); // Must be initialized before calling pattern() and replacements()
 		matchOrFail(COLON);
 		final Pattern target = pattern();
 		matchOrFail(ARROW);
 		final List<Pattern> replacements = replacements();
-		return new PatternRule(name, type, target, replacements);
+		final PatternRule rule = new PatternRule(name, type, target, replacements);
+		subFunctionIdentifiers.put(rule, ruleSubFunctionIdentifiers);
+		return rule;
 	}
 
 	// rule type = REDUCTION | EXPANSION | CALCULATION | EXISTENCE ;
@@ -235,11 +239,7 @@ public class Parser {
 	}
 
 	private void saveSubFunctionIdentifier(final SubFunctionPattern subFunction, final Token curToken) {
-		final Map<SubFunctionPattern, List<Token>> ruleMap = subFunctionIdentifiers.computeIfAbsent(
-				currentRuleName,
-				key -> new HashMap<>()
-		);
-		final List<Token> subFunctionList = ruleMap.computeIfAbsent(
+		final List<Token> subFunctionList = ruleSubFunctionIdentifiers.computeIfAbsent(
 				subFunction,
 				key -> new ArrayList<>()
 		);

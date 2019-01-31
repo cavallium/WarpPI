@@ -19,7 +19,7 @@ public class RulesDsl {
 
 		for (final PatternRule rule : rules) {
 			undefinedSubFunctions(rule).stream()
-					.flatMap(subFunc -> parser.getSubFunctionIdentifiers(rule.getRuleName(), subFunc).stream())
+					.flatMap(subFunc -> parser.getSubFunctionIdentifiers(rule, subFunc).stream())
 					.map(UndefinedSubFunction::new)
 					.forEach(errors::add);
 		}

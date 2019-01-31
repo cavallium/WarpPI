@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static it.cavallium.warppi.math.rules.dsl.frontend.TokenType.*;
 import static org.junit.Assert.*;
@@ -285,6 +286,107 @@ public class ParserTest {
 				)
 		);
 		assertEquals(expected, parser.parse());
+	}
+
+	@Test
+	public void subFunctionIdentifiers() {
+		final List<ReferenceEqualityToken> rule0x = new ArrayList<>();
+		final List<ReferenceEqualityToken> rule1x = new ArrayList<>();
+		final List<ReferenceEqualityToken> rule1y = new ArrayList<>();
+		final List<ReferenceEqualityToken> rule2x = new ArrayList<>();
+		final List<ReferenceEqualityToken> rule3x = new ArrayList<>();
+
+		final List<Token> tokens = Arrays.asList(
+				new Token(REDUCTION, "reduction", 0),
+				new Token(IDENTIFIER, "test1", 0),
+				new Token(COLON, ":", 0),
+				new Token(PLUS, "+", 0),
+				addIdentifierToken(rule0x, "x"),
+				new Token(ARROW, "->", 0),
+				addIdentifierToken(rule0x, "x"),
+
+				new Token(EXPANSION, "expansion", 0),
+				new Token(IDENTIFIER, "test2", 0),
+				new Token(COLON, ":", 0),
+				addIdentifierToken(rule1x, "x"),
+				new Token(POWER, "^", 0),
+				new Token(MINUS, "-", 0),
+				addIdentifierToken(rule1y, "y"),
+				new Token(ARROW, "->", 0),
+				new Token(NUMBER, "1", 0),
+				new Token(DIVIDE, "/", 0),
+				addIdentifierToken(rule1x, "x"),
+				new Token(POWER, "^", 0),
+				addIdentifierToken(rule1y, "y"),
+
+				// Rule with the same name (and type)
+				new Token(CALCULATION, "expansion", 0),
+				new Token(IDENTIFIER, "test2", 0),
+				new Token(COLON, ":", 0),
+				addIdentifierToken(rule2x, "x"),
+				new Token(ARROW, "->", 0),
+				addIdentifierToken(rule2x, "x"),
+				new Token(PLUS, "+", 0),
+				new Token(NUMBER, "0", 0),
+
+				// Identical rule
+				new Token(CALCULATION, "expansion", 0),
+				new Token(IDENTIFIER, "test2", 0),
+				new Token(COLON, ":", 0),
+				addIdentifierToken(rule3x, "x"),
+				new Token(ARROW, "->", 0),
+				addIdentifierToken(rule3x, "x"),
+				new Token(PLUS, "+", 0),
+				new Token(NUMBER, "0", 0),
+
+				new Token(EOF, "", 0)
+		);
+		final Parser parser = new Parser(tokens, errors::add);
+		final List<PatternRule> rules = parser.parse();
+
+		assertEquals(rule0x, toReferenceEquality(
+				parser.getSubFunctionIdentifiers(rules.get(0), new SubFunctionPattern("x"))
+		));
+		assertEquals(rule1x, toReferenceEquality(
+				parser.getSubFunctionIdentifiers(rules.get(1), new SubFunctionPattern("x"))
+		));
+		assertEquals(rule1y, toReferenceEquality(
+				parser.getSubFunctionIdentifiers(rules.get(1), new SubFunctionPattern("y"))
+		));
+		assertEquals(rule2x, toReferenceEquality(
+				parser.getSubFunctionIdentifiers(rules.get(2), new SubFunctionPattern("x"))
+		));
+		assertEquals(rule3x, toReferenceEquality(
+				parser.getSubFunctionIdentifiers(rules.get(3), new SubFunctionPattern("x"))
+		));
+	}
+
+	private static Token addIdentifierToken(final List<ReferenceEqualityToken> list, final String identifier) {
+		final Token token = new Token(IDENTIFIER, identifier, 0);
+		list.add(new ReferenceEqualityToken(token));
+		return token;
+	}
+
+	private static List<ReferenceEqualityToken> toReferenceEquality(final List<Token> tokens) {
+		return tokens.stream()
+				.map(ReferenceEqualityToken::new)
+				.collect(Collectors.toList());
+	}
+
+	private static class ReferenceEqualityToken {
+		private final Token token;
+
+		ReferenceEqualityToken(final Token token) {
+			this.token = token;
+		}
+
+		@Override
+		public boolean equals(final Object o) {
+			if (!(o instanceof ReferenceEqualityToken)) {
+				return false;
+			}
+			return this.token == ((ReferenceEqualityToken) o).token;
+		}
 	}
 
 	// The EOF token is inserted by the lexer, therefore it can only be missing
