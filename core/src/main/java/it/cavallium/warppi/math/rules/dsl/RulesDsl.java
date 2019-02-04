@@ -7,9 +7,19 @@ import it.cavallium.warppi.math.rules.dsl.patterns.SubFunctionPattern;
 
 import java.util.*;
 
+/**
+ * Implements a domain-specific language (DSL) for the definition of {@link Rule}s.
+ */
 public class RulesDsl {
 	private RulesDsl() {}
 
+	/**
+	 * Creates rules from DSL source code.
+	 *
+	 * @param source The source code.
+	 * @return An unmodifiable list containing the rules defined in the DSL code.
+	 * @throws DslAggregateException if the code contains any errors.
+	 */
 	public static List<Rule> makeRules(final String source) throws DslAggregateException {
 		final List<DslError> errors = new ArrayList<>();
 
