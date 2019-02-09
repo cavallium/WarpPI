@@ -111,8 +111,23 @@ public class PatternTest {
 
 		final Function shouldMatch = new Negative(
 				mathContext,
-				new Number(mathContext, 2)
+				new Variable(mathContext, 'x', Variable.V_TYPE.VARIABLE)
 		);
+		final Optional<Map<String, Function>> subFunctions = pattern.match(shouldMatch);
+		assertTrue(subFunctions.isPresent());
+		assertEquals(shouldMatch, pattern.replace(mathContext, subFunctions.get()));
+	}
+
+	@Test
+	public void negativePatternForNumber() {
+		final Pattern pattern = new NegativePattern(
+				new NumberPattern(new BigDecimal(1))
+		);
+
+		final Function shouldNotMatch = new Number(mathContext, 1);
+		assertFalse(pattern.match(shouldNotMatch).isPresent());
+
+		final Function shouldMatch = new Number(mathContext, -1);
 		final Optional<Map<String, Function>> subFunctions = pattern.match(shouldMatch);
 		assertTrue(subFunctions.isPresent());
 		assertEquals(shouldMatch, pattern.replace(mathContext, subFunctions.get()));
