@@ -41,12 +41,12 @@ public class ExponentRule17 implements Rule {
 	*/
 
 	@Override
-	public ObjectArrayList<Function> execute(final Function f) {
+	public ObjectArrayList<Function> execute(final Function f) { // FIXME incorrect rule
 		boolean isExecutable = false;
 		if (f instanceof Root) {
 			final FunctionOperator fnc = (FunctionOperator) f;
 			if (fnc.getParameter1().equals(fnc.getParameter2()))
-				isExecutable = true;
+				isExecutable = true; // root(a, a)
 		}
 
 		if (isExecutable) {
@@ -57,7 +57,7 @@ public class ExponentRule17 implements Rule {
 			final Function two = new Number(root, 2);
 			final Function p = new Power(root, a, two);
 			result.add(p);
-			return result;
+			return result; // root(a, a) -> a^2
 		} else
 			return null;
 	}
