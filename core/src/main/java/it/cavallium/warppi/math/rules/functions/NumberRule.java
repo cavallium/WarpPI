@@ -1,34 +1,32 @@
-package rules.functions;
+package it.cavallium.warppi.math.rules.functions;
 /*
 SETTINGS: (please don't move this part)
- PATH=functions.VariableRule
+ PATH=functions.NumberRule
 */
 
-import org.nevec.rjm.BigDecimalMath;
+import java.math.BigInteger;
 
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
-import it.cavallium.warppi.math.MathematicalSymbols;
+import it.cavallium.warppi.math.functions.Division;
 import it.cavallium.warppi.math.functions.Number;
-import it.cavallium.warppi.math.functions.Variable;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
-import it.cavallium.warppi.util.Error;
 import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
- * Variable
- * a = n
+ * Number
+ *
  *
  * @author Andrea Cavalli
  *
  */
-public class VariableRule implements Rule {
+public class NumberRule implements Rule {
 	// Rule name
 	@Override
 	public String getRuleName() {
-		return "Variable";
+		return "Number";
 	}
 
 	// Rule type
@@ -43,16 +41,21 @@ public class VariableRule implements Rule {
 	     - An ObjectArrayList<Function> if it did something
 	*/
 	@Override
-	public ObjectArrayList<Function> execute(final Function f) throws Error {
-		if (f instanceof Variable) {
+	public ObjectArrayList<Function> execute(final Function f) {
+		if (f instanceof Number) {
 			final ObjectArrayList<Function> result = new ObjectArrayList<>();
-			final Character variable = ((Variable) f).getChar();
 			final MathContext mathContext = f.getMathContext();
-			if (mathContext.exactMode == false)
-				if (variable.equals(MathematicalSymbols.PI)) {
-					//a = n
-					result.add(new Number(mathContext, BigDecimalMath.pi(new java.math.MathContext(Utils.scale, Utils.scaleMode2))));
-					return result;
+			if (mathContext.exactMode)
+				if (((Number) f).isInteger() == false) {
+					final int decimalPlaces = ((Number) f).getNumberOfDecimalPlaces();
+					final int decimalDigits = decimalPlaces + 1;
+					if (decimalDigits < Utils.maxAutoFractionDigits) {
+						final Number divisor = new Number(mathContext, BigInteger.TEN.pow(decimalPlaces));
+						final Function number = new Number(mathContext, ((Number) f).getTerm().multiply(divisor.getTerm()));
+						final Function div = new Division(mathContext, number, divisor);
+						result.add(div);
+						return result;
+					}
 				}
 		}
 		return null;

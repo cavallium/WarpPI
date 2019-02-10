@@ -1,4 +1,4 @@
-package rules.functions;
+package it.cavallium.warppi.math.rules.functions;
 /*
 SETTINGS: (please don't move this part)
  PATH=functions.RootRule

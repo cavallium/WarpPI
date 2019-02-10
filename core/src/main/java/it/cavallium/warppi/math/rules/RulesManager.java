@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Platform.ConsoleUtils;
@@ -23,6 +24,7 @@ import it.cavallium.warppi.math.functions.Variable;
 import it.cavallium.warppi.math.functions.Variable.V_TYPE;
 import it.cavallium.warppi.math.rules.dsl.DslAggregateException;
 import it.cavallium.warppi.math.rules.dsl.RulesDsl;
+import it.cavallium.warppi.math.rules.functions.*;
 import it.cavallium.warppi.math.solver.MathSolver;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -40,6 +42,8 @@ public class RulesManager {
 		for (final RuleType val : RuleType.values()) {
 			RulesManager.rules[val.ordinal()] = new ObjectArrayList<>();
 		}
+
+		loadBuiltinRules();
 
 		try {
 			loadDslRules();
@@ -157,6 +161,24 @@ public class RulesManager {
 			e.printStackTrace();
 			Engine.getPlatform().exit(1);
 		}
+	}
+
+	private static void loadBuiltinRules() {
+		Stream.of(
+				new DivisionRule(),
+				new EmptyNumberRule(),
+				new ExpressionRule(),
+				new JokeRule(),
+				new MultiplicationRule(),
+				new NegativeRule(),
+				new NumberRule(),
+				new PowerRule(),
+				new RootRule(),
+				new SubtractionRule(),
+				new SumRule(),
+				new SumSubtractionRule(),
+				new VariableRule()
+		).forEach(RulesManager::addRule);
 	}
 
 	private static void loadDslRules() throws IOException, DslAggregateException {

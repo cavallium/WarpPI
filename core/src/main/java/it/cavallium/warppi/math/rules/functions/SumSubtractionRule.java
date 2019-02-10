@@ -1,28 +1,30 @@
-package rules.functions;
+package it.cavallium.warppi.math.rules.functions;
 /*
 SETTINGS: (please don't move this part)
- PATH=functions.MultiplicationRule
+ PATH=functions.SumSubtractionRule
 */
 
 import it.cavallium.warppi.math.Function;
-import it.cavallium.warppi.math.functions.Multiplication;
+import it.cavallium.warppi.math.FunctionOperator;
+import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Number;
+import it.cavallium.warppi.math.functions.SumSubtraction;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
- * Multiplication
- * a*b = c
+ * SumSumbraction
+ * a±b = c, d
  *
  * @author Andrea Cavalli
  *
  */
-public class MultiplicationRule implements Rule {
+public class SumSubtractionRule implements Rule {
 	// Rule name
 	@Override
 	public String getRuleName() {
-		return "Multiplication";
+		return "SumSubtraction";
 	}
 
 	// Rule type
@@ -38,13 +40,15 @@ public class MultiplicationRule implements Rule {
 	*/
 	@Override
 	public ObjectArrayList<Function> execute(final Function f) {
-		if (f instanceof Multiplication) {
+		if (f instanceof SumSubtraction) {
 			final ObjectArrayList<Function> result = new ObjectArrayList<>();
-			final Function variable1 = ((Multiplication) f).getParameter1();
-			final Function variable2 = ((Multiplication) f).getParameter2();
+			final Function variable1 = ((FunctionOperator) f).getParameter1();
+			final Function variable2 = ((FunctionOperator) f).getParameter2();
+			final MathContext mathContext = f.getMathContext();
 			if (variable1 instanceof Number && variable2 instanceof Number) {
-				//multiply a by b (a*b = c)
-				result.add(((Number) variable1).multiply((Number) variable2));
+				//a±b = c, d
+				result.add(((Number) variable1).add((Number) variable2));
+				result.add(((Number) variable1).add(((Number) variable2).multiply(new Number(mathContext, -1))));
 				return result;
 			}
 		}

@@ -1,15 +1,2 @@
-functions/DivisionRule
-functions/EmptyNumberRule
-functions/ExpressionRule
-functions/JokeRule
-functions/MultiplicationRule
-functions/NegativeRule
-functions/NumberRule
-functions/PowerRule
-functions/RootRule
-functions/SubtractionRule
-functions/SumRule
-functions/SumSubtractionRule
-functions/VariableRule
 ExpandRule1
 ExponentRule17

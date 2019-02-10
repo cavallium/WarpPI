@@ -1,26 +1,27 @@
-package rules.functions;
+package it.cavallium.warppi.math.rules.functions;
 /*
 SETTINGS: (please don't move this part)
- PATH=functions.EmptyNumberRule
+ PATH=functions.ExpressionRule
 */
 
 import it.cavallium.warppi.math.Function;
+import it.cavallium.warppi.math.functions.Expression;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
- * EmptyNumber
- *
+ * Expression
+ * (x) = x
  *
  * @author Andrea Cavalli
  *
  */
-public class EmptyNumberRule implements Rule {
+public class ExpressionRule implements Rule {
 	// Rule name
 	@Override
 	public String getRuleName() {
-		return "EmptyNumber";
+		return "Expression";
 	}
 
 	// Rule type
@@ -36,6 +37,11 @@ public class EmptyNumberRule implements Rule {
 	*/
 	@Override
 	public ObjectArrayList<Function> execute(final Function f) {
+		if (f instanceof Expression) {
+			final ObjectArrayList<Function> result = new ObjectArrayList<>();
+			result.add(f.getParameter(0));
+			return result;
+		}
 		return null;
 	}
 }
