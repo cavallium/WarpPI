@@ -1,0 +1,33 @@
+calculation NumberRule1a:
+	0 * a -> 0
+calculation NumberRule1b:
+	a * 0 -> 0
+
+calculation NumberRule2a:
+	1 * a -> a
+calculation NumberRule2b:
+	a * 1 -> a
+
+calculation NumberRule3a:
+	a - a -> 0
+calculation NumberRule3b:
+	(-1 * a) + a -> 0
+calculation NumberRule3c:
+	a +- a -> [0, 2*a]
+
+expansion NumberRule4:
+	a +- b -> [a + b, a - b]
+
+calculation NumberRule5a:
+	a + 0 -> a
+calculation NumberRule5b:
+	0 + a -> a
+calculation NumberRule5c:
+	a - 0 -> a
+calculation NumberRule5d:
+	0 - a -> -1 * a
+calculation NumberRule5e:
+	a +- 0 -> a
+
+expansion NumberRule7:
+	a + a -> 2 * a

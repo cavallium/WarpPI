@@ -1,0 +1,5 @@
+existence UndefinedRule1:
+	0^0 -> undefined
+
+existence UndefinedRule2:
+	a / 0 -> undefined

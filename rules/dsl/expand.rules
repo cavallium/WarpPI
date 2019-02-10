@@ -1,0 +1,9 @@
+expansion ExpandRule2a:
+	a * (b + c) -> a*b + a*c
+expansion ExpandRule2b:
+	(b + c) * a -> a*b + a*c
+
+expansion ExpandRule5a:
+	-(-a) -> a
+expansion ExpandRule5b:
+	-1 * (-1 * a) -> a
