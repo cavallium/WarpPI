@@ -66,8 +66,6 @@ public interface Platform {
 
 	void unzip(String targetZipFilePath, String destinationFolderPath, String password);
 
-	boolean compile(String[] command, PrintWriter printWriter, PrintWriter errors);
-
 	public interface Gpio {
 		int valueOutput();
 

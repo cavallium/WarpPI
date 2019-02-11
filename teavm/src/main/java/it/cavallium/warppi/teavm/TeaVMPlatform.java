@@ -1,6 +1,5 @@
 package it.cavallium.warppi.teavm;
 
-import java.io.PrintWriter;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -201,11 +200,6 @@ public class TeaVMPlatform implements Platform {
 
 	@Override
 	public void unzip(final String targetZipFilePath, final String destinationFolderPath, final String password) {
-		throw new java.lang.UnsupportedOperationException("Not implemented.");
-	}
-
-	@Override
-	public boolean compile(final String[] command, final PrintWriter printWriter, final PrintWriter errors) {
 		throw new java.lang.UnsupportedOperationException("Not implemented.");
 	}
 

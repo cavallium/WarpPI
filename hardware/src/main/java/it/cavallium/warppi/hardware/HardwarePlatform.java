@@ -191,11 +191,6 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public boolean compile(final String[] command, final PrintWriter printWriter, final PrintWriter errors) {
-		return org.eclipse.jdt.internal.compiler.batch.Main.compile(command, printWriter, errors, null);
-	}
-
-	@Override
 	public void setRunningOnRaspberry(boolean b) {
 		runningOnRaspberryOverride = b;
 	}
