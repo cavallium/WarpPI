@@ -128,6 +128,22 @@ public class LexerTest {
 	}
 
 	@Test
+	public void unterminatedComment() {
+		final Lexer lexer = new Lexer("reduction /* test:\n x -> x", errors::add);
+
+		final List<Token> expectedTokens = Arrays.asList(
+				new Token(REDUCTION, "reduction", 0),
+				new Token(EOF, "", 26)
+		);
+		assertEquals(expectedTokens, lexer.lex());
+
+		final List<DslError> expectedErrors = Collections.singletonList(
+				new UnterminatedComment(10)
+		);
+		assertEquals(expectedErrors, errors);
+	}
+
+	@Test
 	public void errorOrder() {
 		final Lexer lexer = new Lexer(".2. @", errors::add);
 

@@ -139,8 +139,11 @@ public class Lexer {
 		matchWhile(c -> c != '\n');
 	}
 
-	private void multiLineComment() {
+	private void multiLineComment() throws SyntaxException {
 		while (!(matchChar('*') && matchChar('/'))) {
+			if (atEnd()) {
+				throw new SyntaxException(new UnterminatedComment(startOfLexeme));
+			}
 			popChar();
 		}
 	}
