@@ -46,7 +46,9 @@ public class RulesManager {
 		loadBuiltinRules();
 
 		try {
-			loadDslRules();
+			if (!Engine.getPlatform().isJavascript()) {
+				loadDslRules();
+			}
 
 			boolean compiledSomething = false;
 			InputStream defaultRulesList;
