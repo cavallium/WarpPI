@@ -25,3 +25,6 @@ reduction ExponentRule16b:
 	a^b * a -> a ^ (b + 1)
 reduction ExponentRule16c:
 	a * a^b -> a ^ (1 + b)
+
+expansion ExponentRule17:
+	root(a, x) -> x ^ (1 / a)

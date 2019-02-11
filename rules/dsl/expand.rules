@@ -1,3 +1,27 @@
+expansion ExpandRule1a:
+	-1 * (a + b) -> -1*a - b
+expansion ExpandRule1b:
+	-1 * (a - b) -> -1*a + b
+expansion ExpandRule1c:
+	-1 * (a +- b) -> [-1*a + b, -1*a - b]
+expansion ExpandRule1d:
+	x - (a + b) -> x + (-1*a - b)
+expansion ExpandRule1e:
+	x +- (a + b) -> [x + (a + b), x + (-1*a - b)]
+expansion ExpandRule1f:
+	x - (a - b) -> x + (-1*a + b)
+expansion ExpandRule1g:
+	x +- (a - b) -> [x + (a - b), x + (-1*a + b)]
+expansion ExpandRule1h:
+	x - (a +- b) -> [x + (-1*a + b), x + (-1*a - b)]
+expansion ExpandRule1i:
+	x +- (a +- b) -> [
+		x + (a + b),
+		x + (a - b),
+		x + (-1*a + b),
+		x + (-1*a - b),
+	]
+
 expansion ExpandRule2a:
 	a * (b + c) -> a*b + a*c
 expansion ExpandRule2b:
