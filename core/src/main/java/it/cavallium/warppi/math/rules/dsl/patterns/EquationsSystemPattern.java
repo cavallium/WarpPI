@@ -25,7 +25,7 @@ public class EquationsSystemPattern extends VisitorPattern {
 			return Optional.empty();
 		}
 
-		Optional<Map<String, Function>> subFunctions = Optional.of(new HashMap<>());
+		Optional<Map<String, Function>> subFunctions = Optional.of(Collections.emptyMap());
 		for (int i = 0; i < patterns.length && subFunctions.isPresent(); i++) {
 			final Pattern curPattern = patterns[i];
 			final Function curFunction = equationsSystem.getParameter(i);

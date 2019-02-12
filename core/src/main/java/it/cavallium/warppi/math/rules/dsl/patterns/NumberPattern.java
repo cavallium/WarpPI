@@ -21,7 +21,7 @@ public class NumberPattern extends VisitorPattern {
 	@Override
 	public Optional<Map<String, Function>> visit(final Number number) {
 		if (number.getTerm().compareTo(value) == 0) {
-			return Optional.of(new HashMap<>());
+			return Optional.of(Collections.emptyMap());
 		} else {
 			return Optional.empty();
 		}

@@ -18,9 +18,7 @@ public class SubFunctionPattern implements Pattern {
 
 	@Override
 	public Optional<Map<String, Function>> match(final Function function) {
-		final HashMap<String, Function> subFunctions = new HashMap<>();
-		subFunctions.put(name, function);
-		return Optional.of(subFunctions);
+		return Optional.of(Collections.singletonMap(name, function));
 	}
 
 	@Override

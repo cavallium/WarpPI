@@ -13,7 +13,7 @@ import java.util.*;
 public class UndefinedPattern extends VisitorPattern {
 	@Override
 	public Optional<Map<String, Function>> visit(Undefined undefined) {
-		return Optional.of(new HashMap<>());
+		return Optional.of(Collections.emptyMap());
 	}
 
 	@Override

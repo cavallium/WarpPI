@@ -21,7 +21,7 @@ public class ConstantPattern extends VisitorPattern {
 	public Optional<Map<String, Function>> visit(final Variable variable) {
 		if (variable.getType().equals(Variable.V_TYPE.CONSTANT)
 				&& variable.getChar() == symbol) {
-			return Optional.of(new HashMap<>());
+			return Optional.of(Collections.emptyMap());
 		} else {
 			return Optional.empty();
 		}
