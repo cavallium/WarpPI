@@ -92,32 +92,23 @@ public final class DisplayManager implements RenderingLoop {
 	}
 
 	/*
-	 * private void load_skin() {
-	 * try {
-	 * skin_tex = glGenTextures();
-	 * glBindTexture(GL_TEXTURE_2D, skin_tex);
-	 * glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	 * private void load_skin() { try { skin_tex = glGenTextures();
+	 * glBindTexture(GL_TEXTURE_2D, skin_tex); glPixelStorei(GL_UNPACK_ALIGNMENT,
+	 * 1);
 	 *
-	 * InputStream in = new FileInputStream("skin.png");
-	 * PNGDecoder decoder = new PNGDecoder(in);
+	 * InputStream in = new FileInputStream("skin.png"); PNGDecoder decoder = new
+	 * PNGDecoder(in);
 	 *
 	 * System.out.println("width="+decoder.getWidth());
 	 * System.out.println("height="+decoder.getHeight());
 	 *
 	 * ByteBuffer buf =
 	 * ByteBuffer.allocateDirect(4*decoder.getWidth()*decoder.getHeight());
-	 * decoder.decode(buf, decoder.getWidth()*4, Format.RGBA);
-	 * buf.flip();
+	 * decoder.decode(buf, decoder.getWidth()*4, Format.RGBA); buf.flip();
 	 *
-	 * skin = buf;
-	 * skin_w = decoder.getWidth();
-	 * skin_h = decoder.getHeight();
-	 * glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, skin_w,
-	 * skin_h, 0, GL_RGBA, GL_UNSIGNED_BYTE, skin);
-	 * } catch (IOException ex) {
-	 * ex.printStackTrace();
-	 * }
-	 * }
+	 * skin = buf; skin_w = decoder.getWidth(); skin_h = decoder.getHeight();
+	 * glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, skin_w, skin_h, 0, GL_RGBA,
+	 * GL_UNSIGNED_BYTE, skin); } catch (IOException ex) { ex.printStackTrace(); } }
 	 */
 
 	private GraphicEngine chooseGraphicEngine() {
@@ -139,7 +130,8 @@ public final class DisplayManager implements RenderingLoop {
 		}
 		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "headless 24 bit engine", null);
 		if (d != null && d.isSupported()) {
-			System.err.println("Using Headless 24 bit Engine! This is a problem! No other graphic engines are available.");
+			System.err.println(
+					"Using Headless 24 bit Engine! This is a problem! No other graphic engines are available.");
 			return d;
 		}
 		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "headless 256 colors engine", null);
@@ -149,12 +141,14 @@ public final class DisplayManager implements RenderingLoop {
 		}
 		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "headless 8 colors engine", null);
 		if (d != null && d.isSupported()) {
-			System.err.println("Using Headless basic Engine! This is a problem! No other graphic engines are available.");
+			System.err
+					.println("Using Headless basic Engine! This is a problem! No other graphic engines are available.");
 			return d;
 		}
 		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "HTML5 engine", null);
 		if (d != null && d.isSupported()) {
-			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "Using Html Graphic Engine");
+			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG,
+					"Using Html Graphic Engine");
 			return d;
 		}
 		d = new NoGuiEngine();
@@ -164,8 +158,6 @@ public final class DisplayManager implements RenderingLoop {
 		}
 		throw new UnsupportedOperationException("No graphic engines available.");
 	}
-
-
 
 	public void closeScreen() {
 		boolean isLastSession = sessions[1] == null;
@@ -186,10 +178,10 @@ public final class DisplayManager implements RenderingLoop {
 			} else {
 				currentSession = 0;
 			}
-			updateCurrentScreen(sessions[currentSession]);	
+			updateCurrentScreen(sessions[currentSession]);
 		}
 	}
-	
+
 	public void setScreen(final Screen screen) {
 		boolean mustBeAddedToHistory = screen.initialized == false;
 		if (!mustBeAddedToHistory) {
@@ -200,34 +192,44 @@ public final class DisplayManager implements RenderingLoop {
 			mustBeAddedToHistory |= !found;
 		}
 		if (mustBeAddedToHistory) {
-			if (screen.historyBehavior == HistoryBehavior.NORMAL || screen.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
+			if (screen.historyBehavior == HistoryBehavior.NORMAL
+					|| screen.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
 				if (currentSession > 0) {
-					final int sl = sessions.length; //TODO: I don't know why if i don't add +5 or more some items disappear
+					final int sl = sessions.length; // TODO: I don't know why if i don't add +5 or more some items
+													// disappear
 					List<Screen> newSessions = new LinkedList<>();
 					int i = 0;
 					for (Screen s : sessions) {
+						if (i == currentSession) {
+							currentSession = newSessions.size();
+							newSessions.add(screen);
+						}
 						if (s != null) {
 							if (i < currentSession) {
-								if (s.historyBehavior != HistoryBehavior.DONT_KEEP_IN_HISTORY)
-									newSessions.add(s);
-							} else {
 								if (s.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
 									newSessions.add(s);
 								}
+							} else {
+								if (s.historyBehavior != HistoryBehavior.DONT_KEEP_IN_HISTORY)
+									newSessions.add(s);
 							}
 						}
 						i++;
 					}
-					sessions = newSessions.toArray(new Screen[5]);
-					currentSession = newSessions.indexOf(screen);
-//					sessions = Arrays.copyOfRange(sessions, currentSession, sl);
+					for (int j = 0; j < sl; j++) {
+						if (j < newSessions.size()) {
+							sessions[j] = newSessions.get(j);
+						} else {
+							sessions[j] = null;
+						}
+					}
 				} else {
 					currentSession = 0;
+					for (int i = sessions.length - 1; i >= 1; i--) {
+						sessions[i] = sessions[i - 1];
+					}
+					sessions[0] = screen;
 				}
-				for (int i = sessions.length - 1; i >= 1; i--) {
-					sessions[i] = sessions[i - 1];
-				}
-				sessions[0] = screen;
 			} else {
 				currentSession = -1;
 			}
@@ -254,7 +256,8 @@ public final class DisplayManager implements RenderingLoop {
 
 	public void replaceScreen(final Screen screen) {
 		if (screen.initialized == false) {
-			if (screen.historyBehavior == HistoryBehavior.NORMAL || screen.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
+			if (screen.historyBehavior == HistoryBehavior.NORMAL
+					|| screen.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
 				sessions[currentSession] = screen;
 			} else {
 				currentSession = -1;
@@ -300,7 +303,8 @@ public final class DisplayManager implements RenderingLoop {
 
 	public void goBack() {
 		if (canGoBack()) {
-			if (currentSession >= 0 && screen != sessions[currentSession]) {} else {
+			if (currentSession >= 0 && screen != sessions[currentSession]) {
+			} else {
 				currentSession += 1;
 			}
 			screen = sessions[currentSession];
@@ -359,8 +363,8 @@ public final class DisplayManager implements RenderingLoop {
 		fonts[1] = engine.loadFont("smallest");
 		fonts[2] = engine.loadFont("norm");
 		fonts[3] = engine.loadFont("smal");
-		//4
-		//fonts[5] = engine.loadFont("square");
+		// 4
+		// fonts[5] = engine.loadFont("square");
 	}
 
 	private void draw_init() {
@@ -391,7 +395,9 @@ public final class DisplayManager implements RenderingLoop {
 				fnt.use(engine);
 			}
 			renderer.glColor3i(129, 28, 22);
-			renderer.glDrawStringRight(StaticVars.screenSize[0] - 2, StaticVars.screenSize[1] - (fnt.getCharacterHeight() + 2), Engine.getPlatform().getSettings().getCalculatorNameUppercase() + " CALCULATOR");
+			renderer.glDrawStringRight(StaticVars.screenSize[0] - 2,
+					StaticVars.screenSize[1] - (fnt.getCharacterHeight() + 2),
+					Engine.getPlatform().getSettings().getCalculatorNameUppercase() + " CALCULATOR");
 			renderer.glColor3i(149, 32, 26);
 			renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, 22, error);
 			renderer.glColor3i(164, 34, 28);
@@ -409,14 +415,16 @@ public final class DisplayManager implements RenderingLoop {
 			if (fonts[0] != null && fonts[0] != engine.getRenderer().getCurrentFont()) {
 				fonts[0].use(engine);
 			}
-			if (hud.visible) hud.renderBackground();
+			if (hud.visible)
+				hud.renderBackground();
 			screen.render();
 			if (hud.visible) {
 				hud.render();
 				hud.renderTopmostBackground();
 			}
 			screen.renderTopmost();
-			if (hud.visible) hud.renderTopmost();
+			if (hud.visible)
+				hud.renderTopmost();
 		}
 	}
 
@@ -483,7 +491,8 @@ public final class DisplayManager implements RenderingLoop {
 			engine.start(getDrawable());
 		} catch (final Exception ex) {
 			ex.printStackTrace();
-		} finally {}
+		} finally {
+		}
 	}
 
 	public void changeBrightness(final float change) {

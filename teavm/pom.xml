@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>org.teavm</groupId>
 			<artifactId>teavm-classlib</artifactId>
-			<version>0.6.0-dev-567</version>
+			<version>0.6.0-dev-682</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -86,7 +86,7 @@
 			<plugin>
 				<groupId>org.teavm</groupId>
 				<artifactId>teavm-maven-plugin</artifactId>
-				<version>0.6.0-dev-567</version>
+				<version>0.6.0-dev-682</version>
 				<executions>
 					<execution>
 						<goals>
