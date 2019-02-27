@@ -1,6 +1,6 @@
-package it.cavallium.warppi.device;
+package it.cavallium.warppi.device.input;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.event.TouchCancelEvent;
 import it.cavallium.warppi.event.TouchEndEvent;
 import it.cavallium.warppi.event.TouchMoveEvent;
@@ -8,7 +8,7 @@ import it.cavallium.warppi.event.TouchPoint;
 import it.cavallium.warppi.event.TouchStartEvent;
 import it.cavallium.warppi.gui.screens.Screen;
 
-public class PIHardwareTouchDevice implements HardwareTouchDevice {
+public class PIHardwareTouchDevice implements TouchInputDevice {
 
 	private final boolean invertXY, invertX, invertY;
 
@@ -20,7 +20,7 @@ public class PIHardwareTouchDevice implements HardwareTouchDevice {
 
 	@Override
 	public boolean onTouchStart(final TouchStartEvent e) {
-		final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
+		final Screen scr = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 		boolean refresh = false;
 		if (scr != null && scr.initialized && scr.onTouchStart(e)) {
 			refresh = true;
@@ -28,14 +28,14 @@ public class PIHardwareTouchDevice implements HardwareTouchDevice {
 			//Default behavior
 		}
 		if (refresh) {
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
+			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
 		}
 		return true;
 	}
 
 	@Override
 	public boolean onTouchEnd(final TouchEndEvent e) {
-		final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
+		final Screen scr = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 		boolean refresh = false;
 		if (scr != null && scr.initialized && scr.onTouchEnd(e)) {
 			refresh = true;
@@ -43,14 +43,14 @@ public class PIHardwareTouchDevice implements HardwareTouchDevice {
 			//Default behavior
 		}
 		if (refresh) {
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
+			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
 		}
 		return true;
 	}
 
 	@Override
 	public boolean onTouchCancel(final TouchCancelEvent e) {
-		final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
+		final Screen scr = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 		boolean refresh = false;
 		if (scr != null && scr.initialized && scr.onTouchCancel(e)) {
 			refresh = true;
@@ -58,14 +58,14 @@ public class PIHardwareTouchDevice implements HardwareTouchDevice {
 			//Default behavior
 		}
 		if (refresh) {
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
+			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
 		}
 		return true;
 	}
 
 	@Override
 	public boolean onTouchMove(final TouchMoveEvent e) {
-		final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
+		final Screen scr = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 		boolean refresh = false;
 		if (scr != null && scr.initialized && scr.onTouchMove(e)) {
 			refresh = true;
@@ -73,7 +73,7 @@ public class PIHardwareTouchDevice implements HardwareTouchDevice {
 			//Default behavior
 		}
 		if (refresh) {
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
+			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().forceRefresh = true;
 		}
 		return true;
 	}

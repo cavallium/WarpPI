@@ -1,6 +1,6 @@
 package it.cavallium.warppi.math.parser;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.containers.InputContainer;
@@ -83,17 +83,17 @@ public class MathParser {
 		boolean lastLoopDidSomething;
 		Function lastElement;
 
-		if (Engine.getPlatform().getSettings().isDebugEnabled()) {
-			Engine.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "\tStatus: ");
+		if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
+			WarpPI.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "\tStatus: ");
 			for (final Function f : functionsList) {
-				Engine.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, f.toString());
+				WarpPI.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, f.toString());
 			}
-			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE);
+			WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE);
 		}
 
 		for (final MathParserStep step : steps) {
-			if (Engine.getPlatform().getSettings().isDebugEnabled()) {
-				Engine.getPlatform().getConsoleUtils().out().println(2, "Stack fixing step \"" + step.getStepName() + "\"");
+			if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
+				WarpPI.getPlatform().getConsoleUtils().out().println(2, "Stack fixing step \"" + step.getStepName() + "\"");
 			}
 			final int stepQty = step.requiresReversedIteration() ? -1 : 1,
 					initialIndex = step.requiresReversedIteration() ? functionsList.size() - 1 : 0;
@@ -114,12 +114,12 @@ public class MathParser {
 				}
 			} while (lastLoopDidSomething);
 
-			if (Engine.getPlatform().getSettings().isDebugEnabled()) {
-				Engine.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "\tStatus: ");
+			if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
+				WarpPI.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "\tStatus: ");
 				for (final Function f : functionsList) {
-					Engine.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, f.toString());
+					WarpPI.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, f.toString());
 				}
-				Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE);
+				WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE);
 			}
 		}
 

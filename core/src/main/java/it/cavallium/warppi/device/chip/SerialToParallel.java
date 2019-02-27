@@ -1,6 +1,6 @@
 package it.cavallium.warppi.device.chip;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 
 public class SerialToParallel {
 	private final int RCK; //Storage register clock pin (latch pin)
@@ -17,15 +17,15 @@ public class SerialToParallel {
 		if (data.length != 8) {
 			return;
 		} else {
-			Engine.getPlatform().getGpio().digitalWrite(RCK, Engine.getPlatform().getGpio().valueLow());
+			WarpPI.getPlatform().getGpio().digitalWrite(RCK, WarpPI.getPlatform().getGpio().valueLow());
 
 			for (int i = 7; i >= 0; i--) {
-				Engine.getPlatform().getGpio().digitalWrite(SCK, Engine.getPlatform().getGpio().valueLow());
-				Engine.getPlatform().getGpio().digitalWrite(SER, data[i]);
-				Engine.getPlatform().getGpio().digitalWrite(SCK, Engine.getPlatform().getGpio().valueHigh());
+				WarpPI.getPlatform().getGpio().digitalWrite(SCK, WarpPI.getPlatform().getGpio().valueLow());
+				WarpPI.getPlatform().getGpio().digitalWrite(SER, data[i]);
+				WarpPI.getPlatform().getGpio().digitalWrite(SCK, WarpPI.getPlatform().getGpio().valueHigh());
 			}
 
-			Engine.getPlatform().getGpio().digitalWrite(RCK, Engine.getPlatform().getGpio().valueHigh());
+			WarpPI.getPlatform().getGpio().digitalWrite(RCK, WarpPI.getPlatform().getGpio().valueHigh());
 		}
 	}
 }

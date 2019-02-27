@@ -2,8 +2,9 @@ package it.cavallium.warppi.gui.graphicengine.impl.nogui;
 
 import java.io.IOException;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform.Semaphore;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
@@ -14,7 +15,7 @@ import it.cavallium.warppi.gui.graphicengine.Skin;
 public class NoGuiEngine implements GraphicEngine {
 
 	private boolean initialized;
-	public Semaphore exitSemaphore = Engine.getPlatform().newSemaphore(0);
+	public Semaphore exitSemaphore = WarpPI.getPlatform().newSemaphore(0);
 
 	@Override
 	public int[] getSize() {
@@ -147,7 +148,7 @@ public class NoGuiEngine implements GraphicEngine {
 	public BinaryFont loadFont(final String fontName) throws IOException {
 		return new BinaryFont() {
 			@Override
-			public void use(final GraphicEngine d) {}
+			public void use(final DisplayOutputDevice d) {}
 
 			@Override
 			public void load(final String file) throws IOException {}
@@ -158,7 +159,7 @@ public class NoGuiEngine implements GraphicEngine {
 			}
 
 			@Override
-			public void initialize(final GraphicEngine d) {}
+			public void initialize(final DisplayOutputDevice d) {}
 
 			@Override
 			public int getStringWidth(final String text) {
@@ -193,7 +194,7 @@ public class NoGuiEngine implements GraphicEngine {
 	public BinaryFont loadFont(final String path, final String fontName) throws IOException {
 		return new BinaryFont() {
 			@Override
-			public void use(final GraphicEngine d) {}
+			public void use(final DisplayOutputDevice d) {}
 
 			@Override
 			public void load(final String file) throws IOException {}
@@ -204,7 +205,7 @@ public class NoGuiEngine implements GraphicEngine {
 			}
 
 			@Override
-			public void initialize(final GraphicEngine d) {}
+			public void initialize(final DisplayOutputDevice d) {}
 
 			@Override
 			public int getStringWidth(final String text) {
@@ -239,7 +240,7 @@ public class NoGuiEngine implements GraphicEngine {
 	public Skin loadSkin(final String file) throws IOException {
 		return new Skin() {
 			@Override
-			public void use(final GraphicEngine d) {}
+			public void use(final DisplayOutputDevice d) {}
 
 			@Override
 			public void load(final String file) throws IOException {}
@@ -250,7 +251,7 @@ public class NoGuiEngine implements GraphicEngine {
 			}
 
 			@Override
-			public void initialize(final GraphicEngine d) {}
+			public void initialize(final DisplayOutputDevice d) {}
 
 			@Override
 			public int getSkinWidth() {

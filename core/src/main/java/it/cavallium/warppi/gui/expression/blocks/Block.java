@@ -1,10 +1,10 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.GraphicalElement;
 import it.cavallium.warppi.gui.expression.Caret;
 import it.cavallium.warppi.gui.expression.ExtraMenu;
 import it.cavallium.warppi.gui.expression.InputContext;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.parser.features.interfaces.Feature;
@@ -45,7 +45,7 @@ public abstract class Block implements TreeBlock, GraphicalElement {
 	 *            Position relative to the window.
 	 * @param small
 	 */
-	public abstract void draw(GraphicEngine ge, Renderer r, int x, int y, Caret caret);
+	public abstract void draw(DisplayOutputDevice ge, Renderer r, int x, int y, Caret caret);
 
 	public abstract boolean putBlock(Caret caret, Block newBlock);
 

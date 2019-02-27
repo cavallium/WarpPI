@@ -16,10 +16,10 @@ import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.dom.html.HTMLInputElement;
 import org.teavm.jso.dom.xml.NodeList;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.Platform.Semaphore;
-import it.cavallium.warppi.device.Keyboard;
+import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.flow.BehaviorSubject;
 import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
@@ -86,7 +86,7 @@ public class HtmlEngine implements GraphicEngine {
 
 	@Override
 	public void create(final Runnable onInitialized) {
-		exitSemaphore = Engine.getPlatform().newSemaphore(0);
+		exitSemaphore = WarpPI.getPlatform().newSemaphore(0);
 		width = -1;
 		height = -1;
 		canvas = (HTMLCanvasElement) HtmlEngine.document.createElement("canvas");
@@ -277,8 +277,8 @@ public class HtmlEngine implements GraphicEngine {
 				e.printStackTrace();
 			}
 		});
-		Engine.getPlatform().setThreadName(th, "Canvas rendering thread");
-		Engine.getPlatform().setThreadDaemon(th);
+		WarpPI.getPlatform().setThreadName(th, "Canvas rendering thread");
+		WarpPI.getPlatform().setThreadDaemon(th);
 		th.start();
 	}
 
@@ -316,7 +316,7 @@ public class HtmlEngine implements GraphicEngine {
 
 	@Override
 	public boolean isSupported() {
-		return Engine.getPlatform().isJavascript();
+		return WarpPI.getPlatform().isJavascript();
 	}
 
 	@Override

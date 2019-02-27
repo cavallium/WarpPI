@@ -27,9 +27,9 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.event.TouchEndEvent;
 import it.cavallium.warppi.event.TouchMoveEvent;
 import it.cavallium.warppi.event.TouchPoint;
@@ -70,7 +70,7 @@ public class SwingWindow extends JFrame {
 
 		mult = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue()).intValue();
 
-		if (!Engine.getPlatform().getSettings().isDebugEnabled()) {
+		if (!WarpPI.getPlatform().getSettings().isDebugEnabled()) {
 			// Create a new blank cursor.
 			final Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
 
@@ -96,7 +96,7 @@ public class SwingWindow extends JFrame {
 		addComponentListener(new ComponentListener() {
 			@Override
 			public void componentHidden(final ComponentEvent e) {
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.destroy();
+				WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.destroy();
 			}
 
 			@Override
@@ -109,7 +109,7 @@ public class SwingWindow extends JFrame {
 
 			@Override
 			public void componentShown(final ComponentEvent e) {
-				if (Engine.getPlatform().getSettings().isDebugEnabled())
+				if (WarpPI.getPlatform().getSettings().isDebugEnabled())
 					SwingWindow.this.centerWindow();
 			}
 		});
@@ -142,7 +142,7 @@ public class SwingWindow extends JFrame {
 				touches.add(p);
 				changedTouches.add(p);
 				final TouchMoveEvent tse = new TouchMoveEvent(changedTouches, touches);
-				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchMove(tse);
+				WarpPI.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchMove(tse);
 			}
 
 			@Override
@@ -161,7 +161,7 @@ public class SwingWindow extends JFrame {
 				touches.add(p);
 				changedTouches.add(p);
 				final TouchStartEvent tse = new TouchStartEvent(changedTouches, touches);
-				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchStart(tse);
+				WarpPI.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchStart(tse);
 			}
 
 			@Override
@@ -172,7 +172,7 @@ public class SwingWindow extends JFrame {
 				final ObjectArrayList<TouchPoint> changedTouches = new ObjectArrayList<>();
 				changedTouches.add(p);
 				final TouchEndEvent tse = new TouchEndEvent(changedTouches, touches);
-				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchEnd(tse);
+				WarpPI.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchEnd(tse);
 			}
 
 			@Override
@@ -185,7 +185,7 @@ public class SwingWindow extends JFrame {
 			if (newZoomValue != mult) {
 				mult = (int) newZoomValue.floatValue();
 				onResize.onNext(new Integer[] { getWWidth(), getWHeight() });
-				Engine.getPlatform().getConsoleUtils().out().println(3, "Engine", "CPU", "Zoom changed");
+				WarpPI.getPlatform().getConsoleUtils().out().println(3, "Engine", "CPU", "Zoom changed");
 			}
 		});
 	}
@@ -234,7 +234,7 @@ public class SwingWindow extends JFrame {
 	}
 
 	private void createBtn(final int row, final int col) throws IOException, URISyntaxException {
-		final BufferedImage img = ImageIO.read(Engine.getPlatform().getStorageUtils().getResourceStream("/desktop-buttons.png"));
+		final BufferedImage img = ImageIO.read(WarpPI.getPlatform().getStorageUtils().getResourceStream("/desktop-buttons.png"));
 		final SwingAdvancedButton b = new SwingAdvancedButton(img, new Dimension((int) (BTN_SIZE * 1.5), BTN_SIZE));
 		b.drawDefaultComponent = false;
 		b.setText(Keyboard.getKeyName(row, col));

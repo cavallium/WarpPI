@@ -1,6 +1,6 @@
-package it.cavallium.warppi.device;
+package it.cavallium.warppi.device.input;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.device.chip.ParallelToSerial;
@@ -40,7 +40,7 @@ public class Keyboard {
 
 	public synchronized void startKeyboard() {
 		final Thread kt = new Thread(() -> {
-			if (Engine.getPlatform().isRunningOnRaspberry() == false) {
+			if (WarpPI.getPlatform().isRunningOnRaspberry() == false) {
 				try {
 					while (true) {
 						if (Keyboard.debugKeyCode != -1) {
@@ -55,19 +55,19 @@ public class Keyboard {
 					}
 				} catch (final InterruptedException e) {}
 			} else {
-				Engine.getPlatform().getGpio().pinMode(Keyboard.CLK_INH_pin, Engine.getPlatform().getGpio().valueOutput());
-				Engine.getPlatform().getGpio().pinMode(Keyboard.RCK_pin, Engine.getPlatform().getGpio().valueOutput());
-				Engine.getPlatform().getGpio().pinMode(Keyboard.SER_pin, Engine.getPlatform().getGpio().valueOutput());
-				Engine.getPlatform().getGpio().pinMode(Keyboard.SH_LD_pin, Engine.getPlatform().getGpio().valueOutput());
-				Engine.getPlatform().getGpio().pinMode(Keyboard.SCK_and_CLK_pin, Engine.getPlatform().getGpio().valueOutput());
-				Engine.getPlatform().getGpio().pinMode(Keyboard.QH_pin, Engine.getPlatform().getGpio().valueInput());
+				WarpPI.getPlatform().getGpio().pinMode(Keyboard.CLK_INH_pin, WarpPI.getPlatform().getGpio().valueOutput());
+				WarpPI.getPlatform().getGpio().pinMode(Keyboard.RCK_pin, WarpPI.getPlatform().getGpio().valueOutput());
+				WarpPI.getPlatform().getGpio().pinMode(Keyboard.SER_pin, WarpPI.getPlatform().getGpio().valueOutput());
+				WarpPI.getPlatform().getGpio().pinMode(Keyboard.SH_LD_pin, WarpPI.getPlatform().getGpio().valueOutput());
+				WarpPI.getPlatform().getGpio().pinMode(Keyboard.SCK_and_CLK_pin, WarpPI.getPlatform().getGpio().valueOutput());
+				WarpPI.getPlatform().getGpio().pinMode(Keyboard.QH_pin, WarpPI.getPlatform().getGpio().valueInput());
 
-				Engine.getPlatform().getGpio().digitalWrite(Keyboard.CLK_INH_pin, false);
-				Engine.getPlatform().getGpio().digitalWrite(Keyboard.RCK_pin, false);
-				Engine.getPlatform().getGpio().digitalWrite(Keyboard.SER_pin, false);
-				Engine.getPlatform().getGpio().digitalWrite(Keyboard.SH_LD_pin, false);
-				Engine.getPlatform().getGpio().digitalWrite(Keyboard.SCK_and_CLK_pin, false);
-				Engine.getPlatform().getGpio().digitalWrite(Keyboard.QH_pin, false);
+				WarpPI.getPlatform().getGpio().digitalWrite(Keyboard.CLK_INH_pin, false);
+				WarpPI.getPlatform().getGpio().digitalWrite(Keyboard.RCK_pin, false);
+				WarpPI.getPlatform().getGpio().digitalWrite(Keyboard.SER_pin, false);
+				WarpPI.getPlatform().getGpio().digitalWrite(Keyboard.SH_LD_pin, false);
+				WarpPI.getPlatform().getGpio().digitalWrite(Keyboard.SCK_and_CLK_pin, false);
+				WarpPI.getPlatform().getGpio().digitalWrite(Keyboard.QH_pin, false);
 				final SerialToParallel chip1 = new SerialToParallel(Keyboard.RCK_pin, Keyboard.SCK_and_CLK_pin /*SCK*/, Keyboard.SER_pin);
 				final ParallelToSerial chip2 = new ParallelToSerial(Keyboard.SH_LD_pin, Keyboard.CLK_INH_pin, Keyboard.QH_pin, Keyboard.SCK_and_CLK_pin/*CLK*/);
 
@@ -98,9 +98,9 @@ public class Keyboard {
 				}
 			}
 		});
-		Engine.getPlatform().setThreadName(kt, "Keyboard thread");
+		WarpPI.getPlatform().setThreadName(kt, "Keyboard thread");
 		kt.setPriority(Thread.NORM_PRIORITY + 1);
-		Engine.getPlatform().setThreadDaemon(kt);
+		WarpPI.getPlatform().setThreadDaemon(kt);
 		kt.start();
 	}
 
@@ -290,7 +290,7 @@ public class Keyboard {
 				if (!Keyboard.shift && !Keyboard.alpha) {
 					debugKey(Key.NUM7, released);
 				} else if (Keyboard.shift) {
-					if (Engine.getPlatform().isRunningOnRaspberry() == false) {
+					if (WarpPI.getPlatform().isRunningOnRaspberry() == false) {
 						debugKey(Key.DIVIDE, released);
 					}
 				}
@@ -680,7 +680,7 @@ public class Keyboard {
 	 */
 	@Deprecated
 	public static boolean isKeyDown(final int row, final int col) {
-		if (Engine.getPlatform().isRunningOnRaspberry()) {
+		if (WarpPI.getPlatform().isRunningOnRaspberry()) {
 			return Keyboard.precedentStates[row - 1][col - 1];
 		} else {
 			return Keyboard.debugKeysDown[row - 1][col - 1];
@@ -892,13 +892,13 @@ public class Keyboard {
 	}
 
 	public static void stopKeyboard() {
-		if (Engine.getPlatform().isRunningOnRaspberry()) {
-			Engine.getPlatform().getGpio().digitalWrite(33, false);
-			Engine.getPlatform().getGpio().digitalWrite(35, false);
-			Engine.getPlatform().getGpio().digitalWrite(36, false);
-			Engine.getPlatform().getGpio().digitalWrite(37, false);
-			Engine.getPlatform().getGpio().digitalWrite(38, false);
-			Engine.getPlatform().getGpio().digitalWrite(40, false);
+		if (WarpPI.getPlatform().isRunningOnRaspberry()) {
+			WarpPI.getPlatform().getGpio().digitalWrite(33, false);
+			WarpPI.getPlatform().getGpio().digitalWrite(35, false);
+			WarpPI.getPlatform().getGpio().digitalWrite(36, false);
+			WarpPI.getPlatform().getGpio().digitalWrite(37, false);
+			WarpPI.getPlatform().getGpio().digitalWrite(38, false);
+			WarpPI.getPlatform().getGpio().digitalWrite(40, false);
 		}
 	}
 
@@ -911,8 +911,8 @@ public class Keyboard {
 				new GUIErrorMessage(ex);
 			}
 		}
-		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager() != null) {
-			final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
+		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager() != null) {
+			final Screen scr = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 			boolean refresh = false;
 			boolean scrdone = false;
 			try {
@@ -925,38 +925,38 @@ public class Keyboard {
 			} else {
 				switch (k) {
 					case POWEROFF:
-						Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.destroy();
+						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.destroy();
 						break;
 					case NONE:
 						break;
 					case BRIGHTNESS_CYCLE:
-						Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new TetrisScreen()); //TODO: rimuovere: prova
-						Engine.INSTANCE.getHardwareDevice().getDisplayManager().cycleBrightness(false);
+						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new TetrisScreen()); //TODO: rimuovere: prova
+						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().cycleBrightness(false);
 						refresh = true;
 						break;
 					case BRIGHTNESS_CYCLE_REVERSE:
-						Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MarioScreen()); //TODO: rimuovere: prova
-						Engine.INSTANCE.getHardwareDevice().getDisplayManager().cycleBrightness(true);
+						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MarioScreen()); //TODO: rimuovere: prova
+						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().cycleBrightness(true);
 						refresh = true;
 						break;
 					case ZOOM_MODE:
 						final float newZoom = StaticVars.windowZoom.getLastValue() % 3 + 1;
 						StaticVars.windowZoom.onNext(newZoom);
-						Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Keyboard", "Zoom: " + newZoom);
+						WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Keyboard", "Zoom: " + newZoom);
 //						StaticVars.windowZoom = ((StaticVars.windowZoom - 0.5f) % 2f) + 1f;
 						refresh = true;
 						break;
 					case HISTORY_BACK:
-						Engine.INSTANCE.getHardwareDevice().getDisplayManager().goBack();
+						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().goBack();
 						refresh = true;
 						break;
 					case HISTORY_FORWARD:
-						Engine.INSTANCE.getHardwareDevice().getDisplayManager().goForward();
+						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().goForward();
 						refresh = true;
 						break;
 					case BACK:
-						Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Closing current screen.");
-						Engine.INSTANCE.getHardwareDevice().getDisplayManager().closeScreen();
+						WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Closing current screen.");
+						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().closeScreen();
 						refresh = true;
 						break;
 					default:
@@ -966,25 +966,25 @@ public class Keyboard {
 			switch (k) {
 				case SHIFT:
 					if (Keyboard.alpha) {
-						Engine.getPlatform().alphaChanged(Keyboard.alpha = false);
+						WarpPI.getPlatform().alphaChanged(Keyboard.alpha = false);
 					}
-					Engine.getPlatform().shiftChanged(Keyboard.shift = !Keyboard.shift);
+					WarpPI.getPlatform().shiftChanged(Keyboard.shift = !Keyboard.shift);
 					refresh = true;
 					break;
 				case ALPHA:
 					if (Keyboard.shift) {
-						Engine.getPlatform().shiftChanged(Keyboard.shift = false);
+						WarpPI.getPlatform().shiftChanged(Keyboard.shift = false);
 					}
-					Engine.getPlatform().alphaChanged(Keyboard.alpha = !Keyboard.alpha);
+					WarpPI.getPlatform().alphaChanged(Keyboard.alpha = !Keyboard.alpha);
 					refresh = true;
 					break;
 				default:
 					if (k != Key.NONE) {
 						if (Keyboard.shift) {
-							Engine.getPlatform().shiftChanged(Keyboard.shift = false);
+							WarpPI.getPlatform().shiftChanged(Keyboard.shift = false);
 						}
 						if (Keyboard.alpha) {
-							Engine.getPlatform().alphaChanged(Keyboard.alpha = false);
+							WarpPI.getPlatform().alphaChanged(Keyboard.alpha = false);
 						}
 					}
 					break;
@@ -993,7 +993,7 @@ public class Keyboard {
 				Keyboard.refreshRequest = true;
 			}
 		} else if (!done) {
-			Engine.getPlatform().getConsoleUtils().out().println(1, "Key " + k.toString() + " ignored.");
+			WarpPI.getPlatform().getConsoleUtils().out().println(1, "Key " + k.toString() + " ignored.");
 		}
 	}
 
@@ -1003,8 +1003,8 @@ public class Keyboard {
 			done = Keyboard.additionalListener.onKeyReleased(new KeyReleasedEvent(k));
 		}
 		boolean refresh = false;
-		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager() != null) {
-			final Screen scr = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
+		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager() != null) {
+			final Screen scr = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 			if (scr != null && scr.initialized && scr.onKeyReleased(new KeyReleasedEvent(k))) {
 				refresh = true;
 			} else {
@@ -1019,7 +1019,7 @@ public class Keyboard {
 				Keyboard.refreshRequest = true;
 			}
 		} else if (!done) {
-			Engine.getPlatform().getConsoleUtils().out().println(1, "Key " + k.toString() + " ignored.");
+			WarpPI.getPlatform().getConsoleUtils().out().println(1, "Key " + k.toString() + " ignored.");
 		}
 	}
 

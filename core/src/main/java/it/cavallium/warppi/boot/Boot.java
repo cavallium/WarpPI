@@ -2,11 +2,11 @@ package it.cavallium.warppi.boot;
 
 import java.util.Arrays;
 
-import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.Engine.LoadingStatus;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.WarpPI.LoadingStatus;
 import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.device.PIHardwareDisplay;
-import it.cavallium.warppi.device.PIHardwareTouchDevice;
+import it.cavallium.warppi.device.input.PIHardwareTouchDevice;
 import it.cavallium.warppi.gui.CalculatorHUD;
 import it.cavallium.warppi.gui.screens.LoadingScreen;
 import it.cavallium.warppi.math.rules.RulesManager;
@@ -15,13 +15,14 @@ import it.cavallium.warppi.util.Error;
 public class Boot {
 
 	public static void boot(final Platform platform, final String[] args) throws Exception {
-		Engine.start(platform, new LoadingScreen(), new PIHardwareDisplay(), new PIHardwareTouchDevice(false, false, false), new CalculatorHUD(), Boot.parseStartupArguments(args));
-		Engine.INSTANCE.getLoadPhase().subscribe(Boot::loadCalculator);
+		WarpPI.start(platform, new LoadingScreen(), new CalculatorHUD(), Boot.parseStartupArguments(args));
+		WarpPI.INSTANCE.getLoadPhase().subscribe(Boot::loadCalculator);
 	}
 
 	private static void loadCalculator(final LoadingStatus loading) {
 		try {
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().setBrightness(0.2f);
+			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setBrightness(0.2f);
+			//TODO: plugins system: PluginsManager.initialize();
 			RulesManager.initialize();
 			RulesManager.warmUp();
 			loading.done();

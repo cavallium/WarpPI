@@ -50,9 +50,10 @@ import com.jogamp.opengl.fixedfunc.GLPointerFunc;
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.texture.Texture;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.event.TouchEndEvent;
 import it.cavallium.warppi.event.TouchMoveEvent;
@@ -61,7 +62,6 @@ import it.cavallium.warppi.event.TouchStartEvent;
 import it.cavallium.warppi.flow.BehaviorSubject;
 import it.cavallium.warppi.flow.SimpleSubject;
 import it.cavallium.warppi.flow.Subject;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
@@ -125,7 +125,7 @@ class NEWTWindow implements GLEventListener {
 			System.err.println("Le OpenGL non sono presenti su questo computer!");
 			return;
 		}
-		if (Engine.getPlatform().getSettings().isDebugEnabled())
+		if (WarpPI.getPlatform().getSettings().isDebugEnabled())
 			System.setProperty("jnlp.newt.window.icons", "res/icons/calculator-016.png res/icons/calculator-018.png res/icons/calculator-256.png");
 		final GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2ES1));
 		System.out.println("Loaded OpenGL");
@@ -150,7 +150,7 @@ class NEWTWindow implements GLEventListener {
 
 			@Override
 			public void windowDestroyed(final WindowEvent e) {
-				final GraphicEngine engine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
+				final DisplayOutputDevice engine = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display;
 				if (engine.isInitialized())
 					engine.destroy();
 			}
@@ -361,10 +361,10 @@ class NEWTWindow implements GLEventListener {
 				final float[] ps = e.getAllPressures();
 				final short[] is = e.getAllPointerIDs();
 				for (int i = 0; i < e.getPointerCount(); i++)
-					newPoints.add(Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().makePoint(is[i], xs[i], ys[i], disp.getWidth(), disp.getHeight(), 5, 5, ps[i], 0));
+					newPoints.add(WarpPI.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().makePoint(is[i], xs[i], ys[i], disp.getWidth(), disp.getHeight(), 5, 5, ps[i], 0));
 				changedPoints.add(newPoints.get(0));
 				touches = newPoints;
-				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchStart(new TouchStartEvent(changedPoints, touches));
+				WarpPI.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchStart(new TouchStartEvent(changedPoints, touches));
 			}
 
 			@Override
@@ -378,11 +378,11 @@ class NEWTWindow implements GLEventListener {
 				final float[] ps = e.getAllPressures();
 				final short[] is = e.getAllPointerIDs();
 				for (int i = 0; i < e.getPointerCount(); i++)
-					newPoints.add(Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().makePoint(is[i], xs[i], ys[i], disp.getWidth(), disp.getHeight(), 5, 5, ps[i], 0));
+					newPoints.add(WarpPI.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().makePoint(is[i], xs[i], ys[i], disp.getWidth(), disp.getHeight(), 5, 5, ps[i], 0));
 				changedPoints.add(newPoints.get(0));
 				newPoints.remove(0);
 				touches = newPoints;
-				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchEnd(new TouchEndEvent(changedPoints, touches));
+				WarpPI.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchEnd(new TouchEndEvent(changedPoints, touches));
 			}
 
 			@Override
@@ -403,7 +403,7 @@ class NEWTWindow implements GLEventListener {
 					final float[] ps = e.getAllPressures();
 					final short[] is = e.getAllPointerIDs();
 					for (int i = 0; i < e.getPointerCount(); i++)
-						newPoints.add(Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().makePoint(is[i], xs[i], ys[i], disp.getWidth(), disp.getHeight(), 5, 5, ps[i], 0));
+						newPoints.add(WarpPI.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().makePoint(is[i], xs[i], ys[i], disp.getWidth(), disp.getHeight(), 5, 5, ps[i], 0));
 					newPoints.forEach((newp) -> {
 						oldPoints.forEach((oldp) -> {
 							if (newp.getID() == oldp.getID())
@@ -412,7 +412,7 @@ class NEWTWindow implements GLEventListener {
 						});
 					});
 					touches = newPoints;
-					Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchMove(new TouchMoveEvent(changedPoints, touches));
+					WarpPI.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchMove(new TouchMoveEvent(changedPoints, touches));
 				}
 			}
 
@@ -434,7 +434,7 @@ class NEWTWindow implements GLEventListener {
 		final GL2ES1 gl = drawable.getGL().getGL2ES1();
 		onGLContext.onNext(gl);
 
-		if (Engine.getPlatform().getSettings().isDebugEnabled())
+		if (WarpPI.getPlatform().getSettings().isDebugEnabled())
 			//Vsync
 			gl.setSwapInterval(1);
 		else

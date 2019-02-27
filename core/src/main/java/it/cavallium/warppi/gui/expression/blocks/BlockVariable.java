@@ -2,14 +2,14 @@ package it.cavallium.warppi.gui.expression.blocks;
 
 import java.util.Arrays;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.gui.expression.Caret;
 import it.cavallium.warppi.gui.expression.ExtraMenu;
 import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Variable.V_TYPE;
@@ -82,7 +82,7 @@ public class BlockVariable extends Block {
 	}
 
 	@Override
-	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y, final Caret caret) {
+	public void draw(final DisplayOutputDevice ge, final Renderer r, final int x, final int y, final Caret caret) {
 		if (ic.variableTypeDirtyID != typeDirtyID) {
 			retrieveValue();
 		}
@@ -238,9 +238,9 @@ public class BlockVariable extends Block {
 		}
 
 		@Override
-		public void draw(final GraphicEngine ge, final Renderer r, final Caret caret) {
+		public void draw(final DisplayOutputDevice ge, final Renderer r, final Caret caret) {
 			r.glColor3f(1.0f, 1.0f, 1.0f);
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(ge);
+			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(ge);
 			int popupX = location[0];
 			int popupY = location[1];
 			if (popupX < 0) {

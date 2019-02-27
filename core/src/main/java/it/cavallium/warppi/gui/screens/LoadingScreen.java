@@ -1,6 +1,6 @@
 package it.cavallium.warppi.gui.screens;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.gui.GraphicUtils;
 import it.cavallium.warppi.gui.HistoryBehavior;
@@ -21,7 +21,7 @@ public class LoadingScreen extends Screen {
 
 	@Override
 	public void created() throws InterruptedException {
-		Engine.INSTANCE.isLoaded().subscribe((loaded) -> {
+		WarpPI.INSTANCE.isLoaded().subscribe((loaded) -> {
 			this.loaded = loaded;
 		});
 		endLoading = 0;
@@ -30,7 +30,7 @@ public class LoadingScreen extends Screen {
 	@Override
 	public void initialized() throws InterruptedException {
 		previousZoomValue = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue());
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().hide();
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().hide();
 		StaticVars.windowZoom.onNext(1f);
 	}
 	
@@ -42,24 +42,24 @@ public class LoadingScreen extends Screen {
 		loadingTextTranslation = GraphicUtils.sinDeg(endLoading * 90f) * 10f;
 
 		endLoading += dt;
-		if (!ended && loaded && (Engine.getPlatform().getSettings().isDebugEnabled() || endLoading >= 3.5f)) {
+		if (!ended && loaded && (WarpPI.getPlatform().getSettings().isDebugEnabled() || endLoading >= 3.5f)) {
 			ended = true;
 			StaticVars.windowZoom.onNext(previousZoomValue);
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().show();
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MathInputScreen());
+			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().show();
+			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MathInputScreen());
 		}
 		mustRefresh = true;
 	}
 
 	@Override
 	public void render() {
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor3i(255, 255, 255);
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] / 2f - 80, StaticVars.screenSize[1] / 2f - 64, 160, 48, 0, 32, 160, 48);
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] / 2f - 24, StaticVars.screenSize[1] / 2f - loadingTextTranslation, 48, 48, 160, 32, 48, 48);
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor3i(255, 255, 255);
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] / 2f - 80, StaticVars.screenSize[1] / 2f - 64, 160, 48, 0, 32, 160, 48);
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] / 2f - 24, StaticVars.screenSize[1] / 2f - loadingTextTranslation, 48, 48, 160, 32, 48, 48);
 
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] - 224, StaticVars.screenSize[1] - 48, 224, 48, 0, 80, 224, 48);
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] - 160 - 24 - 224, StaticVars.screenSize[1] - 48, 160, 48, 224, 80, 160, 48);
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] - 224, StaticVars.screenSize[1] - 48, 224, 48, 0, 80, 224, 48);
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] - 160 - 24 - 224, StaticVars.screenSize[1] - 48, 160, 48, 224, 80, 160, 48);
 
 	}
 

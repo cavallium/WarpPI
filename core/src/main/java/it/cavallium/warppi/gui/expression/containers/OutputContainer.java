@@ -1,12 +1,12 @@
 package it.cavallium.warppi.gui.expression.containers;
 
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.GraphicalElement;
 import it.cavallium.warppi.gui.expression.Caret;
 import it.cavallium.warppi.gui.expression.CaretState;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
 import it.cavallium.warppi.gui.expression.layouts.OutputLayout;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
@@ -119,7 +119,7 @@ public abstract class OutputContainer implements GraphicalElement, OutputLayout 
 	 * @param y
 	 *            Position relative to the window.
 	 */
-	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y) {
+	public void draw(final DisplayOutputDevice ge, final Renderer r, final int x, final int y) {
 		int offset = 0;
 		for (final BlockContainer root : roots) {
 			root.draw(ge, r, x, y + offset, caret);

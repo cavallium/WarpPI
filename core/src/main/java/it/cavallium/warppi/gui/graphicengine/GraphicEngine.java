@@ -3,25 +3,28 @@ package it.cavallium.warppi.gui.graphicengine;
 import java.io.IOException;
 import java.util.List;
 
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.flow.Observable;
 
 public interface GraphicEngine {
 
 	int[] getSize();
 
+	boolean isSupported();
+	
 	boolean isInitialized();
 
 	void setTitle(String title);
 
 	void setResizable(boolean r);
 
-	void setDisplayMode(final int ww, final int wh);
+	void setDisplayMode(int ww, int wh);
 
+	void create(Runnable object);
+	
 	default void create() {
 		create(null);
 	};
-
-	void create(Runnable object);
 
 	Observable<Integer[]> onResize();
 
@@ -44,8 +47,6 @@ public interface GraphicEngine {
 	Skin loadSkin(String file) throws IOException;
 
 	void waitForExit();
-
-	boolean isSupported();
 
 	boolean doesRefreshPauses();
 

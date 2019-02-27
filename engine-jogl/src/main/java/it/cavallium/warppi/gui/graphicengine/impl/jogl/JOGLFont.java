@@ -12,9 +12,9 @@ import ar.com.hjg.pngj.ImageInfo;
 import ar.com.hjg.pngj.ImageLineHelper;
 import ar.com.hjg.pngj.ImageLineInt;
 import ar.com.hjg.pngj.PngWriter;
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.impl.common.RFTFont;
 
 public class JOGLFont implements BinaryFont {
@@ -35,11 +35,11 @@ public class JOGLFont implements BinaryFont {
 	private boolean initialized = false;
 	private File tmpFont;
 
-	JOGLFont(final GraphicEngine g, final String name) throws IOException {
+	JOGLFont(final DisplayOutputDevice g, final String name) throws IOException {
 		this(g, null, name);
 	}
 
-	public JOGLFont(final GraphicEngine g, final String path, final String name) throws IOException {
+	public JOGLFont(final DisplayOutputDevice g, final String path, final String name) throws IOException {
 		load(path, name);
 		((JOGLEngine) g).registerFont(this);
 	}
@@ -63,10 +63,10 @@ public class JOGLFont implements BinaryFont {
 		intervalsTotalSize = font.intervalsTotalSize;
 		boolean[][] rawchars = font.rawchars;
 		font = null;
-		Engine.getPlatform().gc();
+		WarpPI.getPlatform().gc();
 		pregenTexture(rawchars);
 		rawchars = null;
-		Engine.getPlatform().gc();
+		WarpPI.getPlatform().gc();
 	}
 
 	public int[] getCharIndexes(final String txt) {
@@ -154,7 +154,7 @@ public class JOGLFont implements BinaryFont {
 		}
 		chars = null;
 		png.end();
-		Engine.getPlatform().gc();
+		WarpPI.getPlatform().gc();
 
 		try {
 			memoryWidth = w;
@@ -164,7 +164,7 @@ public class JOGLFont implements BinaryFont {
 			textureH = h;
 			outputStream.flush();
 			outputStream.close();
-			Engine.getPlatform().gc();
+			WarpPI.getPlatform().gc();
 			tmpFont = f;
 		} catch (GLException | IOException e) {
 			e.printStackTrace();
@@ -185,14 +185,14 @@ public class JOGLFont implements BinaryFont {
 	}
 
 	@Override
-	public void initialize(final GraphicEngine d) {
+	public void initialize(final DisplayOutputDevice d) {
 		genTexture();
 		tmpFont = null;
 		initialized = true;
 	}
 
 	@Override
-	public void use(final GraphicEngine d) {
+	public void use(final DisplayOutputDevice d) {
 		if (!initialized)
 			initialize(d);
 		final JOGLRenderer r = (JOGLRenderer) d.getRenderer();

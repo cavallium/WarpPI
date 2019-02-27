@@ -7,7 +7,7 @@ import org.teavm.jso.canvas.CanvasRenderingContext2D;
 import org.teavm.jso.dom.html.HTMLCanvasElement;
 import org.teavm.jso.dom.html.HTMLDocument;
 
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.impl.common.RFTFont;
 
 public class HtmlFont extends RFTFont {
@@ -47,7 +47,7 @@ public class HtmlFont extends RFTFont {
 	}
 
 	@Override
-	public void use(final GraphicEngine d) {
+	public void use(final DisplayOutputDevice d) {
 		if (d.getRenderer() instanceof HtmlRenderer)
 			((HtmlRenderer) d.getRenderer()).f = this;
 	}

@@ -2,14 +2,14 @@ package it.cavallium.warppi.extra.tetris;
 
 import java.io.IOException;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.gui.HistoryBehavior;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.gui.graphicengine.Skin;
 import it.cavallium.warppi.gui.screens.Screen;
@@ -30,7 +30,7 @@ public class TetrisScreen extends Screen {
 
 	private ButtonInfo backPressed = new ButtonInfo();
 
-	private GraphicEngine e;
+	private DisplayOutputDevice e;
 
 	private Renderer r;
 
@@ -49,10 +49,10 @@ public class TetrisScreen extends Screen {
 	@Override
 	public void graphicInitialized() {
 		try {
-			e = d.engine;
+			e = d.display;
 			r = d.renderer;
 			if (TetrisScreen.skin == null) {
-				TetrisScreen.skin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("/tetrisskin.png");
+				TetrisScreen.skin = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.loadSkin("/tetrisskin.png");
 			}
 		} catch (final IOException e) {
 			e.printStackTrace();
@@ -66,7 +66,7 @@ public class TetrisScreen extends Screen {
 
 	@Override
 	public void beforeRender(final float dt) {
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xff000000);
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xff000000);
 			g.update(dt, leftPressed, rightPressed, downPressed, upPressed, okPressed, backPressed);
 	}
 

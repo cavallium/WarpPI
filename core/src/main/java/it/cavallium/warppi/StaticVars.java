@@ -11,8 +11,6 @@ import it.cavallium.warppi.flow.Observable;
  */
 public class StaticVars {
 	public static final boolean zoomed = true;
-	public static int[] screenPos = new int[] { 0, 0 };
-	public static final int[] screenSize = new int[] { 480, 320 };
 	public static int outputLevel = 0;
 	public static boolean debugWindow2x = false;
 	public static BehaviorSubject<Float> windowZoom = BehaviorSubject.create(2F);

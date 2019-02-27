@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import it.cavallium.warppi.Platform;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.input.KeyboardInputDevice;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.impl.framebuffer.FBEngine;
 import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
@@ -20,6 +22,7 @@ public class HardwarePlatform implements Platform {
 
 	private final HardwareConsoleUtils cu;
 	private final HardwareGpio gi;
+	private final HardwareKeyboard hk;
 	private final HardwareStorageUtils su;
 	private final ImageUtils pu;
 	private final String on;
@@ -30,6 +33,7 @@ public class HardwarePlatform implements Platform {
 	public HardwarePlatform() {
 		cu = new HardwareConsoleUtils();
 		gi = new HardwareGpio();
+		hk = new HardwareKeyboard();
 		su = new HardwareStorageUtils();
 		pu = new HardwareImageUtils();
 		on = System.getProperty("os.name").toLowerCase();
@@ -46,6 +50,11 @@ public class HardwarePlatform implements Platform {
 
 	@Override
 	public Gpio getGpio() {
+		return gi;
+	}
+
+	@Override
+	public KeyboardInputDevice getHardwareKeyboard() {
 		return gi;
 	}
 
@@ -123,12 +132,12 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public Map<String, GraphicEngine> getEnginesList() {
+	public Map<String, GraphicEngine> getGraphicEnginesList() {
 		return el;
 	}
 
 	@Override
-	public GraphicEngine getEngine(final String string) throws NullPointerException {
+	public DisplayOutputDevice getGraphicEngine(final String string) throws NullPointerException {
 		return el.get(string);
 	}
 

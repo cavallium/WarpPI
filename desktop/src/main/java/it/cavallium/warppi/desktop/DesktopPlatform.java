@@ -6,11 +6,17 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.display.BacklightOutputDevice;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.input.KeyboardInputDevice;
+import it.cavallium.warppi.device.input.TouchInputDevice;
 import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
@@ -28,7 +34,6 @@ public class DesktopPlatform implements Platform {
 	private final DesktopStorageUtils su;
 	private final ImageUtils pu;
 	private final String on;
-	private final Map<String, GraphicEngine> el;
 	private final DesktopSettings settings;
 	private Boolean runningOnRaspberryOverride = null;
 
@@ -38,9 +43,6 @@ public class DesktopPlatform implements Platform {
 		su = new DesktopStorageUtils();
 		pu = new DesktopImageUtils();
 		on = System.getProperty("os.name").toLowerCase();
-		el = new HashMap<>();
-		el.put("CPU engine", new SwingEngine());
-		el.put("GPU engine", new JOGLEngine());
 		settings = new DesktopSettings();
 	}
 
@@ -106,14 +108,14 @@ public class DesktopPlatform implements Platform {
 
 	@Override
 	public void alphaChanged(final boolean val) {
-		final GraphicEngine currentEngine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
+		final DisplayOutputDevice currentEngine = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display;
 		if (currentEngine instanceof SwingEngine)
 			((SwingEngine) currentEngine).setAlphaChanged(val);
 	}
 
 	@Override
 	public void shiftChanged(final boolean val) {
-		final GraphicEngine currentEngine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
+		final DisplayOutputDevice currentEngine = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display;
 		if (currentEngine instanceof SwingEngine)
 			((SwingEngine) currentEngine).setShiftChanged(val);
 	}
@@ -131,16 +133,6 @@ public class DesktopPlatform implements Platform {
 	@Override
 	public URLClassLoader newURLClassLoader(final URL[] urls) {
 		return new DesktopURLClassLoader(urls);
-	}
-
-	@Override
-	public Map<String, GraphicEngine> getEnginesList() {
-		return el;
-	}
-
-	@Override
-	public GraphicEngine getEngine(final String string) throws NullPointerException {
-		return el.get(string);
 	}
 
 	@Override
@@ -219,9 +211,9 @@ public class DesktopPlatform implements Platform {
 	public boolean isRunningOnRaspberry() {
 		if (runningOnRaspberryOverride != null) return runningOnRaspberryOverride;
 		return CacheUtils.get("isRunningOnRaspberry", 24 * 60 * 60 * 1000, () -> {
-			if (Engine.getPlatform().isJavascript())
+			if (WarpPI.getPlatform().isJavascript())
 				return false;
-			if (Engine.getPlatform().getOsName().equals("Linux"))
+			if (WarpPI.getPlatform().getOsName().equals("Linux"))
 				try {
 					final File osRelease = new File("/etc", "os-release");
 					return FileUtils.readLines(osRelease, "UTF-8").stream().map(String::toLowerCase).anyMatch(line -> line.contains("raspbian") && line.contains("name"));
@@ -231,6 +223,32 @@ public class DesktopPlatform implements Platform {
 			else
 				return false;
 		});
+	}
+
+	@Override
+	public TouchInputDevice getTouchInputDevice() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public KeyboardInputDevice getKeyboardInputDevice() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DisplayOutputDevice getDisplayOutputDevice() {
+		return displayOutput
+				new SwingEngine();
+				new JOGLEngine();
+				List<DisplayOutputDevice> availableDevices = new LinkedList<>();
+	}
+
+	@Override
+	public BacklightOutputDevice getBacklightOutputDevice() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

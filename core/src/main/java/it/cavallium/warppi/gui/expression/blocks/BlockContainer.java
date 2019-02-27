@@ -2,13 +2,13 @@ package it.cavallium.warppi.gui.expression.blocks;
 
 import java.util.Arrays;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.GraphicalElement;
 import it.cavallium.warppi.gui.expression.Caret;
 import it.cavallium.warppi.gui.expression.CaretState;
 import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
@@ -182,7 +182,7 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 	 * @param caret
 	 *            Position of the caret.
 	 */
-	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y, final Caret caret) {
+	public void draw(final DisplayOutputDevice ge, final Renderer r, final int x, final int y, final Caret caret) {
 		int paddingX = 1;
 
 		if (caret.getRemaining() == 0) {
@@ -396,7 +396,7 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 		return BlockContainer.defFontSizes[b ? 3 : 1];
 	}
 
-	public static void drawCaret(final GraphicEngine ge, final Renderer r, final Caret caret, final boolean small,
+	public static void drawCaret(final DisplayOutputDevice ge, final Renderer r, final Caret caret, final boolean small,
 			final int x, final int y, final int height) {
 		if (caret.getState() == CaretState.VISIBLE_ON) {
 			r.glColor(BlockContainer.getDefaultColor());
@@ -424,7 +424,7 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 
 	private static void checkInitialized() {
 		if (!BlockContainer.initialized) {
-			Engine.getPlatform().throwNewExceptionInInitializerError("Please initialize BlockContainer by running the method BlockContainer.initialize(...) first!");
+			WarpPI.getPlatform().throwNewExceptionInInitializerError("Please initialize BlockContainer by running the method BlockContainer.initialize(...) first!");
 		}
 	}
 

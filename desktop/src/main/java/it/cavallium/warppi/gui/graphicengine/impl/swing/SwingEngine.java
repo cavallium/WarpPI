@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
@@ -53,7 +53,7 @@ public class SwingEngine implements GraphicEngine {
 		initialized = false;
 		exitSemaphore = new Semaphore(0);
 		INSTANCE = new SwingWindow(this);
-		setResizable(Engine.getPlatform().getSettings().isDebugEnabled());
+		setResizable(WarpPI.getPlatform().getSettings().isDebugEnabled());
 		setDisplayMode((int) (StaticVars.screenSize[0] / StaticVars.windowZoom.getLastValue()), (int) (StaticVars.screenSize[1] / StaticVars.windowZoom.getLastValue()));
 		INSTANCE.setVisible(true);
 		initialized = true;
@@ -112,7 +112,7 @@ public class SwingEngine implements GraphicEngine {
 
 	@Deprecated()
 	public void refresh() {
-		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || Engine.INSTANCE.getHardwareDevice().getDisplayManager().error != null && Engine.INSTANCE.getHardwareDevice().getDisplayManager().error.length() > 0 || Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen().mustBeRefreshed())
+		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error != null && WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error.length() > 0 || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen().mustBeRefreshed())
 			INSTANCE.c.paintImmediately(0, 0, getWidth(), getHeight());
 	}
 

@@ -1,9 +1,9 @@
-package it.cavallium.warppi.device;
+package it.cavallium.warppi.device.input;
 
 import it.cavallium.warppi.event.TouchEventListener;
 import it.cavallium.warppi.event.TouchPoint;
 
-public interface HardwareTouchDevice extends TouchEventListener {
+public interface TouchInputDevice extends TouchEventListener {
 	boolean getInvertedXY();
 
 	boolean getInvertedX();

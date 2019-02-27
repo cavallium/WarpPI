@@ -1,8 +1,8 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.expression.Caret;
 import it.cavallium.warppi.gui.expression.InputContext;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.MathematicalSymbols;
@@ -21,7 +21,7 @@ public class BlockUndefined extends Block {
 	}
 
 	@Override
-	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y, final Caret caret) {
+	public void draw(final DisplayOutputDevice ge, final Renderer r, final int x, final int y, final Caret caret) {
 		BlockContainer.getDefaultFont(small).use(ge);
 		r.glColor(BlockContainer.getDefaultColor());
 		r.glDrawStringLeft(x, y, "UNDEFINED");

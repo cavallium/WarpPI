@@ -8,10 +8,10 @@ import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform.ConsoleUtils;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.util.Utils;
 
 public abstract class RFTFont implements BinaryFont {
@@ -62,7 +62,7 @@ public abstract class RFTFont implements BinaryFont {
 	}
 
 	private void load(final String path, final boolean onlyRaw) throws IOException {
-		Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN + 1, "Loading font " + path);
+		WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN + 1, "Loading font " + path);
 		loadFont(path);
 		if (!onlyRaw) {
 			chars32 = new int[intervalsTotalSize * charIntCount];
@@ -94,14 +94,14 @@ public abstract class RFTFont implements BinaryFont {
 			}
 		}
 
-		Engine.getPlatform().gc();
+		WarpPI.getPlatform().gc();
 	}
 
 	private void loadFont(String string) throws IOException {
 		if (!string.startsWith("/")) {
 			string = "/" + string;
 		}
-		InputStream res = Engine.getPlatform().getStorageUtils().getResourceStream(string);
+		InputStream res = WarpPI.getPlatform().getStorageUtils().getResourceStream(string);
 		final int[] file = Utils.realBytes(Utils.convertStreamToByteArray(res, res.available()));
 		final int filelength = file.length;
 		if (filelength >= 16) {
@@ -140,7 +140,7 @@ public abstract class RFTFont implements BinaryFont {
 					} catch (final Exception ex) {
 						ex.printStackTrace();
 						System.out.println(string);
-						Engine.getPlatform().exit(-1);
+						WarpPI.getPlatform().exit(-1);
 					}
 				}
 			} else {
@@ -266,7 +266,7 @@ public abstract class RFTFont implements BinaryFont {
 	}
 
 	@Override
-	public void initialize(final GraphicEngine d) {}
+	public void initialize(final DisplayOutputDevice d) {}
 
 	@Override
 	public int getStringWidth(final String text) {
@@ -314,7 +314,7 @@ public abstract class RFTFont implements BinaryFont {
 		}
 
 		@Override
-		public void use(final GraphicEngine d) {
+		public void use(final DisplayOutputDevice d) {
 
 		}
 

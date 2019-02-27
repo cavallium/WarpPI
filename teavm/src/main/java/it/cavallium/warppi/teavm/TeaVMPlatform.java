@@ -9,6 +9,7 @@ import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLDocument;
 
 import it.cavallium.warppi.Platform;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.html.HtmlEngine;
 import it.cavallium.warppi.math.rules.RulesManager;
@@ -122,12 +123,12 @@ public class TeaVMPlatform implements Platform {
 	}
 
 	@Override
-	public Map<String, GraphicEngine> getEnginesList() {
+	public Map<String, GraphicEngine> getGraphicEnginesList() {
 		return el;
 	}
 
 	@Override
-	public GraphicEngine getEngine(final String string) throws NullPointerException {
+	public DisplayOutputDevice getGraphicEngine(final String string) throws NullPointerException {
 		return el.get(string);
 	}
 

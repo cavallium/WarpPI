@@ -15,7 +15,7 @@ import java.util.Map;
 import org.nevec.rjm.BigDecimalMath;
 import org.nevec.rjm.Rational;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.math.Function;
@@ -399,7 +399,7 @@ public class Utils {
 	}
 
 	public static final BinaryFont getFont(final boolean small, final boolean zoomed) {
-		return Engine.INSTANCE.getHardwareDevice().getDisplayManager().fonts[Utils.getFontIndex(small, zoomed)];
+		return WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().fonts[Utils.getFontIndex(small, zoomed)];
 	}
 
 	public static final int getFontIndex(final boolean small, final boolean zoomed) {
@@ -423,14 +423,14 @@ public class Utils {
 	public static final int getFontHeight(final boolean small, final boolean zoomed) {
 		if (small) {
 			if (zoomed) {
-				return Engine.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[3];
+				return WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[3];
 			} else {
-				return Engine.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[1];
+				return WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[1];
 			}
 		} else if (zoomed) {
-			return Engine.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[2];
+			return WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[2];
 		} else {
-			return Engine.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[0];
+			return WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().glyphsHeight[0];
 		}
 	}
 
@@ -567,7 +567,7 @@ public class Utils {
 	}
 
 	public static boolean isWindows() {
-		return Engine.getPlatform().getOsName().indexOf("win") >= 0;
+		return WarpPI.getPlatform().getOsName().indexOf("win") >= 0;
 	}
 
 	public static <T> ObjectArrayList<T> newArrayList(final T o) {
@@ -578,7 +578,7 @@ public class Utils {
 
 	public static InputStream getResourceStreamSafe(final String string) throws IOException, URISyntaxException {
 		try {
-			return Engine.getPlatform().getStorageUtils().getResourceStream(string);
+			return WarpPI.getPlatform().getStorageUtils().getResourceStream(string);
 		} catch (final Exception ex) {
 			return null;
 		}

@@ -9,7 +9,10 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
+import it.cavallium.warppi.device.display.BacklightOutputDevice;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.input.KeyboardInputDevice;
+import it.cavallium.warppi.device.input.TouchInputDevice;
 import it.cavallium.warppi.util.Error;
 
 public interface Platform {
@@ -52,10 +55,14 @@ public interface Platform {
 
 	URLClassLoader newURLClassLoader(URL[] urls);
 
-	Map<String, GraphicEngine> getEnginesList();
+	TouchInputDevice getTouchInputDevice();
+	
+	KeyboardInputDevice getKeyboardInputDevice();
+	
+	DisplayOutputDevice getDisplayOutputDevice();
 
-	GraphicEngine getEngine(String string) throws NullPointerException;
-
+	BacklightOutputDevice getBacklightOutputDevice();
+	
 	void throwNewExceptionInInitializerError(String text);
 
 	String[] stacktraceToString(Error e);
@@ -97,7 +104,7 @@ public interface Platform {
 
 		Object getBoardType();
 	}
-
+	
 	public interface ConsoleUtils {
 		int OUTPUTLEVEL_NODEBUG = 0;
 		int OUTPUTLEVEL_DEBUG_MIN = 1;

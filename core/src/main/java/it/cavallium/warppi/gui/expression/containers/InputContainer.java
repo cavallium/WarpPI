@@ -1,5 +1,6 @@
 package it.cavallium.warppi.gui.expression.containers;
 
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.event.KeyboardEventListener;
 import it.cavallium.warppi.gui.GraphicalElement;
 import it.cavallium.warppi.gui.expression.Caret;
@@ -10,7 +11,6 @@ import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
 import it.cavallium.warppi.gui.expression.blocks.BlockReference;
 import it.cavallium.warppi.gui.expression.layouts.InputLayout;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
@@ -211,7 +211,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 	 * @param y
 	 *            Position relative to the window.
 	 */
-	public void draw(final GraphicEngine ge, final Renderer r, final int x, final int y) {
+	public void draw(final DisplayOutputDevice ge, final Renderer r, final int x, final int y) {
 		caret.resetRemaining();
 		root.draw(ge, r, x, y, caret);
 		if (extra != null) {

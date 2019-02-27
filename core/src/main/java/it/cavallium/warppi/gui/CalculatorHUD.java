@@ -1,9 +1,9 @@
 package it.cavallium.warppi.gui;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.device.Keyboard;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.gui.graphicengine.Skin;
 import it.cavallium.warppi.gui.screens.Screen;
@@ -39,7 +39,7 @@ public class CalculatorHUD extends HUD {
 	@Override
 	public void renderTopmostBackground() {
 		final Renderer r = d.renderer;
-		final GraphicEngine engine = d.engine;
+		final DisplayOutputDevice engine = d.display;
 
 		r.glColor(0xFFc5c2af);
 		r.glFillColor(0, 0, engine.getWidth(), 20);
@@ -48,7 +48,7 @@ public class CalculatorHUD extends HUD {
 	@Override
 	public void renderTopmost() {
 		final Renderer r = d.renderer;
-		final GraphicEngine engine = d.engine;
+		final DisplayOutputDevice engine = d.display;
 		final Skin guiSkin = d.guiSkin;
 
 		//DRAW TOP
@@ -69,19 +69,19 @@ public class CalculatorHUD extends HUD {
 
 		int padding = 2;
 
-		final int brightness = (int) Math.ceil(Engine.INSTANCE.getHardwareDevice().getDisplayManager().getBrightness() * 9);
+		final int brightness = (int) Math.ceil(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getBrightness() * 9);
 		if (brightness <= 10) {
 			r.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * brightness, 16 * 1, 16, 16);
 		} else {
-			Engine.getPlatform().getConsoleUtils().out().println(1, "Brightness error");
+			WarpPI.getPlatform().getConsoleUtils().out().println(1, "Brightness error");
 		}
 
 		padding += 18 + 6;
 
-		final boolean canGoBack = Engine.INSTANCE.getHardwareDevice().getDisplayManager().canGoBack();
-		final boolean canGoForward = Engine.INSTANCE.getHardwareDevice().getDisplayManager().canGoForward();
+		final boolean canGoBack = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().canGoBack();
+		final boolean canGoForward = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().canGoForward();
 
-		if (Engine.getPlatform().getSettings().isDebugEnabled()) {
+		if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
 			r.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 18, 16 * 0, 16, 16);
 			padding += 18 + 6;
 		}
@@ -112,12 +112,12 @@ public class CalculatorHUD extends HUD {
 		r.glDrawStringLeft(1, StaticVars.screenSize[1] - 7, "PROGRESS.");
 		
 		int currentDebugLine = 2;
-		if (Engine.getPlatform().getSettings().isDebugEnabled()) {
+		if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
 			ObjectArrayList<Screen> allSessions = new ObjectArrayList<>();
-			for (Screen session : Engine.INSTANCE.getHardwareDevice().getDisplayManager().sessions) {
+			for (Screen session : WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().sessions) {
 				allSessions.add(0, session);
 			}
-			Screen curScreen = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
+			Screen curScreen = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 			if (curScreen.historyBehavior == HistoryBehavior.DONT_KEEP_IN_HISTORY) {
 				allSessions.add(curScreen);
 			}
@@ -135,7 +135,7 @@ public class CalculatorHUD extends HUD {
 							r.glColor(0xFF990000);
 						}
 						r.glDrawStringLeft(0, StaticVars.screenSize[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "[" + String.format("%1$03d", session.debugScreenID) + "] " + title.toUpperCase());
-						if (session == Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen()) {
+						if (session == WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen()) {
 							r.glColor(0xFF00CC00);
 						} else {
 							r.glColor(0xFF990000);

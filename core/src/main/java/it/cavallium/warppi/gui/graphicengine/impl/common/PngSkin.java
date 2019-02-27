@@ -3,9 +3,9 @@ package it.cavallium.warppi.gui.graphicengine.impl.common;
 import java.io.File;
 import java.io.IOException;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform.ImageUtils.ImageReader;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.Skin;
 
 public abstract class PngSkin implements Skin {
@@ -25,7 +25,7 @@ public abstract class PngSkin implements Skin {
 		if (!file.startsWith("/")) {
 			file = "/" + file;
 		}
-		final ImageReader r = Engine.getPlatform().getImageUtils().load(Engine.getPlatform().getStorageUtils().getResourceStream(file));
+		final ImageReader r = WarpPI.getPlatform().getImageUtils().load(WarpPI.getPlatform().getStorageUtils().getResourceStream(file));
 		if (r == null) {
 			skinData = new int[0];
 			skinSize = new int[] { 0, 0 };
@@ -37,7 +37,7 @@ public abstract class PngSkin implements Skin {
 	}
 
 	@Override
-	public void initialize(final GraphicEngine d) {
+	public void initialize(final DisplayOutputDevice d) {
 		// TODO Auto-generated method stub
 
 	}
