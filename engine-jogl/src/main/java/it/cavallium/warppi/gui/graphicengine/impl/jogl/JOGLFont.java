@@ -35,13 +35,13 @@ public class JOGLFont implements BinaryFont {
 	private boolean initialized = false;
 	private File tmpFont;
 
-	JOGLFont(final DisplayOutputDevice g, final String name) throws IOException {
+	JOGLFont(final JOGLDisplayOutputDevice g, final String name) throws IOException {
 		this(g, null, name);
 	}
 
-	public JOGLFont(final DisplayOutputDevice g, final String path, final String name) throws IOException {
+	public JOGLFont(final JOGLDisplayOutputDevice g, final String path, final String name) throws IOException {
 		load(path, name);
-		((JOGLEngine) g).registerFont(this);
+		g.getGraphicEngine().registerFont(this);
 	}
 
 	@Override
@@ -195,7 +195,7 @@ public class JOGLFont implements BinaryFont {
 	public void use(final DisplayOutputDevice d) {
 		if (!initialized)
 			initialize(d);
-		final JOGLRenderer r = (JOGLRenderer) d.getRenderer();
+		final JOGLRenderer r = (JOGLRenderer) d.getGraphicEngine().getRenderer();
 		r.currentFont = this;
 		r.useTexture(texture, textureW, textureH);
 	}

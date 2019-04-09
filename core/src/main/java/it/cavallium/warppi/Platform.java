@@ -9,6 +9,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import it.cavallium.warppi.boot.StartupArguments;
+import it.cavallium.warppi.device.DeviceStateDevice;
 import it.cavallium.warppi.device.display.BacklightOutputDevice;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.device.input.KeyboardInputDevice;
@@ -62,6 +64,8 @@ public interface Platform {
 	DisplayOutputDevice getDisplayOutputDevice();
 
 	BacklightOutputDevice getBacklightOutputDevice();
+
+	DeviceStateDevice getDeviceStateDevice();
 	
 	void throwNewExceptionInInitializerError(String text);
 
@@ -210,5 +214,7 @@ public interface Platform {
 		}
 
 	}
+
+	void setArguments(StartupArguments args);
 
 }

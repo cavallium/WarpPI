@@ -35,7 +35,7 @@ public class KeyboardDebugScreen extends Screen {
 		final Renderer renderer = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer;
 		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().fonts[2].use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
 		renderer.glColor4f(0.75f, 0.0f, 0.0f, 1.0f);
-		renderer.glDrawStringRight(StaticVars.screenSize[0] - 10, 30, "-" + keyevent.toUpperCase() + "-");
+		renderer.glDrawStringRight(d.display.getDisplaySize()[0] - 10, 30, "-" + keyevent.toUpperCase() + "-");
 		if (keyevent != "NONE") {
 			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().fonts[2].use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
 			renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);

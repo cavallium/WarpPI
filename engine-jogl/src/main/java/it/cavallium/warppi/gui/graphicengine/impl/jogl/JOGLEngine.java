@@ -8,10 +8,12 @@ import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Semaphore;
 
+import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.texture.Texture;
 
 import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
@@ -21,6 +23,7 @@ import it.cavallium.warppi.gui.graphicengine.Skin;
 
 public class JOGLEngine implements GraphicEngine {
 
+	private final JOGLDisplayOutputDevice display;
 	private volatile boolean initialized;
 	private volatile boolean created;
 	private NEWTWindow wnd;
@@ -33,6 +36,10 @@ public class JOGLEngine implements GraphicEngine {
 	protected LinkedList<Texture> registeredTextures;
 	protected LinkedList<Texture> unregisteredTextures;
 
+	public JOGLEngine(JOGLDisplayOutputDevice display) {
+		this.display = display;
+	}
+	
 	@Override
 	public int[] getSize() {
 		return size;
@@ -71,19 +78,27 @@ public class JOGLEngine implements GraphicEngine {
 	public void create(final Runnable onInitialized) {
 		initialized = false;
 		created = false;
-		size = new int[] { StaticVars.screenSize[0], StaticVars.screenSize[1] };
+		size = new int[] { display.getDisplaySize()[0], display.getDisplaySize()[1] };
 		created = true;
 		registeredTextures = new LinkedList<>();
 		unregisteredTextures = new LinkedList<>();
 		r = new JOGLRenderer();
-		wnd = new NEWTWindow(this);
+		wnd = new NEWTWindow(display);
 		wnd.create();
-		setDisplayMode(StaticVars.screenSize[0], StaticVars.screenSize[1]);
+		setDisplayMode(display.getDisplaySize()[0], display.getDisplaySize()[1]);
 		setResizable(WarpPI.getPlatform().getSettings().isDebugEnabled());
 		initialized = true;
 		wnd.onInitialized = onInitialized;
 	}
 
+	/**
+	 * INTERNAL USE ONLY!
+	 * @return
+	 */
+	public GLWindow getGLWindow() {
+		return wnd.window;
+	}
+	
 	@Override
 	public Observable<Integer[]> onResize() {
 		return wnd.onResizeEvent;
@@ -131,7 +146,7 @@ public class JOGLEngine implements GraphicEngine {
 		for (final Entry<String, JOGLFont> entry : fontCache.entrySet())
 			if (entry.getKey().equals(name))
 				return entry.getValue();
-		final JOGLFont font = new JOGLFont(this, name);
+		final JOGLFont font = new JOGLFont(display, name);
 		fontCache.put(name, font);
 		return font;
 	}
@@ -141,14 +156,14 @@ public class JOGLEngine implements GraphicEngine {
 		for (final Entry<String, JOGLFont> entry : fontCache.entrySet())
 			if (entry.getKey().equals(name))
 				return entry.getValue();
-		final JOGLFont font = new JOGLFont(this, path, name);
+		final JOGLFont font = new JOGLFont(display, path, name);
 		fontCache.put(name, font);
 		return font;
 	}
 
 	@Override
 	public Skin loadSkin(final String file) throws IOException {
-		return new JOGLSkin(this, file);
+		return new JOGLSkin(display, file);
 	}
 
 	@Override

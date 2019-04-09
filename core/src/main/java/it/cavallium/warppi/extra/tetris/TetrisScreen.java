@@ -52,7 +52,7 @@ public class TetrisScreen extends Screen {
 			e = d.display;
 			r = d.renderer;
 			if (TetrisScreen.skin == null) {
-				TetrisScreen.skin = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.loadSkin("/tetrisskin.png");
+				TetrisScreen.skin = d.display.getGraphicEngine().loadSkin("/tetrisskin.png");
 			}
 		} catch (final IOException e) {
 			e.printStackTrace();
@@ -66,21 +66,22 @@ public class TetrisScreen extends Screen {
 
 	@Override
 	public void beforeRender(final float dt) {
-		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xff000000);
+		d.renderer.glClearColor(0xff000000);
 			g.update(dt, leftPressed, rightPressed, downPressed, upPressed, okPressed, backPressed);
 	}
 
 	@Override
 	public void render() {
+		DisplayOutputDevice display = d.display;
 		if (TetrisScreen.skin != null) {
 			TetrisScreen.skin.use(e);
 		}
 		r.glColor3f(1, 1, 1);
 		BlockColor[] renderedGrid = g.getRenderedGrid();
-		int centerScreen = StaticVars.screenSize[0]/2;
+		int centerScreen = display.getDisplaySize()[0]/2;
 		int centerGrid = TetrisGame.WIDTH*6/2-1;
 		final int leftOffset = centerScreen - centerGrid;
-		final int topOffset = StaticVars.screenSize[1] - TetrisGame.HEIGHT*6-1;
+		final int topOffset = display.getDisplaySize()[1] - TetrisGame.HEIGHT*6-1;
 		for (int y = 0; y < TetrisGame.HEIGHT; y++) {
 			for (int x = 0; x < TetrisGame.WIDTH; x++) {
 				final int offset = x+y*TetrisGame.WIDTH;

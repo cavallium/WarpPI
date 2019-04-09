@@ -249,7 +249,7 @@ public class BlockVariable extends Block {
 			if (popupY < 0) {
 				popupY = 0;
 			}
-			final int[] screenSize = ge.getSize();
+			final int[] screenSize = ge.getDisplaySize();
 			if (popupX + width >= screenSize[0]) {
 				popupX = screenSize[0] - width - 1;
 			}

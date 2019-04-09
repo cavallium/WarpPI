@@ -1,6 +1,7 @@
 package it.cavallium.warppi.gui.screens;
 
 import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.gui.GraphicUtils;
 import it.cavallium.warppi.gui.HistoryBehavior;
@@ -53,13 +54,14 @@ public class LoadingScreen extends Screen {
 
 	@Override
 	public void render() {
+		DisplayOutputDevice display = d.display;
 		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
 		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor3i(255, 255, 255);
-		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] / 2f - 80, StaticVars.screenSize[1] / 2f - 64, 160, 48, 0, 32, 160, 48);
-		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] / 2f - 24, StaticVars.screenSize[1] / 2f - loadingTextTranslation, 48, 48, 160, 32, 48, 48);
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(display.getDisplaySize()[0] / 2f - 80, display.getDisplaySize()[1] / 2f - 64, 160, 48, 0, 32, 160, 48);
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(display.getDisplaySize()[0] / 2f - 24, display.getDisplaySize()[1] / 2f - loadingTextTranslation, 48, 48, 160, 32, 48, 48);
 
-		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] - 224, StaticVars.screenSize[1] - 48, 224, 48, 0, 80, 224, 48);
-		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] - 160 - 24 - 224, StaticVars.screenSize[1] - 48, 160, 48, 224, 80, 160, 48);
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(display.getDisplaySize()[0] - 224, display.getDisplaySize()[1] - 48, 224, 48, 0, 80, 224, 48);
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(display.getDisplaySize()[0] - 160 - 24 - 224, display.getDisplaySize()[1] - 48, 160, 48, 224, 80, 160, 48);
 
 	}
 

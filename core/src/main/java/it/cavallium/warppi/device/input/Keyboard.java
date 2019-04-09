@@ -925,7 +925,7 @@ public class Keyboard {
 			} else {
 				switch (k) {
 					case POWEROFF:
-						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.destroy();
+						WarpPI.INSTANCE.getHardwareDevice().getDeviceStateDevice().powerOff();
 						break;
 					case NONE:
 						break;

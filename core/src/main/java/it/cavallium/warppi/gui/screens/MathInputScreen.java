@@ -88,7 +88,7 @@ public class MathInputScreen extends Screen {
 		calc = new MathContext();
 
 		try {
-			BlockContainer.initializeFonts(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.loadFont("norm"), WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.loadFont("smal"));
+			BlockContainer.initializeFonts(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().loadFont("norm"), WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().loadFont("smal"));
 		} catch (final IOException e) {
 			e.printStackTrace();
 			WarpPI.getPlatform().exit(1);
@@ -156,14 +156,14 @@ public class MathInputScreen extends Screen {
 			final int size = 32;
 			final int posY = computingAnimationIndex % 2;
 			final int posX = (computingAnimationIndex - posY) / 2;
-			renderer.glFillRect(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getWidth() - size - 4, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getHeight() - size - 4, size, size, leftX + size * posX, leftY + size * posY, size, size);
+			renderer.glFillRect(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getWidth() - size - 4, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getHeight() - size - 4, size, size, leftX + size * posX, leftY + size * posY, size, size);
 			if (computingBreakTipVisible) {
 				Utils.getFont(false).use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
 				renderer.glColor3f(0.75f, 0, 0);
-				renderer.glDrawStringRight(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getWidth() - 4 - size - 4, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getHeight() - size / 2 - renderer.getCurrentFont().getCharacterHeight() / 2 - 4, "Press (=) to stop");
+				renderer.glDrawStringRight(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getWidth() - 4 - size - 4, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getHeight() - size / 2 - renderer.getCurrentFont().getCharacterHeight() / 2 - 4, "Press (=) to stop");
 			}
 		} else if (!result.isContentEmpty()) {
-			result.draw(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display, renderer, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getWidth() - result.getWidth() - 2, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getHeight() - result.getHeight() - 2);
+			result.draw(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display, renderer, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getWidth() - result.getWidth() - 2, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getHeight() - result.getHeight() - 2);
 		}
 	}
 

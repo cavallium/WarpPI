@@ -3,9 +3,8 @@ package it.cavallium.warppi.boot;
 import java.util.Arrays; 
 import java.util.concurrent.Future; 
  
-import it.cavallium.warppi.WarpPI; 
-import it.cavallium.warppi.Platform; 
-import it.cavallium.warppi.device.input.PIHardwareTouchDevice; 
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.gui.CalculatorHUD; 
 import it.cavallium.warppi.gui.screens.LoadingScreen; 
 import it.cavallium.warppi.math.rules.RulesManager; 

@@ -4,14 +4,22 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import it.cavallium.warppi.Platform;
+import it.cavallium.warppi.boot.StartupArguments;
+import it.cavallium.warppi.device.display.BacklightOutputDevice;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.display.NoDisplaysAvailableException;
 import it.cavallium.warppi.device.input.KeyboardInputDevice;
+import it.cavallium.warppi.device.input.PIHardwareTouchDevice;
+import it.cavallium.warppi.device.input.TouchInputDevice;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.impl.framebuffer.FBEngine;
+import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLDisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
 import it.cavallium.warppi.util.Error;
 import net.lingala.zip4j.core.ZipFile;
@@ -22,18 +30,21 @@ public class HardwarePlatform implements Platform {
 
 	private final HardwareConsoleUtils cu;
 	private final HardwareGpio gi;
-	private final HardwareKeyboard hk;
 	private final HardwareStorageUtils su;
 	private final ImageUtils pu;
 	private final String on;
 	private final Map<String, GraphicEngine> el;
 	private final HardwareSettings settings;
 	private Boolean runningOnRaspberryOverride = null;
+	private StartupArguments args;
+	private DisplayOutputDevice displayOutputDevice;
+	private BacklightOutputDevice backlightOutputDevice;
+	private KeyboardInputDevice keyboardInputDevice;
+	private TouchInputDevice touchInputDevice;
 
 	public HardwarePlatform() {
 		cu = new HardwareConsoleUtils();
 		gi = new HardwareGpio();
-		hk = new HardwareKeyboard();
 		su = new HardwareStorageUtils();
 		pu = new HardwareImageUtils();
 		on = System.getProperty("os.name").toLowerCase();
@@ -50,11 +61,6 @@ public class HardwarePlatform implements Platform {
 
 	@Override
 	public Gpio getGpio() {
-		return gi;
-	}
-
-	@Override
-	public KeyboardInputDevice getHardwareKeyboard() {
 		return gi;
 	}
 
@@ -129,16 +135,6 @@ public class HardwarePlatform implements Platform {
 	@Override
 	public URLClassLoader newURLClassLoader(final URL[] urls) {
 		return new HardwareURLClassLoader(urls);
-	}
-
-	@Override
-	public Map<String, GraphicEngine> getGraphicEnginesList() {
-		return el;
-	}
-
-	@Override
-	public DisplayOutputDevice getGraphicEngine(final String string) throws NullPointerException {
-		return el.get(string);
 	}
 
 	@Override
@@ -236,6 +232,64 @@ public class HardwarePlatform implements Platform {
 			}
 		});
 		 */
+	}
+
+	@Override
+	public TouchInputDevice getTouchInputDevice() {
+		return touchInputDevice;
+	}
+
+	@Override
+	public KeyboardInputDevice getKeyboardInputDevice() {
+		return keyboardInputDevice;
+	}
+
+	@Override
+	public DisplayOutputDevice getDisplayOutputDevice() {
+		return displayOutputDevice;
+	}
+
+	@Override
+	public BacklightOutputDevice getBacklightOutputDevice() {
+		return backlightOutputDevice;
+	}
+
+	@Override
+	public void setArguments(StartupArguments args) {
+		this.args = args;
+		this.chooseDevices();
+	}
+
+	private void chooseDevices() {
+		List<DisplayOutputDevice> availableDevices = new ArrayList<>();
+		List<DisplayOutputDevice> guiDevices = List.of(new JOGLDisplayOutputDevice());
+		List<DisplayOutputDevice> consoleDevices = List.of();
+
+		if (args.isMSDOSModeEnabled() || args.isNoGUIEngineForced()) {
+			availableDevices.addAll(consoleDevices);
+		}
+		if (!args.isNoGUIEngineForced()) {
+			availableDevices.addAll(guiDevices);
+		}
+		
+		if (availableDevices.size() == 0) {
+			throw new NoDisplaysAvailableException();
+		}
+
+		for (DisplayOutputDevice device : availableDevices) {
+			if (device instanceof JOGLDisplayOutputDevice) {
+				if (args.isGPUEngineForced()) {
+					this.displayOutputDevice = device;
+					break;
+				}
+			}
+		}
+
+		if (this.displayOutputDevice == null) this.displayOutputDevice = availableDevices.get(0);
+
+		if (displayOutputDevice instanceof JOGLDisplayOutputDevice) {
+			this.touchInputDevice = new PIHardwareTouchDevice(false, false, false, (JOGLEngine) displayOutputDevice.getGraphicEngine());
+		}
 	}
 
 }

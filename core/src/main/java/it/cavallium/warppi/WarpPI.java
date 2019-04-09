@@ -2,11 +2,14 @@ package it.cavallium.warppi;
 
 import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.boot.StartupArguments;
 import it.cavallium.warppi.device.Device;
+import it.cavallium.warppi.device.DeviceStateDevice;
 import it.cavallium.warppi.device.display.BacklightOutputDevice;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.device.input.InputManager;
@@ -57,6 +60,9 @@ public class WarpPI {
 			final HUD hud, final StartupArguments args, final RunnableWithException onLoading)
 			throws IOException {
 		WarpPI.platform = platform;
+		// Set arguments on platform before everything else
+		platform.setArguments(args);
+		
 		platform.getConsoleUtils().out().println("WarpPI Calculator");
 		initializeEnvironment(args);
 
@@ -71,8 +77,9 @@ public class WarpPI {
 				final DisplayManager dm = new DisplayManager(display, backlight, hud, screen, "WarpPI Calculator by Andrea Cavalli (@Cavallium)");
 				final KeyboardInputDevice keyboard = platform.getKeyboardInputDevice();
 				final TouchInputDevice touchscreen = platform.getTouchInputDevice();
+				final DeviceStateDevice deviceState = platform.getDeviceStateDevice();
 				final InputManager im = new InputManager(keyboard, touchscreen);
-				device = new Device(dm, im);
+				device = new Device(dm, im, deviceState);
 				device.setup();
 				onLoading.run();
 				this.loadingCompleted();
@@ -135,8 +142,12 @@ public class WarpPI {
 
 
 	private void loadingCompleted() {
-		WarpPI.INSTANCE.loaded.onNext(true);
-		WarpPI.INSTANCE.device.getDisplayManager().waitForExit();
+		try {
+			WarpPI.INSTANCE.loaded.onNext(true);
+			WarpPI.INSTANCE.device.getDeviceStateDevice().waitForExit().get();
+		} catch (InterruptedException | ExecutionException e) {
+			throw new CompletionException(e);
+		}
 	}
 
 	private void loadingFailed(Exception e) {

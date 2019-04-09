@@ -21,8 +21,8 @@ public class GUIErrorMessage {
 	}
 
 	public void draw(final DisplayOutputDevice g, final Renderer r, final String msg) {
-		final int scrW = g.getWidth();
-		final int scrH = g.getHeight();
+		final int scrW = g.getGraphicEngine().getWidth();
+		final int scrH = g.getGraphicEngine().getHeight();
 		final int width = 200;
 		final int height = 20;
 		final int margin = 4;

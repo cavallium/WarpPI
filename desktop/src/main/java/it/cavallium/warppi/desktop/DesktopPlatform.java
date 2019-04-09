@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,14 +14,21 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 
 import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.boot.StartupArguments;
+import it.cavallium.warppi.device.DeviceStateDevice;
 import it.cavallium.warppi.device.display.BacklightOutputDevice;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.display.NoDisplaysAvailableException;
+import it.cavallium.warppi.device.display.NullBacklightOutputDevice;
 import it.cavallium.warppi.device.input.KeyboardInputDevice;
 import it.cavallium.warppi.device.input.TouchInputDevice;
 import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
+import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLDisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
+import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingDisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingEngine;
+import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingSkin;
 import it.cavallium.warppi.util.CacheUtils;
 import it.cavallium.warppi.util.Error;
 import net.lingala.zip4j.core.ZipFile;
@@ -36,6 +44,9 @@ public class DesktopPlatform implements Platform {
 	private final String on;
 	private final DesktopSettings settings;
 	private Boolean runningOnRaspberryOverride = null;
+	private StartupArguments args;
+	private DisplayOutputDevice displayOutputDevice;
+	private DeviceStateDevice deviceStateDevice;
 
 	public DesktopPlatform() {
 		cu = new DesktopConsoleUtils();
@@ -206,10 +217,11 @@ public class DesktopPlatform implements Platform {
 			runningOnRaspberryOverride = false;
 		}
 	}
-	
+
 	@Override
 	public boolean isRunningOnRaspberry() {
-		if (runningOnRaspberryOverride != null) return runningOnRaspberryOverride;
+		if (runningOnRaspberryOverride != null)
+			return runningOnRaspberryOverride;
 		return CacheUtils.get("isRunningOnRaspberry", 24 * 60 * 60 * 1000, () -> {
 			if (WarpPI.getPlatform().isJavascript())
 				return false;
@@ -239,16 +251,57 @@ public class DesktopPlatform implements Platform {
 
 	@Override
 	public DisplayOutputDevice getDisplayOutputDevice() {
-		return displayOutput
-				new SwingEngine();
-				new JOGLEngine();
-				List<DisplayOutputDevice> availableDevices = new LinkedList<>();
+		return this.displayOutputDevice;
 	}
 
 	@Override
 	public BacklightOutputDevice getBacklightOutputDevice() {
-		// TODO Auto-generated method stub
-		return null;
+		return new NullBacklightOutputDevice();
+	}
+
+	@Override
+	public DeviceStateDevice getDeviceStateDevice() {
+		return this.deviceStateDevice;
+	}
+
+	@Override
+	public void setArguments(StartupArguments args) {
+		this.args = args;
+		this.chooseDevices();
+	}
+
+	private void chooseDevices() {
+		List<DisplayOutputDevice> availableDevices = new ArrayList<>();
+		List<DisplayOutputDevice> guiDevices = List.of(new SwingDisplayOutputDevice(), new JOGLDisplayOutputDevice());
+		List<DisplayOutputDevice> consoleDevices = List.of();
+
+		if (args.isMSDOSModeEnabled() || args.isNoGUIEngineForced()) {
+			availableDevices.addAll(consoleDevices);
+		}
+		if (!args.isNoGUIEngineForced()) {
+			availableDevices.addAll(guiDevices);
+		}
+		
+		if (availableDevices.size() == 0) {
+			throw new NoDisplaysAvailableException();
+		}
+
+		for (DisplayOutputDevice device : availableDevices) {
+			if (device instanceof SwingDisplayOutputDevice) {
+				if (args.isCPUEngineForced()) {
+					this.displayOutputDevice = device;
+				}
+			} else if (device instanceof JOGLDisplayOutputDevice) {
+				if (args.isGPUEngineForced()) {
+					this.displayOutputDevice = device;
+					break;
+				}
+			}
+		}
+
+		if (this.displayOutputDevice == null) this.displayOutputDevice = availableDevices.get(0);
+		
+		this.deviceStateDevice = null; //TODO: Implement device state that listen exit signal from swing
 	}
 
 }

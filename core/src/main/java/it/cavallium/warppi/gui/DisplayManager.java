@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.Flow.Subscriber;
+import java.util.function.Consumer;
 
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform.ConsoleUtils;
@@ -11,9 +13,15 @@ import it.cavallium.warppi.Platform.Semaphore;
 import it.cavallium.warppi.device.display.BacklightOutputDevice;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.device.input.Keyboard;
+import it.cavallium.warppi.event.TouchCancelEvent;
+import it.cavallium.warppi.event.TouchEndEvent;
+import it.cavallium.warppi.event.TouchEvent;
+import it.cavallium.warppi.event.TouchMoveEvent;
+import it.cavallium.warppi.event.TouchStartEvent;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.flow.Pair;
+import it.cavallium.warppi.flow.Subscription;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
@@ -348,11 +356,11 @@ public final class DisplayManager implements RenderingLoop {
 				fnt.use(display);
 			}
 			renderer.glColor3i(129, 28, 22);
-			renderer.glDrawStringRight(StaticVars.screenSize[0] - 2,
-					StaticVars.screenSize[1] - (fnt.getCharacterHeight() + 2),
+			renderer.glDrawStringRight(display.getDisplaySize()[0] - 2,
+					display.getDisplaySize()[1] - (fnt.getCharacterHeight() + 2),
 					WarpPI.getPlatform().getSettings().getCalculatorNameUppercase() + " CALCULATOR");
 			renderer.glColor3i(149, 32, 26);
-			renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, 22, error);
+			renderer.glDrawStringCenter(display.getDisplaySize()[0] / 2, 22, error);
 			renderer.glColor3i(164, 34, 28);
 			int i = 22;
 			for (final String stackPart : errorStackTrace) {
@@ -363,7 +371,7 @@ public final class DisplayManager implements RenderingLoop {
 				fonts[0].use(display);
 			}
 			renderer.glColor3i(129, 28, 22);
-			renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, 11, "UNEXPECTED EXCEPTION");
+			renderer.glDrawStringCenter(display.getDisplaySize()[0] / 2, 11, "UNEXPECTED EXCEPTION");
 		} else {
 			if (fonts[0] != null && fonts[0] != graphicEngine.getRenderer().getCurrentFont()) {
 				fonts[0].use(display);
@@ -434,8 +442,8 @@ public final class DisplayManager implements RenderingLoop {
 
 				if (pair.getRight() != null) {
 					final Integer[] windowSize = pair.getRight();
-					StaticVars.screenSize[0] = windowSize[0];
-					StaticVars.screenSize[1] = windowSize[1];
+					display.getDisplaySize()[0] = windowSize[0];
+					display.getDisplaySize()[1] = windowSize[1];
 				}
 
 				screen.beforeRender((float) (dt / 1000d));
@@ -491,7 +499,31 @@ public final class DisplayManager implements RenderingLoop {
 		renderer.glFillRect(x, y, uvX2 - uvX, uvY2 - uvY, uvX, uvY, uvX2 - uvX, uvY2 - uvY);
 	}
 
-	public void waitForExit() {
-		graphicEngine.waitForExit();
+	public Consumer<TouchEvent> getTouchEventListener() {
+		return (TouchEvent t) -> {
+			boolean refresh = false;
+			if (screen != null && screen.initialized && executeTouchEventOnScreen(t, screen)) {
+				refresh = true;
+			} else {
+				//Default behavior
+			}
+			if (refresh) {
+				forceRefresh = true;
+			}
+		};
+	}
+	
+	private boolean executeTouchEventOnScreen(TouchEvent t, Screen scr) {
+		if (t instanceof TouchStartEvent) {
+			return scr.onTouchStart((TouchStartEvent) t);
+		} else if (t instanceof TouchMoveEvent) {
+			return scr.onTouchMove((TouchMoveEvent) t);
+		} else if (t instanceof TouchEndEvent) {
+			return scr.onTouchEnd((TouchEndEvent) t);
+		} else if (t instanceof TouchCancelEvent) {
+			return scr.onTouchCancel((TouchCancelEvent) t);
+		} else {
+			throw new UnsupportedOperationException();
+		}
 	}
 }

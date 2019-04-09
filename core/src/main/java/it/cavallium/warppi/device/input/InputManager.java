@@ -8,8 +8,6 @@ public class InputManager {
 		this.keyboard = keyboard;
 		this.touchDevice = touchscreen;
 	}
-	
-	// TODO: manage the keyboard and the touchscreen here!
 
 	public KeyboardInputDevice getKeyboard() {
 		return keyboard;
@@ -17,6 +15,11 @@ public class InputManager {
 
 	public TouchInputDevice getTouchDevice() {
 		return touchDevice;
+	}
+
+	public void initialize() {
+		this.keyboard.initialize();
+		this.touchDevice.initialize();
 	}
 
 }

@@ -4,6 +4,7 @@ import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.StaticVars;
+import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.gui.graphicengine.Skin;
 import it.cavallium.warppi.gui.screens.Screen;
@@ -39,7 +40,8 @@ public class CalculatorHUD extends HUD {
 	@Override
 	public void renderTopmostBackground() {
 		final Renderer r = d.renderer;
-		final DisplayOutputDevice engine = d.display;
+		final DisplayOutputDevice display = d.display;
+		final GraphicEngine engine = display.getGraphicEngine();
 
 		r.glColor(0xFFc5c2af);
 		r.glFillColor(0, 0, engine.getWidth(), 20);
@@ -48,14 +50,15 @@ public class CalculatorHUD extends HUD {
 	@Override
 	public void renderTopmost() {
 		final Renderer r = d.renderer;
-		final DisplayOutputDevice engine = d.display;
+		final DisplayOutputDevice display = d.display;
+		final GraphicEngine engine = display.getGraphicEngine();
 		final Skin guiSkin = d.guiSkin;
 
 		//DRAW TOP
 		r.glColor3i(0, 0, 0);
 		r.glDrawLine(0, 20, engine.getWidth() - 1, 20);
 		r.glColor3i(255, 255, 255);
-		guiSkin.use(engine);
+		guiSkin.use(display);
 		if (Keyboard.shift) {
 			r.glFillRect(2 + 18 * 0, 2, 16, 16, 16 * 2, 16 * 0, 16, 16);
 		} else {
@@ -71,7 +74,7 @@ public class CalculatorHUD extends HUD {
 
 		final int brightness = (int) Math.ceil(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getBrightness() * 9);
 		if (brightness <= 10) {
-			r.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * brightness, 16 * 1, 16, 16);
+			r.glFillRect(display.getDisplaySize()[0] - (padding + 16), 2, 16, 16, 16 * brightness, 16 * 1, 16, 16);
 		} else {
 			WarpPI.getPlatform().getConsoleUtils().out().println(1, "Brightness error");
 		}
@@ -82,18 +85,18 @@ public class CalculatorHUD extends HUD {
 		final boolean canGoForward = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().canGoForward();
 
 		if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
-			r.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 18, 16 * 0, 16, 16);
+			r.glFillRect(display.getDisplaySize()[0] - (padding + 16), 2, 16, 16, 16 * 18, 16 * 0, 16, 16);
 			padding += 18 + 6;
 		}
 
 		if (canGoBack && canGoForward) {
-			r.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 14, 16 * 0, 16, 16);
+			r.glFillRect(display.getDisplaySize()[0] - (padding + 16), 2, 16, 16, 16 * 14, 16 * 0, 16, 16);
 		} else if (canGoBack) {
-			r.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 15, 16 * 0, 16, 16);
+			r.glFillRect(display.getDisplaySize()[0] - (padding + 16), 2, 16, 16, 16 * 15, 16 * 0, 16, 16);
 		} else if (canGoForward) {
-			r.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 16, 16 * 0, 16, 16);
+			r.glFillRect(display.getDisplaySize()[0] - (padding + 16), 2, 16, 16, 16 * 16, 16 * 0, 16, 16);
 		} else {
-			r.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 17, 16 * 0, 16, 16);
+			r.glFillRect(display.getDisplaySize()[0] - (padding + 16), 2, 16, 16, 16 * 17, 16 * 0, 16, 16);
 		}
 
 		padding += 18;
@@ -101,15 +104,15 @@ public class CalculatorHUD extends HUD {
 		//DRAW BOTTOM
 		r.glDrawStringLeft(2, 90, d.displayDebugString);
 
-		Utils.getFont(true, false).use(engine);
+		Utils.getFont(true, false).use(display);
 		r.glColor4i(255, 0, 0, 40);
-		r.glDrawStringLeft(1 + 1, StaticVars.screenSize[1] - 7 - 7 + 1, "WORK IN");
+		r.glDrawStringLeft(1 + 1, display.getDisplaySize()[1] - 7 - 7 + 1, "WORK IN");
 		r.glColor4i(255, 0, 0, 80);
-		r.glDrawStringLeft(1, StaticVars.screenSize[1] - 7 - 7, "WORK IN");
+		r.glDrawStringLeft(1, display.getDisplaySize()[1] - 7 - 7, "WORK IN");
 		r.glColor4i(255, 0, 0, 40);
-		r.glDrawStringLeft(1 + 1, StaticVars.screenSize[1] - 7 + 1, "PROGRESS.");
+		r.glDrawStringLeft(1 + 1, display.getDisplaySize()[1] - 7 + 1, "PROGRESS.");
 		r.glColor4i(255, 0, 0, 80);
-		r.glDrawStringLeft(1, StaticVars.screenSize[1] - 7, "PROGRESS.");
+		r.glDrawStringLeft(1, display.getDisplaySize()[1] - 7, "PROGRESS.");
 		
 		int currentDebugLine = 2;
 		if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
@@ -126,7 +129,7 @@ public class CalculatorHUD extends HUD {
 				if (session != null) {
 					String title = session.getSessionTitle();
 					if (title != null && title.length() > 0) {
-						Utils.getFont(true).use(engine);
+						Utils.getFont(true).use(display);
 						if (session.historyBehavior == HistoryBehavior.DONT_KEEP_IN_HISTORY) {
 							r.glColor(0xFF3333FF);
 						} else if (session.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
@@ -134,19 +137,19 @@ public class CalculatorHUD extends HUD {
 						} else {
 							r.glColor(0xFF990000);
 						}
-						r.glDrawStringLeft(0, StaticVars.screenSize[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "[" + String.format("%1$03d", session.debugScreenID) + "] " + title.toUpperCase());
+						r.glDrawStringLeft(0, display.getDisplaySize()[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "[" + String.format("%1$03d", session.debugScreenID) + "] " + title.toUpperCase());
 						if (session == WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen()) {
 							r.glColor(0xFF00CC00);
 						} else {
 							r.glColor(0xFF990000);
 						}
-						r.glDrawStringLeft(0, StaticVars.screenSize[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "      " + title.toUpperCase());
+						r.glDrawStringLeft(0, display.getDisplaySize()[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "      " + title.toUpperCase());
 					}	
 					currentDebugLine++;
 				}
 			}
 			r.glColor(0xFF000000);
-			r.glDrawStringLeft(5, StaticVars.screenSize[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "DEBUG ENABLED");
+			r.glDrawStringLeft(5, display.getDisplaySize()[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "DEBUG ENABLED");
 		}
 	}
 

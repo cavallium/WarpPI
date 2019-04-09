@@ -23,7 +23,7 @@ public class JOGLSkin implements Skin {
 	private boolean initialized = false;
 	private boolean isResource;
 
-	JOGLSkin(final DisplayOutputDevice d, final String file) throws IOException {
+	JOGLSkin(final JOGLDisplayOutputDevice d, final String file) throws IOException {
 		load(file);
 	}
 
