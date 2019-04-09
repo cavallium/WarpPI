@@ -1,6 +1,8 @@
 package it.cavallium.warppi;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.boot.StartupArguments;
@@ -15,47 +17,45 @@ import it.cavallium.warppi.flow.BehaviorSubject;
 import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.DisplayManager;
 import it.cavallium.warppi.gui.HUD;
-import it.cavallium.warppi.gui.HardwareDisplay;
 import it.cavallium.warppi.gui.screens.Screen;
 import it.cavallium.warppi.util.ClassUtils;
+import it.cavallium.warppi.util.RunnableWithException;
 
 public class WarpPI {
 	public static final WarpPI INSTANCE = new WarpPI();
 	private static Platform platform;
 	private static boolean running = false;
-	private static BehaviorSubject<LoadingStatus> loadPhase = BehaviorSubject.create();
 	private final BehaviorSubject<Boolean> loaded = BehaviorSubject.create(false);
 	private Device device;
 
 	private WarpPI() {}
 
-	/**
-	 * Start an instance of the calculator.
-	 *
-	 * @param platform
-	 *            Platform implementation
-	 * @param screen
-	 *            Default screen to show at startup
-	 * @param hud
-	 *            Head-up display
-	 * @param args
-	 *            Startup arguments
-	 * @throws InterruptedException
-	 * @throws IOException
-	 */
-	public static void start(final Platform platform, final Screen screen, final HUD hud, final StartupArguments args)
-			throws InterruptedException, IOException {
+	/** 
+	 * Start an instance of the calculator. 
+	 * 
+	 * @param platform 
+	 *            Platform implementation 
+	 * @param screen 
+	 *            Default screen to show at startup 
+	 * @param hud 
+	 *            Head-up display 
+	 * @param args 
+	 *            Startup arguments 
+	 * @throws InterruptedException 
+	 * @throws IOException 
+	 */ 
+	public static Future<Void> start(final Platform platform, final Screen screen, final HUD hud, final StartupArguments args, final RunnableWithException onLoading) throws IOException {
 		if (WarpPI.running) {
 			throw new RuntimeException("Already running!");
 		} else {
 			WarpPI.running = true;
-			WarpPI.INSTANCE.startEngine(platform, screen, hud, args);
+			return WarpPI.INSTANCE.startInstance(platform, screen, hud, args, onLoading);
 		}
 	}
 
-	private void startEngine(final Platform platform, final Screen screen,
-			final HUD hud, final StartupArguments args)
-			throws InterruptedException, IOException {
+	private Future<Void> startInstance(final Platform platform, final Screen screen,
+			final HUD hud, final StartupArguments args, final RunnableWithException onLoading)
+			throws IOException {
 		WarpPI.platform = platform;
 		platform.getConsoleUtils().out().println("WarpPI Calculator");
 		initializeEnvironment(args);
@@ -63,15 +63,23 @@ public class WarpPI {
 		final Thread currentThread = Thread.currentThread();
 		currentThread.setPriority(Thread.MAX_PRIORITY);
 		WarpPI.getPlatform().setThreadName(currentThread, "Main thread");
-		final DisplayOutputDevice display = platform.getDisplayOutputDevice();
-		final BacklightOutputDevice backlight = platform.getBacklightOutputDevice();
-		final DisplayManager dm = new DisplayManager(display, backlight, hud, screen, "WarpPI Calculator by Andrea Cavalli (@Cavallium)");
-		final KeyboardInputDevice keyboard = platform.getKeyboardInputDevice();
-		final TouchInputDevice touchscreen = platform.getTouchInputDevice();
-		final InputManager im = new InputManager(keyboard, touchscreen);
-		device = new Device(dm, im);
 
-		device.setup(() -> WarpPI.loadPhase.onNext(new LoadingStatus()));
+		return CompletableFuture.runAsync(() -> {
+			try {
+				final DisplayOutputDevice display = platform.getDisplayOutputDevice();
+				final BacklightOutputDevice backlight = platform.getBacklightOutputDevice();
+				final DisplayManager dm = new DisplayManager(display, backlight, hud, screen, "WarpPI Calculator by Andrea Cavalli (@Cavallium)");
+				final KeyboardInputDevice keyboard = platform.getKeyboardInputDevice();
+				final TouchInputDevice touchscreen = platform.getTouchInputDevice();
+				final InputManager im = new InputManager(keyboard, touchscreen);
+				device = new Device(dm, im);
+				device.setup();
+				onLoading.run();
+				this.loadingCompleted();
+			} catch (Exception ex) {
+				this.loadingFailed(ex);
+			}
+		}).thenRun(this::onShutdown);
 	}
 
 	private void onShutdown() {
@@ -117,10 +125,6 @@ public class WarpPI {
 		return loaded;
 	}
 
-	public Observable<LoadingStatus> getLoadPhase() {
-		return WarpPI.loadPhase;
-	}
-
 	public Device getHardwareDevice() {
 		return device;
 	}
@@ -129,19 +133,13 @@ public class WarpPI {
 		return WarpPI.platform;
 	}
 
-	public static class LoadingStatus {
-		protected LoadingStatus() {
 
-		}
+	private void loadingCompleted() {
+		WarpPI.INSTANCE.loaded.onNext(true);
+		WarpPI.INSTANCE.device.getDisplayManager().waitForExit();
+	}
 
-		public void done() {
-			WarpPI.INSTANCE.loaded.onNext(true);
-			WarpPI.INSTANCE.device.getDisplayManager().waitForExit();
-			WarpPI.INSTANCE.onShutdown();
-		}
-
-		public void failed() {
-			WarpPI.INSTANCE.onShutdown();
-		}
+	private void loadingFailed(Exception e) {
+		e.printStackTrace();
 	}
 }

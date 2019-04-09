@@ -21,12 +21,8 @@ public class Device {
 		return inputManager;
 	}
 
-	public void setup(final Runnable r) {
+	public void setup() {
 		displayManager.initialize();
-		final Thread t = new Thread(r);
-		WarpPI.getPlatform().setThreadDaemon(t, false);
-		WarpPI.getPlatform().setThreadName(t, "Main thread (after setup)");
-		t.start();
 	}
 
 }
