@@ -26,6 +26,11 @@ public class UnexpectedCharacters implements DslError {
 		return unexpectedCharacters.length();
 	}
 
+	@Override
+	public <T> T accept(final DslError.Visitor<T> visitor) {
+		return visitor.visit(this);
+	}
+
 	/**
 	 * @return The string of one or more consecutive unexpected characters.
 	 */

@@ -32,6 +32,11 @@ public class UnexpectedToken implements DslError {
 		return unexpected.lexeme.length();
 	}
 
+	@Override
+	public <T> T accept(final DslError.Visitor<T> visitor) {
+		return visitor.visit(this);
+	}
+
 	/**
 	 * @return The unexpected token.
 	 */

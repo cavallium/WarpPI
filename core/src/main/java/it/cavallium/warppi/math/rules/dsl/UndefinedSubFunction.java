@@ -25,6 +25,11 @@ public class UndefinedSubFunction implements DslError {
 		return identifier.lexeme.length();
 	}
 
+	@Override
+	public <T> T accept(final DslError.Visitor<T> visitor) {
+		return visitor.visit(this);
+	}
+
 	/**
 	 * @return The name of the undefined sub-function.
 	 */

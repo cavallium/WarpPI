@@ -25,6 +25,11 @@ public class UnterminatedComment implements DslError {
 	}
 
 	@Override
+	public <T> T accept(final DslError.Visitor<T> visitor) {
+		return visitor.visit(this);
+	}
+
+	@Override
 	public boolean equals(final Object o) {
 		if (!(o instanceof UnterminatedComment)) {
 			return false;

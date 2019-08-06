@@ -28,6 +28,11 @@ public class IncompleteNumberLiteral implements DslError {
 		return literal.length();
 	}
 
+	@Override
+	public <T> T accept(final DslError.Visitor<T> visitor) {
+		return visitor.visit(this);
+	}
+
 	/**
 	 * @return The incomplete number literal.
 	 */
