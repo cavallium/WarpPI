@@ -21,6 +21,15 @@ public class LexerTest {
 	}
 
 	@Test
+	public void emptyInput() {
+		final Lexer lexer = new Lexer("", errors::add);
+		final List<Token> expected = Collections.singletonList(
+			new Token(EOF, "", 0)
+		);
+		assertEquals(expected, lexer.lex());
+	}
+
+	@Test
 	public void validRule() {
 		final Lexer lexer = new Lexer(
 				"reduction TestRule_123:\n" +
