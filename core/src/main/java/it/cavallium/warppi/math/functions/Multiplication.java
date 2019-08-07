@@ -85,7 +85,7 @@ public class Multiplication extends FunctionOperator {
 	}
 
 	@Override
-	public <T> T accept(final FunctionVisitor<T> visitor) {
+	public <T> T accept(final Function.Visitor<T> visitor) {
 		return visitor.visit(this);
 	}
 

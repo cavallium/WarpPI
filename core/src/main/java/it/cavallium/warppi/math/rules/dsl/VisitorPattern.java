@@ -1,7 +1,6 @@
 package it.cavallium.warppi.math.rules.dsl;
 
 import it.cavallium.warppi.math.Function;
-import it.cavallium.warppi.math.FunctionVisitor;
 import it.cavallium.warppi.math.functions.*;
 import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.functions.equations.Equation;
@@ -15,7 +14,7 @@ import java.util.Optional;
 /**
  * A <code>Pattern</code> which implements <code>match</code> as a visitor.
  */
-public abstract class VisitorPattern implements Pattern, FunctionVisitor<Optional<Map<String, Function>>> {
+public abstract class VisitorPattern implements Pattern, Function.Visitor<Optional<Map<String, Function>>> {
 	@Override
 	public Optional<Map<String, Function>> match(final Function function) {
 		return function.accept(this);

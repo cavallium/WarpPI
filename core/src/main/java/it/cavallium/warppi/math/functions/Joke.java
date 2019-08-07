@@ -2,7 +2,6 @@ package it.cavallium.warppi.math.functions;
 
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.math.Function;
-import it.cavallium.warppi.math.FunctionVisitor;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.util.Error;
@@ -63,7 +62,7 @@ public class Joke implements Function {
 	}
 
 	@Override
-	public <T> T accept(final FunctionVisitor<T> visitor) {
+	public <T> T accept(final Function.Visitor<T> visitor) {
 		return visitor.visit(this);
 	}
 

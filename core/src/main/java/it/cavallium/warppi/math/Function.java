@@ -1,6 +1,12 @@
 package it.cavallium.warppi.math;
 
 import it.cavallium.warppi.gui.expression.blocks.Block;
+import it.cavallium.warppi.math.functions.*;
+import it.cavallium.warppi.math.functions.Number;
+import it.cavallium.warppi.math.functions.equations.Equation;
+import it.cavallium.warppi.math.functions.equations.EquationsSystem;
+import it.cavallium.warppi.math.functions.equations.EquationsSystemPart;
+import it.cavallium.warppi.math.functions.trigonometry.*;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -82,11 +88,43 @@ public interface Function {
 	ObjectArrayList<Block> toBlock(MathContext context) throws Error;
 
 	/**
-	 * Accepts a <code>FunctionVisitor</code> by calling the correct overload of <code>visit</code>.
+	 * Accepts a <code>Function.Visitor</code> by calling the correct overload of <code>visit</code>.
 	 *
 	 * @param visitor The visitor to be accepted.
 	 * @param <T> The return type of the <code>visit</code> method.
 	 * @return The value returned by <code>visit</code>.
 	 */
-	<T> T accept(FunctionVisitor<T> visitor);
+	<T> T accept(Visitor<T> visitor);
+
+	/**
+	 * Executes a different overload of a method for each <code>Function</code> implementation.
+	 *
+	 * @param <T> The return type of all <code>visit</code> method overloads.
+	 */
+	interface Visitor<T> {
+		T visit(ArcCosine arcCosine);
+		T visit(ArcSine arcSine);
+		T visit(ArcTangent arcTangent);
+		T visit(Cosine cosine);
+		T visit(Division division);
+		T visit(Equation equation);
+		T visit(EquationsSystem equationsSystem);
+		T visit(EquationsSystemPart equationsSystemPart);
+		T visit(Expression expression);
+		T visit(Joke joke);
+		T visit(Logarithm logarithm);
+		T visit(Multiplication multiplication);
+		T visit(Negative negative);
+		T visit(Number number);
+		T visit(Power power);
+		T visit(Root root);
+		T visit(RootSquare rootSquare);
+		T visit(Sine sine);
+		T visit(Subtraction subtraction);
+		T visit(SumSubtraction sumSubtraction);
+		T visit(Sum sum);
+		T visit(Tangent tangent);
+		T visit(Undefined undefined);
+		T visit(Variable variable);
+	}
 }
