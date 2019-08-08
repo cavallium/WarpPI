@@ -28,9 +28,10 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<java.version>1.8</java.version>
+		<java.version>11</java.version>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.release>11</maven.compiler.release>
 		<src.dir>src/main/java</src.dir>
 		<src.dir2>src/main/java</src.dir2>
 		<src.resdir>src/main/resources</src.resdir>
@@ -43,7 +44,7 @@
 		<module>bigdecimal-math</module>
 		<module>Flow</module>
 		<module>rules</module>
-		<!-- <module>hardware</module>-->
+		<!-- <module>hardware</module> -->
 		<module>desktop</module>
 		<module>engine-jogl</module>
 		<module>teavm</module>
@@ -138,10 +139,6 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>3.8.0</version>
-					<configuration>
-						<source>${maven.compiler.source}</source>
-						<target>${maven.compiler.target}</target>
-					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -161,6 +158,12 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
 					<version>2.22.0</version>
+					<configuration>
+						<useSystemClassLoader>false</useSystemClassLoader>
+						<argLine>
+							--illegal-access=permit
+						</argLine>
+					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.felix</groupId>
@@ -212,7 +215,7 @@
 						</configuration>
 					</execution>
 				</executions>
-				</plugin>
+			</plugin>
 		</plugins>
 	</build>
 </project>
