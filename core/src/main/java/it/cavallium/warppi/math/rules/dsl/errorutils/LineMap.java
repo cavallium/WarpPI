@@ -181,11 +181,11 @@ public class LineMap {
 
 		@Override
 		public String toString() {
-			return new StringJoiner(", ", "Line{", "}")
-				.add("number=" + number)
-				.add("startPosition=" + startPosition)
-				.add("text='" + text + "'")
-				.toString();
+			return "Line{" +
+				"number=" + number +
+				", startPosition=" + startPosition +
+				", text='" + text + '\'' +
+				'}';
 		}
 	}
 }

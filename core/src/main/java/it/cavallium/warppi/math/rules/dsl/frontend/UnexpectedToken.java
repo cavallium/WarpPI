@@ -2,6 +2,8 @@ package it.cavallium.warppi.math.rules.dsl.frontend;
 
 import it.cavallium.warppi.math.rules.dsl.DslError;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -19,7 +21,7 @@ public class UnexpectedToken implements DslError {
 
 	public UnexpectedToken(final Token unexpected, final TokenType... suggested) {
 		this.unexpected = unexpected;
-		this.suggested = Set.of(suggested);
+		this.suggested = new HashSet<>(Arrays.asList(suggested)); // TeaVM doesn't support Set.of
 	}
 
 	@Override

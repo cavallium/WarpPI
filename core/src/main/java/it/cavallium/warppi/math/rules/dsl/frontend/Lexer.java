@@ -2,14 +2,9 @@ package it.cavallium.warppi.math.rules.dsl.frontend;
 
 import it.cavallium.warppi.math.rules.dsl.DslError;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static it.cavallium.warppi.math.rules.dsl.frontend.TokenType.*;
 
@@ -17,14 +12,19 @@ import static it.cavallium.warppi.math.rules.dsl.frontend.TokenType.*;
  * Converts the source string to a list of tokens.
  */
 public class Lexer {
-	private static final Map<String, TokenType> keywords = Stream.of(
+	private static final Map<String, TokenType> KEYWORDS;
+	static {
+		TokenType[] keywordTokenTypes = {
 			REDUCTION, EXPANSION, CALCULATION, EXISTENCE,
 			ARCCOS, ARCSIN, ARCTAN, COS, SIN, TAN, ROOT, SQRT, LOG,
 			UNDEFINED, PI, E
-	).collect(Collectors.toMap(
-			tokenType -> tokenType.name().toLowerCase(),
-			Function.identity()
-	));
+		};
+		Map<String, TokenType> map = new HashMap<>();
+		for (TokenType type : keywordTokenTypes) {
+			map.put(type.name().toLowerCase(), type);
+		}
+		KEYWORDS = Collections.unmodifiableMap(map);
+	}
 
 	private final String source;
 	private final Consumer<? super DslError> errorReporter;
@@ -160,7 +160,7 @@ public class Lexer {
 
 	private void keywordOrIdentifier() {
 		matchWhile(Character::isJavaIdentifierPart);
-		TokenType type = keywords.getOrDefault(currentLexeme(), IDENTIFIER);
+		TokenType type = KEYWORDS.getOrDefault(currentLexeme(), IDENTIFIER);
 		emitToken(type);
 	}
 

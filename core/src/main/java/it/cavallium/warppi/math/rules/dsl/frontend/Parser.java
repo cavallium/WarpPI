@@ -6,6 +6,7 @@ import it.cavallium.warppi.math.rules.dsl.DslError;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
 import it.cavallium.warppi.math.rules.dsl.PatternRule;
 import it.cavallium.warppi.math.rules.dsl.patterns.*;
+import it.cavallium.warppi.util.MapFactory;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -19,11 +20,11 @@ import static it.cavallium.warppi.math.rules.dsl.frontend.TokenType.*;
  * Converts a list of tokens to a list of <code>PatternRule</code>s.
  */
 public class Parser {
-	private static final Map<TokenType, RuleType> ruleTypes = Map.ofEntries(
-			Map.entry(REDUCTION, RuleType.REDUCTION),
-			Map.entry(EXPANSION, RuleType.EXPANSION),
-			Map.entry(CALCULATION, RuleType.CALCULATION),
-			Map.entry(EXISTENCE, RuleType.EXISTENCE)
+	private static final Map<TokenType, RuleType> RULE_TYPES = MapFactory.fromEntries(
+		MapFactory.entry(REDUCTION, RuleType.REDUCTION),
+		MapFactory.entry(EXPANSION, RuleType.EXPANSION),
+		MapFactory.entry(CALCULATION, RuleType.CALCULATION),
+		MapFactory.entry(EXISTENCE, RuleType.EXISTENCE)
 	);
 
 	private final List<Token> tokens;
@@ -57,7 +58,7 @@ public class Parser {
 				rules.add(rule());
 			} catch (final SyntaxException e) {
 				errorReporter.accept(e.getError());
-				synchronizeTo(ruleTypes.keySet()); // Skip to the next rule to minimize "false" errors
+				synchronizeTo(RULE_TYPES.keySet()); // Skip to the next rule to minimize "false" errors
 			}
 		}
 		return rules;
@@ -82,12 +83,12 @@ public class Parser {
 	// rule type = REDUCTION | EXPANSION | CALCULATION | EXISTENCE ;
 	private RuleType ruleType() throws SyntaxException {
 		final Token curToken = pop();
-		if (!ruleTypes.containsKey(curToken.type)) {
+		if (!RULE_TYPES.containsKey(curToken.type)) {
 			throw new SyntaxException(
-					new UnexpectedToken(curToken, ruleTypes.keySet())
+					new UnexpectedToken(curToken, RULE_TYPES.keySet())
 			);
 		}
-		return ruleTypes.get(curToken.type);
+		return RULE_TYPES.get(curToken.type);
 	}
 
 	// pattern = equation ;
@@ -126,18 +127,18 @@ public class Parser {
 
 	// sum = product , { ( PLUS | MINUS | PLUS_MINUS ) product } ;
 	private Pattern sum() throws SyntaxException {
-		return matchLeftAssoc(this::product, Map.ofEntries(
-				Map.entry(PLUS, SumPattern::new),
-				Map.entry(MINUS, SubtractionPattern::new),
-				Map.entry(PLUS_MINUS, SumSubtractionPattern::new)
+		return matchLeftAssoc(this::product, MapFactory.fromEntries(
+				MapFactory.entry(PLUS, SumPattern::new),
+				MapFactory.entry(MINUS, SubtractionPattern::new),
+				MapFactory.entry(PLUS_MINUS, SumSubtractionPattern::new)
 		));
 	}
 
 	// product = unary , { ( TIMES | DIVIDE ) unary } ;
 	private Pattern product() throws SyntaxException {
-		return matchLeftAssoc(this::unary, Map.ofEntries(
-				Map.entry(TIMES, MultiplicationPattern::new),
-				Map.entry(DIVIDE, DivisionPattern::new)
+		return matchLeftAssoc(this::unary, MapFactory.fromEntries(
+				MapFactory.entry(TIMES, MultiplicationPattern::new),
+				MapFactory.entry(DIVIDE, DivisionPattern::new)
 		));
 	}
 
@@ -170,18 +171,18 @@ public class Parser {
 	// function = ( ARCCOS | ARCSIN | ARCTAN | COS | SIN | SQRT | TAN ) , LEFT_PAREN , sum , RIGHT_PAREN
 	//          | ( LOG | ROOT ) LEFT_PAREN , sum , COMMA , sum , RIGHT_PAREN ;
 	private Pattern tryFunction() throws SyntaxException {
-		final Map<TokenType, Function<Pattern, Pattern>> oneArg = Map.ofEntries(
-				Map.entry(ARCCOS, ArcCosinePattern::new),
-				Map.entry(ARCSIN, ArcSinePattern::new),
-				Map.entry(ARCTAN, ArcTangentPattern::new),
-				Map.entry(COS, CosinePattern::new),
-				Map.entry(SIN, SinePattern::new),
-				Map.entry(SQRT, arg -> new RootPattern(new NumberPattern(new BigDecimal(2)), arg)),
-				Map.entry(TAN, TangentPattern::new)
+		final Map<TokenType, Function<Pattern, Pattern>> oneArg = MapFactory.fromEntries(
+				MapFactory.entry(ARCCOS, ArcCosinePattern::new),
+				MapFactory.entry(ARCSIN, ArcSinePattern::new),
+				MapFactory.entry(ARCTAN, ArcTangentPattern::new),
+				MapFactory.entry(COS, CosinePattern::new),
+				MapFactory.entry(SIN, SinePattern::new),
+				MapFactory.entry(SQRT, arg -> new RootPattern(new NumberPattern(new BigDecimal(2)), arg)),
+				MapFactory.entry(TAN, TangentPattern::new)
 		);
-		final Map<TokenType, BiFunction<Pattern, Pattern, Pattern>> twoArg = Map.ofEntries(
-				Map.entry(LOG, LogarithmPattern::new),
-				Map.entry(ROOT, RootPattern::new)
+		final Map<TokenType, BiFunction<Pattern, Pattern, Pattern>> twoArg = MapFactory.fromEntries(
+				MapFactory.entry(LOG, LogarithmPattern::new),
+				MapFactory.entry(ROOT, RootPattern::new)
 		);
 
 		final TokenType curType = peek().type;
