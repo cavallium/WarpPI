@@ -1,13 +1,8 @@
 package it.cavallium.warppi.math.rules;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.stream.Stream;
-
 import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.Platform.ConsoleUtils;
-import it.cavallium.warppi.Platform.StorageUtils;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Expression;
@@ -20,6 +15,10 @@ import it.cavallium.warppi.math.rules.functions.*;
 import it.cavallium.warppi.math.solver.MathSolver;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.stream.Stream;
 
 public class RulesManager {
 
@@ -37,18 +36,14 @@ public class RulesManager {
 
 		loadBuiltinRules();
 
-		if (Engine.getPlatform().isJavascript()) {
-			Engine.getPlatform().loadPlatformRules();
-		} else {
-			try {
-				loadDslRules();
-			} catch (IOException | DslFilesException e) {
-				e.printStackTrace();
-				if (e instanceof DslFilesException) {
-					System.err.print(((DslFilesException) e).format());
-				}
-				Engine.getPlatform().exit(1);
+		try {
+			loadDslRules();
+		} catch (IOException | DslFilesException e) {
+			e.printStackTrace();
+			if (e instanceof DslFilesException) {
+				System.err.print(((DslFilesException) e).format());
 			}
+			Engine.getPlatform().exit(1);
 		}
 	}
 
@@ -71,33 +66,29 @@ public class RulesManager {
 	}
 
 	private static void loadDslRules() throws IOException, DslFilesException {
-		final StorageUtils storageUtils = Engine.getPlatform().getStorageUtils();
-		final File dslRulesPath = storageUtils.get("rules/dsl/");
-		if (!dslRulesPath.exists()) {
-			return;
-		}
+		final Platform platform = Engine.getPlatform();
 
 		final DslFilesException fileErrors = new DslFilesException();
-		for (final File file : storageUtils.walk(dslRulesPath)) {
-			if (!file.toString().endsWith(".rules")) {
-				continue;
-			}
-
-			Engine.getPlatform().getConsoleUtils().out().println(
+		for (final String path : platform.getRuleFilePaths()) {
+			platform.getConsoleUtils().out().println(
 					ConsoleUtils.OUTPUTLEVEL_NODEBUG,
 					"RulesManager",
-					"Found DSL rules file: " + file.getAbsolutePath()
+					"Found DSL rules file: " + path
 			);
 
 			final String source;
-			try (final InputStream resource = storageUtils.getResourceStream(file.toString())) {
-				source = storageUtils.read(resource);
+			try (final InputStream resource = platform.getStorageUtils().getResourceStream(path)) {
+				source = platform.getStorageUtils().read(resource);
 			}
 
 			try {
-				RulesDsl.makeRules(source).forEach(RulesManager::addRule);
+				// This loop used to be written as RulesDsl.makeRules(source).forEach(RulesManager::addRule),
+				// but the forEach method hangs on TeaVM.
+				for (Rule rule : RulesDsl.makeRules(source)) {
+					addRule(rule);
+				}
 			} catch (DslAggregateException e) {
-				fileErrors.addFileErrors(file, source, e.getErrors());
+				fileErrors.addFileErrors(path, source, e.getErrors());
 			}
 		}
 

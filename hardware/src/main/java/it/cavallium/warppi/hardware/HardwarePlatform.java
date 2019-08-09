@@ -1,10 +1,13 @@
 package it.cavallium.warppi.hardware;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import it.cavallium.warppi.Platform;
@@ -146,8 +149,18 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public void loadPlatformRules() {
-
+	public List<String> getRuleFilePaths() throws IOException {
+		final File dslRulesPath = getStorageUtils().get("rules/dsl/");
+		List<String> paths = new ArrayList<>();
+		if (dslRulesPath.exists()) {
+			for (final File file : getStorageUtils().walk(dslRulesPath)) {
+				final String path = file.toString();
+				if (path.endsWith(".rules")) {
+					paths.add(path);
+				}
+			}
+		}
+		return paths;
 	}
 
 	@Override

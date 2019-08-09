@@ -2,7 +2,6 @@ package it.cavallium.warppi.math.rules.dsl.errorutils;
 
 import it.cavallium.warppi.math.rules.dsl.DslError;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,13 +14,13 @@ public class DslFilesException extends Exception {
 	/**
 	 * Registers errors which have been found in the specified DSL source file.
 	 *
-	 * @param file The path of the DSL source file in which the errors occurred.
-	 * @param source The entire contents of the DSL source file in which the errors occurred.
-	 * @param errors The (non-empty) list of errors found in the DSL source file.
+	 * @param filePath The path of the DSL source file in which the errors occurred.
+	 * @param source   The entire contents of the DSL source file in which the errors occurred.
+	 * @param errors   The (non-empty) list of errors found in the DSL source file.
 	 * @throws IllegalArgumentException If the list of errors is empty.
 	 */
-	public void addFileErrors(final File file, final String source, final List<DslError> errors) {
-		filesErrors.add(new FileErrors(file, source, errors));
+	public void addFileErrors(final String filePath, final String source, final List<DslError> errors) {
+		filesErrors.add(new FileErrors(filePath, source, errors));
 	}
 
 	/**

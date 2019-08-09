@@ -3,7 +3,6 @@ package it.cavallium.warppi.math.rules.dsl.errorutils;
 import it.cavallium.warppi.math.rules.dsl.DslError;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +25,7 @@ public class FilesErrorsFormatter {
 	 */
 	public String format(final List<FileErrors> filesErrors) {
 		return filesErrors.stream()
-				.sorted(Comparator.comparing(FileErrors::getFile))
+				.sorted(Comparator.comparing(FileErrors::getFilePath))
 				.flatMap(this::formatFileErrors)
 				.collect(Collectors.joining(System.lineSeparator()));
 	}
@@ -35,17 +34,17 @@ public class FilesErrorsFormatter {
 		final LineMap lines = new LineMap(fileErrors.getSource());
 		return fileErrors.getErrors().stream()
 				.sorted(Comparator.comparing(DslError::getPosition).thenComparing(DslError::getLength))
-				.map(error -> formatError(fileErrors.getFile(), lines, error));
+				.map(error -> formatError(fileErrors.getFilePath(), lines, error));
 	}
 
-	private String formatError(final File file, final LineMap lines, final DslError error) {
+	private String formatError(final String filePath, final LineMap lines, final DslError error) {
 		final StringBuilder builder = new StringBuilder();
 
 		final List<LineMap.Line> spannedLines = lines.getSpannedLines(error.getPosition(), error.getLength());
 		final LineMap.Line firstLine = spannedLines.get(0);
 		final int column = error.getPosition() - firstLine.getStartPosition() + 1;
 
-		builder.append(file.toString()).append(":")
+		builder.append(filePath).append(":")
 				.append(firstLine.getNumber()).append(":")
 				.append(column).append(":")
 				.append(System.lineSeparator());
