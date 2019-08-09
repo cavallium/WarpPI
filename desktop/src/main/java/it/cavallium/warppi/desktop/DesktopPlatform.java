@@ -160,7 +160,7 @@ public class DesktopPlatform implements Platform {
 
 	@Override
 	public List<String> getRuleFilePaths() throws IOException {
-		final File dslRulesPath = getStorageUtils().get("rules/dsl/");
+		final File dslRulesPath = getStorageUtils().get("rules/");
 		List<String> paths = new ArrayList<>();
 		if (dslRulesPath.exists()) {
 			for (final File file : getStorageUtils().walk(dslRulesPath)) {
