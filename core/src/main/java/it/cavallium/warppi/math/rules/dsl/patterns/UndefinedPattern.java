@@ -5,15 +5,17 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Undefined;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Matches and generates <code>Undefined</code>.
  */
 public class UndefinedPattern extends VisitorPattern {
 	@Override
-	public Optional<Map<String, Function>> visit(Undefined undefined) {
-		return Optional.of(Collections.emptyMap());
+	public Boolean visit(final Undefined undefined, final Map<String, Function> subFunctions) {
+		return true;
 	}
 
 	@Override

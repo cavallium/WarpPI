@@ -51,7 +51,7 @@ public class Negative extends FunctionSingle {
 	}
 
 	@Override
-	public <T> T accept(final Function.Visitor<T> visitor) {
-		return visitor.visit(this);
+	public <Argument, Result> Result accept(final Function.Visitor<Argument, Result> visitor, final Argument argument) {
+		return visitor.visit(this, argument);
 	}
 }

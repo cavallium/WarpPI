@@ -8,7 +8,6 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -22,15 +21,15 @@ public class ArcTangentPattern extends VisitorPattern {
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final ArcTangent arcTangent) {
-		return argument.match(arcTangent.getParameter());
+	public Boolean visit(final ArcTangent arcTangent, final Map<String, Function> subFunctions) {
+		return argument.match(arcTangent.getParameter(), subFunctions);
 	}
 
 	@Override
 	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
 		return new ArcTangent(
-				mathContext,
-				argument.replace(mathContext, subFunctions)
+			mathContext,
+			argument.replace(mathContext, subFunctions)
 		);
 	}
 

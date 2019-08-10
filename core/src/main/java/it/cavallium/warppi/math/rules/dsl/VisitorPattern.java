@@ -9,134 +9,133 @@ import it.cavallium.warppi.math.functions.equations.EquationsSystemPart;
 import it.cavallium.warppi.math.functions.trigonometry.*;
 
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * A <code>Pattern</code> which implements <code>match</code> as a visitor.
  */
-public abstract class VisitorPattern implements Pattern, Function.Visitor<Optional<Map<String, Function>>> {
+public abstract class VisitorPattern implements Pattern, Function.Visitor<Map<String, Function>, Boolean> {
 	@Override
-	public Optional<Map<String, Function>> match(final Function function) {
-		return function.accept(this);
+	public boolean match(Function function, Map<String, Function> subFunctions) {
+		return function.accept(this, subFunctions);
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final ArcCosine arcCosine) {
-		return Optional.empty();
+	public Boolean visit(final ArcCosine arcCosine, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final ArcSine arcSine) {
-		return Optional.empty();
+	public Boolean visit(final ArcSine arcSine, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final ArcTangent arcTangent) {
-		return Optional.empty();
+	public Boolean visit(final ArcTangent arcTangent, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Cosine cosine) {
-		return Optional.empty();
+	public Boolean visit(final Cosine cosine, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Division division) {
-		return Optional.empty();
+	public Boolean visit(final Division division, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Equation equation) {
-		return Optional.empty();
+	public Boolean visit(final Equation equation, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final EquationsSystem equationsSystem) {
-		return Optional.empty();
+	public Boolean visit(final EquationsSystem equationsSystem, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final EquationsSystemPart equationsSystemPart) {
-		return Optional.empty();
+	public Boolean visit(final EquationsSystemPart equationsSystemPart, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Expression expression) {
-		return Optional.empty();
+	public Boolean visit(final Expression expression, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Joke joke) {
-		return Optional.empty();
+	public Boolean visit(final Joke joke, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Logarithm logarithm) {
-		return Optional.empty();
+	public Boolean visit(final Logarithm logarithm, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Multiplication multiplication) {
-		return Optional.empty();
+	public Boolean visit(final Multiplication multiplication, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Negative negative) {
-		return Optional.empty();
+	public Boolean visit(final Negative negative, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Number number) {
-		return Optional.empty();
+	public Boolean visit(final Number number, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Power power) {
-		return Optional.empty();
+	public Boolean visit(final Power power, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Root root) {
-		return Optional.empty();
+	public Boolean visit(final Root root, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final RootSquare rootSquare) {
-		return Optional.empty();
+	public Boolean visit(final RootSquare rootSquare, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Sine sine) {
-		return Optional.empty();
+	public Boolean visit(final Sine sine, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Subtraction subtraction) {
-		return Optional.empty();
+	public Boolean visit(final Subtraction subtraction, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final SumSubtraction sumSubtraction) {
-		return Optional.empty();
+	public Boolean visit(final SumSubtraction sumSubtraction, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Sum sum) {
-		return Optional.empty();
+	public Boolean visit(final Sum sum, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Tangent tangent) {
-		return Optional.empty();
+	public Boolean visit(final Tangent tangent, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Undefined undefined) {
-		return Optional.empty();
+	public Boolean visit(final Undefined undefined, final Map<String, Function> subFunctions) {
+		return false;
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Variable variable) {
-		return Optional.empty();
+	public Boolean visit(final Variable variable, final Map<String, Function> subFunctions) {
+		return false;
 	}
 }

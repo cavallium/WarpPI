@@ -9,7 +9,6 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -25,16 +24,17 @@ public class SumPattern extends VisitorPattern {
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Sum sum) {
-		return PatternUtils.matchFunctionOperatorParameters(sum, left, right);
+	public Boolean visit(final Sum sum, final Map<String, Function> subFunctions) {
+		return left.match(sum.getParameter1(), subFunctions)
+			&& right.match(sum.getParameter2(), subFunctions);
 	}
 
 	@Override
 	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
 		return new Sum(
-				mathContext,
-				left.replace(mathContext, subFunctions),
-				right.replace(mathContext, subFunctions)
+			mathContext,
+			left.replace(mathContext, subFunctions),
+			right.replace(mathContext, subFunctions)
 		);
 	}
 

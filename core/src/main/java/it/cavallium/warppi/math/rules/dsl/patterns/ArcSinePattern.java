@@ -8,7 +8,6 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -22,15 +21,15 @@ public class ArcSinePattern extends VisitorPattern {
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final ArcSine arcSine) {
-		return argument.match(arcSine.getParameter());
+	public Boolean visit(final ArcSine arcSine, final Map<String, Function> subFunctions) {
+		return argument.match(arcSine.getParameter(), subFunctions);
 	}
 
 	@Override
 	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
 		return new ArcSine(
-				mathContext,
-				argument.replace(mathContext, subFunctions)
+			mathContext,
+			argument.replace(mathContext, subFunctions)
 		);
 	}
 

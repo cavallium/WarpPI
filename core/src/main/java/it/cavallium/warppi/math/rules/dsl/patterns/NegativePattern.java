@@ -10,7 +10,6 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -24,18 +23,18 @@ public class NegativePattern extends VisitorPattern {
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Negative negative) {
-		return inner.match(negative.getParameter());
+	public Boolean visit(final Negative negative, final Map<String, Function> subFunctions) {
+		return inner.match(negative.getParameter(), subFunctions);
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Number number) {
+	public Boolean visit(final Number number, final Map<String, Function> subFunctions) {
 		final BigDecimal value = number.getTerm();
-		if (value.signum() < 0) {
-			return inner.match(new Number(number.getMathContext(), value.abs()));
-		} else {
-			return Optional.empty();
+		if (value.signum() >= 0) {
+			return false;
 		}
+		final Number absoluteValue = new Number(number.getMathContext(), value.abs());
+		return inner.match(absoluteValue, subFunctions);
 	}
 
 	@Override
@@ -46,8 +45,8 @@ public class NegativePattern extends VisitorPattern {
 			return ((Number) newInner).multiply(new Number(mathContext, -1));
 		} else {
 			return new Negative(
-					mathContext,
-					inner.replace(mathContext, subFunctions)
+				mathContext,
+				inner.replace(mathContext, subFunctions)
 			);
 		}
 	}

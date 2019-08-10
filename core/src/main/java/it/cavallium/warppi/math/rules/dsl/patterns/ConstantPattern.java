@@ -5,7 +5,10 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Variable;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * Matches and generates a specific symbolic constant.
@@ -18,13 +21,9 @@ public class ConstantPattern extends VisitorPattern {
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Variable variable) {
-		if (variable.getType().equals(Variable.V_TYPE.CONSTANT)
-				&& variable.getChar() == symbol) {
-			return Optional.of(Collections.emptyMap());
-		} else {
-			return Optional.empty();
-		}
+	public Boolean visit(final Variable variable, final Map<String, Function> subFunctions) {
+		return variable.getType().equals(Variable.V_TYPE.CONSTANT)
+			&& variable.getChar() == symbol;
 	}
 
 	@Override

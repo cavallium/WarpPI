@@ -9,7 +9,6 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -25,16 +24,17 @@ public class DivisionPattern extends VisitorPattern {
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Division division) {
-		return PatternUtils.matchFunctionOperatorParameters(division, dividend, divisor);
+	public Boolean visit(final Division division, final Map<String, Function> subFunctions) {
+		return dividend.match(division.getParameter1(), subFunctions)
+			&& divisor.match(division.getParameter2(), subFunctions);
 	}
 
 	@Override
 	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
 		return new Division(
-				mathContext,
-				dividend.replace(mathContext, subFunctions),
-				divisor.replace(mathContext, subFunctions)
+			mathContext,
+			dividend.replace(mathContext, subFunctions),
+			divisor.replace(mathContext, subFunctions)
 		);
 	}
 

@@ -88,43 +88,47 @@ public interface Function {
 	ObjectArrayList<Block> toBlock(MathContext context) throws Error;
 
 	/**
-	 * Accepts a <code>Function.Visitor</code> by calling the correct overload of <code>visit</code>.
+	 * Accepts a {@code Function.Visitor<Argument, Result>} by calling the correct overload of <code>visit</code>.
 	 *
-	 * @param visitor The visitor to be accepted.
-	 * @param <T> The return type of the <code>visit</code> method.
+	 * @param visitor    The visitor to be accepted.
+	 * @param argument   An additional argument to be passed to <code>visit</code>.
+	 * @param <Argument> The type of an additional argument to be passed to the <code>visit</code> method.
+	 * @param <Result>   The return type of the <code>visit</code> method.
 	 * @return The value returned by <code>visit</code>.
 	 */
-	<T> T accept(Visitor<T> visitor);
+	<Argument, Result> Result accept(Visitor<Argument, Result> visitor, Argument argument);
 
 	/**
 	 * Executes a different overload of a method for each <code>Function</code> implementation.
 	 *
-	 * @param <T> The return type of all <code>visit</code> method overloads.
+	 * @param <Argument> The type of an additional argument which can be passed to all <code>visit</code> method overloads.
+	 *                   If the argument is not required, this type parameter should be set to {@link Void}.
+	 * @param <Result>   The return type of all <code>visit</code> method overloads.
 	 */
-	interface Visitor<T> {
-		T visit(ArcCosine arcCosine);
-		T visit(ArcSine arcSine);
-		T visit(ArcTangent arcTangent);
-		T visit(Cosine cosine);
-		T visit(Division division);
-		T visit(Equation equation);
-		T visit(EquationsSystem equationsSystem);
-		T visit(EquationsSystemPart equationsSystemPart);
-		T visit(Expression expression);
-		T visit(Joke joke);
-		T visit(Logarithm logarithm);
-		T visit(Multiplication multiplication);
-		T visit(Negative negative);
-		T visit(Number number);
-		T visit(Power power);
-		T visit(Root root);
-		T visit(RootSquare rootSquare);
-		T visit(Sine sine);
-		T visit(Subtraction subtraction);
-		T visit(SumSubtraction sumSubtraction);
-		T visit(Sum sum);
-		T visit(Tangent tangent);
-		T visit(Undefined undefined);
-		T visit(Variable variable);
+	interface Visitor<Argument, Result> {
+		Result visit(ArcCosine arcCosine, Argument argument);
+		Result visit(ArcSine arcSine, Argument argument);
+		Result visit(ArcTangent arcTangent, Argument argument);
+		Result visit(Cosine cosine, Argument argument);
+		Result visit(Division division, Argument argument);
+		Result visit(Equation equation, Argument argument);
+		Result visit(EquationsSystem equationsSystem, Argument argument);
+		Result visit(EquationsSystemPart equationsSystemPart, Argument argument);
+		Result visit(Expression expression, Argument argument);
+		Result visit(Joke joke, Argument argument);
+		Result visit(Logarithm logarithm, Argument argument);
+		Result visit(Multiplication multiplication, Argument argument);
+		Result visit(Negative negative, Argument argument);
+		Result visit(Number number, Argument argument);
+		Result visit(Power power, Argument argument);
+		Result visit(Root root, Argument argument);
+		Result visit(RootSquare rootSquare, Argument argument);
+		Result visit(Sine sine, Argument argument);
+		Result visit(Subtraction subtraction, Argument argument);
+		Result visit(SumSubtraction sumSubtraction, Argument argument);
+		Result visit(Sum sum, Argument argument);
+		Result visit(Tangent tangent, Argument argument);
+		Result visit(Undefined undefined, Argument argument);
+		Result visit(Variable variable, Argument argument);
 	}
 }

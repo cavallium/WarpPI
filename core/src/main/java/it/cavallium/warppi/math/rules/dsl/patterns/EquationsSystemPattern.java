@@ -7,7 +7,9 @@ import it.cavallium.warppi.math.rules.dsl.Pattern;
 import it.cavallium.warppi.math.rules.dsl.PatternUtils;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Matches and generates a system of equations of multiple other patterns.
@@ -20,28 +22,27 @@ public class EquationsSystemPattern extends VisitorPattern {
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final EquationsSystem equationsSystem) {
+	public Boolean visit(final EquationsSystem equationsSystem, final Map<String, Function> subFunctions) {
 		if (patterns.length != equationsSystem.getParametersLength()) {
-			return Optional.empty();
+			return false;
 		}
 
-		Optional<Map<String, Function>> subFunctions = Optional.of(Collections.emptyMap());
-		for (int i = 0; i < patterns.length && subFunctions.isPresent(); i++) {
+		for (int i = 0; i < patterns.length; i++) {
 			final Pattern curPattern = patterns[i];
 			final Function curFunction = equationsSystem.getParameter(i);
-			subFunctions = subFunctions
-					.flatMap(prevMatch -> curPattern.match(curFunction)
-							.flatMap(curMatch -> PatternUtils.mergeMatches(prevMatch, curMatch))
-					);
+			if (!curPattern.match(curFunction, subFunctions)) {
+				return false;
+			}
 		}
-		return subFunctions;
+
+		return true;
 	}
 
 	@Override
 	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
 		final Function[] functions = Arrays.stream(patterns)
-				.map(pattern -> pattern.replace(mathContext, subFunctions))
-				.toArray(Function[]::new);
+			.map(pattern -> pattern.replace(mathContext, subFunctions))
+			.toArray(Function[]::new);
 		return new EquationsSystem(mathContext, functions);
 	}
 

@@ -9,7 +9,6 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -25,16 +24,17 @@ public class EquationPattern extends VisitorPattern {
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Equation equation) {
-		return PatternUtils.matchFunctionOperatorParameters(equation, left, right);
+	public Boolean visit(final Equation equation, final Map<String, Function> subFunctions) {
+		return left.match(equation.getParameter1(), subFunctions)
+			&& right.match(equation.getParameter2(), subFunctions);
 	}
 
 	@Override
 	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
 		return new Equation(
-				mathContext,
-				left.replace(mathContext, subFunctions),
-				right.replace(mathContext, subFunctions)
+			mathContext,
+			left.replace(mathContext, subFunctions),
+			right.replace(mathContext, subFunctions)
 		);
 	}
 

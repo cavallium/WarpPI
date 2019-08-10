@@ -9,7 +9,6 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -25,16 +24,17 @@ public class PowerPattern extends VisitorPattern {
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Power power) {
-		return PatternUtils.matchFunctionOperatorParameters(power, base, exponent);
+	public Boolean visit(final Power power, final Map<String, Function> subFunctions) {
+		return base.match(power.getParameter1(), subFunctions)
+			&& exponent.match(power.getParameter2(), subFunctions);
 	}
 
 	@Override
 	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
 		return new Power(
-				mathContext,
-				base.replace(mathContext, subFunctions),
-				exponent.replace(mathContext, subFunctions)
+			mathContext,
+			base.replace(mathContext, subFunctions),
+			exponent.replace(mathContext, subFunctions)
 		);
 	}
 

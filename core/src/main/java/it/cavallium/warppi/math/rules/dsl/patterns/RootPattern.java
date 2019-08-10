@@ -12,7 +12,6 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -30,13 +29,15 @@ public class RootPattern extends VisitorPattern {
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(final Root root) {
-		return PatternUtils.matchFunctionOperatorParameters(root, degree, radicand);
+	public Boolean visit(final Root root, final Map<String, Function> subFunctions) {
+		return degree.match(root.getParameter1(), subFunctions)
+			&& radicand.match(root.getParameter2(), subFunctions);
 	}
 
 	@Override
-	public Optional<Map<String, Function>> visit(RootSquare rootSquare) {
-		return PatternUtils.matchFunctionOperatorParameters(rootSquare, degree, radicand);
+	public Boolean visit(final RootSquare rootSquare, final Map<String, Function> subFunctions) {
+		return degree.match(rootSquare.getParameter1(), subFunctions)
+			&& radicand.match(rootSquare.getParameter2(), subFunctions);
 	}
 
 	@Override
@@ -45,7 +46,7 @@ public class RootPattern extends VisitorPattern {
 		final Function newRadicand = radicand.replace(mathContext, subFunctions);
 
 		if (newDegree instanceof Number
-				&& ((Number) newDegree).getTerm().compareTo(new BigDecimal(2)) == 0) {
+			&& ((Number) newDegree).getTerm().compareTo(new BigDecimal(2)) == 0) {
 			return new RootSquare(mathContext, newRadicand);
 		} else {
 			return new Root(mathContext, newDegree, newRadicand);
