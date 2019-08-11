@@ -4,12 +4,11 @@ import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.SumSubtraction;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
-import it.cavallium.warppi.math.rules.dsl.PatternUtils;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Matches and generates a sum/subtraction (±) of two other patterns.
@@ -39,8 +38,9 @@ public class SumSubtractionPattern extends VisitorPattern {
 	}
 
 	@Override
-	public Set<SubFunctionPattern> getSubFunctions() {
-		return PatternUtils.getSubFunctionsFrom(left, right);
+	public Stream<SubFunctionPattern> getSubFunctions() {
+		return Stream.of(left, right)
+			.flatMap(Pattern::getSubFunctions);
 	}
 
 	@Override

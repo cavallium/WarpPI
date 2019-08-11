@@ -4,12 +4,11 @@ import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.equations.EquationsSystem;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
-import it.cavallium.warppi.math.rules.dsl.PatternUtils;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Matches and generates a system of equations of multiple other patterns.
@@ -47,8 +46,9 @@ public class EquationsSystemPattern extends VisitorPattern {
 	}
 
 	@Override
-	public Set<SubFunctionPattern> getSubFunctions() {
-		return PatternUtils.getSubFunctionsFrom(patterns);
+	public Stream<SubFunctionPattern> getSubFunctions() {
+		return Stream.of(patterns)
+			.flatMap(Pattern::getSubFunctions);
 	}
 
 	@Override

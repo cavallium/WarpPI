@@ -7,7 +7,7 @@ import it.cavallium.warppi.math.rules.dsl.patterns.SubFunctionPattern;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Recognizes and generates functions of some specific shape.
@@ -51,8 +51,10 @@ public interface Pattern {
 	Function replace(MathContext mathContext, Map<String, Function> subFunctions);
 
 	/**
-	 * @return The (possibly empty) <code>Set</code> of all sub-function patterns
+	 * @return A (possibly empty) <code>Stream</code> of all sub-function patterns
 	 *         found within this pattern and its children.
+	 *         If there are multiple sub-function patterns with the same name, the stream still contains all of them.
+	 *         The order of the patterns within the stream is unspecified.
 	 */
-	Set<SubFunctionPattern> getSubFunctions();
+	Stream<SubFunctionPattern> getSubFunctions();
 }

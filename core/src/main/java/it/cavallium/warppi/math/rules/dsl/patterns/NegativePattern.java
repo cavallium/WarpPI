@@ -10,7 +10,7 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Matches and generates the negative of another pattern.
@@ -52,7 +52,7 @@ public class NegativePattern extends VisitorPattern {
 	}
 
 	@Override
-	public Set<SubFunctionPattern> getSubFunctions() {
+	public Stream<SubFunctionPattern> getSubFunctions() {
 		return inner.getSubFunctions();
 	}
 

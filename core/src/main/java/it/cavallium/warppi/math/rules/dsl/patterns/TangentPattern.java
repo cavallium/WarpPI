@@ -8,7 +8,7 @@ import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Matches and generates the tangent of another pattern.
@@ -34,7 +34,7 @@ public class TangentPattern extends VisitorPattern {
 	}
 
 	@Override
-	public Set<SubFunctionPattern> getSubFunctions() {
+	public Stream<SubFunctionPattern> getSubFunctions() {
 		return argument.getSubFunctions();
 	}
 

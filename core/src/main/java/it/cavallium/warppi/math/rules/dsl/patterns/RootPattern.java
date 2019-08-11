@@ -6,13 +6,12 @@ import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.functions.Root;
 import it.cavallium.warppi.math.functions.RootSquare;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
-import it.cavallium.warppi.math.rules.dsl.PatternUtils;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Matches and generates a root of degree and radicand patterns.
@@ -54,8 +53,9 @@ public class RootPattern extends VisitorPattern {
 	}
 
 	@Override
-	public Set<SubFunctionPattern> getSubFunctions() {
-		return PatternUtils.getSubFunctionsFrom(degree, radicand);
+	public Stream<SubFunctionPattern> getSubFunctions() {
+		return Stream.of(degree, radicand)
+			.flatMap(Pattern::getSubFunctions);
 	}
 
 	@Override

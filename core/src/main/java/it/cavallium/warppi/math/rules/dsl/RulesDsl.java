@@ -6,6 +6,8 @@ import it.cavallium.warppi.math.rules.dsl.frontend.Parser;
 import it.cavallium.warppi.math.rules.dsl.patterns.SubFunctionPattern;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Implements a domain-specific language (DSL) for the definition of {@link Rule}s.
@@ -28,9 +30,10 @@ public class RulesDsl {
 		final List<PatternRule> rules = parser.parse();
 
 		for (final PatternRule rule : rules) {
-			undefinedSubFunctions(rule).stream()
-					.flatMap(subFunc -> parser.getSubFunctionIdentifiers(rule, subFunc).stream())
-					.map(UndefinedSubFunction::new)
+			undefinedSubFunctions(rule)
+					.map(subFunc -> new UndefinedSubFunction(
+						parser.getSubFunctionIdentifier(subFunc)
+					))
 					.forEach(errors::add);
 		}
 
@@ -46,15 +49,12 @@ public class RulesDsl {
 	 * without being defined (captured) in the target pattern.
 	 *
 	 * @param rule The rule to analyze.
-	 * @return The (possibly empty) set of undefined sub-functions.
+	 * @return A (possibly empty) <code>Stream</code> of undefined sub-functions.
 	 */
-	private static Set<SubFunctionPattern> undefinedSubFunctions(final PatternRule rule) {
-		final Set<SubFunctionPattern> defined = rule.getTarget().getSubFunctions();
-		final Set<SubFunctionPattern> undefined = new HashSet<>();
-		for (final Pattern replacement : rule.getReplacements()) {
-			undefined.addAll(replacement.getSubFunctions());
-		}
-		undefined.removeAll(defined);
-		return undefined;
+	private static Stream<SubFunctionPattern> undefinedSubFunctions(final PatternRule rule) {
+		final Set<SubFunctionPattern> defined = rule.getTarget().getSubFunctions().collect(Collectors.toSet());
+		return rule.getReplacements().stream()
+			.flatMap(Pattern::getSubFunctions)
+			.filter(subFunc -> !defined.contains(subFunc));
 	}
 }

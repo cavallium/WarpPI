@@ -4,12 +4,11 @@ import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Power;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
-import it.cavallium.warppi.math.rules.dsl.PatternUtils;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Matches and generates a power (exponentiation) of base and exponent patterns.
@@ -39,8 +38,9 @@ public class PowerPattern extends VisitorPattern {
 	}
 
 	@Override
-	public Set<SubFunctionPattern> getSubFunctions() {
-		return PatternUtils.getSubFunctionsFrom(base, exponent);
+	public Stream<SubFunctionPattern> getSubFunctions() {
+		return Stream.of(base, exponent)
+			.flatMap(Pattern::getSubFunctions);
 	}
 
 	@Override

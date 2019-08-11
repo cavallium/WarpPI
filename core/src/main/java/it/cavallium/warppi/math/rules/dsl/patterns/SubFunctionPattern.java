@@ -4,10 +4,9 @@ import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Matches and generates any function as a named sub-function.
@@ -31,8 +30,8 @@ public class SubFunctionPattern implements Pattern {
 	}
 
 	@Override
-	public Set<SubFunctionPattern> getSubFunctions() {
-		return Collections.singleton(this);
+	public Stream<SubFunctionPattern> getSubFunctions() {
+		return Stream.of(this);
 	}
 
 	@Override

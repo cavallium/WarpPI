@@ -32,10 +32,8 @@ public class Parser {
 	private int currentIndex = 0;
 
 	// For error reporting
-	private Map<SubFunctionPattern, List<Token>> ruleSubFunctionIdentifiers;
-	// An IdentityHashMap is used to distinguish rules even if they're identical (equal)
-	private final IdentityHashMap<PatternRule, Map<SubFunctionPattern, List<Token>>> subFunctionIdentifiers =
-			new IdentityHashMap<>();
+	// An IdentityHashMap is used to distinguish SubFunctionPatterns even if they're identical (equal)
+	private final IdentityHashMap<SubFunctionPattern, Token> subFunctionIdentifiers = new IdentityHashMap<>();
 
 	/**
 	 * Constructs a <code>Parser</code> that will produce a list of {@link PatternRule}s from the the given list of {@link Token}s.
@@ -64,8 +62,21 @@ public class Parser {
 		return rules();
 	}
 
-	public List<Token> getSubFunctionIdentifiers(final PatternRule rule, final SubFunctionPattern subFunction) {
-		return subFunctionIdentifiers.get(rule).get(subFunction);
+	/**
+	 * Retrieves the <code>IDENTIFIER</code> token which corresponds to the given <code>SubFunctionPattern</code>.
+	 * <p>
+	 * The information returned by this method can be used to point out the location of sub-function related errors
+	 * within the DSL source code.
+	 *
+	 * @param subFunction a <code>SubFunctionsPattern</code> from one of the rules returned by this <code>Parser</code>
+	 *                    instance. While <code>SubFunctionPattern</code>s with the same name are considered equal,
+	 *                    this method can distinguish between them, in order to return the exact identifier which led
+	 *                    to the creation of the specified <code>SubFunctionPattern</code> object.
+	 * @return the <code>Token</code> (of type <code>IDENTIFIER</code>) which corresponds to the given
+	 * 	       <code>SubFunctionPattern</code>.
+	 */
+	public Token getSubFunctionIdentifier(final SubFunctionPattern subFunction) {
+		return subFunctionIdentifiers.get(subFunction);
 	}
 
 	// rules = { rule } , EOF ;
@@ -88,14 +99,11 @@ public class Parser {
 	private PatternRule rule() throws SyntaxException {
 		final RuleType type = ruleType();
 		final String name = matchOrFail(IDENTIFIER).lexeme;
-		ruleSubFunctionIdentifiers = new HashMap<>(); // Must be initialized before calling pattern() and replacements()
 		matchOrFail(COLON);
 		final Pattern target = pattern();
 		matchOrFail(ARROW);
 		final List<Pattern> replacements = replacements();
-		final PatternRule rule = new PatternRule(name, type, target, replacements);
-		subFunctionIdentifiers.put(rule, ruleSubFunctionIdentifiers);
-		return rule;
+		return new PatternRule(name, type, target, replacements);
 	}
 
 	// rule type = REDUCTION | EXPANSION | CALCULATION | EXISTENCE ;
@@ -247,7 +255,7 @@ public class Parser {
 				return new NumberPattern(new BigDecimal(curToken.lexeme));
 			case IDENTIFIER:
 				final SubFunctionPattern subFunction = new SubFunctionPattern(curToken.lexeme);
-				saveSubFunctionIdentifier(subFunction, curToken);
+				subFunctionIdentifiers.put(subFunction, curToken);
 				return subFunction;
 			case LEFT_PAREN:
 				final Pattern grouped = sum();
@@ -255,14 +263,6 @@ public class Parser {
 				return grouped;
 		}
 		throw new SyntaxException(new UnexpectedToken(curToken));
-	}
-
-	private void saveSubFunctionIdentifier(final SubFunctionPattern subFunction, final Token curToken) {
-		final List<Token> subFunctionList = ruleSubFunctionIdentifiers.computeIfAbsent(
-				subFunction,
-				key -> new ArrayList<>()
-		);
-		subFunctionList.add(curToken);
 	}
 
 	private Pattern matchLeftAssoc(

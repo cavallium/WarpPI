@@ -52,11 +52,11 @@ public class PatternRule implements Rule {
 		return ruleType;
 	}
 
-	Pattern getTarget() {
+	public Pattern getTarget() {
 		return target;
 	}
 
-	List<Pattern> getReplacements() {
+	public List<Pattern> getReplacements() {
 		return replacements;
 	}
 

@@ -6,10 +6,9 @@ import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Matches and generates a specific number.
@@ -32,8 +31,8 @@ public class NumberPattern extends VisitorPattern {
 	}
 
 	@Override
-	public Set<SubFunctionPattern> getSubFunctions() {
-		return Collections.emptySet();
+	public Stream<SubFunctionPattern> getSubFunctions() {
+		return Stream.empty();
 	}
 
 	@Override

@@ -6,6 +6,7 @@ import it.cavallium.warppi.math.rules.dsl.DslError;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
 import it.cavallium.warppi.math.rules.dsl.PatternRule;
 import it.cavallium.warppi.math.rules.dsl.patterns.*;
+import org.apache.commons.lang3.ObjectUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static it.cavallium.warppi.math.rules.dsl.frontend.TokenType.*;
 import static org.junit.Assert.*;
@@ -344,21 +346,11 @@ public class ParserTest {
 		final Parser parser = new Parser(tokens, errors::add);
 		final List<PatternRule> rules = parser.parse();
 
-		assertEquals(rule0x, toReferenceEquality(
-				parser.getSubFunctionIdentifiers(rules.get(0), new SubFunctionPattern("x"))
-		));
-		assertEquals(rule1x, toReferenceEquality(
-				parser.getSubFunctionIdentifiers(rules.get(1), new SubFunctionPattern("x"))
-		));
-		assertEquals(rule1y, toReferenceEquality(
-				parser.getSubFunctionIdentifiers(rules.get(1), new SubFunctionPattern("y"))
-		));
-		assertEquals(rule2x, toReferenceEquality(
-				parser.getSubFunctionIdentifiers(rules.get(2), new SubFunctionPattern("x"))
-		));
-		assertEquals(rule3x, toReferenceEquality(
-				parser.getSubFunctionIdentifiers(rules.get(3), new SubFunctionPattern("x"))
-		));
+		assertEquals(rule0x, getSubFunctionIdentifiers(parser, rules.get(0), "x"));
+		assertEquals(rule1x, getSubFunctionIdentifiers(parser, rules.get(1), "x"));
+		assertEquals(rule1y, getSubFunctionIdentifiers(parser, rules.get(1), "y"));
+		assertEquals(rule2x, getSubFunctionIdentifiers(parser, rules.get(2), "x"));
+		assertEquals(rule3x, getSubFunctionIdentifiers(parser, rules.get(3), "x"));
 	}
 
 	private static Token addIdentifierToken(final List<ReferenceEqualityToken> list, final String identifier) {
@@ -367,10 +359,22 @@ public class ParserTest {
 		return token;
 	}
 
-	private static List<ReferenceEqualityToken> toReferenceEquality(final List<Token> tokens) {
-		return tokens.stream()
-				.map(ReferenceEqualityToken::new)
-				.collect(Collectors.toList());
+	private static List<ReferenceEqualityToken> getSubFunctionIdentifiers(
+		final Parser parser,
+		final PatternRule rule,
+		final String subFunctionName
+	) {
+		final SubFunctionPattern exampleSubFunction = new SubFunctionPattern(subFunctionName);
+		final Stream<SubFunctionPattern> allSubFunctions = Stream.concat(
+			rule.getTarget().getSubFunctions(),
+			rule.getReplacements().stream().flatMap(Pattern::getSubFunctions)
+		);
+		return allSubFunctions
+			.filter(subFunc -> subFunc.equals(exampleSubFunction)) // Match the name without having access to it directly
+			.map(subFunc -> new ReferenceEqualityToken(
+				parser.getSubFunctionIdentifier(subFunc)
+			))
+			.collect(Collectors.toList());
 	}
 
 	private static class ReferenceEqualityToken {
@@ -386,6 +390,11 @@ public class ParserTest {
 				return false;
 			}
 			return this.token == ((ReferenceEqualityToken) o).token;
+		}
+
+		@Override
+		public String toString() {
+			return "ReferenceEqualityToken{" + ObjectUtils.identityToString(token) + '}';
 		}
 	}
 

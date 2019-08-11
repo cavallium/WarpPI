@@ -5,9 +5,8 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Undefined;
 import it.cavallium.warppi.math.rules.dsl.VisitorPattern;
 
-import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Matches and generates <code>Undefined</code>.
@@ -24,8 +23,8 @@ public class UndefinedPattern extends VisitorPattern {
 	}
 
 	@Override
-	public Set<SubFunctionPattern> getSubFunctions() {
-		return Collections.emptySet();
+	public Stream<SubFunctionPattern> getSubFunctions() {
+		return Stream.empty();
 	}
 
 	@Override
