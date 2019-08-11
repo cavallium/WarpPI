@@ -17,7 +17,7 @@ import java.util.function.Function;
 import static it.cavallium.warppi.math.rules.dsl.frontend.TokenType.*;
 
 /**
- * Converts a list of tokens to a list of <code>PatternRule</code>s.
+ * Converts a list of {@link Token}s to a list of {@link PatternRule}s.
  */
 public class Parser {
 	private static final Map<TokenType, RuleType> RULE_TYPES = MapFactory.fromEntries(
@@ -29,7 +29,7 @@ public class Parser {
 
 	private final List<Token> tokens;
 	private final Consumer<? super DslError> errorReporter;
-	private int current = 0;
+	private int currentIndex = 0;
 
 	// For error reporting
 	private Map<SubFunctionPattern, List<Token>> ruleSubFunctionIdentifiers;
@@ -37,11 +37,29 @@ public class Parser {
 	private final IdentityHashMap<PatternRule, Map<SubFunctionPattern, List<Token>>> subFunctionIdentifiers =
 			new IdentityHashMap<>();
 
+	/**
+	 * Constructs a <code>Parser</code> that will produce a list of {@link PatternRule}s from the the given list of {@link Token}s.
+	 *
+	 * @param tokens        the list of <code>Token</code>s to process.
+	 * @param errorReporter a <code>Consumer</code> used to report each <code>DslError</code> that the
+	 *                      <code>Parser</code> finds within the source string.
+	 */
 	public Parser(final List<Token> tokens, final Consumer<? super DslError> errorReporter) {
 		this.tokens = tokens;
 		this.errorReporter = errorReporter;
 	}
 
+	/**
+	 * Runs the <code>Parser</code>.
+	 * <p>
+	 * This method can only be called once per instance.
+	 *
+	 * @return the list of all valid <code>PatternRule</code>s constructed from the given tokens.
+	 * 	       If any errors are reported, this list should not be considered to represent a valid set of DSL rules,
+	 * 		   but each rule can still be analyzed to look for undefined sub-functions in replacement patterns and
+	 * 		   report them (which may allow the user to fix more errors before having to rerun the <code>Lexer</code>
+	 * 		   and <code>Parser</code>).
+	 */
 	public List<PatternRule> parse() {
 		return rules();
 	}
@@ -264,42 +282,42 @@ public class Parser {
 		final Token matched = match(expectedType);
 		if (matched == null) {
 			throw new SyntaxException(
-					new UnexpectedToken(tokens.get(current), expectedType)
+					new UnexpectedToken(tokens.get(currentIndex), expectedType)
 			);
 		}
 		return matched;
 	}
 
 	private Token match(final TokenType expectedType) {
-		final Token curToken = tokens.get(current);
+		final Token curToken = tokens.get(currentIndex);
 		if (curToken.type != expectedType) {
 			return null;
 		}
-		current++;
+		currentIndex++;
 		return curToken;
 	}
 
 	private void synchronizeTo(final Set<TokenType> types) {
-		while (!atEnd() && !types.contains(tokens.get(current).type)) {
-			current++;
+		while (!atEnd() && !types.contains(tokens.get(currentIndex).type)) {
+			currentIndex++;
 		}
 	}
 
 	private Token pop() throws SyntaxException {
-		final Token curToken = tokens.get(current);
+		final Token curToken = tokens.get(currentIndex);
 		if (atEnd()) {
 			throw new SyntaxException(new UnexpectedToken(curToken)); // Avoid popping EOF
 		}
-		current++;
+		currentIndex++;
 		return curToken;
 	}
 
 	private Token peek() {
-		return tokens.get(current);
+		return tokens.get(currentIndex);
 	}
 
 	private boolean atEnd() {
-		return tokens.get(current).type == EOF;
+		return tokens.get(currentIndex).type == EOF;
 	}
 
 	@FunctionalInterface

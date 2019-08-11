@@ -1,5 +1,8 @@
 package it.cavallium.warppi.math.rules.dsl.frontend;
 
+/**
+ * Specifies the type of a <code>Token</code>.
+ */
 public enum TokenType {
 	EOF,
 	// Separators and grouping

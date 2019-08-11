@@ -9,7 +9,7 @@ import java.util.function.Predicate;
 import static it.cavallium.warppi.math.rules.dsl.frontend.TokenType.*;
 
 /**
- * Converts the source string to a list of tokens.
+ * Converts the source <code>String</code> to a list of {@link Token}s.
  */
 public class Lexer {
 	private static final Map<String, TokenType> KEYWORDS;
@@ -34,11 +34,28 @@ public class Lexer {
 	private int curPosition = 0;
 	private UnexpectedCharacters unexpectedCharacters = null;
 
+	/**
+	 * Constructs a <code>Lexer</code> that will split the given source code into {@link Token}s.
+	 *
+	 * @param source        a <code>String</code> containing the DSL source code to process.
+	 * @param errorReporter a <code>Consumer</code> used to report each <code>DslError</code> that the
+	 *                      <code>Lexer</code> finds within the source string.
+	 */
 	public Lexer(final String source, final Consumer<? super DslError> errorReporter) {
 		this.source = source;
 		this.errorReporter = errorReporter;
 	}
 
+	/**
+	 * Runs the <code>Lexer</code>.
+	 * <p>
+	 * This method can only be called once per instance.
+	 *
+	 * @return the list of <code>Token</code>s extracted from the source string.
+	 * 		   If any errors are reported, this list should not be considered to represent a valid set of DSL rules,
+	 * 		   but it can still be parsed to potentially find additional errors (which may allow the user to fix more
+	 * 		   errors before having to rerun the <code>Lexer</code>).
+	 */
 	public List<Token> lex() {
 		while (!atEnd()) {
 			startOfLexeme = curPosition;

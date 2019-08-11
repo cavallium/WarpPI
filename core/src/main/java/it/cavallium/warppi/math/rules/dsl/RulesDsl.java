@@ -57,6 +57,4 @@ public class RulesDsl {
 		undefined.removeAll(defined);
 		return undefined;
 	}
-
-
 }
