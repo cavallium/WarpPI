@@ -3,7 +3,7 @@ package it.cavallium.warppi.math.rules.dsl.errorutils;
 import java.util.Arrays;
 
 /**
- * Represents a string in which tabs have been expanded (replaced with spaces).
+ * Represents a line of text in which tabs have been expanded (replaced with spaces).
  * <p>
  * Each tab character is replaced with the number of spaces required to get to the next tab stop
  * (that is, the next column which is a multiple of the tab stop width).
@@ -15,8 +15,9 @@ public class TabExpandedString {
 	/**
 	 * Constructs a tab-expanded string with the given tab stop width.
 	 *
-	 * @param string The string to expand.
+	 * @param string The string to expand. Must not contain any line separator characters ('\r' or '\n').
 	 * @param tabWidth The tab stop width.
+	 * @throws IllegalArgumentException If <code>string</code> contains any line separator characters.
 	 */
 	public TabExpandedString(final String string, final int tabWidth) {
 		final StringBuilder builder = new StringBuilder();
@@ -26,14 +27,20 @@ public class TabExpandedString {
 			final char c = string.charAt(i);
 			charWidths[i] = 1;
 
-			if (c == '\t') {
-				builder.append(' ');
-				while (builder.length() % tabWidth != 0) {
+			switch (c) {
+				case '\r':
+				case '\n':
+					throw new IllegalArgumentException("The string to expand is not a single line: " + string);
+				case '\t':
 					builder.append(' ');
-					charWidths[i]++;
-				}
-			} else {
-				builder.append(c);
+					while (builder.length() % tabWidth != 0) {
+						builder.append(' ');
+						charWidths[i]++;
+					}
+					break;
+				default:
+					builder.append(c);
+					break;
 			}
 		}
 
