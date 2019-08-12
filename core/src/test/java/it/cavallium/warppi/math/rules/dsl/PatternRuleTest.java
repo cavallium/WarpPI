@@ -10,13 +10,13 @@ import it.cavallium.warppi.math.rules.RuleType;
 import it.cavallium.warppi.math.rules.dsl.patterns.*;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class PatternRuleTest {
+class PatternRuleTest {
 	private final MathContext mathContext = new MathContext();
 
 	private final Pattern x = new SubFunctionPattern("x");
@@ -26,7 +26,7 @@ public class PatternRuleTest {
 	);
 
 	@Test
-	public void testNonMatching() throws InterruptedException, Error {
+	void testNonMatching() throws InterruptedException, Error {
 		final Function func = new Sum(
 				mathContext,
 				new Number(mathContext, 1),
@@ -38,7 +38,7 @@ public class PatternRuleTest {
 	}
 
 	@Test
-	public void testMatching() throws InterruptedException, Error {
+	void testMatching() throws InterruptedException, Error {
 		final Function func = new Sum(
 				mathContext,
 				new Number(mathContext, 1),
@@ -57,7 +57,7 @@ public class PatternRuleTest {
 	}
 
 	@Test
-	public void testMatchingRecursive() throws InterruptedException, Error {
+	void testMatchingRecursive() throws InterruptedException, Error {
 		final Function func = new Sum(
 				mathContext,
 				new Number(mathContext, 3),
@@ -85,13 +85,14 @@ public class PatternRuleTest {
 	}
 
 	@Test
-	public void testMultipleReplacements() throws InterruptedException, Error {
+	void testMultipleReplacements() throws InterruptedException, Error {
 		final Number one = new Number(mathContext, 1);
 		final Number two = new Number(mathContext, 2);
 		final Function func = new SumSubtraction(mathContext, one, two);
 
 		final Pattern x = new SubFunctionPattern("x");
 		final Pattern y = new SubFunctionPattern("y");
+		@SuppressWarnings("SuspiciousNameCombination")
 		final PatternRule rule = new PatternRule(
 				"TestRule",
 				RuleType.EXPANSION,
@@ -108,7 +109,7 @@ public class PatternRuleTest {
 	}
 
 	@Test
-	public void testNoReplacements() throws InterruptedException, Error {
+	void testNoReplacements() throws InterruptedException, Error {
 		final Function func = new Sum(
 				mathContext,
 				new Number(mathContext, 1),

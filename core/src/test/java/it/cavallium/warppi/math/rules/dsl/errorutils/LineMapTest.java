@@ -1,16 +1,16 @@
 package it.cavallium.warppi.math.rules.dsl.errorutils;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class LineMapTest {
+class LineMapTest {
 	@Test
-	public void emptyText() {
+	void emptyText() {
 		String text = "";
 		LineMap map = new LineMap(text);
 
@@ -18,7 +18,7 @@ public class LineMapTest {
 	}
 
 	@Test
-	public void noLineSeparators() {
+	void noLineSeparators() {
 		String text = "single line";
 		LineMap map = new LineMap(text);
 
@@ -29,7 +29,7 @@ public class LineMapTest {
 	}
 
 	@Test
-	public void trailingLf() {
+	void trailingLf() {
 		String text = "single line\n";
 		LineMap map = new LineMap(text);
 
@@ -40,7 +40,7 @@ public class LineMapTest {
 	}
 
 	@Test
-	public void trailingCr() {
+	void trailingCr() {
 		String text = "single line\r";
 		LineMap map = new LineMap(text);
 
@@ -51,7 +51,7 @@ public class LineMapTest {
 	}
 
 	@Test
-	public void trailingCrLf() {
+	void trailingCrLf() {
 		String text = "single line\r\n";
 		LineMap map = new LineMap(text);
 
@@ -62,7 +62,7 @@ public class LineMapTest {
 	}
 
 	@Test
-	public void multipleNonEmptyLines() {
+	void multipleNonEmptyLines() {
 		String text = "line 1\nline 2\rline 3\r\nline 4";
 		LineMap map = new LineMap(text);
 
@@ -76,7 +76,7 @@ public class LineMapTest {
 	}
 
 	@Test
-	public void singleEmptyLine() {
+	void singleEmptyLine() {
 		String text = "\n";
 		LineMap map = new LineMap(text);
 
@@ -87,7 +87,7 @@ public class LineMapTest {
 	}
 
 	@Test
-	public void multipleEmptyLines() {
+	void multipleEmptyLines() {
 		String text = "\r\n\n\r";
 		LineMap map = new LineMap(text);
 
@@ -100,7 +100,7 @@ public class LineMapTest {
 	}
 
 	@Test
-	public void mixedEmptyAndNonEmptyLines() {
+	void mixedEmptyAndNonEmptyLines() {
 		String text = "line 1\nline 2\r\r\nline 4\n\n";
 		LineMap map = new LineMap(text);
 
@@ -115,7 +115,7 @@ public class LineMapTest {
 	}
 
 	@Test
-	public void emptySubstrings() {
+	void emptySubstrings() {
 		String text = "single line\n";
 		LineMap map = new LineMap(text);
 
@@ -128,7 +128,7 @@ public class LineMapTest {
 	}
 
 	@Test
-	public void substringIsJustLineSeparator() {
+	void substringIsJustLineSeparator() {
 		String separator = "\n";
 		String text = "line 1" + separator + "line 2";
 		LineMap map = new LineMap(text);

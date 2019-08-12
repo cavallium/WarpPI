@@ -10,23 +10,18 @@ import it.cavallium.warppi.math.rules.dsl.patterns.NegativePattern;
 import it.cavallium.warppi.math.rules.dsl.patterns.NumberPattern;
 import it.cavallium.warppi.math.rules.dsl.patterns.SubFunctionPattern;
 import it.cavallium.warppi.math.rules.dsl.patterns.SumPattern;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class RulesDslTest {
-	@org.junit.Rule
-	public ExpectedException thrown = ExpectedException.none();
-
+class RulesDslTest {
 	@Test
-	public void validRules() throws DslAggregateException {
+	void validRules() throws DslAggregateException {
 		final List<Rule> rules = RulesDsl.makeRules(
 				"reduction test1: x -> x\n" +
 				"expansion test2:\n" +
@@ -63,38 +58,35 @@ public class RulesDslTest {
 	}
 
 	@Test
-	public void lexerError() throws DslAggregateException {
-		thrown.expect(DslAggregateException.class);
-		thrown.expect(equalTo(
-				new DslAggregateException(Collections.singletonList(
-						new IncompleteNumberLiteral(16, "2.")
-				))
-		));
-
-		RulesDsl.makeRules("reduction test: 2. 5 -> 1");
+	void lexerError() {
+		final var exception = assertThrows(DslAggregateException.class, () ->
+			RulesDsl.makeRules("reduction test: 2. 5 -> 1")
+		);
+		final var expectedErrors = Collections.singletonList(
+			new IncompleteNumberLiteral(16, "2.")
+		);
+		assertEquals(expectedErrors, exception.getErrors());
 	}
 
 	@Test
-	public void parserError() throws DslAggregateException {
-		thrown.expect(DslAggregateException.class);
-		thrown.expect(equalTo(
-				new DslAggregateException(Collections.singletonList(
-						new UnexpectedToken(new Token(TokenType.EOF, "", 24))
-				))
-		));
-
-		RulesDsl.makeRules("existence test: x + y ->");
+	void parserError() {
+		final var exception = assertThrows(DslAggregateException.class, () ->
+			RulesDsl.makeRules("existence test: x + y ->")
+		);
+		final var expectedErrors = Collections.singletonList(
+			new UnexpectedToken(new Token(TokenType.EOF, "", 24))
+		);
+		assertEquals(expectedErrors, exception.getErrors());
 	}
 
 	@Test
-	public void undefinedSubFunction() throws DslAggregateException {
-		thrown.expect(DslAggregateException.class);
-		thrown.expect(equalTo(
-				new DslAggregateException(Collections.singletonList(
-						new UndefinedSubFunction(new Token(TokenType.IDENTIFIER, "y", 25))
-				))
-		));
-
-		RulesDsl.makeRules("expansion test: x -> x + y");
+	void undefinedSubFunction() {
+		final var exception = assertThrows(DslAggregateException.class, () ->
+			RulesDsl.makeRules("expansion test: x -> x + y")
+		);
+		final var expectedErrors = Collections.singletonList(
+			new UndefinedSubFunction(new Token(TokenType.IDENTIFIER, "y", 25))
+		);
+		assertEquals(expectedErrors, exception.getErrors());
 	}
 }

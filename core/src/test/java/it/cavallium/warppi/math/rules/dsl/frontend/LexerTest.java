@@ -1,8 +1,8 @@
 package it.cavallium.warppi.math.rules.dsl.frontend;
 
 import it.cavallium.warppi.math.rules.dsl.DslError;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,18 +10,18 @@ import java.util.Collections;
 import java.util.List;
 
 import static it.cavallium.warppi.math.rules.dsl.frontend.TokenType.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class LexerTest {
+class LexerTest {
 	private final List<DslError> errors = new ArrayList<>();
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 		errors.clear();
 	}
 
 	@Test
-	public void emptyInput() {
+	void emptyInput() {
 		final Lexer lexer = new Lexer("", errors::add);
 		final List<Token> expected = Collections.singletonList(
 			new Token(EOF, "", 0)
@@ -30,7 +30,7 @@ public class LexerTest {
 	}
 
 	@Test
-	public void validRule() {
+	void validRule() {
 		final Lexer lexer = new Lexer(
 				"reduction TestRule_123:\n" +
 				"  x + y * z = -(a_123 +- 3 / 2.2) -> [\n" +
@@ -85,7 +85,7 @@ public class LexerTest {
 	}
 
 	@Test
-	public void incompleteNumberOtherChar() {
+	void incompleteNumberOtherChar() {
 		final Lexer lexer = new Lexer("2. 5 + 3", errors::add);
 
 		final List<Token> expectedTokens = Arrays.asList(
@@ -103,7 +103,7 @@ public class LexerTest {
 	}
 
 	@Test
-	public void incompleteNumberEof() {
+	void incompleteNumberEof() {
 		final Lexer lexer = new Lexer("2.", errors::add);
 
 		final List<Token> expectedTokens = Collections.singletonList(
@@ -118,7 +118,7 @@ public class LexerTest {
 	}
 
 	@Test
-	public void unexpectedCharacters() {
+	void unexpectedCharacters() {
 		final Lexer lexer = new Lexer("reduction @| .: {}", errors::add);
 
 		final List<Token> expectedTokens = Arrays.asList(
@@ -137,7 +137,7 @@ public class LexerTest {
 	}
 
 	@Test
-	public void unterminatedComment() {
+	void unterminatedComment() {
 		final Lexer lexer = new Lexer("reduction /* test:\n x -> x", errors::add);
 
 		final List<Token> expectedTokens = Arrays.asList(
@@ -153,7 +153,7 @@ public class LexerTest {
 	}
 
 	@Test
-	public void errorOrder() {
+	void errorOrder() {
 		final Lexer lexer = new Lexer(".2. @", errors::add);
 
 		final List<Token> expectedTokens = Collections.singletonList(

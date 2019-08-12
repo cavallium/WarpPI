@@ -29,18 +29,4 @@ public class DslAggregateException extends Exception {
 	public List<DslError> getErrors() {
 		return errors;
 	}
-
-	@Override
-	public boolean equals(final Object o) {
-		if (!(o instanceof DslAggregateException)) {
-			return false;
-		}
-		final DslAggregateException other = (DslAggregateException) o;
-		return this.errors.equals(other.errors);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(errors);
-	}
 }

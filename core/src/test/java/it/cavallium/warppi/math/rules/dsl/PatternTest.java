@@ -10,18 +10,18 @@ import it.cavallium.warppi.math.functions.equations.EquationsSystem;
 import it.cavallium.warppi.math.functions.trigonometry.*;
 import it.cavallium.warppi.math.rules.dsl.patterns.*;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class PatternTest {
+class PatternTest {
 	private final MathContext mathContext = new MathContext();
 
 	@Test
-	public void subFunctionPattern() {
+	void subFunctionPattern() {
 		final Pattern pattern = new SubFunctionPattern("x");
 
 		final Function func = new Sum(
@@ -36,16 +36,19 @@ public class PatternTest {
 		assertEquals(func, pattern.replace(mathContext, subFunctions.get()));
 	}
 
-	@Test(expected = UndefinedSubFunctionException.class) // TODO assert exception.getSubFunctionName().equals("x")
-	public void undefinedSubFunction() {
+	@Test
+	void undefinedSubFunction() {
 		final Pattern pattern = new SubFunctionPattern("x");
 		final Map<String, Function> subFunctions = Collections.singletonMap("y", new Number(mathContext, 1));
 
-		pattern.replace(mathContext, subFunctions);
+		final var exception = assertThrows(UndefinedSubFunctionException.class, () ->
+			pattern.replace(mathContext, subFunctions)
+		);
+		assertEquals("x", exception.getSubFunctionName());
 	}
 
 	@Test
-	public void sumPattern() {
+	void sumPattern() {
 		final Pattern pattern = new SumPattern(
 				new SubFunctionPattern("x"),
 				new SubFunctionPattern("y")
@@ -69,7 +72,7 @@ public class PatternTest {
 	}
 
 	@Test
-	public void repeatedSubFunction() {
+	void repeatedSubFunction() {
 		final Pattern pattern = new SumPattern(
 				new SubFunctionPattern("x"),
 				new SubFunctionPattern("x")
@@ -93,7 +96,7 @@ public class PatternTest {
 	}
 
 	@Test
-	public void numberPattern() {
+	void numberPattern() {
 		final Pattern pattern = new NumberPattern(BigDecimal.valueOf(Math.PI));
 
 		final Function shouldNotMatch = new Number(mathContext, 2);
@@ -106,7 +109,7 @@ public class PatternTest {
 	}
 
 	@Test
-	public void negativePattern() {
+	void negativePattern() {
 		final Pattern pattern = new NegativePattern(
 				new SubFunctionPattern("x")
 		);
@@ -124,7 +127,7 @@ public class PatternTest {
 	}
 
 	@Test
-	public void negativePatternForNumber() {
+	void negativePatternForNumber() {
 		final Pattern pattern = new NegativePattern(
 				new NumberPattern(new BigDecimal(1))
 		);
@@ -139,7 +142,7 @@ public class PatternTest {
 	}
 
 	@Test
-	public void undefinedPattern() {
+	void undefinedPattern() {
 		final Pattern pattern = new UndefinedPattern();
 
 		final Function shouldNotMatch = new Number(mathContext, 0);
@@ -152,7 +155,7 @@ public class PatternTest {
 	}
 
 	@Test
-	public void equationsSystemPattern() {
+	void equationsSystemPattern() {
 		final Pattern pattern = new EquationsSystemPattern(new Pattern[]{
 				new SubFunctionPattern("x"),
 				new SubFunctionPattern("y"),
@@ -182,7 +185,7 @@ public class PatternTest {
 	}
 
 	@Test
-	public void rootPatternForRootSquare() {
+	void rootPatternForRootSquare() {
 		final Pattern pattern = new RootPattern(
 				new SubFunctionPattern("x"),
 				new SubFunctionPattern("y")
@@ -210,7 +213,7 @@ public class PatternTest {
 	}
 
 	@Test
-	public void constantPattern() {
+	void constantPattern() {
 		final Pattern pattern = new ConstantPattern(MathematicalSymbols.PI);
 
 		final Function shouldNotMatch = new Variable(
@@ -231,7 +234,7 @@ public class PatternTest {
 	}
 
 	@Test
-	public void otherBinaryPatterns() {
+	void otherBinaryPatterns() {
 		final Number one = new Number(mathContext, 1);
 		final Number two = new Number(mathContext, 2);
 		final SubFunctionPattern x = new SubFunctionPattern("x");
@@ -239,6 +242,7 @@ public class PatternTest {
 
 		final Function shouldNotMatch = new Sum(mathContext, one, two);
 
+		@SuppressWarnings("SuspiciousNameCombination")
 		final List<ImmutablePair<Pattern, Function>> patternsAndMatchingFunctions = Arrays.asList(
 				new ImmutablePair<>(
 						new DivisionPattern(x, y),
@@ -278,7 +282,7 @@ public class PatternTest {
 	}
 
 	@Test
-	public void otherUnaryPatterns() {
+	void otherUnaryPatterns() {
 		final Number one = new Number(mathContext, 1);
 		final SubFunctionPattern x = new SubFunctionPattern("x");
 

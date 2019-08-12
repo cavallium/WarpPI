@@ -7,8 +7,8 @@ import it.cavallium.warppi.math.rules.dsl.Pattern;
 import it.cavallium.warppi.math.rules.dsl.PatternRule;
 import it.cavallium.warppi.math.rules.dsl.patterns.*;
 import org.apache.commons.lang3.ObjectUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -19,18 +19,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static it.cavallium.warppi.math.rules.dsl.frontend.TokenType.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ParserTest {
+class ParserTest {
 	private final List<DslError> errors = new ArrayList<>();
 
-	@Before
-	public void setUp() {
+	@BeforeEach
+	void setUp() {
 		errors.clear();
 	}
 
 	@Test
-	public void noRules() {
+	void noRules() {
 		final List<Token> tokens = Collections.singletonList(
 				new Token(EOF, "", 0)
 		);
@@ -39,7 +39,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void validRuleMultipleReplacements() {
+	void validRuleMultipleReplacements() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
 				new Token(IDENTIFIER, "TestRule_123", 10),
@@ -127,7 +127,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void validRuleNoReplacements() {
+	void validRuleNoReplacements() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
 				new Token(IDENTIFIER, "test", 0),
@@ -154,7 +154,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void validRuleOneReplacement() {
+	void validRuleOneReplacement() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
 				new Token(IDENTIFIER, "test", 0),
@@ -188,7 +188,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void validRuleOneReplacementBrackets() {
+	void validRuleOneReplacementBrackets() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
 				new Token(IDENTIFIER, "test", 0),
@@ -232,7 +232,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void multipleValidRules() {
+	void multipleValidRules() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
 				new Token(IDENTIFIER, "test1", 0),
@@ -291,7 +291,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void subFunctionIdentifiers() {
+	void subFunctionIdentifiers() {
 		final List<ReferenceEqualityToken> rule0x = new ArrayList<>();
 		final List<ReferenceEqualityToken> rule1x = new ArrayList<>();
 		final List<ReferenceEqualityToken> rule1y = new ArrayList<>();
@@ -400,8 +400,8 @@ public class ParserTest {
 
 	// The EOF token is inserted by the lexer, therefore it can only be missing
 	// in case of programming errors, and not directly because of user input.
-	@Test(expected = RuntimeException.class)
-	public void missingEof() {
+	@Test
+	void missingEof() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
 				new Token(IDENTIFIER, "test", 0),
@@ -414,11 +414,11 @@ public class ParserTest {
 				new Token(RIGHT_BRACKET, "]", 0)
 		);
 		final Parser parser = new Parser(tokens, errors::add);
-		parser.parse();
+		assertThrows(RuntimeException.class, parser::parse);
 	}
 
 	@Test
-	public void incompleteRule() {
+	void incompleteRule() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
 				new Token(IDENTIFIER, "test", 0),
@@ -440,7 +440,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void missingRuleType() {
+	void missingRuleType() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(IDENTIFIER, "test", 0),
 				new Token(EOF, "", 0)
@@ -457,7 +457,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void unexpectedTokenPrimary() {
+	void unexpectedTokenPrimary() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
 				new Token(IDENTIFIER, "test", 0),
@@ -481,7 +481,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void missingRuleName() {
+	void missingRuleName() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
 				new Token(COLON, ":", 0),
@@ -499,7 +499,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void missingColon() {
+	void missingColon() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
 				new Token(IDENTIFIER, "test", 0),
@@ -520,7 +520,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void missingArrow() {
+	void missingArrow() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
 				new Token(IDENTIFIER, "test", 0),
@@ -541,7 +541,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void missingRightBracket() {
+	void missingRightBracket() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
 				new Token(IDENTIFIER, "test", 0),
@@ -564,7 +564,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void missingOneArgFunctionLeftParen() {
+	void missingOneArgFunctionLeftParen() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
 				new Token(IDENTIFIER, "test", 0),
@@ -589,7 +589,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void missingOneArgFunctionRightParen() {
+	void missingOneArgFunctionRightParen() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
 				new Token(IDENTIFIER, "test", 0),
@@ -614,7 +614,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void missingTwoArgFunctionLeftParen() {
+	void missingTwoArgFunctionLeftParen() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
 				new Token(IDENTIFIER, "test", 0),
@@ -641,7 +641,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void missingTwoArgFunctionComma() {
+	void missingTwoArgFunctionComma() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
 				new Token(IDENTIFIER, "test", 0),
@@ -668,7 +668,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void missingTwoArgFunctionRightParen() {
+	void missingTwoArgFunctionRightParen() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
 				new Token(IDENTIFIER, "test", 0),
@@ -695,7 +695,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void missingExpressionRightParen() {
+	void missingExpressionRightParen() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(EXISTENCE, "existence", 0),
 				new Token(IDENTIFIER, "test", 0),
@@ -719,7 +719,7 @@ public class ParserTest {
 	}
 
 	@Test
-	public void recoveryToNextRule() {
+	void recoveryToNextRule() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),
 				new Token(IDENTIFIER, "test1", 0),
