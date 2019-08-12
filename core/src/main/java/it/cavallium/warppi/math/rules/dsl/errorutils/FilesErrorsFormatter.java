@@ -42,7 +42,11 @@ public class FilesErrorsFormatter {
 
 		final List<LineMap.Line> spannedLines = lines.getSpannedLines(error.getPosition(), error.getLength());
 		final LineMap.Line firstLine = spannedLines.get(0);
-		final int column = error.getPosition() - firstLine.getStartPosition() + 1;
+
+		final int positionInFirstLine = error.getPosition() - firstLine.getStartPosition();
+		final TabExpandedString expandedFirstLine = new TabExpandedString(firstLine.getText(), TAB_WIDTH);
+		// When computing the column number, each tab character is counted as the number of spaces it expands to
+		final int column = 1 + expandedFirstLine.substringLength(0, positionInFirstLine);
 
 		builder.append(filePath).append(":")
 				.append(firstLine.getNumber()).append(":")
