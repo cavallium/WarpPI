@@ -10,6 +10,11 @@ import java.util.stream.Stream;
 
 /**
  * Matches and generates any function as a named sub-function.
+ * <p>
+ * For a <code>Function</code> to match a <code>Pattern</code>, all <code>SubFunctionPattern</code>s with the same name
+ * must capture equal sub-functions (according to the <code>equals</code> method).
+ * For example, the <code>x + x</code> <code>Pattern</code> matches <code>2 + 2</code> and <code>2 + 2.0</code>,
+ * but not <code>2 + 3</code>, while the <code>x + y</code> <code>Pattern</code> matches all three <code>Function</code>s.
  */
 public class SubFunctionPattern implements Pattern {
 	private final String name;
