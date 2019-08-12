@@ -41,6 +41,7 @@ public class RulesManager {
 		} catch (IOException | DslFilesException e) {
 			e.printStackTrace();
 			if (e instanceof DslFilesException) {
+				System.err.println();
 				System.err.print(((DslFilesException) e).format());
 			}
 			Engine.getPlatform().exit(1);

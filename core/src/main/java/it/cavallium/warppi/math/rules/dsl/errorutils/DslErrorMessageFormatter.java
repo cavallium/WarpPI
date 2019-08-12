@@ -31,7 +31,7 @@ public class DslErrorMessageFormatter implements DslError.Visitor<String> {
 	@Override
 	public String visit(final UndefinedSubFunction undefinedSubFunction) {
 		return String.format(
-				"Sub-function %s is used in a replacement pattern,\nbut not defined in the target pattern",
+				"Sub-function \"%s\" is used in a replacement pattern,\nbut not defined in the target pattern",
 				undefinedSubFunction.getName()
 		);
 	}
