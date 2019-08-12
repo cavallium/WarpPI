@@ -13,10 +13,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Test;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -37,6 +34,14 @@ public class PatternTest {
 		assertTrue(subFunctions.isPresent());
 
 		assertEquals(func, pattern.replace(mathContext, subFunctions.get()));
+	}
+
+	@Test(expected = UndefinedSubFunctionException.class) // TODO assert exception.getSubFunctionName().equals("x")
+	public void undefinedSubFunction() {
+		final Pattern pattern = new SubFunctionPattern("x");
+		final Map<String, Function> subFunctions = Collections.singletonMap("y", new Number(mathContext, 1));
+
+		pattern.replace(mathContext, subFunctions);
 	}
 
 	@Test

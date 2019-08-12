@@ -29,7 +29,8 @@ public class PatternRule implements Rule {
 	 * @param target       the <code>Pattern</code> used to match functions and capture sub-functions.
 	 * @param replacements the list of <code>Pattern</code>s used to construct replacement functions.
 	 *                     All sub-functions which are referenced within these <code>Pattern</code>s must be captured
-	 *                     by <code>target</code>.
+	 *                     by <code>target</code>, otherwise the {@link #execute} method will throw an
+	 *                     {@link UndefinedSubFunction} exception when constructing the replacement functions.
 	 */
 	public PatternRule(
 			final String ruleName,
@@ -51,7 +52,8 @@ public class PatternRule implements Rule {
 	 * @param target       the <code>Pattern</code> used to match functions and capture sub-functions.
 	 * @param replacements the <code>Pattern</code>s used to construct replacement functions.
 	 *                     All sub-functions which are referenced within these <code>Pattern</code>s must be captured
-	 *                     by <code>target</code>.
+	 *                     by <code>target</code>, otherwise the {@link #execute} method will throw an
+	 *                     {@link UndefinedSubFunction} exception when constructing the replacement functions.
 	 */
 	public PatternRule(
 			final String ruleName,
@@ -86,6 +88,13 @@ public class PatternRule implements Rule {
 		return replacements;
 	}
 
+	/**
+	 * @throws UndefinedSubFunctionException if the target pattern matches, but it doesn't capture all of the
+	 *                                       sub-functions required by the replacement patterns.
+	 *                                       This exception will never be thrown for well-formed rules (like the ones
+	 *                                       returned by {@link RulesDsl#makeRules}), in which the target pattern
+	 *                                       correctly captures all sub-functions referenced by the replacement patterns.
+	 */
 	@Override
 	public ObjectArrayList<Function> execute(final Function func) {
 		return target.match(func)

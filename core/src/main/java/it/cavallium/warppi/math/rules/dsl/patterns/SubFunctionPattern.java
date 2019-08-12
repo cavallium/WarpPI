@@ -3,6 +3,7 @@ package it.cavallium.warppi.math.rules.dsl.patterns;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
+import it.cavallium.warppi.math.rules.dsl.UndefinedSubFunctionException;
 
 import java.util.Map;
 import java.util.Objects;
@@ -29,8 +30,16 @@ public class SubFunctionPattern implements Pattern {
 		return existingSubFunction == null || existingSubFunction.equals(function);
 	}
 
+	/**
+	 * @throws UndefinedSubFunctionException if the <code>subFunctions</code> <code>Map</code> doesn't contain a
+	 *                                       sub-function with the name specified in this
+	 *                                       <code>SubFunctionPattern</code>'s constructor.
+	 */
 	@Override
 	public Function replace(final MathContext mathContext, final Map<String, Function> subFunctions) {
+		if (!subFunctions.containsKey(name)) {
+			throw new UndefinedSubFunctionException(name);
+		}
 		return subFunctions.get(name);
 	}
 
