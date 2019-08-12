@@ -21,6 +21,16 @@ public class PatternRule implements Rule {
 	private final Pattern target;
 	private final List<Pattern> replacements;
 
+	/**
+	 * Constructs a <code>PatternRule</code> with the given name, type and <code>Pattern</code>s.
+	 *
+	 * @param ruleName     the name of the rule.
+	 * @param ruleType     the type of the rule.
+	 * @param target       the <code>Pattern</code> used to match functions and capture sub-functions.
+	 * @param replacements the list of <code>Pattern</code>s used to construct replacement functions.
+	 *                     All sub-functions which are referenced within these <code>Pattern</code>s must be captured
+	 *                     by <code>target</code>.
+	 */
 	public PatternRule(
 			final String ruleName,
 			final RuleType ruleType,
@@ -33,6 +43,16 @@ public class PatternRule implements Rule {
 		this.replacements = replacements;
 	}
 
+	/**
+	 * Constructs a <code>PatternRule</code> with the given name, type and <code>Pattern</code>s.
+	 *
+	 * @param ruleName     the name of the rule.
+	 * @param ruleType     the type of the rule.
+	 * @param target       the <code>Pattern</code> used to match functions and capture sub-functions.
+	 * @param replacements the <code>Pattern</code>s used to construct replacement functions.
+	 *                     All sub-functions which are referenced within these <code>Pattern</code>s must be captured
+	 *                     by <code>target</code>.
+	 */
 	public PatternRule(
 			final String ruleName,
 			final RuleType ruleType,
@@ -52,10 +72,16 @@ public class PatternRule implements Rule {
 		return ruleType;
 	}
 
+	/**
+	 * @return the <code>Pattern</code> used to match functions and capture sub-functions.
+	 */
 	public Pattern getTarget() {
 		return target;
 	}
 
+	/**
+	 * @return the list of <code>Pattern</code>s used to construct replacement functions.
+	 */
 	public List<Pattern> getReplacements() {
 		return replacements;
 	}
