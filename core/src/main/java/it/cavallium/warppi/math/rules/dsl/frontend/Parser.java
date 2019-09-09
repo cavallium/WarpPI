@@ -29,6 +29,7 @@ public class Parser {
 
 	private final List<Token> tokens;
 	private final Consumer<? super DslError> errorReporter;
+	private boolean used = false;
 	private int currentIndex = 0;
 
 	// For error reporting
@@ -57,8 +58,14 @@ public class Parser {
 	 * 		   but each rule can still be analyzed to look for undefined sub-functions in replacement patterns and
 	 * 		   report them (which may allow the user to fix more errors before having to rerun the <code>Lexer</code>
 	 * 		   and <code>Parser</code>).
+	 * @throws IllegalStateException if called multiple times on the same instance.
 	 */
 	public List<PatternRule> parse() {
+		if (used) {
+			throw new IllegalStateException("Parser.parse can only be called once per instance");
+		}
+		used = true;
+
 		return rules();
 	}
 

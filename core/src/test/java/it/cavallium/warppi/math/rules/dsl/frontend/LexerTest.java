@@ -30,6 +30,13 @@ class LexerTest {
 	}
 
 	@Test
+	void multipleLexCalls() {
+		final Lexer lexer = new Lexer("", errors::add);
+		lexer.lex();
+		assertThrows(IllegalStateException.class, lexer::lex);
+	}
+
+	@Test
 	void validRule() {
 		final Lexer lexer = new Lexer(
 				"reduction TestRule_123:\n" +

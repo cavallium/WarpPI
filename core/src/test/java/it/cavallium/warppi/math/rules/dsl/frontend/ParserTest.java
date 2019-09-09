@@ -39,6 +39,16 @@ class ParserTest {
 	}
 
 	@Test
+	void multipleParseCalls() {
+		final List<Token> tokens = Collections.singletonList(
+			new Token(EOF, "", 0)
+		);
+		final Parser parser = new Parser(tokens, errors::add);
+		parser.parse();
+		assertThrows(IllegalStateException.class, parser::parse);
+	}
+
+	@Test
 	void validRuleMultipleReplacements() {
 		final List<Token> tokens = Arrays.asList(
 				new Token(REDUCTION, "reduction", 0),

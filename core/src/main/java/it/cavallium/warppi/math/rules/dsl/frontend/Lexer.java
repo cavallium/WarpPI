@@ -29,6 +29,7 @@ public class Lexer {
 	private final String source;
 	private final Consumer<? super DslError> errorReporter;
 
+	private boolean used = false;
 	private final List<Token> tokens = new ArrayList<>();
 	private int startOfLexeme = 0;
 	private int curPosition = 0;
@@ -55,8 +56,14 @@ public class Lexer {
 	 * 		   If any errors are reported, this list should not be considered to represent a valid set of DSL rules,
 	 * 		   but it can still be parsed to potentially find additional errors (which may allow the user to fix more
 	 * 		   errors before having to rerun the <code>Lexer</code>).
+	 * @throws IllegalStateException if called multiple times on the same instance.
 	 */
 	public List<Token> lex() {
+		if (used) {
+			throw new IllegalStateException("Lexer.lex can only be called once per instance");
+		}
+		used = true;
+
 		while (!atEnd()) {
 			startOfLexeme = curPosition;
 			lexAndHandleErrors();
