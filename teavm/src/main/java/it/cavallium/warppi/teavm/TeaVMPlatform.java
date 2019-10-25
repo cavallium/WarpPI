@@ -158,16 +158,6 @@ public class TeaVMPlatform implements Platform {
 	}
 
 	@Override
-	public void zip(final String targetPath, final String destinationFilePath, final String password) {
-		throw new java.lang.UnsupportedOperationException("Not implemented.");
-	}
-
-	@Override
-	public void unzip(final String targetZipFilePath, final String destinationFolderPath, final String password) {
-		throw new java.lang.UnsupportedOperationException("Not implemented.");
-	}
-
-	@Override
 	public void setRunningOnRaspberry(boolean b) {
 	}
 	

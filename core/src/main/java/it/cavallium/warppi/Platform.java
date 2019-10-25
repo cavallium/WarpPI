@@ -70,10 +70,6 @@ public interface Platform {
 	 */
 	List<String> getRuleFilePaths() throws IOException;
 
-	void zip(String targetPath, String destinationFilePath, String password);
-
-	void unzip(String targetZipFilePath, String destinationFolderPath, String password);
-
 	public interface Gpio {
 		int valueOutput();
 
