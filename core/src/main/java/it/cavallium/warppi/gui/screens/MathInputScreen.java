@@ -3,6 +3,8 @@ package it.cavallium.warppi.gui.screens;
 import java.io.IOException;
 import java.util.HashMap;
 
+import it.cavallium.warppi.gui.RenderContext;
+import it.cavallium.warppi.gui.ScreenContext;
 import org.apache.commons.lang3.SerializationUtils;
 
 import it.cavallium.warppi.WarpPI;
@@ -66,7 +68,6 @@ public class MathInputScreen extends Screen {
 
 	/**
 	 * Create a copy of this element
-	 * @param mathInputScreen
 	 */
 	private MathInputScreen(MathInputScreen old) {
 		this.calc = new MathContext(old.calc);
@@ -87,13 +88,6 @@ public class MathInputScreen extends Screen {
 		ic = new InputContext();
 		calc = new MathContext();
 
-		try {
-			BlockContainer.initializeFonts(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().loadFont("norm"), WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().loadFont("smal"));
-		} catch (final IOException e) {
-			e.printStackTrace();
-			WarpPI.getPlatform().exit(1);
-		}
-
 		userInput = new NormalInputContainer(ic);
 		result = new NormalOutputContainer();
 
@@ -106,16 +100,22 @@ public class MathInputScreen extends Screen {
 	}
 
 	@Override
-	public void graphicInitialized() throws InterruptedException {
+	public void graphicInitialized(ScreenContext ctx) throws InterruptedException {
 		/* Fine caricamento */
+		try {
+			BlockContainer.initializeFonts(ctx.getGraphicEngine().loadFont("norm"), ctx.getGraphicEngine().loadFont("smal"));
+		} catch (final IOException e) {
+			e.printStackTrace();
+			WarpPI.getPlatform().exit(1);
+		}
 	}
 
 	@Override
-	public void beforeRender(final float dt) {
+	public void beforeRender(final ScreenContext ctx, final float dt) {
 		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error == null) {
-			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xFFc5c2af);
+			ctx.getGraphicEngine().getRenderer().glClearColor(0xFFc5c2af);
 		} else {
-			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xFFDC3C32);
+			ctx.getGraphicEngine().getRenderer().glClearColor(0xFFDC3C32);
 		}
 		if (userInput.beforeRender(dt)) {
 			mustRefresh = true;
@@ -140,8 +140,8 @@ public class MathInputScreen extends Screen {
 	}
 
 	@Override
-	public void render() {
-		final Renderer renderer = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer;
+	public void render(RenderContext ctx) {
+		final Renderer renderer = ctx.getRenderer();
 		MathInputScreen.fontBig.use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
 		final int textColor = 0xFF000000;
 		final int padding = 4;
@@ -168,8 +168,8 @@ public class MathInputScreen extends Screen {
 	}
 
 	@Override
-	public void renderTopmost() {
-		final Renderer renderer = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer;
+	public void renderTopmost(RenderContext ctx) {
+		final Renderer renderer = ctx.getRenderer();
 		renderer.glColor3f(1, 1, 1);
 		final int pos = 2;
 		final int spacersNumb = 1;

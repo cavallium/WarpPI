@@ -5,13 +5,13 @@ public interface GraphicalInterface {
 	
 	void initialize() throws InterruptedException;
 	
-	void initializeGraphic() throws InterruptedException;
+	void initializeGraphic(ScreenContext ctx) throws InterruptedException;
 
-	void render();
+	void render(RenderContext ctx);
 
-	void renderTopmost();
+	void renderTopmost(RenderContext ctx);
 
-	void beforeRender(float dt);
+	void beforeRender(ScreenContext ctx, float dt);
 
 	boolean mustBeRefreshed();
 }

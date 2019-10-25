@@ -2,9 +2,7 @@ package it.cavallium.warppi.gui.screens;
 
 import it.cavallium.warppi.event.KeyboardEventListener;
 import it.cavallium.warppi.event.TouchEventListener;
-import it.cavallium.warppi.gui.DisplayManager;
-import it.cavallium.warppi.gui.GraphicalInterface;
-import it.cavallium.warppi.gui.HistoryBehavior;
+import it.cavallium.warppi.gui.*;
 
 public abstract class Screen implements KeyboardEventListener, TouchEventListener, GraphicalInterface {
 	public DisplayManager d;
@@ -21,10 +19,10 @@ public abstract class Screen implements KeyboardEventListener, TouchEventListene
 	}
 
 	@Override
-	public void initializeGraphic() throws InterruptedException {
+	public void initializeGraphic(ScreenContext ctx) throws InterruptedException {
 		if (!graphicInitialized) {
 			graphicInitialized = true;
-			graphicInitialized();
+			graphicInitialized(ctx);
 		}
 	}
 	
@@ -66,18 +64,18 @@ public abstract class Screen implements KeyboardEventListener, TouchEventListene
 	 * Called before initialized()
 	 * @throws InterruptedException
 	 */
-	public abstract void graphicInitialized() throws InterruptedException;
+	public abstract void graphicInitialized(ScreenContext ctx) throws InterruptedException;
 
 	@Override
-	public abstract void render();
+	public abstract void render(RenderContext ctx);
 
 	@Override
-	public void renderTopmost() {
+	public void renderTopmost(RenderContext ctx) {
 
 	}
 
 	@Override
-	public abstract void beforeRender(float dt);
+	public abstract void beforeRender(ScreenContext ctx, float dt);
 
 	@Override
 	public abstract boolean mustBeRefreshed();

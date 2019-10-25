@@ -28,12 +28,8 @@
 
 package it.cavallium.warppi.gui.graphicengine.impl.jogl;
 
-import java.util.List;
-
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
-import com.jogamp.newt.event.MouseEvent;
-import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.event.WindowListener;
 import com.jogamp.newt.event.WindowUpdateEvent;
@@ -55,15 +51,9 @@ import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.event.Key;
-import it.cavallium.warppi.event.TouchEndEvent;
-import it.cavallium.warppi.event.TouchMoveEvent;
-import it.cavallium.warppi.event.TouchPoint;
-import it.cavallium.warppi.event.TouchStartEvent;
 import it.cavallium.warppi.flow.BehaviorSubject;
 import it.cavallium.warppi.flow.SimpleSubject;
 import it.cavallium.warppi.flow.Subject;
-import it.cavallium.warppi.gui.DisplayManager;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
  *
@@ -73,7 +63,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 class NEWTWindow implements GLEventListener {
 
-	private final DisplayOutputDevice display;
 	private final JOGLEngine engine;
 	private final JOGLRenderer renderer;
 	public GLWindow window;
@@ -87,15 +76,14 @@ class NEWTWindow implements GLEventListener {
 	private final BehaviorSubject<Float> onZoom = BehaviorSubject.create();
 	private final Subject<GL2ES1> onGLContext = SimpleSubject.create();
 
-	public NEWTWindow(final JOGLDisplayOutputDevice display) {
-		this.display = display;
-		this.engine = display.getGraphicEngine();
+	public NEWTWindow(final JOGLEngine engine) {
+		this.engine = engine;
 		renderer = engine.getRenderer();
-		engine.size[0] = display.getDisplaySize()[0];
-		engine.size[1] = display.getDisplaySize()[1];
-		realWindowSize = new int[] { display.getDisplaySize()[0], display.getDisplaySize()[1] };
+		engine.size[0] = engine.getSize()[0];
+		engine.size[1] = engine.getSize()[1];
+		realWindowSize = new int[] { engine.getSize()[0], engine.getSize()[1] };
 		windowZoom = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue());
-		onRealResize = BehaviorSubject.create(new Integer[] { (int) (display.getDisplaySize()[0] * windowZoom), (int) (display.getDisplaySize()[1] * windowZoom) });
+		onRealResize = BehaviorSubject.create(new Integer[] { (int) (engine.getSize()[0] * windowZoom), (int) (engine.getSize()[1] * windowZoom) });
 
 		onRealResize.subscribe((realSize) -> {
 			realWindowSize[0] = realSize[0];
@@ -105,16 +93,14 @@ class NEWTWindow implements GLEventListener {
 			onResizeEvent.onNext(new Integer[] { engine.size[0], engine.size[1] });
 			refreshViewport = true;
 		});
-		StaticVars.windowZoom$.subscribe((zoom) -> {
-			onZoom.onNext(zoom);
-		});
+		StaticVars.windowZoom$.subscribe(onZoom::onNext);
 		onZoom.subscribe((z) -> {
 			if (windowZoom != 0) {
 				windowZoom = z;
 				engine.size[0] = (int) (realWindowSize[0] / windowZoom);
 				engine.size[1] = (int) (realWindowSize[1] / windowZoom);
-				display.getDisplaySize()[0] = engine.size[0];
-				display.getDisplaySize()[1] = engine.size[1];
+				engine.getSize()[0] = engine.size[0];
+				engine.getSize()[1] = engine.size[1];
 				refreshViewport = true;
 			}
 		});

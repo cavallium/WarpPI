@@ -11,6 +11,7 @@ import java.util.Map;
 
 import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.boot.StartupArguments;
+import it.cavallium.warppi.device.DeviceStateDevice;
 import it.cavallium.warppi.device.display.BacklightOutputDevice;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.device.display.NoDisplaysAvailableException;

@@ -339,7 +339,9 @@ public final class DisplayManager implements RenderingLoop {
 		}
 		if (!screen.graphicInitialized) {
 			try {
-				screen.initializeGraphic();
+				var displaySize = display.getDisplaySize();
+				var fullCtx = new RenderContext(graphicEngine, renderer, displaySize[0], displaySize[1]);
+				screen.initializeGraphic(fullCtx);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -348,6 +350,12 @@ public final class DisplayManager implements RenderingLoop {
 	}
 
 	private void draw_world() {
+		var displaySize = display.getDisplaySize();
+		var scrWidth = displaySize[0] - hud.getMarginLeft() - hud.getMarginRight();
+		var scrHeight = displaySize[1] - hud.getMarginTop() - hud.getMarginBottom();
+		var scrCtx = new RenderContext(graphicEngine, renderer.getBoundedInstance(hud.getMarginLeft(), hud.getMarginTop(), scrWidth, scrHeight), scrWidth, scrHeight);
+		var fullCtdx = new RenderContext(graphicEngine, renderer, displaySize[0], displaySize[1]);
+
 		renderer.glColor3i(255, 255, 255);
 
 		if (error != null) {
@@ -378,14 +386,14 @@ public final class DisplayManager implements RenderingLoop {
 			}
 			if (hud.visible)
 				hud.renderBackground();
-			screen.render();
+			screen.render(scrCtx);
 			if (hud.visible) {
-				hud.render();
+				hud.render(fullCtdx);
 				hud.renderTopmostBackground();
 			}
-			screen.renderTopmost();
+			screen.renderTopmost(scrCtx);
 			if (hud.visible)
-				hud.renderTopmost();
+				hud.renderTopmost(fullCtdx);
 		}
 	}
 
@@ -397,8 +405,8 @@ public final class DisplayManager implements RenderingLoop {
 	private long precTime = -1;
 
 	@Override
-	public void refresh() {
-		if (supportsPauses == false || Keyboard.popRefreshRequest() || forceRefresh || screen.mustBeRefreshed()) {
+	public void refresh(boolean force) {
+		if (force || supportsPauses == false || Keyboard.popRefreshRequest() || forceRefresh || screen.mustBeRefreshed()) {
 			forceRefresh = false;
 			draw();
 		}
@@ -446,7 +454,11 @@ public final class DisplayManager implements RenderingLoop {
 					display.getDisplaySize()[1] = windowSize[1];
 				}
 
-				screen.beforeRender((float) (dt / 1000d));
+				var displaySize = display.getDisplaySize();
+				var scrWidth = displaySize[0] - hud.getMarginLeft() - hud.getMarginRight();
+				var scrHeight = displaySize[1] - hud.getMarginTop() - hud.getMarginBottom();
+				var scrCtx = new ScreenContext(graphicEngine, scrWidth, scrHeight);
+				screen.beforeRender(scrCtx, (float) (dt / 1000d));
 			});
 
 			graphicEngine.start(getDrawable());

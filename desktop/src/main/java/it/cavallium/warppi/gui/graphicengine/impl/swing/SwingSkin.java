@@ -13,7 +13,7 @@ public class SwingSkin extends PngSkin {
 
 	@Override
 	public void use(final DisplayOutputDevice d) {
-		if (d.getRenderer() instanceof SwingRenderer)
-			((SwingRenderer) d.getRenderer()).currentSkin = this;
+		if (d.getGraphicEngine().getRenderer() instanceof SwingRenderer)
+			((SwingRenderer) d.getGraphicEngine().getRenderer()).currentSkin = this;
 	}
 }

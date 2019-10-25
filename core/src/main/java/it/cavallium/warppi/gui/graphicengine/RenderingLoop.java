@@ -1,5 +1,5 @@
 package it.cavallium.warppi.gui.graphicengine;
 
 public interface RenderingLoop {
-	void refresh();
+	void refresh(boolean force);
 }

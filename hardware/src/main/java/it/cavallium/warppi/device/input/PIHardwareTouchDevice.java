@@ -1,23 +1,19 @@
 package it.cavallium.warppi.device.input;
 
 import java.util.List;
-import java.util.concurrent.Flow.Subscriber;
 import java.util.concurrent.SubmissionPublisher;
+import java.util.function.Consumer;
 
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.opengl.GLWindow;
 
-import it.cavallium.warppi.WarpPI;
-import it.cavallium.warppi.device.input.TouchInputDevice;
-import it.cavallium.warppi.event.TouchCancelEvent;
 import it.cavallium.warppi.event.TouchEndEvent;
 import it.cavallium.warppi.event.TouchEvent;
 import it.cavallium.warppi.event.TouchMoveEvent;
 import it.cavallium.warppi.event.TouchPoint;
 import it.cavallium.warppi.event.TouchStartEvent;
 import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
-import it.cavallium.warppi.gui.screens.Screen;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class PIHardwareTouchDevice implements TouchInputDevice {
@@ -126,7 +122,7 @@ public class PIHardwareTouchDevice implements TouchInputDevice {
 	}
 
 	@Override
-	public void listenTouchEvents(Subscriber<TouchEvent> touchEventListener) {
-		touchEventPublisher.subscribe(touchEventListener);
+	public void listenTouchEvents(Consumer<TouchEvent> touchEventListener) {
+		touchEventPublisher.consume(touchEventListener);
 	}
 }

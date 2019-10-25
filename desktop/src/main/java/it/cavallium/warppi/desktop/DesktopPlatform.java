@@ -6,11 +6,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
+import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLDisplayOutputDevice;
+import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
+import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingDeviceState;
+import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingTouchInputDevice;
 import org.apache.commons.io.FileUtils;
 
 import it.cavallium.warppi.WarpPI;
@@ -23,12 +24,8 @@ import it.cavallium.warppi.device.display.NullBacklightOutputDevice;
 import it.cavallium.warppi.device.input.KeyboardInputDevice;
 import it.cavallium.warppi.device.input.TouchInputDevice;
 import it.cavallium.warppi.Platform;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
-import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLDisplayOutputDevice;
-import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
 import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingDisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingEngine;
-import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingSkin;
 import it.cavallium.warppi.util.CacheUtils;
 import it.cavallium.warppi.util.Error;
 import net.lingala.zip4j.core.ZipFile;
@@ -47,6 +44,8 @@ public class DesktopPlatform implements Platform {
 	private StartupArguments args;
 	private DisplayOutputDevice displayOutputDevice;
 	private DeviceStateDevice deviceStateDevice;
+	private TouchInputDevice touchInputDevice;
+	private KeyboardInputDevice keyboardInputDevice;
 
 	public DesktopPlatform() {
 		cu = new DesktopConsoleUtils();
@@ -239,14 +238,12 @@ public class DesktopPlatform implements Platform {
 
 	@Override
 	public TouchInputDevice getTouchInputDevice() {
-		// TODO Auto-generated method stub
-		return null;
+		return touchInputDevice;
 	}
 
 	@Override
 	public KeyboardInputDevice getKeyboardInputDevice() {
-		// TODO Auto-generated method stub
-		return null;
+		return keyboardInputDevice;
 	}
 
 	@Override
@@ -300,8 +297,26 @@ public class DesktopPlatform implements Platform {
 		}
 
 		if (this.displayOutputDevice == null) this.displayOutputDevice = availableDevices.get(0);
-		
-		this.deviceStateDevice = null; //TODO: Implement device state that listen exit signal from swing
+
+
+		if (displayOutputDevice instanceof SwingDisplayOutputDevice) {
+			this.touchInputDevice = new SwingTouchInputDevice((SwingEngine) displayOutputDevice.getGraphicEngine());
+
+			//TODO: implement a keyboard input device
+			this.keyboardInputDevice = new KeyboardInputDevice() {
+				@Override
+				public void initialize() {
+
+				}
+			};
+
+			this.deviceStateDevice = new SwingDeviceState((SwingEngine) displayOutputDevice.getGraphicEngine());
+
+		} else if (displayOutputDevice instanceof JOGLDisplayOutputDevice) {
+			this.touchInputDevice = null;
+			this.keyboardInputDevice = null;
+			this.deviceStateDevice = null; //TODO: Implement
+		}
 	}
 
 }

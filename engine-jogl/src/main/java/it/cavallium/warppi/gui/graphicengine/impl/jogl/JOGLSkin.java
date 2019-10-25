@@ -23,7 +23,7 @@ public class JOGLSkin implements Skin {
 	private boolean initialized = false;
 	private boolean isResource;
 
-	JOGLSkin(final JOGLDisplayOutputDevice d, final String file) throws IOException {
+	JOGLSkin(final String file) throws IOException {
 		load(file);
 	}
 
@@ -55,7 +55,7 @@ public class JOGLSkin implements Skin {
 	public void use(final DisplayOutputDevice d) {
 		if (!initialized)
 			initialize(d);
-		final JOGLRenderer r = (JOGLRenderer) d.getRenderer();
+		final JOGLRenderer r = (JOGLRenderer) d.getGraphicEngine().getRenderer();
 		r.useTexture(t, w, h);
 	}
 

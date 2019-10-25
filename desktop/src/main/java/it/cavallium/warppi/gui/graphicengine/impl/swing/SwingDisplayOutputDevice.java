@@ -8,7 +8,7 @@ public class SwingDisplayOutputDevice implements DisplayOutputDevice {
 	private final SwingEngine engine;
 	
 	public SwingDisplayOutputDevice() {
-		this.engine = new SwingEngine();
+		this.engine = new SwingEngine(480, 320);
 	}
 
 	@Override

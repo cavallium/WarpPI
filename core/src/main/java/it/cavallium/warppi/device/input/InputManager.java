@@ -1,12 +1,14 @@
 package it.cavallium.warppi.device.input;
 
+import java.util.Objects;
+
 public class InputManager {
 	private final KeyboardInputDevice keyboard;
 	private final TouchInputDevice touchDevice;
 
 	public InputManager(KeyboardInputDevice keyboard, TouchInputDevice touchscreen) {
-		this.keyboard = keyboard;
-		this.touchDevice = touchscreen;
+		this.keyboard = Objects.requireNonNull(keyboard);
+		this.touchDevice = Objects.requireNonNull(touchscreen);
 	}
 
 	public KeyboardInputDevice getKeyboard() {

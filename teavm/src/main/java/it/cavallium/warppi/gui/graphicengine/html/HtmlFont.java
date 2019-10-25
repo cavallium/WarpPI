@@ -48,8 +48,8 @@ public class HtmlFont extends RFTFont {
 
 	@Override
 	public void use(final DisplayOutputDevice d) {
-		if (d.getRenderer() instanceof HtmlRenderer)
-			((HtmlRenderer) d.getRenderer()).f = this;
+		if (d.getGraphicEngine().getRenderer() instanceof HtmlRenderer)
+			((HtmlRenderer) d.getGraphicEngine().getRenderer()).f = this;
 	}
 
 }

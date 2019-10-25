@@ -17,7 +17,7 @@ public class SwingFont extends RFTFont {
 
 	@Override
 	public void use(final DisplayOutputDevice d) {
-		if (d.getRenderer() instanceof SwingRenderer)
-			((SwingRenderer) d.getRenderer()).currentFont = this;
+		if (d.getGraphicEngine().getRenderer() instanceof SwingRenderer)
+			((SwingRenderer) d.getGraphicEngine().getRenderer()).currentFont = this;
 	}
 }

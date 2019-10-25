@@ -15,7 +15,6 @@ import it.cavallium.warppi.gui.graphicengine.Skin;
 public class NoGuiEngine implements GraphicEngine {
 
 	private boolean initialized;
-	public Semaphore exitSemaphore = WarpPI.getPlatform().newSemaphore(0);
 
 	@Override
 	public int[] getSize() {
@@ -62,7 +61,6 @@ public class NoGuiEngine implements GraphicEngine {
 	@Override
 	public void destroy() {
 		initialized = false;
-		exitSemaphore.release();
 	}
 
 	@Override
@@ -265,13 +263,6 @@ public class NoGuiEngine implements GraphicEngine {
 				return 0;
 			}
 		};
-	}
-
-	@Override
-	public void waitForExit() {
-		try {
-			exitSemaphore.acquire();
-		} catch (final InterruptedException e) {}
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package it.cavallium.warppi.gui.graphicengine;
 import java.io.IOException;
 import java.util.List;
 
-import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.flow.Observable;
 
 public interface GraphicEngine {
@@ -45,8 +44,6 @@ public interface GraphicEngine {
 	BinaryFont loadFont(String path, String fontName) throws IOException;
 
 	Skin loadSkin(String file) throws IOException;
-
-	void waitForExit();
 
 	boolean doesRefreshPauses();
 
