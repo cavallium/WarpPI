@@ -6,6 +6,8 @@ import it.cavallium.warppi.util.Errors;
 import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
+import java.util.Objects;
+
 public abstract class FunctionOperator implements Function {
 	
 	/**
@@ -175,7 +177,7 @@ public abstract class FunctionOperator implements Function {
 
 	@Override
 	public int hashCode() {
-		return parameter1.hashCode() + 7 * parameter2.hashCode() + 883 * super.hashCode();
+		return Objects.hash(parameter1, parameter2);
 	}
 
 	@Override

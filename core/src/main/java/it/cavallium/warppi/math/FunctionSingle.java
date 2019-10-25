@@ -4,6 +4,8 @@ import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
+import java.util.Objects;
+
 public abstract class FunctionSingle implements Function {
 
 	private boolean simplified;
@@ -117,7 +119,7 @@ public abstract class FunctionSingle implements Function {
 
 	@Override
 	public int hashCode() {
-		return parameter.hashCode() + 883 * super.hashCode();
+		return Objects.hash(parameter);
 	}
 
 	@Override

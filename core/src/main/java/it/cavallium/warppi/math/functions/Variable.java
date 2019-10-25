@@ -8,6 +8,8 @@ import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
+import java.util.Objects;
+
 public class Variable implements Function {
 
 	protected char var;
@@ -84,7 +86,7 @@ public class Variable implements Function {
 
 	@Override
 	public int hashCode() {
-		return toString().hashCode();
+		return Objects.hash(var, type);
 	}
 
 	@Override
