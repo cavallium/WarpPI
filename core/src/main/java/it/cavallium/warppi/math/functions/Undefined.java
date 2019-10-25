@@ -28,7 +28,7 @@ public class Undefined implements Function {
 
 	@Override
 	public boolean equals(final Object o) {
-		return false;
+		return o instanceof Undefined;
 	}
 
 	@Override

@@ -21,11 +21,7 @@ public class Multiplication extends FunctionOperator {
 	public boolean equals(final Object o) {
 		if (o instanceof Multiplication) {
 			final FunctionOperator f = (FunctionOperator) o;
-			if (parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2())) {
-				return true;
-			} else if (parameter1.equals(f.getParameter2()) && parameter2.equals(f.getParameter1())) {
-				return true;
-			}
+			return parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2());
 		}
 		return false;
 	}

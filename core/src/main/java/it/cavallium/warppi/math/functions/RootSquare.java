@@ -17,7 +17,7 @@ public class RootSquare extends FunctionOperator {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (o instanceof Root || o instanceof RootSquare) {
+		if (o instanceof RootSquare) {
 			final FunctionOperator f = (FunctionOperator) o;
 			return parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2());
 		}

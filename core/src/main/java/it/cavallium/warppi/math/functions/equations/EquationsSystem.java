@@ -24,19 +24,22 @@ public class EquationsSystem extends FunctionDynamic {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (o instanceof EquationsSystem) {
-			final FunctionDynamic f = (FunctionDynamic) o;
-			if (functions.length != f.getParametersLength()) {
+		if (!(o instanceof EquationsSystem)) {
+			return false;
+		}
+		final FunctionDynamic f = (FunctionDynamic) o;
+
+		if (functions.length != f.getParametersLength()) {
+			return false;
+		}
+
+		for (int i = 0; i < functions.length; i++) {
+			if (!functions[i].equals(f.getParameter(i))) {
 				return false;
 			}
-			for (int i = 0; i < functions.length; i++) {
-				if (!functions[i].equals(f.getParameter(i))) {
-					return false;
-				}
-			}
-			return true;
 		}
-		return false;
+
+		return true;
 	}
 
 	@Override

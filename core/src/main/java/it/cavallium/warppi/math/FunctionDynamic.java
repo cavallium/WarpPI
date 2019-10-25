@@ -140,7 +140,5 @@ public abstract class FunctionDynamic implements Function {
 	}
 
 	@Override
-	public boolean equals(final Object o) {
-		return false;
-	}
+	public abstract boolean equals(Object o);
 }

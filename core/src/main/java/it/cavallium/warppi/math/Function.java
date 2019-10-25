@@ -21,6 +21,16 @@ public interface Function {
 	@Override
 	String toString();
 
+	/**
+	 * Indicates whether some other object is a <code>Function</code> which is <em>identical</em> to this one.
+	 * <p>
+	 * Two functions which are not identical, but only equivalent (due to, for example, the commutative property) aren't
+	 * considered equal.
+	 *
+	 * @param o the other object to compare.
+	 * @return <code>true</code> if the other object is identical to this <code>Function</code>, <code>false</code>
+	 * otherwise.
+	 */
 	@Override
 	boolean equals(Object o);
 

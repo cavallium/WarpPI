@@ -19,9 +19,7 @@ public class Sine extends FunctionSingle {
 	public boolean equals(final Object o) {
 		if (o instanceof Sine) {
 			final FunctionSingle f = (FunctionSingle) o;
-			if (parameter.equals(f.getParameter())) {
-				return true;
-			}
+			return parameter.equals(f.getParameter());
 		}
 		return false;
 	}
