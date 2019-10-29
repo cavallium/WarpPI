@@ -133,14 +133,12 @@ public abstract class FunctionDynamic implements Function {
 
 	@Override
 	public abstract FunctionDynamic clone();
-	
+
 	@Override
 	public int hashCode() {
-		return functions.hashCode() + 883 * super.hashCode();
+		return Arrays.hashCode(functions);
 	}
 
 	@Override
-	public boolean equals(final Object o) {
-		return false;
-	}
+	public abstract boolean equals(Object o);
 }

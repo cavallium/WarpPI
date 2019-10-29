@@ -1,6 +1,12 @@
 package it.cavallium.warppi.math;
 
 import it.cavallium.warppi.gui.expression.blocks.Block;
+import it.cavallium.warppi.math.functions.*;
+import it.cavallium.warppi.math.functions.Number;
+import it.cavallium.warppi.math.functions.equations.Equation;
+import it.cavallium.warppi.math.functions.equations.EquationsSystem;
+import it.cavallium.warppi.math.functions.equations.EquationsSystemPart;
+import it.cavallium.warppi.math.functions.trigonometry.*;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -15,6 +21,16 @@ public interface Function {
 	@Override
 	String toString();
 
+	/**
+	 * Indicates whether some other object is a <code>Function</code> which is <em>identical</em> to this one.
+	 * <p>
+	 * Two functions which are not identical, but only equivalent (due to, for example, the commutative property) aren't
+	 * considered equal.
+	 *
+	 * @param o the other object to compare.
+	 * @return <code>true</code> if the other object is identical to this <code>Function</code>, <code>false</code>
+	 * otherwise.
+	 */
 	@Override
 	boolean equals(Object o);
 
@@ -80,4 +96,49 @@ public interface Function {
 	 * @throws Error
 	 */
 	ObjectArrayList<Block> toBlock(MathContext context) throws Error;
+
+	/**
+	 * Accepts a {@code Function.Visitor<Argument, Result>} by calling the correct overload of <code>visit</code>.
+	 *
+	 * @param visitor    The visitor to be accepted.
+	 * @param argument   An additional argument to be passed to <code>visit</code>.
+	 * @param <Argument> The type of an additional argument to be passed to the <code>visit</code> method.
+	 * @param <Result>   The return type of the <code>visit</code> method.
+	 * @return The value returned by <code>visit</code>.
+	 */
+	<Argument, Result> Result accept(Visitor<Argument, Result> visitor, Argument argument);
+
+	/**
+	 * Executes a different overload of a method for each <code>Function</code> implementation.
+	 *
+	 * @param <Argument> The type of an additional argument which can be passed to all <code>visit</code> method overloads.
+	 *                   If the argument is not required, this type parameter should be set to {@link Void}.
+	 * @param <Result>   The return type of all <code>visit</code> method overloads.
+	 */
+	interface Visitor<Argument, Result> {
+		Result visit(ArcCosine arcCosine, Argument argument);
+		Result visit(ArcSine arcSine, Argument argument);
+		Result visit(ArcTangent arcTangent, Argument argument);
+		Result visit(Cosine cosine, Argument argument);
+		Result visit(Division division, Argument argument);
+		Result visit(Equation equation, Argument argument);
+		Result visit(EquationsSystem equationsSystem, Argument argument);
+		Result visit(EquationsSystemPart equationsSystemPart, Argument argument);
+		Result visit(Expression expression, Argument argument);
+		Result visit(Joke joke, Argument argument);
+		Result visit(Logarithm logarithm, Argument argument);
+		Result visit(Multiplication multiplication, Argument argument);
+		Result visit(Negative negative, Argument argument);
+		Result visit(Number number, Argument argument);
+		Result visit(Power power, Argument argument);
+		Result visit(Root root, Argument argument);
+		Result visit(RootSquare rootSquare, Argument argument);
+		Result visit(Sine sine, Argument argument);
+		Result visit(Subtraction subtraction, Argument argument);
+		Result visit(SumSubtraction sumSubtraction, Argument argument);
+		Result visit(Sum sum, Argument argument);
+		Result visit(Tangent tangent, Argument argument);
+		Result visit(Undefined undefined, Argument argument);
+		Result visit(Variable variable, Argument argument);
+	}
 }

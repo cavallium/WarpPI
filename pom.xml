@@ -43,7 +43,6 @@
 		<module>util</module>
 		<module>bigdecimal-math</module>
 		<module>Flow</module>
-		<module>rules</module>
 		<!-- <module>hardware</module> -->
 		<module>desktop</module>
 		<module>engine-jogl</module>
@@ -93,9 +92,9 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.12</version>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter</artifactId>
+				<version>5.5.1</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>

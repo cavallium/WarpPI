@@ -1,0 +1,30 @@
+calculation ExponentRule1:
+	1^a -> 1
+
+calculation ExponentRule2:
+	a^1 -> a
+
+calculation ExponentRule3:
+	a^0 -> 1
+
+expansion ExponentRule4:
+	(a * b) ^ n -> a^n * b^n
+
+expansion ExponentRule8:
+	a ^ (b + c) -> a^b * a^c
+
+expansion ExponentRule9:
+	(a ^ b) ^ c -> a ^ (b * c)
+
+expansion ExponentRule15:
+	a * a -> a^2
+
+reduction ExponentRule16a:
+	a^b * a^c -> a ^ (b + c)
+reduction ExponentRule16b:
+	a^b * a -> a ^ (b + 1)
+reduction ExponentRule16c:
+	a * a^b -> a ^ (1 + b)
+
+expansion ExponentRule17:
+	root(a, x) -> x ^ (1 / a)

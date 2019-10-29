@@ -23,6 +23,26 @@ public class EquationsSystem extends FunctionDynamic {
 	}
 
 	@Override
+	public boolean equals(final Object o) {
+		if (!(o instanceof EquationsSystem)) {
+			return false;
+		}
+		final FunctionDynamic f = (FunctionDynamic) o;
+
+		if (functions.length != f.getParametersLength()) {
+			return false;
+		}
+
+		for (int i = 0; i < functions.length; i++) {
+			if (!functions[i].equals(f.getParameter(i))) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Override
 	public EquationsSystem clone() {
 		Function[] newFuncs = functions.clone();
 		for (int i = 0; i < newFuncs.length; i++) {
@@ -46,4 +66,8 @@ public class EquationsSystem extends FunctionDynamic {
 		return null;
 	}
 
+	@Override
+	public <Argument, Result> Result accept(final Function.Visitor<Argument, Result> visitor, final Argument argument) {
+		return visitor.visit(this, argument);
+	}
 }

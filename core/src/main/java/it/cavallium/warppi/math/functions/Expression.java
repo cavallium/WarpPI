@@ -583,6 +583,11 @@ public class Expression extends FunctionSingle {
 	}
 
 	@Override
+	public <Argument, Result> Result accept(final Function.Visitor<Argument, Result> visitor, final Argument argument) {
+		return visitor.visit(this, argument);
+	}
+
+	@Override
 	public String toString() {
 		String s = "(";
 		if (parameter == null) {

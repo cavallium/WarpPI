@@ -8,6 +8,8 @@ import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
+import java.util.Objects;
+
 public class Variable implements Function {
 
 	protected char var;
@@ -84,7 +86,7 @@ public class Variable implements Function {
 
 	@Override
 	public int hashCode() {
-		return toString().hashCode();
+		return Objects.hash(var, type);
 	}
 
 	@Override
@@ -130,5 +132,10 @@ public class Variable implements Function {
 		//TODO: Temporary solution. In near future Variables will be distint objects and they will have a color. So they will be no longer a BlockChar/FeatureChar
 		result.add(new BlockChar(getChar()));
 		return result;
+	}
+
+	@Override
+	public <Argument, Result> Result accept(final Function.Visitor<Argument, Result> visitor, final Argument argument) {
+		return visitor.visit(this, argument);
 	}
 }

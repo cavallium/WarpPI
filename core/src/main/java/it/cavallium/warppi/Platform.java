@@ -60,13 +60,15 @@ public interface Platform {
 
 	String[] stacktraceToString(Error e);
 
-	void loadPlatformRules();
-
-	void zip(String targetPath, String destinationFilePath, String password);
-
-	void unzip(String targetZipFilePath, String destinationFolderPath, String password);
-
-	boolean compile(String[] command, PrintWriter printWriter, PrintWriter errors);
+	/**
+	 * Determines the list of files containing DSL rules to load.
+	 *
+	 * @return a <code>List</code> of paths of files which contain DSL rules.
+	 * 		   Each <code>String</code> in the returned <code>List</code> can be passed as an argument to
+	 * 		   {@link StorageUtils#getResourceStream(String)} to access the corresponding file's contents.
+	 * @throws IOException if an IO error occurs while getting the list of rule file paths.
+	 */
+	List<String> getRuleFilePaths() throws IOException;
 
 	public interface Gpio {
 		int valueOutput();

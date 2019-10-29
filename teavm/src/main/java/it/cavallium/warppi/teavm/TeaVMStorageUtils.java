@@ -11,12 +11,12 @@ import java.io.Reader;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.teavm.jso.browser.Window;
 
 import it.cavallium.warppi.Platform.StorageUtils;
@@ -133,9 +133,21 @@ public class TeaVMStorageUtils implements StorageUtils {
 		return list;
 	}
 
+	// Reading an InputStream as a String is implemented this way
+	// because, on TeaVM, more convenient methods (such as IOUtils.toString) hang.
 	@Override
 	public String read(final InputStream input) throws IOException {
-		return IOUtils.toString(input, "UTF-8");
+		final int BUFFER_SIZE = 1024;
+
+		final StringBuilder builder = new StringBuilder();
+		try (final Reader reader = new InputStreamReader(input, StandardCharsets.UTF_8)) {
+			final char[] buffer = new char[BUFFER_SIZE];
+			int readCount;
+			while ((readCount = reader.read(buffer)) != -1) {
+				builder.append(buffer, 0, readCount);
+			}
+		}
+		return builder.toString();
 	}
 
 	@Override

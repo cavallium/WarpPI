@@ -28,7 +28,7 @@ public class Undefined implements Function {
 
 	@Override
 	public boolean equals(final Object o) {
-		return false;
+		return o instanceof Undefined;
 	}
 
 	@Override
@@ -56,6 +56,11 @@ public class Undefined implements Function {
 		final ObjectArrayList<Block> result = new ObjectArrayList<>();
 		result.add(new BlockUndefined());
 		return result;
+	}
+
+	@Override
+	public <Argument, Result> Result accept(final Function.Visitor<Argument, Result> visitor, final Argument argument) {
+		return visitor.visit(this, argument);
 	}
 
 	@Override
