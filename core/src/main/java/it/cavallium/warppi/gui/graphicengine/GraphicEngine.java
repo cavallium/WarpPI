@@ -1,9 +1,10 @@
 package it.cavallium.warppi.gui.graphicengine;
 
+import it.cavallium.warppi.util.EventSubscriber;
+
 import java.io.IOException;
 import java.util.List;
-
-import it.cavallium.warppi.flow.Observable;
+import java.util.function.Consumer;
 
 public interface GraphicEngine {
 
@@ -23,7 +24,7 @@ public interface GraphicEngine {
 
 	void create(Runnable object);
 
-	Observable<Integer[]> onResize();
+	EventSubscriber<Integer[]> onResize();
 
 	int getWidth();
 

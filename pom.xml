@@ -5,7 +5,7 @@
 
 	<groupId>it.cavallium</groupId>
 	<artifactId>warppi</artifactId>
-	<version>0.9.0a3</version>
+	<version>0.10.0-alpha</version>
 	<packaging>pom</packaging>
 
 	<name>WarpPI Calculator</name>
@@ -42,7 +42,6 @@
 		<module>core</module>
 		<module>util</module>
 		<module>bigdecimal-math</module>
-		<module>Flow</module>
 		<!-- <module>hardware</module> -->
 		<module>desktop</module>
 		<module>engine-jogl</module>

@@ -10,8 +10,6 @@ import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.Platform.Semaphore;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.device.Keyboard;
-import it.cavallium.warppi.flow.Observable;
-import it.cavallium.warppi.flow.Pair;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
@@ -19,6 +17,7 @@ import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
 import it.cavallium.warppi.gui.graphicengine.Skin;
 import it.cavallium.warppi.gui.graphicengine.impl.nogui.NoGuiEngine;
 import it.cavallium.warppi.gui.screens.Screen;
+import it.cavallium.warppi.util.Timer;
 import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
@@ -459,40 +458,33 @@ public final class DisplayManager implements RenderingLoop {
 				Engine.getPlatform().exit(0);
 			}
 
-			final Observable<Long> workTimer = Observable.interval(DisplayManager.tickDuration);
-
-			final Observable<Integer[]> onResizeObservable = engine.onResize();
-			Observable<Pair<Long, Integer[]>> refreshObservable;
-			if (onResizeObservable == null) {
-				refreshObservable = workTimer.map((l) -> Pair.of(l, null));
-			} else {
-				refreshObservable = Observable.combineChanged(workTimer, engine.onResize());
-			}
-
-			refreshObservable.subscribe((pair) -> {
-				double dt = 0;
-				final long newtime = System.nanoTime();
-				if (precTime == -1) {
-					dt = DisplayManager.tickDuration;
-				} else {
-					dt = (newtime - precTime) / 1000d / 1000d;
-				}
-				precTime = newtime;
-
-				if (pair.getRight() != null) {
-					final Integer[] windowSize = pair.getRight();
-					StaticVars.screenSize[0] = windowSize[0];
-					StaticVars.screenSize[1] = windowSize[1];
-				}
-
-				screen.beforeRender((float) (dt / 1000d));
-			});
+			var displayRefreshManager = new DisplayRefreshManager(this::onRefresh);
+			new Timer(DisplayManager.tickDuration, displayRefreshManager::onTick);
+			engine.onResize().subscribe(displayRefreshManager::onResize);
 
 			engine.start(getDrawable());
 		} catch (final Exception ex) {
 			ex.printStackTrace();
 		} finally {
 		}
+	}
+
+	private void onRefresh(Integer[] windowSize) {
+		double dt = 0;
+		final long newtime = System.nanoTime();
+		if (precTime == -1) {
+			dt = DisplayManager.tickDuration;
+		} else {
+			dt = (newtime - precTime) / 1000d / 1000d;
+		}
+		precTime = newtime;
+
+		if (windowSize != null) {
+			StaticVars.screenSize[0] = windowSize[0];
+			StaticVars.screenSize[1] = windowSize[1];
+		}
+
+		screen.beforeRender((float) (dt / 1000d));
 	}
 
 	public void changeBrightness(final float change) {

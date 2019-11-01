@@ -4,12 +4,13 @@ import java.io.IOException;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Platform.Semaphore;
-import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
 import it.cavallium.warppi.gui.graphicengine.Skin;
+import it.cavallium.warppi.util.EventSubmitter;
+import it.cavallium.warppi.util.EventSubscriber;
 
 public class NoGuiEngine implements GraphicEngine {
 
@@ -44,7 +45,7 @@ public class NoGuiEngine implements GraphicEngine {
 	}
 
 	@Override
-	public Observable<Integer[]> onResize() {
+	public EventSubscriber<Integer[]> onResize() {
 		return null;
 	}
 

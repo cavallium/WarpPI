@@ -2,6 +2,7 @@ package it.cavallium.warppi.gui.graphicengine.html;
 
 import java.io.IOException;
 
+import it.cavallium.warppi.util.EventSubmitter;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.browser.Window;
@@ -20,8 +21,6 @@ import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.Platform.Semaphore;
 import it.cavallium.warppi.device.Keyboard;
-import it.cavallium.warppi.flow.BehaviorSubject;
-import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
@@ -38,8 +37,8 @@ public class HtmlEngine implements GraphicEngine {
 	private int width, height;
 	public int mult = 1;
 	private final int frameTime = (int) (1000d / 10d);
-	private final BehaviorSubject<Integer[]> onResize = BehaviorSubject.create();
-	private final BehaviorSubject<Float> onZoom = BehaviorSubject.create();
+	private final EventSubmitter<Integer[]> onResize = EventSubmitter.create();
+	private final EventSubmitter<Float> onZoom = EventSubmitter.create();
 
 	@Override
 	public int[] getSize() {
@@ -93,7 +92,7 @@ public class HtmlEngine implements GraphicEngine {
 		g = (CanvasRenderingContext2D) canvas.getContext("2d");
 		final HTMLInputElement keyInput = (HTMLInputElement) HtmlEngine.document.createElement("input");
 		StaticVars.windowZoom$.subscribe((zoom) -> {
-			onZoom.onNext(zoom);
+			onZoom.submit(zoom);
 		});
 		onZoom.subscribe((windowZoom) -> {
 			if (windowZoom != 0) {
@@ -325,7 +324,7 @@ public class HtmlEngine implements GraphicEngine {
 	}
 
 	@Override
-	public Observable<Integer[]> onResize() {
+	public EventSubmitter<Integer[]> onResize() {
 		return onResize;
 	}
 

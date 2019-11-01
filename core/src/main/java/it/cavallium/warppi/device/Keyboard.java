@@ -941,7 +941,7 @@ public class Keyboard {
 						break;
 					case ZOOM_MODE:
 						final float newZoom = StaticVars.windowZoom.getLastValue() % 3 + 1;
-						StaticVars.windowZoom.onNext(newZoom);
+						StaticVars.windowZoom.submit(newZoom);
 						Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Keyboard", "Zoom: " + newZoom);
 //						StaticVars.windowZoom = ((StaticVars.windowZoom - 0.5f) % 2f) + 1f;
 						refresh = true;

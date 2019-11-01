@@ -58,10 +58,8 @@ import it.cavallium.warppi.event.TouchEndEvent;
 import it.cavallium.warppi.event.TouchMoveEvent;
 import it.cavallium.warppi.event.TouchPoint;
 import it.cavallium.warppi.event.TouchStartEvent;
-import it.cavallium.warppi.flow.BehaviorSubject;
-import it.cavallium.warppi.flow.SimpleSubject;
-import it.cavallium.warppi.flow.Subject;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
+import it.cavallium.warppi.util.EventSubmitter;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
@@ -81,10 +79,10 @@ class NEWTWindow implements GLEventListener {
 	public volatile boolean refreshViewport;
 	public List<TouchPoint> touches = new ObjectArrayList<>();
 
-	final BehaviorSubject<Integer[]> onRealResize;
-	final BehaviorSubject<Integer[]> onResizeEvent = BehaviorSubject.create();
-	private final BehaviorSubject<Float> onZoom = BehaviorSubject.create();
-	private final Subject<GL2ES1> onGLContext = SimpleSubject.create();
+	final EventSubmitter<Integer[]> onRealResize;
+	final EventSubmitter<Integer[]> onResizeEvent = EventSubmitter.create();
+	private final EventSubmitter<Float> onZoom = EventSubmitter.create();
+	private final EventSubmitter<GL2ES1> onGLContext = EventSubmitter.create();
 
 	public NEWTWindow(final JOGLEngine disp) {
 		this.disp = disp;
@@ -93,18 +91,18 @@ class NEWTWindow implements GLEventListener {
 		disp.size[1] = StaticVars.screenSize[1];
 		realWindowSize = new int[] { StaticVars.screenSize[0], StaticVars.screenSize[1] };
 		windowZoom = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue());
-		onRealResize = BehaviorSubject.create(new Integer[] { (int) (StaticVars.screenSize[0] * windowZoom), (int) (StaticVars.screenSize[1] * windowZoom) });
+		onRealResize = EventSubmitter.create(new Integer[] { (int) (StaticVars.screenSize[0] * windowZoom), (int) (StaticVars.screenSize[1] * windowZoom) });
 
 		onRealResize.subscribe((realSize) -> {
 			realWindowSize[0] = realSize[0];
 			realWindowSize[1] = realSize[1];
 			disp.size[0] = realSize[0] / (int) windowZoom;
 			disp.size[1] = realSize[1] / (int) windowZoom;
-			onResizeEvent.onNext(new Integer[] { disp.size[0], disp.size[1] });
+			onResizeEvent.submit(new Integer[] { disp.size[0], disp.size[1] });
 			refreshViewport = true;
 		});
 		StaticVars.windowZoom$.subscribe((zoom) -> {
-			onZoom.onNext(zoom);
+			onZoom.submit(zoom);
 		});
 		onZoom.subscribe((z) -> {
 			if (windowZoom != 0) {
@@ -432,7 +430,7 @@ class NEWTWindow implements GLEventListener {
 	@Override
 	public void init(final GLAutoDrawable drawable) {
 		final GL2ES1 gl = drawable.getGL().getGL2ES1();
-		onGLContext.onNext(gl);
+		onGLContext.submit(gl);
 
 		if (Engine.getPlatform().getSettings().isDebugEnabled())
 			//Vsync
@@ -472,14 +470,14 @@ class NEWTWindow implements GLEventListener {
 
 	@Override
 	public void reshape(final GLAutoDrawable glad, final int x, final int y, final int width, final int height) {
-		onRealResize.onNext(new Integer[] { width, height });
+		onRealResize.submit(new Integer[] { width, height });
 	}
 
 	@Override
 	public void display(final GLAutoDrawable glad) {
 		final GL2ES1 gl = glad.getGL().getGL2ES1();
 		JOGLRenderer.gl = gl;
-		onGLContext.onNext(gl);
+		onGLContext.submit(gl);
 
 		final boolean linear = windowZoom % (int) windowZoom != 0f;
 		if (refreshViewport) {
@@ -531,7 +529,7 @@ class NEWTWindow implements GLEventListener {
 		if (zoom == 0)
 			zoom = 1;
 		window.setSize(width * zoom, height * zoom);
-		onRealResize.onNext(new Integer[] { width * zoom, height * zoom });
+		onRealResize.submit(new Integer[] { width * zoom, height * zoom });
 	}
 
 	@Override

@@ -8,20 +8,19 @@ import it.cavallium.warppi.device.HardwareDevice;
 import it.cavallium.warppi.device.HardwareTouchDevice;
 import it.cavallium.warppi.device.InputManager;
 import it.cavallium.warppi.device.Keyboard;
-import it.cavallium.warppi.flow.BehaviorSubject;
-import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.DisplayManager;
 import it.cavallium.warppi.gui.HUD;
 import it.cavallium.warppi.gui.HardwareDisplay;
 import it.cavallium.warppi.gui.screens.Screen;
 import it.cavallium.warppi.util.ClassUtils;
+import it.cavallium.warppi.util.EventSubmitter;
 
 public class Engine {
 	public static final Engine INSTANCE = new Engine();
 	private static Platform platform;
 	private static boolean running = false;
-	private static BehaviorSubject<LoadingStatus> loadPhase = BehaviorSubject.create();
-	private final BehaviorSubject<Boolean> loaded = BehaviorSubject.create(false);
+	private static EventSubmitter<LoadingStatus> loadPhase = new EventSubmitter<>();
+	private final EventSubmitter<Boolean> loaded = new EventSubmitter<>(false);
 	private HardwareDevice hardwareDevice;
 
 	private Engine() {}
@@ -43,8 +42,8 @@ public class Engine {
 	 * @throws IOException
 	 */
 	public static void start(final Platform platform, final Screen screen, final HardwareDisplay disp,
-			final HardwareTouchDevice touchdevice, final HUD hud, final StartupArguments args)
-			throws InterruptedException, IOException {
+	                         final HardwareTouchDevice touchdevice, final HUD hud, final StartupArguments args)
+		throws InterruptedException, IOException {
 		if (Engine.running) {
 			throw new RuntimeException("Already running!");
 		} else {
@@ -54,8 +53,8 @@ public class Engine {
 	}
 
 	private void startInstance(final Platform platform, final Screen screen, final HardwareDisplay disp,
-			final HardwareTouchDevice touchdevice, final HUD hud, final StartupArguments args)
-			throws InterruptedException, IOException {
+	                           final HardwareTouchDevice touchdevice, final HUD hud, final StartupArguments args)
+		throws InterruptedException, IOException {
 		Engine.platform = platform;
 		platform.getConsoleUtils().out().println("WarpPI Calculator");
 		initializeEnvironment(args);
@@ -69,7 +68,7 @@ public class Engine {
 		final InputManager im = new InputManager(k, touchdevice);
 		hardwareDevice = new HardwareDevice(dm, im);
 
-		hardwareDevice.setup(() -> Engine.loadPhase.onNext(new LoadingStatus()));
+		hardwareDevice.setup(() -> Engine.loadPhase.submit(new LoadingStatus()));
 	}
 
 	private void onShutdown() {
@@ -112,11 +111,11 @@ public class Engine {
 		Keyboard.stopKeyboard();
 	}
 
-	public Observable<Boolean> isLoaded() {
+	public EventSubmitter<Boolean> isLoaded() {
 		return loaded;
 	}
 
-	public Observable<LoadingStatus> getLoadPhase() {
+	public EventSubmitter<LoadingStatus> getLoadPhase() {
 		return Engine.loadPhase;
 	}
 
@@ -134,7 +133,7 @@ public class Engine {
 		}
 
 		public void done() {
-			Engine.INSTANCE.loaded.onNext(true);
+			Engine.INSTANCE.loaded.submit(true);
 			Engine.INSTANCE.hardwareDevice.getDisplayManager().waitForExit();
 			Engine.INSTANCE.onShutdown();
 		}

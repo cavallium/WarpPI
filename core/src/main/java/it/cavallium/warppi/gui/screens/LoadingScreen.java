@@ -31,7 +31,7 @@ public class LoadingScreen extends Screen {
 	public void initialized() throws InterruptedException {
 		previousZoomValue = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue());
 		Engine.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().hide();
-		StaticVars.windowZoom.onNext(1f);
+		StaticVars.windowZoom.submit(1f);
 	}
 	
 	@Override
@@ -44,7 +44,7 @@ public class LoadingScreen extends Screen {
 		endLoading += dt;
 		if (!ended && loaded && (Engine.getPlatform().getSettings().isDebugEnabled() || endLoading >= 3.5f)) {
 			ended = true;
-			StaticVars.windowZoom.onNext(previousZoomValue);
+			StaticVars.windowZoom.submit(previousZoomValue);
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().show();
 			Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MathInputScreen());
 		}

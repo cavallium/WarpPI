@@ -34,9 +34,8 @@ import it.cavallium.warppi.event.TouchEndEvent;
 import it.cavallium.warppi.event.TouchMoveEvent;
 import it.cavallium.warppi.event.TouchPoint;
 import it.cavallium.warppi.event.TouchStartEvent;
-import it.cavallium.warppi.flow.BehaviorSubject;
-import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
+import it.cavallium.warppi.util.EventSubmitter;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class SwingWindow extends JFrame {
@@ -45,8 +44,8 @@ public class SwingWindow extends JFrame {
 	private RenderingLoop renderingLoop;
 	private final SwingEngine display;
 	private int mult = 1;
-	private final BehaviorSubject<Integer[]> onResize;
-	private final Observable<Integer[]> onResize$;
+	private final EventSubmitter<Integer[]> onResize;
+	private final EventSubmitter<Integer[]> onResize$;
 	public JPanel buttonsPanel;
 	private SwingAdvancedButton[][] buttons;
 	private int BTN_SIZE;
@@ -82,8 +81,8 @@ public class SwingWindow extends JFrame {
 
 		setTitle("WarpPI Calculator by Andrea Cavalli (@Cavallium)");
 
-		onResize = BehaviorSubject.create();
-		onResize$ = onResize.doOnNext((newSize) -> {
+		onResize = EventSubmitter.create();
+		onResize$ = onResize.map((newSize) -> {
 			disp.r.size = new int[] { newSize[0], newSize[1] };
 			if (disp.r.size[0] <= 0)
 				disp.r.size[0] = 1;
@@ -91,6 +90,8 @@ public class SwingWindow extends JFrame {
 				disp.r.size[1] = 1;
 			SwingRenderer.canvas2d = new int[disp.r.size[0] * disp.r.size[1]];
 			disp.g = new BufferedImage(disp.r.size[0], disp.r.size[1], BufferedImage.TYPE_INT_RGB);
+
+			return newSize;
 		});
 
 		addComponentListener(new ComponentListener() {
@@ -104,7 +105,7 @@ public class SwingWindow extends JFrame {
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
-				onResize.onNext(new Integer[] { c.getWidth() / mult, c.getHeight() / mult });
+				onResize.submit(new Integer[] { c.getWidth() / mult, c.getHeight() / mult });
 			}
 
 			@Override
@@ -184,7 +185,7 @@ public class SwingWindow extends JFrame {
 		StaticVars.windowZoom$.subscribe((newZoomValue) -> {
 			if (newZoomValue != mult) {
 				mult = (int) newZoomValue.floatValue();
-				onResize.onNext(new Integer[] { getWWidth(), getWHeight() });
+				onResize.submit(new Integer[] { getWWidth(), getWHeight() });
 				Engine.getPlatform().getConsoleUtils().out().println(3, "Engine", "CPU", "Zoom changed");
 			}
 		});
@@ -323,7 +324,7 @@ public class SwingWindow extends JFrame {
 			}
 	}
 
-	public Observable<Integer[]> onResize() {
+	public EventSubmitter<Integer[]> onResize() {
 		return onResize$;
 	}
 

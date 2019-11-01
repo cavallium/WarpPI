@@ -13,11 +13,11 @@ import com.jogamp.opengl.util.texture.Texture;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
 import it.cavallium.warppi.gui.graphicengine.Skin;
+import it.cavallium.warppi.util.EventSubscriber;
 
 public class JOGLEngine implements GraphicEngine {
 
@@ -85,7 +85,7 @@ public class JOGLEngine implements GraphicEngine {
 	}
 
 	@Override
-	public Observable<Integer[]> onResize() {
+	public EventSubscriber<Integer[]> onResize() {
 		return wnd.onResizeEvent;
 	}
 

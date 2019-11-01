@@ -1,6 +1,3 @@
-[submodule "Flow"]
-	path = Flow
-	url = https://github.com/Cavallium/Flow
 [submodule "bigdecimal-math"]
 	path = bigdecimal-math
 	url = https://github.com/Cavallium/bigdecimal-math

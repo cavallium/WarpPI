@@ -11,10 +11,6 @@ import org.teavm.jso.dom.html.HTMLImageElement;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Platform.Semaphore;
-import it.cavallium.warppi.flow.BehaviorSubject;
-import it.cavallium.warppi.flow.SimpleSubject;
-import it.cavallium.warppi.flow.Subject;
-import it.cavallium.warppi.flow.ValueReference;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Skin;
 
@@ -49,13 +45,13 @@ public class HtmlSkin implements Skin {
 	@Override
 	public void initialize(final GraphicEngine d) {
 		final HTMLDocument doc = Window.current().getDocument();
-		ValueReference<Boolean> done = new ValueReference<Boolean>(false);
+		Boolean[] done = new Boolean[]{false};
 		imgEl = doc.createElement("img").cast();
 		imgEl.addEventListener("load", (Event e) -> {
-			done.value = true;
+			done[0] = true;
 		});
 		imgEl.setSrc(url);
-		while (!done.value) {
+		while (!done[0]) {
 			try {Thread.sleep(15);} catch (Exception e) {}
 		}
 		skinSize = new int[] { imgEl.getNaturalWidth(), imgEl.getNaturalHeight() };

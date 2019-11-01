@@ -7,11 +7,11 @@ import java.util.concurrent.Semaphore;
 
 import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.flow.Observable;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
 import it.cavallium.warppi.gui.graphicengine.Skin;
+import it.cavallium.warppi.util.EventSubmitter;
 
 public class SwingEngine implements GraphicEngine {
 
@@ -62,7 +62,7 @@ public class SwingEngine implements GraphicEngine {
 	}
 
 	@Override
-	public Observable<Integer[]> onResize() {
+	public EventSubmitter<Integer[]> onResize() {
 		return INSTANCE.onResize();
 	}
 

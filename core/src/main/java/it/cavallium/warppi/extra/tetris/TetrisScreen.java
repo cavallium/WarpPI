@@ -43,7 +43,7 @@ public class TetrisScreen extends Screen {
 
 	@Override
 	public void initialized() {
-		StaticVars.windowZoom.onNext(2f);
+		StaticVars.windowZoom.submit(2f);
 	}
 
 	@Override

@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.cavallium</groupId>
 		<artifactId>warppi</artifactId>
-		<version>0.9.0a3</version>
+		<version>0.10.0-alpha</version>
 	</parent>
 	<artifactId>warppi-teavm</artifactId>
 	<packaging>jar</packaging>
@@ -17,17 +17,12 @@
 		<dependency>
 			<groupId>it.cavallium</groupId>
 			<artifactId>warppi-core</artifactId>
-			<version>0.9.0a3</version>
-		</dependency>
-		<dependency>
-			<groupId>it.cavallium</groupId>
-			<artifactId>warppi-rules</artifactId>
-			<version>0.9.0a3</version>
+			<version>0.10.0-alpha</version>
 		</dependency>
 		<dependency>
 			<groupId>org.teavm</groupId>
 			<artifactId>teavm-classlib</artifactId>
-			<version>0.6.0-dev-682</version>
+			<version>0.7.0-dev-916</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -86,7 +81,7 @@
 			<plugin>
 				<groupId>org.teavm</groupId>
 				<artifactId>teavm-maven-plugin</artifactId>
-				<version>0.6.0-dev-682</version>
+				<version>0.7.0-dev-916</version>
 				<executions>
 					<execution>
 						<goals>
