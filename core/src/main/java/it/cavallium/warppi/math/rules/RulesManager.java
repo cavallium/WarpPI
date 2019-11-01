@@ -1,7 +1,8 @@
 package it.cavallium.warppi.math.rules;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform;
+import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
@@ -28,7 +29,7 @@ public class RulesManager {
 
 	@SuppressWarnings({ "unchecked" })
 	public static void initialize() {
-		Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "RulesManager", "Loading the rules");
+		WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "RulesManager", "Loading the rules");
 		RulesManager.rules = new ObjectArrayList[RuleType.values().length];
 		for (final RuleType val : RuleType.values()) {
 			RulesManager.rules[val.ordinal()] = new ObjectArrayList<>();
@@ -134,6 +135,6 @@ public class RulesManager {
 
 	public static void addRule(final Rule rule) {
 		RulesManager.rules[rule.getRuleType().ordinal()].add(rule);
-		Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "RulesManager", rule.getRuleName(), "Loaded as " + rule.getRuleType() + " rule");
+		WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "RulesManager", rule.getRuleName(), "Loaded as " + rule.getRuleType() + " rule");
 	}
 }

@@ -1,11 +1,12 @@
 package it.cavallium.warppi.gui.graphicengine.impl.swing;
 
-import java.awt.GraphicsEnvironment;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
@@ -15,11 +16,17 @@ import it.cavallium.warppi.util.EventSubmitter;
 
 public class SwingEngine implements GraphicEngine {
 
+	private final int defaultWidth;
+	private final int defaultHeight;
 	private SwingWindow INSTANCE;
 	public SwingRenderer r;
 	public volatile BufferedImage g;
 	public volatile boolean initialized;
-	public Semaphore exitSemaphore;
+
+	public SwingEngine(int defaultWidth, int defaultHeight) {
+		this.defaultWidth = defaultWidth;
+		this.defaultHeight = defaultHeight;
+	}
 
 	@Override
 	public void setTitle(final String title) {
@@ -51,10 +58,8 @@ public class SwingEngine implements GraphicEngine {
 		r = new SwingRenderer();
 		g = new BufferedImage(r.size[0], r.size[1], BufferedImage.TYPE_INT_RGB);
 		initialized = false;
-		exitSemaphore = new Semaphore(0);
-		INSTANCE = new SwingWindow(this);
-		setResizable(Engine.getPlatform().getSettings().isDebugEnabled());
-		setDisplayMode((int) (StaticVars.screenSize[0] / StaticVars.windowZoom.getLastValue()), (int) (StaticVars.screenSize[1] / StaticVars.windowZoom.getLastValue()));
+		INSTANCE = new SwingWindow(this, defaultWidth, defaultHeight);
+		setResizable(WarpPI.getPlatform().getSettings().isDebugEnabled());
 		INSTANCE.setVisible(true);
 		initialized = true;
 		if (onInitialized != null)
@@ -68,20 +73,21 @@ public class SwingEngine implements GraphicEngine {
 
 	@Override
 	public int getWidth() {
-		return INSTANCE.getWWidth() - StaticVars.screenPos[0];
+		return this.getSize()[0];
 	}
 
 	@Override
 	public int getHeight() {
-		return INSTANCE.getWHeight() - StaticVars.screenPos[1];
+		return this.getSize()[1];
 	}
 
 	@Override
 	public void destroy() {
+		sendPowerOffSignal();
+	}
+
+	protected void destroyEngine() {
 		initialized = false;
-		exitSemaphore.release();
-		INSTANCE.setVisible(false);
-		INSTANCE.dispose();
 	}
 
 	@Override
@@ -112,13 +118,56 @@ public class SwingEngine implements GraphicEngine {
 
 	@Deprecated()
 	public void refresh() {
-		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || Engine.INSTANCE.getHardwareDevice().getDisplayManager().error != null && Engine.INSTANCE.getHardwareDevice().getDisplayManager().error.length() > 0 || Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen().mustBeRefreshed())
+		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error != null && WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error.length() > 0 || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen().mustBeRefreshed())
 			INSTANCE.c.paintImmediately(0, 0, getWidth(), getHeight());
 	}
 
 	@Override
 	public void repaint() {
 		INSTANCE.c.repaint();
+	}
+
+	public void subscribeExit(Runnable subscriber) {
+		INSTANCE.addWindowListener(new WindowListener() {
+			@Override
+			public void windowOpened(WindowEvent e) {
+
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				subscriber.run();
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+
+			}
+		});
+	}
+
+	public void sendPowerOffSignal() {
+		INSTANCE.sendPowerOffSignal();
 	}
 
 	public abstract class Startable {
@@ -137,7 +186,7 @@ public class SwingEngine implements GraphicEngine {
 
 	@Override
 	public int[] getSize() {
-		return r.size;
+		return r.size.clone();
 	}
 
 	@Override
@@ -166,13 +215,6 @@ public class SwingEngine implements GraphicEngine {
 	}
 
 	@Override
-	public void waitForExit() {
-		try {
-			exitSemaphore.acquire();
-		} catch (final InterruptedException e) {}
-	}
-
-	@Override
 	public boolean isSupported() {
 		if (StaticVars.startupArguments.isEngineForced() && StaticVars.startupArguments.isCPUEngineForced() == false)
 			return false;
@@ -190,5 +232,14 @@ public class SwingEngine implements GraphicEngine {
 
 	public void setShiftChanged(final boolean val) {
 		INSTANCE.setShiftChanged(val);
+	}
+
+	public Insets getInsets() {
+		return INSTANCE.getInsets();
+	}
+
+	public void subscribeTouchDevice(MouseMotionListener mouseMotionListener, MouseListener mouseListener) {
+		INSTANCE.c.addMouseListener(mouseListener);
+		INSTANCE.c.addMouseMotionListener(mouseMotionListener);
 	}
 }

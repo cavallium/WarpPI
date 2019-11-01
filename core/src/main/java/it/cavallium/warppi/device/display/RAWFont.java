@@ -1,4 +1,4 @@
-package it.cavallium.warppi.device.graphicengine;
+package it.cavallium.warppi.device.display;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.util.ClassUtils;
 import it.cavallium.warppi.util.Utils;
 
@@ -32,7 +32,7 @@ public class RAWFont {
 			loadFont("/font_" + name + ".rft");
 		} catch (final IOException e) {
 			e.printStackTrace();
-			Engine.getPlatform().exit(1);
+			WarpPI.getPlatform().exit(1);
 		}
 		chars32 = new int[(maxBound - minBound) * charIntCount];
 		for (int charIndex = 0; charIndex < maxBound - minBound; charIndex++) {
@@ -110,7 +110,7 @@ public class RAWFont {
 					} catch (final Exception ex) {
 						ex.printStackTrace();
 						System.out.println(string);
-						Engine.getPlatform().exit(-1);
+						WarpPI.getPlatform().exit(-1);
 					}
 				}
 			} else {

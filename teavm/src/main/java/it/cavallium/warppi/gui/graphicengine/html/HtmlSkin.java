@@ -9,9 +9,9 @@ import org.teavm.jso.dom.events.Event;
 import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLImageElement;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform.Semaphore;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.Skin;
 
 public class HtmlSkin implements Skin {
@@ -29,7 +29,7 @@ public class HtmlSkin implements Skin {
 	}
 
 	@Override
-	public void use(final GraphicEngine d) {
+	public void use(final DisplayOutputDevice d) {
 		if (d instanceof HtmlEngine) {
 			if (!initd)
 				initialize(d);
@@ -39,11 +39,11 @@ public class HtmlSkin implements Skin {
 
 	@Override
 	public void load(String file) throws IOException {
-		url = Engine.getPlatform().getStorageUtils().getBasePath() + (!file.startsWith("/") ? "/" : "") + file;
+		url = WarpPI.getPlatform().getStorageUtils().getBasePath() + (!file.startsWith("/") ? "/" : "") + file;
 	}
 
 	@Override
-	public void initialize(final GraphicEngine d) {
+	public void initialize(final DisplayOutputDevice d) {
 		final HTMLDocument doc = Window.current().getDocument();
 		Boolean[] done = new Boolean[]{false};
 		imgEl = doc.createElement("img").cast();

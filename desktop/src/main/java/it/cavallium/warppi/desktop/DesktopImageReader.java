@@ -8,7 +8,7 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 import ar.com.hjg.pngj.ImageLineInt;
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform.ImageUtils.ImageReader;
 
 public class DesktopImageReader implements ImageReader {

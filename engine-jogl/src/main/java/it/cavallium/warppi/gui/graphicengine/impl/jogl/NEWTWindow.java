@@ -28,12 +28,8 @@
 
 package it.cavallium.warppi.gui.graphicengine.impl.jogl;
 
-import java.util.List;
-
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
-import com.jogamp.newt.event.MouseEvent;
-import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.event.WindowListener;
 import com.jogamp.newt.event.WindowUpdateEvent;
@@ -50,17 +46,12 @@ import com.jogamp.opengl.fixedfunc.GLPointerFunc;
 import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.texture.Texture;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.event.Key;
-import it.cavallium.warppi.event.TouchEndEvent;
-import it.cavallium.warppi.event.TouchMoveEvent;
-import it.cavallium.warppi.event.TouchPoint;
-import it.cavallium.warppi.event.TouchStartEvent;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.util.EventSubmitter;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
  *
@@ -70,47 +61,44 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 class NEWTWindow implements GLEventListener {
 
-	private final JOGLEngine disp;
+	private final JOGLEngine engine;
 	private final JOGLRenderer renderer;
 	public GLWindow window;
 	public volatile float windowZoom = 1;
 	public int[] realWindowSize;
 	public Runnable onInitialized;
 	public volatile boolean refreshViewport;
-	public List<TouchPoint> touches = new ObjectArrayList<>();
 
 	final EventSubmitter<Integer[]> onRealResize;
 	final EventSubmitter<Integer[]> onResizeEvent = EventSubmitter.create();
 	private final EventSubmitter<Float> onZoom = EventSubmitter.create();
 	private final EventSubmitter<GL2ES1> onGLContext = EventSubmitter.create();
 
-	public NEWTWindow(final JOGLEngine disp) {
-		this.disp = disp;
-		renderer = disp.getRenderer();
-		disp.size[0] = StaticVars.screenSize[0];
-		disp.size[1] = StaticVars.screenSize[1];
-		realWindowSize = new int[] { StaticVars.screenSize[0], StaticVars.screenSize[1] };
+	public NEWTWindow(final JOGLEngine engine) {
+		this.engine = engine;
+		renderer = engine.getRenderer();
+		engine.size[0] = engine.getSize()[0];
+		engine.size[1] = engine.getSize()[1];
+		realWindowSize = new int[] { engine.getSize()[0], engine.getSize()[1] };
 		windowZoom = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue());
-		onRealResize = EventSubmitter.create(new Integer[] { (int) (StaticVars.screenSize[0] * windowZoom), (int) (StaticVars.screenSize[1] * windowZoom) });
+		onRealResize = BehaviorSubject.create(new Integer[] { (int) (engine.getSize()[0] * windowZoom), (int) (engine.getSize()[1] * windowZoom) });
 
 		onRealResize.subscribe((realSize) -> {
 			realWindowSize[0] = realSize[0];
 			realWindowSize[1] = realSize[1];
-			disp.size[0] = realSize[0] / (int) windowZoom;
-			disp.size[1] = realSize[1] / (int) windowZoom;
-			onResizeEvent.submit(new Integer[] { disp.size[0], disp.size[1] });
+			engine.size[0] = realSize[0] / (int) windowZoom;
+			engine.size[1] = realSize[1] / (int) windowZoom;
+			onResizeEvent.onNext(new Integer[] { engine.size[0], engine.size[1] });
 			refreshViewport = true;
 		});
-		StaticVars.windowZoom$.subscribe((zoom) -> {
-			onZoom.submit(zoom);
-		});
+		StaticVars.windowZoom$.subscribe(onZoom::onNext);
 		onZoom.subscribe((z) -> {
 			if (windowZoom != 0) {
 				windowZoom = z;
-				disp.size[0] = (int) (realWindowSize[0] / windowZoom);
-				disp.size[1] = (int) (realWindowSize[1] / windowZoom);
-				StaticVars.screenSize[0] = disp.size[0];
-				StaticVars.screenSize[1] = disp.size[1];
+				engine.size[0] = (int) (realWindowSize[0] / windowZoom);
+				engine.size[1] = (int) (realWindowSize[1] / windowZoom);
+				engine.getSize()[0] = engine.size[0];
+				engine.getSize()[1] = engine.size[1];
 				refreshViewport = true;
 			}
 		});
@@ -123,7 +111,7 @@ class NEWTWindow implements GLEventListener {
 			System.err.println("Le OpenGL non sono presenti su questo computer!");
 			return;
 		}
-		if (Engine.getPlatform().getSettings().isDebugEnabled())
+		if (WarpPI.getPlatform().getSettings().isDebugEnabled())
 			System.setProperty("jnlp.newt.window.icons", "res/icons/calculator-016.png res/icons/calculator-018.png res/icons/calculator-256.png");
 		final GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2ES1));
 		System.out.println("Loaded OpenGL");
@@ -148,7 +136,6 @@ class NEWTWindow implements GLEventListener {
 
 			@Override
 			public void windowDestroyed(final WindowEvent e) {
-				final GraphicEngine engine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
 				if (engine.isInitialized())
 					engine.destroy();
 			}
@@ -314,112 +301,6 @@ class NEWTWindow implements GLEventListener {
 				}
 			}
 		});
-		glWindow.addMouseListener(new MouseListener() {
-
-			@Override
-			public void mouseClicked(final MouseEvent e) {
-//				List<TouchPoint> newPoints = new ObjectArrayList<>();
-//				List<TouchPoint> changedPoints = new ObjectArrayList<>();
-//				List<TouchPoint> oldPoints = touches;
-//				int[] xs = e.getAllX();
-//				int[] ys = e.getAllY();
-//				float[] ps = e.getAllPressures();
-//				short[] is = e.getAllPointerIDs();
-//				for (int i = 0; i < e.getPointerCount(); i++) {
-//					newPoints.add(Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().makePoint(is[i], xs[i], ys[i], disp.getWidth(), disp.getHeight(), 5, 5, ps[i], 0));
-//				}
-//
-//				changedPoints.add(newPoints.get(0));
-//				newPoints.remove(0);
-//				touches = newPoints;
-//				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchStart(new TouchStartEvent(changedPoints, touches));
-//				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchEnd(new TouchEndEvent(changedPoints, touches));
-			}
-
-			@Override
-			public void mouseEntered(final MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mouseExited(final MouseEvent e) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void mousePressed(final MouseEvent e) {
-				final List<TouchPoint> newPoints = new ObjectArrayList<>();
-				final List<TouchPoint> changedPoints = new ObjectArrayList<>();
-				@SuppressWarnings("unused")
-				final List<TouchPoint> oldPoints = touches;
-				final int[] xs = e.getAllX();
-				final int[] ys = e.getAllY();
-				final float[] ps = e.getAllPressures();
-				final short[] is = e.getAllPointerIDs();
-				for (int i = 0; i < e.getPointerCount(); i++)
-					newPoints.add(Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().makePoint(is[i], xs[i], ys[i], disp.getWidth(), disp.getHeight(), 5, 5, ps[i], 0));
-				changedPoints.add(newPoints.get(0));
-				touches = newPoints;
-				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchStart(new TouchStartEvent(changedPoints, touches));
-			}
-
-			@Override
-			public void mouseReleased(final MouseEvent e) {
-				final List<TouchPoint> newPoints = new ObjectArrayList<>();
-				final List<TouchPoint> changedPoints = new ObjectArrayList<>();
-				@SuppressWarnings("unused")
-				final List<TouchPoint> oldPoints = touches;
-				final int[] xs = e.getAllX();
-				final int[] ys = e.getAllY();
-				final float[] ps = e.getAllPressures();
-				final short[] is = e.getAllPointerIDs();
-				for (int i = 0; i < e.getPointerCount(); i++)
-					newPoints.add(Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().makePoint(is[i], xs[i], ys[i], disp.getWidth(), disp.getHeight(), 5, 5, ps[i], 0));
-				changedPoints.add(newPoints.get(0));
-				newPoints.remove(0);
-				touches = newPoints;
-				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchEnd(new TouchEndEvent(changedPoints, touches));
-			}
-
-			@Override
-			public void mouseMoved(final MouseEvent e) {}
-
-			private long lastDraggedTime = 0;
-
-			@Override
-			public void mouseDragged(final MouseEvent e) {
-				final long curTime = System.currentTimeMillis();
-				if (curTime - lastDraggedTime > 50) {
-					lastDraggedTime = curTime;
-					final List<TouchPoint> newPoints = new ObjectArrayList<>();
-					final List<TouchPoint> changedPoints = new ObjectArrayList<>();
-					final List<TouchPoint> oldPoints = touches;
-					final int[] xs = e.getAllX();
-					final int[] ys = e.getAllY();
-					final float[] ps = e.getAllPressures();
-					final short[] is = e.getAllPointerIDs();
-					for (int i = 0; i < e.getPointerCount(); i++)
-						newPoints.add(Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().makePoint(is[i], xs[i], ys[i], disp.getWidth(), disp.getHeight(), 5, 5, ps[i], 0));
-					newPoints.forEach((newp) -> {
-						oldPoints.forEach((oldp) -> {
-							if (newp.getID() == oldp.getID())
-								if (newp.equals(oldp) == false)
-									changedPoints.add(newp);
-						});
-					});
-					touches = newPoints;
-					Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchMove(new TouchMoveEvent(changedPoints, touches));
-				}
-			}
-
-			@Override
-			public void mouseWheelMoved(final MouseEvent e) {
-
-			}
-
-		});
 
 		glWindow.addGLEventListener(this /* GLEventListener */);
 		final Animator animator = new Animator();
@@ -432,7 +313,7 @@ class NEWTWindow implements GLEventListener {
 		final GL2ES1 gl = drawable.getGL().getGL2ES1();
 		onGLContext.submit(gl);
 
-		if (Engine.getPlatform().getSettings().isDebugEnabled())
+		if (WarpPI.getPlatform().getSettings().isDebugEnabled())
 			//Vsync
 			gl.setSwapInterval(1);
 		else
@@ -451,7 +332,7 @@ class NEWTWindow implements GLEventListener {
 		//gl.glEnable(GL.GL_MULTISAMPLE);
 
 		try {
-			renderer.currentTex = ((JOGLSkin) disp.loadSkin("/test.png")).t;
+			renderer.currentTex = ((JOGLSkin) engine.loadSkin("/test.png")).t;
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
@@ -487,21 +368,21 @@ class NEWTWindow implements GLEventListener {
 			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
 			gl.glLoadIdentity();
 
-			gl.glOrtho(0.0, disp.size[0], disp.size[1], 0.0, -1, 1);
+			gl.glOrtho(0.0, engine.size[0], engine.size[1], 0.0, -1, 1);
 
 			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 			gl.glLoadIdentity();
 
-			for (final Texture t : disp.registeredTextures) {
+			for (final Texture t : engine.registeredTextures) {
 				t.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, linear ? GL.GL_LINEAR : GL.GL_NEAREST);
 				t.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
 			}
 		}
-		while (disp.unregisteredTextures.isEmpty() == false) {
-			final Texture t = disp.unregisteredTextures.pop();
+		while (engine.unregisteredTextures.isEmpty() == false) {
+			final Texture t = engine.unregisteredTextures.pop();
 			t.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, linear ? GL.GL_LINEAR : GL.GL_NEAREST);
 			t.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-			disp.registeredTextures.addLast(t);
+			engine.registeredTextures.addLast(t);
 		}
 
 		gl.glEnableClientState(GLPointerFunc.GL_COLOR_ARRAY);
@@ -510,7 +391,7 @@ class NEWTWindow implements GLEventListener {
 
 		renderer.initDrawCycle();
 
-		disp.repaint();
+		engine.repaint();
 
 		renderer.endDrawCycle();
 

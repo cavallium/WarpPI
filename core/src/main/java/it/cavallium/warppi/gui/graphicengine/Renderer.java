@@ -42,4 +42,6 @@ public interface Renderer {
 	void glClearSkin();
 
 	BinaryFont getCurrentFont();
+
+	Renderer getBoundedInstance(int dx, int dy, int width, int height);
 }

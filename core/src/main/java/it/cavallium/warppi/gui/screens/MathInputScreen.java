@@ -3,11 +3,13 @@ package it.cavallium.warppi.gui.screens;
 import java.io.IOException;
 import java.util.HashMap;
 
+import it.cavallium.warppi.gui.RenderContext;
+import it.cavallium.warppi.gui.ScreenContext;
 import org.apache.commons.lang3.SerializationUtils;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform.ConsoleUtils;
-import it.cavallium.warppi.device.Keyboard;
+import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
@@ -66,7 +68,6 @@ public class MathInputScreen extends Screen {
 
 	/**
 	 * Create a copy of this element
-	 * @param mathInputScreen
 	 */
 	private MathInputScreen(MathInputScreen old) {
 		this.calc = new MathContext(old.calc);
@@ -87,13 +88,6 @@ public class MathInputScreen extends Screen {
 		ic = new InputContext();
 		calc = new MathContext();
 
-		try {
-			BlockContainer.initializeFonts(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("norm"), Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("smal"));
-		} catch (final IOException e) {
-			e.printStackTrace();
-			Engine.getPlatform().exit(1);
-		}
-
 		userInput = new NormalInputContainer(ic);
 		result = new NormalOutputContainer();
 
@@ -106,16 +100,22 @@ public class MathInputScreen extends Screen {
 	}
 
 	@Override
-	public void graphicInitialized() throws InterruptedException {
+	public void graphicInitialized(ScreenContext ctx) throws InterruptedException {
 		/* Fine caricamento */
+		try {
+			BlockContainer.initializeFonts(ctx.getGraphicEngine().loadFont("norm"), ctx.getGraphicEngine().loadFont("smal"));
+		} catch (final IOException e) {
+			e.printStackTrace();
+			WarpPI.getPlatform().exit(1);
+		}
 	}
 
 	@Override
-	public void beforeRender(final float dt) {
-		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager().error == null) {
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xFFc5c2af);
+	public void beforeRender(final ScreenContext ctx, final float dt) {
+		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error == null) {
+			ctx.getGraphicEngine().getRenderer().glClearColor(0xFFc5c2af);
 		} else {
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xFFDC3C32);
+			ctx.getGraphicEngine().getRenderer().glClearColor(0xFFDC3C32);
 		}
 		if (userInput.beforeRender(dt)) {
 			mustRefresh = true;
@@ -140,14 +140,14 @@ public class MathInputScreen extends Screen {
 	}
 
 	@Override
-	public void render() {
-		final Renderer renderer = Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer;
-		MathInputScreen.fontBig.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
+	public void render(RenderContext ctx) {
+		final Renderer renderer = ctx.getRenderer();
+		MathInputScreen.fontBig.use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
 		final int textColor = 0xFF000000;
 		final int padding = 4;
 		renderer.glColor(textColor);
 
-		userInput.draw(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine, renderer, padding, padding + 20);
+		userInput.draw(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display, renderer, padding, padding + 20);
 
 		if (computingResult) {
 			renderer.glColor3f(1, 1, 1);
@@ -156,20 +156,20 @@ public class MathInputScreen extends Screen {
 			final int size = 32;
 			final int posY = computingAnimationIndex % 2;
 			final int posX = (computingAnimationIndex - posY) / 2;
-			renderer.glFillRect(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getWidth() - size - 4, Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - size - 4, size, size, leftX + size * posX, leftY + size * posY, size, size);
+			renderer.glFillRect(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getWidth() - size - 4, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getHeight() - size - 4, size, size, leftX + size * posX, leftY + size * posY, size, size);
 			if (computingBreakTipVisible) {
-				Utils.getFont(false).use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
+				Utils.getFont(false).use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
 				renderer.glColor3f(0.75f, 0, 0);
-				renderer.glDrawStringRight(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getWidth() - 4 - size - 4, Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - size / 2 - renderer.getCurrentFont().getCharacterHeight() / 2 - 4, "Press (=) to stop");
+				renderer.glDrawStringRight(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getWidth() - 4 - size - 4, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getHeight() - size / 2 - renderer.getCurrentFont().getCharacterHeight() / 2 - 4, "Press (=) to stop");
 			}
 		} else if (!result.isContentEmpty()) {
-			result.draw(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine, renderer, Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getWidth() - result.getWidth() - 2, Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - result.getHeight() - 2);
+			result.draw(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display, renderer, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getWidth() - result.getWidth() - 2, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getHeight() - result.getHeight() - 2);
 		}
 	}
 
 	@Override
-	public void renderTopmost() {
-		final Renderer renderer = Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer;
+	public void renderTopmost(RenderContext ctx) {
+		final Renderer renderer = ctx.getRenderer();
 		renderer.glColor3f(1, 1, 1);
 		final int pos = 2;
 		final int spacersNumb = 1;
@@ -179,7 +179,7 @@ public class MathInputScreen extends Screen {
 		} else {
 			skinN = 21;
 		}
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
 		renderer.glFillRect(2 + 18 * pos + 2 * spacersNumb, 2, 16, 16, 16 * skinN, 16 * 0, 16, 16);
 	}
 
@@ -195,7 +195,7 @@ public class MathInputScreen extends Screen {
 
 	@Override
 	public boolean onKeyPressed(final KeyPressedEvent k) {
-		Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "MathInputScreen", "Pressed key " + k.getKey().toString());
+		WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "MathInputScreen", "Pressed key " + k.getKey().toString());
 		try {
 			switch (k.getKey()) {
 				case OK:
@@ -347,9 +347,9 @@ public class MathInputScreen extends Screen {
 								userInput.clear();
 								result.clear();
 								currentStep = 0;
-								if (Engine.INSTANCE.getHardwareDevice().getDisplayManager().error != null) {
-									Engine.getPlatform().getConsoleUtils().out().println(1, "Resetting after error...");
-									Engine.INSTANCE.getHardwareDevice().getDisplayManager().error = null;
+								if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error != null) {
+									WarpPI.getPlatform().getConsoleUtils().out().println(1, "Resetting after error...");
+									WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error = null;
 								}
 								return true;
 							case SURD_MODE:
@@ -361,7 +361,7 @@ public class MathInputScreen extends Screen {
 								}
 								return true;
 							case debug1:
-								Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new EmptyScreen());
+								WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new EmptyScreen());
 								return true;
 							case HISTORY_BACK:
 								//					if (Engine.INSTANCE.getHardwareDevice().getDisplayManager().canGoBack()) {
@@ -428,7 +428,7 @@ public class MathInputScreen extends Screen {
 	@SuppressWarnings("unchecked")
 	private void swapInputScreen() {
 		MathInputScreen mis = new MathInputScreen(this);
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(mis);
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(mis);
 	}
 
 	@SuppressWarnings("unused")
@@ -517,10 +517,10 @@ public class MathInputScreen extends Screen {
 		if (!step) {
 			currentStep = 0;
 		}
-		if (Engine.INSTANCE.getHardwareDevice().getDisplayManager().error != null) {
+		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error != null) {
 			//TODO: make the error management a global API rather than being relegated to this screen.
-			Engine.getPlatform().getConsoleUtils().out().println(1, "Resetting after error...");
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().error = null;
+			WarpPI.getPlatform().getConsoleUtils().out().println(1, "Resetting after error...");
+			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error = null;
 			calc.f = null;
 			calc.f2 = null;
 			calc.resultsCount = 0;
@@ -540,13 +540,13 @@ public class MathInputScreen extends Screen {
 								calc.f2.clear();
 							}
 							calc.f.add(expr);
-							Engine.getPlatform().getConsoleUtils().out().println(2, "INPUT: " + expr);
+							WarpPI.getPlatform().getConsoleUtils().out().println(2, "INPUT: " + expr);
 							final MathSolver ms = new MathSolver(expr);
 							final ObjectArrayList<ObjectArrayList<Function>> resultSteps = ms.solveAllSteps();
 							resultSteps.add(0, Utils.newArrayList(expr));
 							final ObjectArrayList<Function> resultExpressions = resultSteps.get(resultSteps.size() - 1);
 							for (final Function rr : resultExpressions) {
-								Engine.getPlatform().getConsoleUtils().out().println(0, "RESULT: " + rr.toString());
+								WarpPI.getPlatform().getConsoleUtils().out().println(0, "RESULT: " + rr.toString());
 							}
 							final ObjectArrayList<ObjectArrayList<Block>> resultBlocks = MathParser.parseOutput(calc, resultExpressions);
 							result.setContentAsMultipleGroups(resultBlocks);
@@ -559,22 +559,22 @@ public class MathInputScreen extends Screen {
 							}
 						}
 					} catch (final InterruptedException ex) {
-						Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Computing thread stopped.");
+						WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Computing thread stopped.");
 					} catch (final Exception ex) {
-						if (Engine.getPlatform().getSettings().isDebugEnabled()) {
+						if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
 							ex.printStackTrace();
 						}
 						throw new Error(Errors.SYNTAX_ERROR);
 					}
 				} catch (final Error e) {
-					d.errorStackTrace = Engine.getPlatform().stacktraceToString(e);
-					Engine.INSTANCE.getHardwareDevice().getDisplayManager().error = e.id.toString();
+					d.errorStackTrace = WarpPI.getPlatform().stacktraceToString(e);
+					WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error = e.id.toString();
 					System.err.println(e.id);
 				}
 				computingResult = false;
 			});
-			Engine.getPlatform().setThreadName(computingThread, "Computing Thread");
-			Engine.getPlatform().setThreadDaemon(computingThread);
+			WarpPI.getPlatform().setThreadName(computingThread, "Computing Thread");
+			WarpPI.getPlatform().setThreadDaemon(computingThread);
 			computingThread.setPriority(Thread.NORM_PRIORITY + 3);
 			computingThread.start();
 			return true;
@@ -638,9 +638,9 @@ public class MathInputScreen extends Screen {
 			boolean cancelled = false;
 			for (final Function f : knownVarsInFunctions) {
 				final ChooseVariableValueScreen cvs = new ChooseVariableValueScreen(this, new VariableValue((Variable) f, new Number(calc, 0)));
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(cvs);
+				WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(cvs);
 				try {
-					Engine.INSTANCE.getHardwareDevice().getDisplayManager().screenChange.acquire();
+					WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().screenChange.acquire();
 				} catch (final InterruptedException e) {}
 				if (cvs.resultNumberValue == null) {
 					cancelled = true;
@@ -661,9 +661,9 @@ public class MathInputScreen extends Screen {
 				}
 			}
 		});
-		Engine.getPlatform().setThreadName(ct, "Variables user-input queue thread");
+		WarpPI.getPlatform().setThreadName(ct, "Variables user-input queue thread");
 		ct.setPriority(Thread.MIN_PRIORITY);
-		Engine.getPlatform().setThreadDaemon(ct);
+		WarpPI.getPlatform().setThreadDaemon(ct);
 		ct.start();
 	}
 

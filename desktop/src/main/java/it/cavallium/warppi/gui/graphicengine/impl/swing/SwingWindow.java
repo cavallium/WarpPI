@@ -1,22 +1,13 @@
 package it.cavallium.warppi.gui.graphicengine.impl.swing;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -27,9 +18,9 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.event.TouchEndEvent;
 import it.cavallium.warppi.event.TouchMoveEvent;
 import it.cavallium.warppi.event.TouchPoint;
@@ -40,6 +31,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class SwingWindow extends JFrame {
 	private static final long serialVersionUID = 2945898937634075491L;
+	private final int defaultWidth;
+	private final int defaultHeight;
 	public CustomCanvas c;
 	private RenderingLoop renderingLoop;
 	private final SwingEngine display;
@@ -49,12 +42,20 @@ public class SwingWindow extends JFrame {
 	public JPanel buttonsPanel;
 	private SwingAdvancedButton[][] buttons;
 	private int BTN_SIZE;
+	private volatile boolean windowShown;
+	private volatile boolean forceRepaint;
 
-	public SwingWindow(final SwingEngine disp) {
+	public SwingWindow(final SwingEngine disp, int defaultWidth, int defaultHeight) {
 		display = disp;
+		this.defaultWidth = defaultWidth;
+		this.defaultHeight = defaultHeight;
 		setLayout(new BorderLayout());
 		setBackground(Color.BLACK);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		c = new CustomCanvas();
+		c.setMinimumSize(new Dimension(0, 0));
+		c.setPreferredSize(new Dimension(defaultWidth, defaultHeight));
+		c.setSize(defaultWidth, defaultHeight);
 		c.setDoubleBuffered(false);
 		this.add(c, BorderLayout.CENTER);
 		try {
@@ -69,7 +70,7 @@ public class SwingWindow extends JFrame {
 
 		mult = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue()).intValue();
 
-		if (!Engine.getPlatform().getSettings().isDebugEnabled()) {
+		if (!WarpPI.getPlatform().getSettings().isDebugEnabled()) {
 			// Create a new blank cursor.
 			final Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "blank cursor");
 
@@ -83,13 +84,35 @@ public class SwingWindow extends JFrame {
 
 		onResize = EventSubmitter.create();
 		onResize$ = onResize.map((newSize) -> {
-			disp.r.size = new int[] { newSize[0], newSize[1] };
-			if (disp.r.size[0] <= 0)
-				disp.r.size[0] = 1;
-			if (disp.r.size[1] <= 0)
-				disp.r.size[1] = 1;
+			if (newSize[0] <= 0)
+				newSize[0] = 1;
+			if (newSize[1] <= 0)
+				newSize[1] = 1;
+
+			var oldSize = disp.r.size;
+ 			disp.r.size = new int[] { newSize[0], newSize[1] };
+
 			SwingRenderer.canvas2d = new int[disp.r.size[0] * disp.r.size[1]];
+			var oldG = disp.g;
 			disp.g = new BufferedImage(disp.r.size[0], disp.r.size[1], BufferedImage.TYPE_INT_RGB);
+			Graphics2D g = (Graphics2D) disp.g.getGraphics();
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+			g.setColor(Color.BLACK);
+			g.clearRect(0, 0, disp.r.size[0], disp.r.size[1]);
+			double oldRatio = (double) oldSize[0] / (double) oldSize[1];
+			double newRatio = (double) newSize[0] / (double) newSize[1];
+			int newFrameWidth;
+			int newFrameHeight = 0;
+			if ((int) (oldRatio * 100) == (int) (newRatio * 100)) {
+				newFrameWidth = newSize[0];
+				newFrameHeight = newSize[1];
+			} else {
+				newFrameWidth = oldSize[0];
+				newFrameHeight = oldSize[1];
+			}
+			g.drawImage(oldG, 0, 0, newFrameWidth, newFrameHeight, null);
+			forceRepaint = true;
+			display.repaint();
 
 			return newSize;
 		});
@@ -97,7 +120,7 @@ public class SwingWindow extends JFrame {
 		addComponentListener(new ComponentListener() {
 			@Override
 			public void componentHidden(final ComponentEvent e) {
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.destroy();
+				sendPowerOffSignal();
 			}
 
 			@Override
@@ -105,12 +128,15 @@ public class SwingWindow extends JFrame {
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
+				if (windowShown) {
 				onResize.submit(new Integer[] { c.getWidth() / mult, c.getHeight() / mult });
+				}
 			}
 
 			@Override
 			public void componentShown(final ComponentEvent e) {
-				if (Engine.getPlatform().getSettings().isDebugEnabled())
+				SwingWindow.this.windowShown = true;
+				if (WarpPI.getPlatform().getSettings().isDebugEnabled())
 					SwingWindow.this.centerWindow();
 			}
 		});
@@ -133,60 +159,11 @@ public class SwingWindow extends JFrame {
 
 			}
 		});
-		c.addMouseMotionListener(new MouseMotionListener() {
-			@Override
-			public void mouseDragged(final MouseEvent e) {
-				final Insets wp = SwingWindow.this.getInsets();
-				final TouchPoint p = new TouchPoint(0, e.getX() - wp.left, e.getY() - wp.top, 5, 5, 1, 0);
-				final ObjectArrayList<TouchPoint> touches = new ObjectArrayList<>();
-				final ObjectArrayList<TouchPoint> changedTouches = new ObjectArrayList<>();
-				touches.add(p);
-				changedTouches.add(p);
-				final TouchMoveEvent tse = new TouchMoveEvent(changedTouches, touches);
-				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchMove(tse);
-			}
-
-			@Override
-			public void mouseMoved(final MouseEvent e) {}
-		});
-		c.addMouseListener(new MouseListener() {
-			@Override
-			public void mouseClicked(final MouseEvent e) {}
-
-			@Override
-			public void mousePressed(final MouseEvent e) {
-				final Insets wp = SwingWindow.this.getInsets();
-				final TouchPoint p = new TouchPoint(0, e.getX() - wp.left, e.getY() - wp.top, 5, 5, 1, 0);
-				final ObjectArrayList<TouchPoint> touches = new ObjectArrayList<>();
-				final ObjectArrayList<TouchPoint> changedTouches = new ObjectArrayList<>();
-				touches.add(p);
-				changedTouches.add(p);
-				final TouchStartEvent tse = new TouchStartEvent(changedTouches, touches);
-				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchStart(tse);
-			}
-
-			@Override
-			public void mouseReleased(final MouseEvent e) {
-				final Insets wp = SwingWindow.this.getInsets();
-				final TouchPoint p = new TouchPoint(0, e.getX() - wp.left, e.getY() - wp.top, 5, 5, 1, 0);
-				final ObjectArrayList<TouchPoint> touches = new ObjectArrayList<>();
-				final ObjectArrayList<TouchPoint> changedTouches = new ObjectArrayList<>();
-				changedTouches.add(p);
-				final TouchEndEvent tse = new TouchEndEvent(changedTouches, touches);
-				Engine.INSTANCE.getHardwareDevice().getInputManager().getTouchDevice().onTouchEnd(tse);
-			}
-
-			@Override
-			public void mouseEntered(final MouseEvent e) {}
-
-			@Override
-			public void mouseExited(final MouseEvent e) {}
-		});
 		StaticVars.windowZoom$.subscribe((newZoomValue) -> {
 			if (newZoomValue != mult) {
 				mult = (int) newZoomValue.floatValue();
 				onResize.submit(new Integer[] { getWWidth(), getWHeight() });
-				Engine.getPlatform().getConsoleUtils().out().println(3, "Engine", "CPU", "Zoom changed");
+				WarpPI.getPlatform().getConsoleUtils().out().println(3, "Engine", "CPU", "Zoom changed");
 			}
 		});
 	}
@@ -225,6 +202,10 @@ public class SwingWindow extends JFrame {
 		for (int a = 4; a >= 0; a--)
 			createBtn(a, b);
 		createBlankBox();
+
+		var size = super.getSize();
+		super.setSize(size.width, size.height + buttonsPanelContainer.getHeight());
+		super.pack();
 	}
 
 	private void createBlankBox() {
@@ -235,7 +216,7 @@ public class SwingWindow extends JFrame {
 	}
 
 	private void createBtn(final int row, final int col) throws IOException, URISyntaxException {
-		final BufferedImage img = ImageIO.read(Engine.getPlatform().getStorageUtils().getResourceStream("/desktop-buttons.png"));
+		final BufferedImage img = ImageIO.read(WarpPI.getPlatform().getStorageUtils().getResourceStream("/desktop-buttons.png"));
 		final SwingAdvancedButton b = new SwingAdvancedButton(img, new Dimension((int) (BTN_SIZE * 1.5), BTN_SIZE));
 		b.drawDefaultComponent = false;
 		b.setText(Keyboard.getKeyName(row, col));
@@ -328,6 +309,7 @@ public class SwingWindow extends JFrame {
 		return onResize$;
 	}
 
+	@Deprecated
 	@Override
 	public void setSize(final int width, final int height) {
 		c.setSize(new Dimension(width * mult, height * mult));
@@ -340,10 +322,12 @@ public class SwingWindow extends JFrame {
 	}
 
 	public int getWWidth() {
+		if (!windowShown) return defaultWidth;
 		return c.getWidth() / mult;
 	}
 
 	public int getWHeight() {
+		if (!windowShown) return defaultHeight;
 		return c.getHeight() / mult;
 	}
 
@@ -356,6 +340,12 @@ public class SwingWindow extends JFrame {
 		final int x = (int) ((dimension.getWidth() - super.getWidth()) / 2);
 		final int y = (int) ((dimension.getHeight() - super.getHeight()) / 2);
 		super.setLocation(x, y);
+	}
+
+	public void sendPowerOffSignal() {
+		display.destroyEngine();
+		this.setVisible(false);
+		this.dispose();
 	}
 
 //	private static ObjectArrayList<Double> mediaValori = new ObjectArrayList<Double>();
@@ -371,7 +361,9 @@ public class SwingWindow extends JFrame {
 		public void paintComponent(final Graphics g) {
 //			long time1 = System.nanoTime();
 			if (renderingLoop != null) {
-				renderingLoop.refresh();
+				boolean forceRepaint = SwingWindow.this.forceRepaint;
+				SwingWindow.this.forceRepaint = false;
+				renderingLoop.refresh(forceRepaint);
 
 
 				final int[] a = ((DataBufferInt) display.g.getRaster().getDataBuffer()).getData();

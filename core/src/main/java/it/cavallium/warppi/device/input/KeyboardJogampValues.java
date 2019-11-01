@@ -1,4 +1,4 @@
-package it.cavallium.warppi.device;
+package it.cavallium.warppi.device.input;
 
 public interface KeyboardJogampValues {
 

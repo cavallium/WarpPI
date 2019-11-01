@@ -5,17 +5,26 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.ArrayList;
 
+import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLDisplayOutputDevice;
+import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
+import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingDeviceState;
+import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingTouchInputDevice;
 import org.apache.commons.io.FileUtils;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.boot.StartupArguments;
+import it.cavallium.warppi.device.DeviceStateDevice;
+import it.cavallium.warppi.device.display.BacklightOutputDevice;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.display.NoDisplaysAvailableException;
+import it.cavallium.warppi.device.display.NullBacklightOutputDevice;
+import it.cavallium.warppi.device.input.KeyboardInputDevice;
+import it.cavallium.warppi.device.input.TouchInputDevice;
 import it.cavallium.warppi.Platform;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
-import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
+import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingDisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingEngine;
 import it.cavallium.warppi.util.CacheUtils;
 import it.cavallium.warppi.util.Error;
@@ -27,9 +36,13 @@ public class DesktopPlatform implements Platform {
 	private final DesktopStorageUtils su;
 	private final ImageUtils pu;
 	private final String on;
-	private final Map<String, GraphicEngine> el;
 	private final DesktopSettings settings;
 	private Boolean runningOnRaspberryOverride = null;
+	private StartupArguments args;
+	private DisplayOutputDevice displayOutputDevice;
+	private DeviceStateDevice deviceStateDevice;
+	private TouchInputDevice touchInputDevice;
+	private KeyboardInputDevice keyboardInputDevice;
 
 	public DesktopPlatform() {
 		cu = new DesktopConsoleUtils();
@@ -37,9 +50,6 @@ public class DesktopPlatform implements Platform {
 		su = new DesktopStorageUtils();
 		pu = new DesktopImageUtils();
 		on = System.getProperty("os.name").toLowerCase();
-		el = new HashMap<>();
-		el.put("CPU engine", new SwingEngine());
-		el.put("GPU engine", new JOGLEngine());
 		settings = new DesktopSettings();
 	}
 
@@ -105,14 +115,14 @@ public class DesktopPlatform implements Platform {
 
 	@Override
 	public void alphaChanged(final boolean val) {
-		final GraphicEngine currentEngine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
+		final DisplayOutputDevice currentEngine = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display;
 		if (currentEngine instanceof SwingEngine)
 			((SwingEngine) currentEngine).setAlphaChanged(val);
 	}
 
 	@Override
 	public void shiftChanged(final boolean val) {
-		final GraphicEngine currentEngine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
+		final DisplayOutputDevice currentEngine = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display;
 		if (currentEngine instanceof SwingEngine)
 			((SwingEngine) currentEngine).setShiftChanged(val);
 	}
@@ -130,16 +140,6 @@ public class DesktopPlatform implements Platform {
 	@Override
 	public URLClassLoader newURLClassLoader(final URL[] urls) {
 		return new DesktopURLClassLoader(urls);
-	}
-
-	@Override
-	public Map<String, GraphicEngine> getEnginesList() {
-		return el;
-	}
-
-	@Override
-	public GraphicEngine getEngine(final String string) throws NullPointerException {
-		return el.get(string);
 	}
 
 	@Override
@@ -178,14 +178,15 @@ public class DesktopPlatform implements Platform {
 			runningOnRaspberryOverride = false;
 		}
 	}
-	
+
 	@Override
 	public boolean isRunningOnRaspberry() {
-		if (runningOnRaspberryOverride != null) return runningOnRaspberryOverride;
+		if (runningOnRaspberryOverride != null)
+			return runningOnRaspberryOverride;
 		return CacheUtils.get("isRunningOnRaspberry", 24 * 60 * 60 * 1000, () -> {
-			if (Engine.getPlatform().isJavascript())
+			if (WarpPI.getPlatform().isJavascript())
 				return false;
-			if (Engine.getPlatform().getOsName().equals("Linux"))
+			if (WarpPI.getPlatform().getOsName().equals("Linux"))
 				try {
 					final File osRelease = new File("/etc", "os-release");
 					return FileUtils.readLines(osRelease, "UTF-8").stream().map(String::toLowerCase).anyMatch(line -> line.contains("raspbian") && line.contains("name"));
@@ -195,6 +196,89 @@ public class DesktopPlatform implements Platform {
 			else
 				return false;
 		});
+	}
+
+	@Override
+	public TouchInputDevice getTouchInputDevice() {
+		return touchInputDevice;
+	}
+
+	@Override
+	public KeyboardInputDevice getKeyboardInputDevice() {
+		return keyboardInputDevice;
+	}
+
+	@Override
+	public DisplayOutputDevice getDisplayOutputDevice() {
+		return this.displayOutputDevice;
+	}
+
+	@Override
+	public BacklightOutputDevice getBacklightOutputDevice() {
+		return new NullBacklightOutputDevice();
+	}
+
+	@Override
+	public DeviceStateDevice getDeviceStateDevice() {
+		return this.deviceStateDevice;
+	}
+
+	@Override
+	public void setArguments(StartupArguments args) {
+		this.args = args;
+		this.chooseDevices();
+	}
+
+	private void chooseDevices() {
+		List<DisplayOutputDevice> availableDevices = new ArrayList<>();
+		List<DisplayOutputDevice> guiDevices = List.of(new SwingDisplayOutputDevice(), new JOGLDisplayOutputDevice());
+		List<DisplayOutputDevice> consoleDevices = List.of();
+
+		if (args.isMSDOSModeEnabled() || args.isNoGUIEngineForced()) {
+			availableDevices.addAll(consoleDevices);
+		}
+		if (!args.isNoGUIEngineForced()) {
+			availableDevices.addAll(guiDevices);
+		}
+		
+		if (availableDevices.size() == 0) {
+			throw new NoDisplaysAvailableException();
+		}
+
+		for (DisplayOutputDevice device : availableDevices) {
+			if (device instanceof SwingDisplayOutputDevice) {
+				if (args.isCPUEngineForced()) {
+					this.displayOutputDevice = device;
+				}
+			} else if (device instanceof JOGLDisplayOutputDevice) {
+				if (args.isGPUEngineForced()) {
+					this.displayOutputDevice = device;
+					break;
+				}
+			}
+		}
+
+		if (this.displayOutputDevice == null) this.displayOutputDevice = availableDevices.get(0);
+
+
+		if (displayOutputDevice instanceof SwingDisplayOutputDevice) {
+			this.touchInputDevice = new SwingTouchInputDevice((SwingEngine) displayOutputDevice.getGraphicEngine());
+
+			//TODO: implement a keyboard input device
+			this.keyboardInputDevice = new KeyboardInputDevice() {
+				@Override
+				public void initialize() {
+
+				}
+			};
+
+			this.deviceStateDevice = new SwingDeviceState((SwingEngine) displayOutputDevice.getGraphicEngine());
+
+		} else if (displayOutputDevice instanceof JOGLDisplayOutputDevice) {
+			this.touchInputDevice = null;
+			this.keyboardInputDevice = null;
+			this.deviceStateDevice = null; //TODO: Implement
+		}
 	}
 
 }

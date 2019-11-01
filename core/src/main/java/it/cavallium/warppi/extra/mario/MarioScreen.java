@@ -2,10 +2,11 @@ package it.cavallium.warppi.extra.mario;
 
 import java.io.IOException;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.Platform.ConsoleUtils;
-import it.cavallium.warppi.device.Keyboard;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.gui.HistoryBehavior;
@@ -48,30 +49,30 @@ public class MarioScreen extends Screen {
 	public void graphicInitialized() {
 		try {
 			if (MarioScreen.skin == null) {
-				MarioScreen.skin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("/marioskin.png");
+				MarioScreen.skin = d.display.getGraphicEngine().loadSkin("/marioskin.png");
 			}
 			if (MarioScreen.groundskin == null) {
-				MarioScreen.groundskin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("/marioground.png");
+				MarioScreen.groundskin = d.display.getGraphicEngine().loadSkin("/marioground.png");
 			}
 			if (MarioScreen.gpuTest2 == null) {
 				try {
-					MarioScreen.gpuTest2 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("N:\\gputest\\gputest2");
+					MarioScreen.gpuTest2 = d.display.getGraphicEngine().loadFont("N:\\gputest\\gputest2");
 				} catch (final Exception ex) {}
 			}
 			if (MarioScreen.gpuTest1 == null) {
 				try {
-					MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("N:\\gputest\\gputest12");
+					MarioScreen.gpuTest1 = d.display.getGraphicEngine().loadFont("N:\\gputest\\gputest12");
 					MarioScreen.gpuTest12 = true;
 				} catch (final Exception ex) {
 					MarioScreen.gpuTest12 = false;
 					try {
-						MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("N:\\gputest\\gputest1");
+						MarioScreen.gpuTest1 = d.display.getGraphicEngine().loadFont("N:\\gputest\\gputest1");
 					} catch (final Exception ex2) {}
 				}
 			}
 			if (MarioScreen.gpuTest3 == null) {
 				try {
-					MarioScreen.gpuTest3 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("N:\\gputest\\font_gputest3.png");
+					MarioScreen.gpuTest3 = d.display.getGraphicEngine().loadSkin("N:\\gputest\\font_gputest3.png");
 				} catch (final Exception ex) {
 					ex.printStackTrace();
 				}
@@ -85,30 +86,30 @@ public class MarioScreen extends Screen {
 	public void initialized() {
 		try {
 			if (MarioScreen.skin == null) {
-				MarioScreen.skin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("/marioskin.png");
+				MarioScreen.skin = d.display.getGraphicEngine().loadSkin("/marioskin.png");
 			}
 			if (MarioScreen.groundskin == null) {
-				MarioScreen.groundskin = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("/marioground.png");
+				MarioScreen.groundskin = d.display.getGraphicEngine().loadSkin("/marioground.png");
 			}
 			if (MarioScreen.gpuTest2 == null) {
 				try {
-					MarioScreen.gpuTest2 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("N:\\gputest\\gputest2");
+					MarioScreen.gpuTest2 = d.display.getGraphicEngine().loadFont("N:\\gputest\\gputest2");
 				} catch (final Exception ex) {}
 			}
 			if (MarioScreen.gpuTest1 == null) {
 				try {
-					MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("N:\\gputest\\gputest12");
+					MarioScreen.gpuTest1 = d.display.getGraphicEngine().loadFont("N:\\gputest\\gputest12");
 					MarioScreen.gpuTest12 = true;
 				} catch (final Exception ex) {
 					MarioScreen.gpuTest12 = false;
 					try {
-						MarioScreen.gpuTest1 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadFont("N:\\gputest\\gputest1");
+						MarioScreen.gpuTest1 = d.display.getGraphicEngine().loadFont("N:\\gputest\\gputest1");
 					} catch (final Exception ex2) {}
 				}
 			}
 			if (MarioScreen.gpuTest3 == null) {
 				try {
-					MarioScreen.gpuTest3 = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.loadSkin("N:\\gputest\\font_gputest3.png");
+					MarioScreen.gpuTest3 = d.display.getGraphicEngine().loadSkin("N:\\gputest\\font_gputest3.png");
 				} catch (final Exception ex) {
 					ex.printStackTrace();
 				}
@@ -182,24 +183,25 @@ public class MarioScreen extends Screen {
 				gpuCharTestt1Elapsed -= 1.5;
 			}
 
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glClearColor(0xff000000);
+			d.renderer.glClearColor(0xff000000);
 		}
 	}
 
 	@Override
 	public void render() {
+		DisplayOutputDevice display = d.display;
 		if (errored) {
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringLeft(0, 20, "ERROR");
+			d.renderer.glDrawStringLeft(0, 20, "ERROR");
 		} else {
 			if (MarioScreen.groundskin != null) {
 				final double playerX = g.getPlayer().getX();
 				final double playerY = g.getPlayer().getY();
-				MarioScreen.groundskin.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
+				MarioScreen.groundskin.use(d.display);
 				final MarioWorld w = g.getCurrentWorld();
 				final int width = w.getWidth();
 				final int height = w.getHeight();
-				final float screenX = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getWidth() / 2f - 8f;
-				final float screenY = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() / 2f - 8f;
+				final float screenX = d.display.getGraphicEngine().getWidth() / 2f - 8f;
+				final float screenY = d.display.getGraphicEngine().getHeight() / 2f - 8f;
 				final float shiftX = -8 + 16 * (float) playerX;
 				final float shiftY = -8 + 16 * (height - (float) playerY);
 				int blue = -1;
@@ -212,59 +214,59 @@ public class MarioScreen extends Screen {
 							if (b == 0) {
 								if (blue != 1) {
 									blue = 1;
-									Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xff9290ff);
+									d.renderer.glColor(0xff9290ff);
 								}
-								Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillColor(screenX - shiftX + 16 * ix, screenY - shiftY + 16 * (height - iy), 16, 16);
+								d.renderer.glFillColor(screenX - shiftX + 16 * ix, screenY - shiftY + 16 * (height - iy), 16, 16);
 							} else {
 								if (blue != 0) {
 									blue = 0;
-									Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xffffffff);
+									d.renderer.glColor(0xffffffff);
 								}
-								Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(screenX - shiftX + 16 * ix, screenY - shiftY + 16 * (height - iy), 16, 16, 0, 0, 16, 16);
+								d.renderer.glFillRect(screenX - shiftX + 16 * ix, screenY - shiftY + 16 * (height - iy), 16, 16, 0, 0, 16, 16);
 							}
 						}
 					}
 				}
 				if (blue != 0) {
 					blue = 0;
-					Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xffffffff);
+					d.renderer.glColor(0xffffffff);
 				}
 
 				//DRAW MARIO
-				MarioScreen.skin.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(screenX - (g.getPlayer().flipped ? 3 : 0), screenY, 35, 27, 35 * (g.getPlayer().marioSkinPos[0] + (g.getPlayer().flipped ? 2 : 1)), 27 * g.getPlayer().marioSkinPos[1], 35 * (g.getPlayer().flipped ? -1 : 1), 27);
+				MarioScreen.skin.use(d.display);
+				d.renderer.glFillRect(screenX - (g.getPlayer().flipped ? 3 : 0), screenY, 35, 27, 35 * (g.getPlayer().marioSkinPos[0] + (g.getPlayer().flipped ? 2 : 1)), 27 * g.getPlayer().marioSkinPos[1], 35 * (g.getPlayer().flipped ? -1 : 1), 27);
 //				PIDisplay.renderer.glDrawSkin(getPosX() - 18, 25 + getPosY(), 35 * (marioSkinPos[0] + (flipped ? 2 : 1)), 27 * marioSkinPos[1], 35 * (marioSkinPos[0] + (flipped ? 1 : 2)), 27 * (marioSkinPos[1] + 1), true);
 			}
 
 //		GPU PERFORMANCE TEST
 			if (MarioScreen.gpuTest1 != null) {
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor3f(1, 1, 1);
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillColor(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getWidth() - (MarioScreen.gpuTest12 ? 512 : 256), Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() / 2 - (MarioScreen.gpuTest12 ? 256 : 128), MarioScreen.gpuTest12 ? 512 : 256, MarioScreen.gpuTest12 ? 512 : 256);
-				MarioScreen.gpuTest1.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor3f(0, 0, 0);
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getWidth(), Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() / 2 - (MarioScreen.gpuTest12 ? 256 : 128), gpuCharTest1[gpuCharTest1Num]);
+				d.renderer.glColor3f(1, 1, 1);
+				d.renderer.glFillColor(d.display.getGraphicEngine().getWidth() - (MarioScreen.gpuTest12 ? 512 : 256), d.display.getGraphicEngine().getHeight() / 2 - (MarioScreen.gpuTest12 ? 256 : 128), MarioScreen.gpuTest12 ? 512 : 256, MarioScreen.gpuTest12 ? 512 : 256);
+				MarioScreen.gpuTest1.use(d.display);
+				d.renderer.glColor3f(0, 0, 0);
+				d.renderer.glDrawStringRight(d.display.getGraphicEngine().getWidth(), d.display.getGraphicEngine().getHeight() / 2 - (MarioScreen.gpuTest12 ? 256 : 128), gpuCharTest1[gpuCharTest1Num]);
 			}
 			if (MarioScreen.gpuTest3 != null) {
-				MarioScreen.gpuTest3.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor4f(1, 1, 1, 0.7f);
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(0, StaticVars.screenSize[1] - 128, 224, 128, gpuTestNum * 224, 0, 224, 128);
+				MarioScreen.gpuTest3.use(d.display);
+				d.renderer.glColor4f(1, 1, 1, 0.7f);
+				d.renderer.glFillRect(0, display.getDisplaySize()[1] - 128, 224, 128, gpuTestNum * 224, 0, 224, 128);
 			}
 			if (MarioScreen.gpuTest2 != null) {
-				MarioScreen.gpuTest2.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xFF000000);
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "A");
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xFF800000);
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "B");
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xFFeea28e);
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "C");
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xFFee7255);
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "D");
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xFFeac0b0);
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "E");
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xFFf3d8ce);
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "F");
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor(0xFFffede7);
-				Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringRight(StaticVars.screenSize[0], Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine.getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "G");
+				MarioScreen.gpuTest2.use(d.display);
+				d.renderer.glColor(0xFF000000);
+				d.renderer.glDrawStringRight(display.getDisplaySize()[0], d.display.getGraphicEngine().getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "A");
+				d.renderer.glColor(0xFF800000);
+				d.renderer.glDrawStringRight(display.getDisplaySize()[0], d.display.getGraphicEngine().getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "B");
+				d.renderer.glColor(0xFFeea28e);
+				d.renderer.glDrawStringRight(display.getDisplaySize()[0], d.display.getGraphicEngine().getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "C");
+				d.renderer.glColor(0xFFee7255);
+				d.renderer.glDrawStringRight(display.getDisplaySize()[0], d.display.getGraphicEngine().getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "D");
+				d.renderer.glColor(0xFFeac0b0);
+				d.renderer.glDrawStringRight(display.getDisplaySize()[0], d.display.getGraphicEngine().getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "E");
+				d.renderer.glColor(0xFFf3d8ce);
+				d.renderer.glDrawStringRight(display.getDisplaySize()[0], d.display.getGraphicEngine().getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "F");
+				d.renderer.glColor(0xFFffede7);
+				d.renderer.glDrawStringRight(display.getDisplaySize()[0], d.display.getGraphicEngine().getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "G");
 			}
 		}
 	}

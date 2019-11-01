@@ -15,6 +15,10 @@ public class SwingRenderer implements Renderer {
 	public int[] size = new int[] { 1, 1 };
 	static int[] canvas2d = new int[1];
 
+	public SwingRenderer() {
+
+	}
+
 	@Override
 	public void glColor3i(final int r, final int gg, final int b) {
 		glColor4i(r, gg, b, 255);
@@ -57,8 +61,6 @@ public class SwingRenderer implements Renderer {
 
 	private void glDrawSkin(int x0, int y0, final int x1, final int y1, int s0, int t0, int s1, int t1,
 			final boolean transparent) {
-		x0 += StaticVars.screenPos[0];
-		y0 += StaticVars.screenPos[1];
 		final double incrementX = Math.abs((double) (x1 - x0) / (double) (s1 - s0));
 		final double incrementY = Math.abs((double) (y1 - y0) / (double) (t1 - t0));
 		final boolean flippedX = (x1 - x0) / (s1 - s0) < 0;
@@ -185,10 +187,6 @@ public class SwingRenderer implements Renderer {
 
 	@Override
 	public void glDrawLine(float x0, float y0, float x1, float y1) {
-		x0 += StaticVars.screenPos[0];
-		x1 += StaticVars.screenPos[0];
-		y0 += StaticVars.screenPos[1];
-		y1 += StaticVars.screenPos[1];
 		final int ix0 = (int) x0;
 		final int ix1 = (int) x1;
 		final int iy0 = (int) y0;
@@ -223,8 +221,6 @@ public class SwingRenderer implements Renderer {
 
 	@Override
 	public void glFillColor(float x, float y, final float width, final float height) {
-		x += StaticVars.screenPos[0];
-		y += StaticVars.screenPos[1];
 
 		final int ix = (int) x;
 		final int iy = (int) y;
@@ -256,8 +252,6 @@ public class SwingRenderer implements Renderer {
 
 	@Override
 	public void glDrawStringLeft(float x, float y, final String textString) {
-		x += StaticVars.screenPos[0];
-		y += StaticVars.screenPos[1];
 
 		final int ix = (int) x;
 		final int iy = (int) y;

@@ -2,7 +2,7 @@ package it.cavallium.warppi.gui.graphicengine.impl.swing;
 
 import java.io.IOException;
 
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.impl.common.PngSkin;
 
 public class SwingSkin extends PngSkin {
@@ -12,8 +12,8 @@ public class SwingSkin extends PngSkin {
 	}
 
 	@Override
-	public void use(final GraphicEngine d) {
-		if (d.getRenderer() instanceof SwingRenderer)
-			((SwingRenderer) d.getRenderer()).currentSkin = this;
+	public void use(final DisplayOutputDevice d) {
+		if (d.getGraphicEngine().getRenderer() instanceof SwingRenderer)
+			((SwingRenderer) d.getGraphicEngine().getRenderer()).currentSkin = this;
 	}
 }

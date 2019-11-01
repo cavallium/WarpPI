@@ -8,10 +8,11 @@ import java.util.Map.Entry;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Semaphore;
 
+import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.texture.Texture;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
@@ -33,9 +34,12 @@ public class JOGLEngine implements GraphicEngine {
 	protected LinkedList<Texture> registeredTextures;
 	protected LinkedList<Texture> unregisteredTextures;
 
+	public JOGLEngine() {
+	}
+
 	@Override
 	public int[] getSize() {
-		return size;
+		return size.clone();
 	}
 
 	@Override
@@ -71,19 +75,28 @@ public class JOGLEngine implements GraphicEngine {
 	public void create(final Runnable onInitialized) {
 		initialized = false;
 		created = false;
-		size = new int[] { StaticVars.screenSize[0], StaticVars.screenSize[1] };
+		this.getSize();
+		size = new int[] { this.getSize()[0], this.getSize()[1] };
 		created = true;
 		registeredTextures = new LinkedList<>();
 		unregisteredTextures = new LinkedList<>();
 		r = new JOGLRenderer();
 		wnd = new NEWTWindow(this);
 		wnd.create();
-		setDisplayMode(StaticVars.screenSize[0], StaticVars.screenSize[1]);
-		setResizable(Engine.getPlatform().getSettings().isDebugEnabled());
+		setDisplayMode(this.getSize()[0], this.getSize()[1]);
+		setResizable(WarpPI.getPlatform().getSettings().isDebugEnabled());
 		initialized = true;
 		wnd.onInitialized = onInitialized;
 	}
 
+	/**
+	 * INTERNAL USE ONLY!
+	 * @return
+	 */
+	public GLWindow getGLWindow() {
+		return wnd.window;
+	}
+	
 	@Override
 	public EventSubscriber<Integer[]> onResize() {
 		return wnd.onResizeEvent;
@@ -118,7 +131,7 @@ public class JOGLEngine implements GraphicEngine {
 	@Override
 	public void repaint() {
 		if (d != null & r != null && JOGLRenderer.gl != null)
-			d.refresh();
+			d.refresh(false);
 	}
 
 	@Override
@@ -131,7 +144,8 @@ public class JOGLEngine implements GraphicEngine {
 		for (final Entry<String, JOGLFont> entry : fontCache.entrySet())
 			if (entry.getKey().equals(name))
 				return entry.getValue();
-		final JOGLFont font = new JOGLFont(this, name);
+		final JOGLFont font = new JOGLFont(name);
+		this.registerFont(font);
 		fontCache.put(name, font);
 		return font;
 	}
@@ -141,21 +155,15 @@ public class JOGLEngine implements GraphicEngine {
 		for (final Entry<String, JOGLFont> entry : fontCache.entrySet())
 			if (entry.getKey().equals(name))
 				return entry.getValue();
-		final JOGLFont font = new JOGLFont(this, path, name);
+		final JOGLFont font = new JOGLFont(path, name);
+		this.registerFont(font);
 		fontCache.put(name, font);
 		return font;
 	}
 
 	@Override
 	public Skin loadSkin(final String file) throws IOException {
-		return new JOGLSkin(this, file);
-	}
-
-	@Override
-	public void waitForExit() {
-		try {
-			exitSemaphore.acquire();
-		} catch (final InterruptedException e) {}
+		return new JOGLSkin(file);
 	}
 
 	@Override
@@ -180,8 +188,12 @@ public class JOGLEngine implements GraphicEngine {
 		return false;
 	}
 
-	public void registerFont(final JOGLFont gpuFont) {
-		registeredFonts.add(gpuFont);
+	private void registerFont(final BinaryFont gpuFont) {
+		if (gpuFont instanceof JOGLFont || gpuFont == null) {
+			registeredFonts.add(gpuFont);
+		} else {
+			throw new IllegalArgumentException("Can't handle font type " + gpuFont.getClass().getSimpleName());
+		}
 	}
 
 	@Override
@@ -197,5 +209,4 @@ public class JOGLEngine implements GraphicEngine {
 	public void registerTexture(final Texture t) {
 		unregisteredTextures.addLast(t);
 	}
-
 }
