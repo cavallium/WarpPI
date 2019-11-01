@@ -58,8 +58,6 @@ public class HtmlRenderer implements Renderer {
 			final boolean transparent) {
 		final int[] size = e.getSize();
 
-		x0 += StaticVars.screenPos[0];
-		y0 += StaticVars.screenPos[1];
 		final double incrementX = Math.abs((double) (x1 - x0) / (double) (s1 - s0));
 		final double incrementY = Math.abs((double) (y1 - y0) / (double) (t1 - t0));
 		final boolean flippedX = (x1 - x0) / (s1 - s0) < 0;
@@ -110,8 +108,6 @@ public class HtmlRenderer implements Renderer {
 
 	@Override
 	public void glFillColor(float x, float y, final float width, final float height) {
-		x += StaticVars.screenPos[0];
-		y += StaticVars.screenPos[1];
 		g.setFillStyle(currentColor);
 		g.fillRect(x * e.mult, y * e.mult, width * e.mult, height * e.mult);
 	}
@@ -123,8 +119,6 @@ public class HtmlRenderer implements Renderer {
 
 	@Override
 	public void glDrawStringLeft(float x, float y, final String textString) {
-		x += StaticVars.screenPos[0];
-		y += StaticVars.screenPos[1];
 
 		f.imgElCtx.setGlobalCompositeOperation("source-in");
 		f.imgElCtx.setFillStyle(currentColor);
@@ -235,5 +229,55 @@ public class HtmlRenderer implements Renderer {
 	@Override
 	public HtmlFont getCurrentFont() {
 		return f;
+	}
+
+	@Override
+	public HtmlRenderer getBoundedInstance(int dx, int dy, int width, int height) {
+		return new HtmlRenderer(e, g) {
+			@Override
+			public void glDrawLine(float x0, float y0, float x1, float y1) {
+				super.glDrawLine(x0 + dx, y0 + dy, x1, y1);
+			}
+
+			@Override
+			public void glDrawCharCenter(int x, int y, char ch) {
+				super.glDrawCharCenter(x + dx, y + dy, ch);
+			}
+
+			@Override
+			public void glDrawCharLeft(int x, int y, char ch) {
+				super.glDrawCharLeft(x + dx, y + dy, ch);
+			}
+
+			@Override
+			public void glDrawCharRight(int x, int y, char ch) {
+				super.glDrawCharRight(x + dx, y + dy, ch);
+			}
+
+			@Override
+			public void glFillColor(float x0, float y0, float w1, float h1) {
+				super.glFillColor(x0 + dx, y0 + dy, w1, h1);
+			}
+
+			@Override
+			public void glFillRect(float x, float y, float width, float height, float uvX, float uvY, float uvWidth, float uvHeight) {
+				super.glFillRect(x + dx, y + dy, width, height, uvX, uvY, uvWidth, uvHeight);
+			}
+
+			@Override
+			public void glDrawStringCenter(float x, float y, String text) {
+				super.glDrawStringCenter(x + dx, y + dy, text);
+			}
+
+			@Override
+			public void glDrawStringLeft(float x, float y, String text) {
+				super.glDrawStringLeft(x + dx, y + dy, text);
+			}
+
+			@Override
+			public void glDrawStringRight(float x, float y, String text) {
+				super.glDrawStringRight(x + dx, y + dy, text);
+			}
+		};
 	}
 }

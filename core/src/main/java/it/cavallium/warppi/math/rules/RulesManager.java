@@ -2,7 +2,6 @@ package it.cavallium.warppi.math.rules;
 
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform;
-import it.cavallium.warppi.Engine;
 import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
@@ -45,7 +44,7 @@ public class RulesManager {
 				System.err.println();
 				System.err.print(((DslFilesException) e).format());
 			}
-			Engine.getPlatform().exit(1);
+			WarpPI.getPlatform().exit(1);
 		}
 	}
 
@@ -68,7 +67,7 @@ public class RulesManager {
 	}
 
 	private static void loadDslRules() throws IOException, DslFilesException {
-		final Platform platform = Engine.getPlatform();
+		final Platform platform = WarpPI.getPlatform();
 
 		final DslFilesException fileErrors = new DslFilesException();
 		for (final String path : platform.getRuleFilePaths()) {

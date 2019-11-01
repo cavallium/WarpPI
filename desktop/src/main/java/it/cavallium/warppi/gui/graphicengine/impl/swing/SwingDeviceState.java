@@ -4,26 +4,32 @@ import it.cavallium.warppi.device.DeviceStateDevice;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class SwingDeviceState implements DeviceStateDevice {
     private final SwingEngine graphicEngine;
-    private final CompletableFuture<Void> exitWait;
+    private final AtomicBoolean exitWait = new AtomicBoolean(false);
 
     public SwingDeviceState(SwingEngine graphicEngine) {
         this.graphicEngine = graphicEngine;
-        this.exitWait = new CompletableFuture<>();
     }
 
     @Override
     public void initialize() {
         graphicEngine.subscribeExit(() -> {
-            exitWait.complete(null);
+            exitWait.set(true);
         });
     }
 
     @Override
-    public Future<?> waitForExit() {
-        return exitWait;
+    public void waitForExit() {
+	    try {
+		    while (!exitWait.get()) {
+			    Thread.sleep(500);
+		    }
+	    } catch (InterruptedException e) {
+		    e.printStackTrace();
+	    }
     }
 
     @Override

@@ -5,6 +5,8 @@ import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.gui.HistoryBehavior;
+import it.cavallium.warppi.gui.RenderContext;
+import it.cavallium.warppi.gui.ScreenContext;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 
 public class KeyboardDebugScreen extends Screen {
@@ -28,14 +30,14 @@ public class KeyboardDebugScreen extends Screen {
 	public void initialized() throws InterruptedException {}
 
 	@Override
-	public void graphicInitialized() throws InterruptedException {}
+	public void graphicInitialized(ScreenContext ctx) throws InterruptedException {}
 
 	@Override
-	public void render() {
+	public void render(RenderContext ctx) {
 		final Renderer renderer = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer;
 		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().fonts[2].use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
 		renderer.glColor4f(0.75f, 0.0f, 0.0f, 1.0f);
-		renderer.glDrawStringRight(d.display.getDisplaySize()[0] - 10, 30, "-" + keyevent.toUpperCase() + "-");
+		renderer.glDrawStringRight(ctx.getWidth() - 10, 30, "-" + keyevent.toUpperCase() + "-");
 		if (keyevent != "NONE") {
 			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().fonts[2].use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
 			renderer.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
@@ -176,7 +178,7 @@ public class KeyboardDebugScreen extends Screen {
 	}
 
 	@Override
-	public void beforeRender(final float dt) {
+	public void beforeRender(ScreenContext ctx, final float dt) {
 		if (System.currentTimeMillis() - beforetime >= 1000) {
 			keyevent = "NONE";
 			KeyboardDebugScreen.keyX = 0;

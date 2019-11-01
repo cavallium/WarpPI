@@ -3,10 +3,20 @@ package it.cavallium.warppi.teavm;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.cavallium.warppi.boot.StartupArguments;
+import it.cavallium.warppi.device.DeviceStateDevice;
+import it.cavallium.warppi.device.display.BacklightOutputDevice;
+import it.cavallium.warppi.device.display.NoDisplaysAvailableException;
+import it.cavallium.warppi.device.display.NullBacklightOutputDevice;
+import it.cavallium.warppi.device.input.KeyboardInputDevice;
+import it.cavallium.warppi.device.input.TouchInputDevice;
+import it.cavallium.warppi.gui.graphicengine.html.HtmlDeviceState;
+import it.cavallium.warppi.gui.graphicengine.html.HtmlDisplayOutputDevice;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLDocument;
 
@@ -22,10 +32,14 @@ public class TeaVMPlatform implements Platform {
 	private final TeaVMGpio gi;
 	private final TeaVMStorageUtils su;
 	private final String on;
-	private final Map<String, GraphicEngine> el;
 	private final TeaVMImageUtils pu;
 	private final TeaVMSettings settings;
 	private Boolean runningOnRaspberryOverride = null;
+	private StartupArguments args;
+	private DisplayOutputDevice displayOutputDevice;
+	private DeviceStateDevice deviceStateDevice;
+	private TouchInputDevice touchInputDevice;
+	private KeyboardInputDevice keyboardInputDevice;
 
 	public TeaVMPlatform() {
 		cu = new TeaVMConsoleUtils();
@@ -33,8 +47,6 @@ public class TeaVMPlatform implements Platform {
 		su = new TeaVMStorageUtils();
 		pu = new TeaVMImageUtils();
 		on = "JavaScript";
-		el = new HashMap<>();
-		el.put("HTML5 engine", new HtmlEngine());
 		settings = new TeaVMSettings();
 	}
 
@@ -124,16 +136,6 @@ public class TeaVMPlatform implements Platform {
 	}
 
 	@Override
-	public Map<String, GraphicEngine> getGraphicEnginesList() {
-		return el;
-	}
-
-	@Override
-	public DisplayOutputDevice getGraphicEngine(final String string) throws NullPointerException {
-		return el.get(string);
-	}
-
-	@Override
 	public void throwNewExceptionInInitializerError(final String text) {
 		throw new NullPointerException();
 	}
@@ -167,4 +169,65 @@ public class TeaVMPlatform implements Platform {
 		return false;
 	}
 
+
+	@Override
+	public TouchInputDevice getTouchInputDevice() {
+		return touchInputDevice;
+	}
+
+	@Override
+	public KeyboardInputDevice getKeyboardInputDevice() {
+		return keyboardInputDevice;
+	}
+
+	@Override
+	public DisplayOutputDevice getDisplayOutputDevice() {
+		return this.displayOutputDevice;
+	}
+
+	@Override
+	public BacklightOutputDevice getBacklightOutputDevice() {
+		return new NullBacklightOutputDevice();
+	}
+
+	@Override
+	public DeviceStateDevice getDeviceStateDevice() {
+		return this.deviceStateDevice;
+	}
+
+	@Override
+	public void setArguments(StartupArguments args) {
+		this.args = args;
+		this.chooseDevices();
+	}
+
+	private void chooseDevices() {
+		List<DisplayOutputDevice> availableDevices = new ArrayList<>();
+		List<DisplayOutputDevice> guiDevices = new ArrayList<>();
+		guiDevices.add(new HtmlDisplayOutputDevice());
+		List<DisplayOutputDevice> consoleDevices = new ArrayList<>();
+
+		if (args.isMSDOSModeEnabled() || args.isNoGUIEngineForced()) {
+			availableDevices.addAll(consoleDevices);
+		}
+		if (!args.isNoGUIEngineForced()) {
+			availableDevices.addAll(guiDevices);
+		}
+
+		if (availableDevices.size() == 0) {
+			throw new NoDisplaysAvailableException();
+		}
+
+		if (this.displayOutputDevice == null) this.displayOutputDevice = availableDevices.get(0);
+
+
+		if (displayOutputDevice instanceof HtmlDisplayOutputDevice) {
+			//this.touchInputDevice = new HtmlTouchInputDevice((HtmlEngine) displayOutputDevice.getGraphicEngine());
+
+			this.keyboardInputDevice = null;
+
+			this.deviceStateDevice = new HtmlDeviceState((HtmlEngine) displayOutputDevice.getGraphicEngine());
+
+		}
+	}
 }

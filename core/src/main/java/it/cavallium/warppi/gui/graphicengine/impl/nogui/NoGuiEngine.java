@@ -140,6 +140,11 @@ public class NoGuiEngine implements GraphicEngine {
 			public BinaryFont getCurrentFont() {
 				return null;
 			}
+
+			@Override
+			public Renderer getBoundedInstance(int dx, int dy, int width, int height) {
+				return getRenderer();
+			}
 		};
 	}
 

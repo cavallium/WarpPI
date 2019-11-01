@@ -9,6 +9,8 @@ import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.gui.HistoryBehavior;
+import it.cavallium.warppi.gui.RenderContext;
+import it.cavallium.warppi.gui.ScreenContext;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.gui.graphicengine.Skin;
@@ -47,7 +49,7 @@ public class TetrisScreen extends Screen {
 	}
 
 	@Override
-	public void graphicInitialized() {
+	public void graphicInitialized(ScreenContext ctx) {
 		try {
 			e = d.display;
 			r = d.renderer;
@@ -65,23 +67,23 @@ public class TetrisScreen extends Screen {
 	}
 
 	@Override
-	public void beforeRender(final float dt) {
+	public void beforeRender(ScreenContext ctx, final float dt) {
 		d.renderer.glClearColor(0xff000000);
 			g.update(dt, leftPressed, rightPressed, downPressed, upPressed, okPressed, backPressed);
 	}
 
 	@Override
-	public void render() {
+	public void render(RenderContext ctx) {
 		DisplayOutputDevice display = d.display;
 		if (TetrisScreen.skin != null) {
 			TetrisScreen.skin.use(e);
 		}
 		r.glColor3f(1, 1, 1);
 		BlockColor[] renderedGrid = g.getRenderedGrid();
-		int centerScreen = display.getDisplaySize()[0]/2;
+		int centerScreen = ctx.getWidth()/2;
 		int centerGrid = TetrisGame.WIDTH*6/2-1;
 		final int leftOffset = centerScreen - centerGrid;
-		final int topOffset = display.getDisplaySize()[1] - TetrisGame.HEIGHT*6-1;
+		final int topOffset = ctx.getHeight() - TetrisGame.HEIGHT*6-1;
 		for (int y = 0; y < TetrisGame.HEIGHT; y++) {
 			for (int x = 0; x < TetrisGame.WIDTH; x++) {
 				final int offset = x+y*TetrisGame.WIDTH;

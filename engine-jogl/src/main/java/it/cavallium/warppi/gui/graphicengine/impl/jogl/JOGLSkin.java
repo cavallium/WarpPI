@@ -43,7 +43,7 @@ public class JOGLSkin implements Skin {
 			t = JOGLRenderer.importTexture(i.f, i.deleteOnExit);
 			w = i.w;
 			h = i.h;
-			((JOGLEngine) d).registerTexture(t);
+			((JOGLEngine) d.getGraphicEngine()).registerTexture(t);
 			initialized = true;
 		} catch (GLException | IOException e) {
 			e.printStackTrace();

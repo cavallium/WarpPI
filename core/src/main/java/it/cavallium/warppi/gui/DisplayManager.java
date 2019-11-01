@@ -1,35 +1,21 @@
 package it.cavallium.warppi.gui;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.Flow.Subscriber;
-import java.util.function.Consumer;
-
-import it.cavallium.warppi.WarpPI;
-import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.Platform.Semaphore;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.device.display.BacklightOutputDevice;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.device.input.Keyboard;
-import it.cavallium.warppi.event.TouchCancelEvent;
-import it.cavallium.warppi.event.TouchEndEvent;
-import it.cavallium.warppi.event.TouchEvent;
-import it.cavallium.warppi.event.TouchMoveEvent;
-import it.cavallium.warppi.event.TouchStartEvent;
-import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.device.Keyboard;
-import it.cavallium.warppi.gui.graphicengine.BinaryFont;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
-import it.cavallium.warppi.gui.graphicengine.Renderer;
-import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
-import it.cavallium.warppi.gui.graphicengine.Skin;
-import it.cavallium.warppi.gui.graphicengine.impl.nogui.NoGuiEngine;
+import it.cavallium.warppi.event.*;
+import it.cavallium.warppi.gui.graphicengine.*;
 import it.cavallium.warppi.gui.screens.Screen;
 import it.cavallium.warppi.util.Timer;
 import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public final class DisplayManager implements RenderingLoop {
 	private static final int tickDuration = 50;
@@ -72,7 +58,7 @@ public final class DisplayManager implements RenderingLoop {
 		screenChange = WarpPI.getPlatform().newSemaphore();
 		supportsPauses = graphicEngine.doesRefreshPauses();
 
-		glyphsHeight = new int[] { 9, 6, 12, 9 };
+		glyphsHeight = new int[]{9, 6, 12, 9};
 		displayDebugString = "";
 		errorMessages = new ObjectArrayList<>();
 	}
@@ -153,10 +139,10 @@ public final class DisplayManager implements RenderingLoop {
 		}
 		if (mustBeAddedToHistory) {
 			if (screen.historyBehavior == HistoryBehavior.NORMAL
-					|| screen.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
+				|| screen.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
 				if (currentSession > 0) {
 					final int sl = sessions.length; // TODO: I don't know why if i don't add +5 or more some items
-													// disappear
+					// disappear
 					List<Screen> newSessions = new LinkedList<>();
 					int i = 0;
 					for (Screen s : sessions) {
@@ -217,7 +203,7 @@ public final class DisplayManager implements RenderingLoop {
 	public void replaceScreen(final Screen screen) {
 		if (screen.initialized == false) {
 			if (screen.historyBehavior == HistoryBehavior.NORMAL
-					|| screen.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
+				|| screen.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
 				sessions[currentSession] = screen;
 			} else {
 				currentSession = -1;
@@ -339,8 +325,10 @@ public final class DisplayManager implements RenderingLoop {
 		if (!screen.graphicInitialized) {
 			try {
 				var displaySize = display.getDisplaySize();
-				var fullCtx = new RenderContext(graphicEngine, renderer, displaySize[0], displaySize[1]);
-				screen.initializeGraphic(fullCtx);
+				var scrWidth = displaySize[0] - hud.getMarginLeft() - hud.getMarginRight();
+				var scrHeight = displaySize[1] - hud.getMarginTop() - hud.getMarginBottom();
+				var scrCtx = new ScreenContext(graphicEngine, scrWidth, scrHeight);
+				screen.initializeGraphic(scrCtx);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -353,7 +341,7 @@ public final class DisplayManager implements RenderingLoop {
 		var scrWidth = displaySize[0] - hud.getMarginLeft() - hud.getMarginRight();
 		var scrHeight = displaySize[1] - hud.getMarginTop() - hud.getMarginBottom();
 		var scrCtx = new RenderContext(graphicEngine, renderer.getBoundedInstance(hud.getMarginLeft(), hud.getMarginTop(), scrWidth, scrHeight), scrWidth, scrHeight);
-		var fullCtdx = new RenderContext(graphicEngine, renderer, displaySize[0], displaySize[1]);
+		var fullCtx = new RenderContext(graphicEngine, renderer, displaySize[0], displaySize[1]);
 
 		renderer.glColor3i(255, 255, 255);
 
@@ -364,8 +352,8 @@ public final class DisplayManager implements RenderingLoop {
 			}
 			renderer.glColor3i(129, 28, 22);
 			renderer.glDrawStringRight(display.getDisplaySize()[0] - 2,
-					display.getDisplaySize()[1] - (fnt.getCharacterHeight() + 2),
-					WarpPI.getPlatform().getSettings().getCalculatorNameUppercase() + " CALCULATOR");
+				display.getDisplaySize()[1] - (fnt.getCharacterHeight() + 2),
+				WarpPI.getPlatform().getSettings().getCalculatorNameUppercase() + " CALCULATOR");
 			renderer.glColor3i(149, 32, 26);
 			renderer.glDrawStringCenter(display.getDisplaySize()[0] / 2, 22, error);
 			renderer.glColor3i(164, 34, 28);
@@ -387,12 +375,12 @@ public final class DisplayManager implements RenderingLoop {
 				hud.renderBackground();
 			screen.render(scrCtx);
 			if (hud.visible) {
-				hud.render(fullCtdx);
+				hud.render(fullCtx);
 				hud.renderTopmostBackground();
 			}
-			screen.renderTopmost(scrCtx);
+			screen.renderTopmost(fullCtx);
 			if (hud.visible)
-				hud.renderTopmost(fullCtdx);
+				hud.renderTopmost(fullCtx);
 		}
 	}
 
@@ -429,9 +417,9 @@ public final class DisplayManager implements RenderingLoop {
 
 			var displayRefreshManager = new DisplayRefreshManager(this::onRefresh);
 			new Timer(DisplayManager.tickDuration, displayRefreshManager::onTick);
-			engine.onResize().subscribe(displayRefreshManager::onResize);
+			graphicEngine.onResize().subscribe(displayRefreshManager::onResize);
 
-			engine.start(getDrawable());
+			graphicEngine.start(getDrawable());
 		} catch (final Exception ex) {
 			ex.printStackTrace();
 		} finally {
@@ -449,11 +437,15 @@ public final class DisplayManager implements RenderingLoop {
 		precTime = newtime;
 
 		if (windowSize != null) {
-			StaticVars.screenSize[0] = windowSize[0];
-			StaticVars.screenSize[1] = windowSize[1];
+			display.getDisplaySize()[0] = windowSize[0];
+			display.getDisplaySize()[1] = windowSize[1];
 		}
 
-		screen.beforeRender((float) (dt / 1000d));
+		var displaySize = display.getDisplaySize();
+		var scrWidth = displaySize[0] - hud.getMarginLeft() - hud.getMarginRight();
+		var scrHeight = displaySize[1] - hud.getMarginTop() - hud.getMarginBottom();
+		var scrCtx = new ScreenContext(graphicEngine, scrWidth, scrHeight);
+		screen.beforeRender(scrCtx, (float) (dt / 1000d));
 	}
 
 	public void changeBrightness(final float change) {
@@ -512,7 +504,7 @@ public final class DisplayManager implements RenderingLoop {
 			}
 		};
 	}
-	
+
 	private boolean executeTouchEventOnScreen(TouchEvent t, Screen scr) {
 		if (t instanceof TouchStartEvent) {
 			return scr.onTouchStart((TouchStartEvent) t);

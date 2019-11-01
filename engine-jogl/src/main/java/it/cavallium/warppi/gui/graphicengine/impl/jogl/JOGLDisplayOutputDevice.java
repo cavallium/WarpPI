@@ -6,7 +6,7 @@ public class JOGLDisplayOutputDevice implements DisplayOutputDevice {
     private JOGLEngine engine;
 
     public JOGLDisplayOutputDevice() {
-        this.engine = new JOGLEngine();
+        this.engine = new JOGLEngine(480, 320);
     }
 
     @Override

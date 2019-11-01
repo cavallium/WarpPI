@@ -34,7 +34,8 @@ public class JOGLEngine implements GraphicEngine {
 	protected LinkedList<Texture> registeredTextures;
 	protected LinkedList<Texture> unregisteredTextures;
 
-	public JOGLEngine() {
+	public JOGLEngine(int defaultWidth, int defaultHeight) {
+		this.size = new int[]{defaultWidth, defaultHeight};
 	}
 
 	@Override

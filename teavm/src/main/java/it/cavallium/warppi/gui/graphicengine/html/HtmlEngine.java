@@ -108,8 +108,7 @@ public class HtmlEngine implements GraphicEngine {
 				width = 480 / windowZoom.intValue();
 				height = 320 / windowZoom.intValue();
 				this.mult = windowZoom.intValue();
-				StaticVars.screenSize[0] = width;
-				StaticVars.screenSize[1] = height;
+				onResize.submit(new Integer[] {width, height});
 			}
 		});
 		keyInput.setType("text");
@@ -248,6 +247,10 @@ public class HtmlEngine implements GraphicEngine {
 
 	@Override
 	public void destroy() {
+		sendPowerOffSignal();
+	}
+
+	private void destroyEngine() {
 		HtmlEngine.document.getBody().removeChild(canvas);
 		initialized = false;
 		exitSemaphore.release();
@@ -283,7 +286,7 @@ public class HtmlEngine implements GraphicEngine {
 
 	@Override
 	public void repaint() {
-		renderingLoop.refresh();
+		renderingLoop.refresh(false);
 	}
 
 	@Override
@@ -306,11 +309,16 @@ public class HtmlEngine implements GraphicEngine {
 		return new HtmlSkin(file);
 	}
 
-	@Override
-	public void waitForExit() {
-		try {
-			exitSemaphore.acquire();
-		} catch (final InterruptedException e) {}
+
+	public void subscribeExit(Runnable subscriber) {
+		var thr = new Thread(() -> {
+			try {
+				exitSemaphore.acquire();
+			} catch (final InterruptedException e) {}
+			subscriber.run();
+		});
+		thr.setDaemon(true);
+		thr.start();
 	}
 
 	@Override
@@ -328,4 +336,7 @@ public class HtmlEngine implements GraphicEngine {
 		return onResize;
 	}
 
+	public void sendPowerOffSignal() {
+		destroyEngine();
+	}
 }

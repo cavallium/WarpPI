@@ -5,6 +5,8 @@ import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.gui.HistoryBehavior;
+import it.cavallium.warppi.gui.RenderContext;
+import it.cavallium.warppi.gui.ScreenContext;
 
 public class SolveForXScreen extends Screen {
 
@@ -25,21 +27,21 @@ public class SolveForXScreen extends Screen {
 	public void initialized() throws InterruptedException {}
 
 	@Override
-	public void graphicInitialized() throws InterruptedException {}
+	public void graphicInitialized(ScreenContext ctx) throws InterruptedException {}
 
 	@Override
-	public void render() {
+	public void render(RenderContext ctx) {
 		DisplayOutputDevice display = d.display;
-		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor4i(0, 0, 0, 64);
-		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(display.getDisplaySize()[0] / 2 + 1, display.getDisplaySize()[1] / 4, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
-		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(display.getDisplaySize()[0] / 2, display.getDisplaySize()[1] / 4 + 1, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
-		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(display.getDisplaySize()[0] / 2 + 1, display.getDisplaySize()[1] / 4 + 1, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
-		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor3i(255, 0, 0);
-		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glDrawStringCenter(display.getDisplaySize()[0] / 2, display.getDisplaySize()[1] / 4, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
+		ctx.getRenderer().glColor4i(0, 0, 0, 64);
+		ctx.getRenderer().glDrawStringCenter(ctx.getWidth() / 2 + 1, ctx.getHeight() / 4, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
+		ctx.getRenderer().glDrawStringCenter(ctx.getWidth() / 2, ctx.getHeight() / 4 + 1, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
+		ctx.getRenderer().glDrawStringCenter(ctx.getWidth() / 2 + 1, ctx.getHeight() / 4 + 1, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
+		ctx.getRenderer().glColor3i(255, 0, 0);
+		ctx.getRenderer().glDrawStringCenter(ctx.getWidth() / 2, ctx.getHeight() / 4, "WORK IN PROGRESS. THIS SCREEN MUST HAVE A GUI TO SELECT THE VARIABLE TO SOLVE.");
 	}
 
 	@Override
-	public void beforeRender(final float dt) {
+	public void beforeRender(ScreenContext ctx, final float dt) {
 
 	}
 

@@ -10,6 +10,8 @@ import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.gui.HistoryBehavior;
+import it.cavallium.warppi.gui.RenderContext;
+import it.cavallium.warppi.gui.ScreenContext;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.Skin;
 import it.cavallium.warppi.gui.screens.Screen;
@@ -46,7 +48,7 @@ public class MarioScreen extends Screen {
 	}
 
 	@Override
-	public void graphicInitialized() {
+	public void graphicInitialized(ScreenContext ctx) {
 		try {
 			if (MarioScreen.skin == null) {
 				MarioScreen.skin = d.display.getGraphicEngine().loadSkin("/marioskin.png");
@@ -56,17 +58,17 @@ public class MarioScreen extends Screen {
 			}
 			if (MarioScreen.gpuTest2 == null) {
 				try {
-					MarioScreen.gpuTest2 = d.display.getGraphicEngine().loadFont("N:\\gputest\\gputest2");
+					MarioScreen.gpuTest2 = d.display.getGraphicEngine().loadFont("N:\\gputest", "gputest2");
 				} catch (final Exception ex) {}
 			}
 			if (MarioScreen.gpuTest1 == null) {
 				try {
-					MarioScreen.gpuTest1 = d.display.getGraphicEngine().loadFont("N:\\gputest\\gputest12");
+					MarioScreen.gpuTest1 = d.display.getGraphicEngine().loadFont("N:\\gputest", "gputest12");
 					MarioScreen.gpuTest12 = true;
 				} catch (final Exception ex) {
 					MarioScreen.gpuTest12 = false;
 					try {
-						MarioScreen.gpuTest1 = d.display.getGraphicEngine().loadFont("N:\\gputest\\gputest1");
+						MarioScreen.gpuTest1 = d.display.getGraphicEngine().loadFont("N:\\gputest", "gputest1");
 					} catch (final Exception ex2) {}
 				}
 			}
@@ -167,7 +169,7 @@ public class MarioScreen extends Screen {
 	}
 	
 	@Override
-	public void beforeRender(final float dt) {
+	public void beforeRender(ScreenContext ctx, final float dt) {
 		if (!errored) {
 			final boolean upPressed = false, downPressed = false, runPressed = false;
 			g.gameTick(dt, upPressed, downPressed, leftPressed, rightPressed, jumpPressed, runPressed);
@@ -188,7 +190,7 @@ public class MarioScreen extends Screen {
 	}
 
 	@Override
-	public void render() {
+	public void render(RenderContext ctx) {
 		DisplayOutputDevice display = d.display;
 		if (errored) {
 			d.renderer.glDrawStringLeft(0, 20, "ERROR");
@@ -200,8 +202,8 @@ public class MarioScreen extends Screen {
 				final MarioWorld w = g.getCurrentWorld();
 				final int width = w.getWidth();
 				final int height = w.getHeight();
-				final float screenX = d.display.getGraphicEngine().getWidth() / 2f - 8f;
-				final float screenY = d.display.getGraphicEngine().getHeight() / 2f - 8f;
+				final float screenX = ctx.getWidth() / 2f - 8f;
+				final float screenY = ctx.getHeight() / 2f - 8f;
 				final float shiftX = -8 + 16 * (float) playerX;
 				final float shiftY = -8 + 16 * (height - (float) playerY);
 				int blue = -1;
@@ -241,10 +243,10 @@ public class MarioScreen extends Screen {
 //		GPU PERFORMANCE TEST
 			if (MarioScreen.gpuTest1 != null) {
 				d.renderer.glColor3f(1, 1, 1);
-				d.renderer.glFillColor(d.display.getGraphicEngine().getWidth() - (MarioScreen.gpuTest12 ? 512 : 256), d.display.getGraphicEngine().getHeight() / 2 - (MarioScreen.gpuTest12 ? 256 : 128), MarioScreen.gpuTest12 ? 512 : 256, MarioScreen.gpuTest12 ? 512 : 256);
+				d.renderer.glFillColor(ctx.getWidth() - (MarioScreen.gpuTest12 ? 512 : 256), ctx.getHeight() / 2 - (MarioScreen.gpuTest12 ? 256 : 128), MarioScreen.gpuTest12 ? 512 : 256, MarioScreen.gpuTest12 ? 512 : 256);
 				MarioScreen.gpuTest1.use(d.display);
 				d.renderer.glColor3f(0, 0, 0);
-				d.renderer.glDrawStringRight(d.display.getGraphicEngine().getWidth(), d.display.getGraphicEngine().getHeight() / 2 - (MarioScreen.gpuTest12 ? 256 : 128), gpuCharTest1[gpuCharTest1Num]);
+				d.renderer.glDrawStringRight(ctx.getWidth(), ctx.getHeight() / 2 - (MarioScreen.gpuTest12 ? 256 : 128), gpuCharTest1[gpuCharTest1Num]);
 			}
 			if (MarioScreen.gpuTest3 != null) {
 				MarioScreen.gpuTest3.use(d.display);
@@ -254,19 +256,19 @@ public class MarioScreen extends Screen {
 			if (MarioScreen.gpuTest2 != null) {
 				MarioScreen.gpuTest2.use(d.display);
 				d.renderer.glColor(0xFF000000);
-				d.renderer.glDrawStringRight(display.getDisplaySize()[0], d.display.getGraphicEngine().getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "A");
+				d.renderer.glDrawStringRight(display.getDisplaySize()[0], ctx.getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "A");
 				d.renderer.glColor(0xFF800000);
-				d.renderer.glDrawStringRight(display.getDisplaySize()[0], d.display.getGraphicEngine().getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "B");
+				d.renderer.glDrawStringRight(display.getDisplaySize()[0], ctx.getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "B");
 				d.renderer.glColor(0xFFeea28e);
-				d.renderer.glDrawStringRight(display.getDisplaySize()[0], d.display.getGraphicEngine().getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "C");
+				d.renderer.glDrawStringRight(display.getDisplaySize()[0], ctx.getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "C");
 				d.renderer.glColor(0xFFee7255);
-				d.renderer.glDrawStringRight(display.getDisplaySize()[0], d.display.getGraphicEngine().getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "D");
+				d.renderer.glDrawStringRight(display.getDisplaySize()[0], ctx.getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "D");
 				d.renderer.glColor(0xFFeac0b0);
-				d.renderer.glDrawStringRight(display.getDisplaySize()[0], d.display.getGraphicEngine().getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "E");
+				d.renderer.glDrawStringRight(display.getDisplaySize()[0], ctx.getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "E");
 				d.renderer.glColor(0xFFf3d8ce);
-				d.renderer.glDrawStringRight(display.getDisplaySize()[0], d.display.getGraphicEngine().getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "F");
+				d.renderer.glDrawStringRight(display.getDisplaySize()[0], ctx.getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "F");
 				d.renderer.glColor(0xFFffede7);
-				d.renderer.glDrawStringRight(display.getDisplaySize()[0], d.display.getGraphicEngine().getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "G");
+				d.renderer.glDrawStringRight(display.getDisplaySize()[0], ctx.getHeight() - MarioScreen.gpuTest2.getCharacterHeight(), "G");
 			}
 		}
 	}

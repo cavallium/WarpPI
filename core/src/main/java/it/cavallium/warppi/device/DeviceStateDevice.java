@@ -6,7 +6,7 @@ public interface DeviceStateDevice {
 
 	void initialize();
 
-	Future<?> waitForExit();
+	void waitForExit();
 	
 	void powerOff();
 }

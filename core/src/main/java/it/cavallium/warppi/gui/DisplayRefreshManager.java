@@ -1,13 +1,12 @@
 package it.cavallium.warppi.gui;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 public class DisplayRefreshManager {
 	private final Consumer<Integer[]> refreshConsumer;
-	private AtomicBoolean ticked = new AtomicBoolean(false);
-	private AtomicBoolean sizeSet = new AtomicBoolean(false);
 	private volatile Integer[] size;
 
 	public DisplayRefreshManager(Consumer<Integer[]> refreshConsumer) {
@@ -15,18 +14,13 @@ public class DisplayRefreshManager {
 	}
 
 	public void onTick() {
-		ticked.set(true);
-		refreshIfNeeded();
+		refreshConsumer.accept(size);
 	}
 
 	public void onResize(Integer[] newSize) {
-		size = newSize;
-		sizeSet.set(true);
-		refreshIfNeeded();
-	}
-
-	private void refreshIfNeeded() {
-		if (ticked.get() && sizeSet.get()) {
+		var oldSize = size;
+		if (oldSize == null || !Arrays.equals(oldSize, newSize)) {
+			size = newSize;
 			refreshConsumer.accept(size);
 		}
 	}

@@ -88,9 +88,6 @@ public class MathInputScreen extends Screen {
 		ic = new InputContext();
 		calc = new MathContext();
 
-		userInput = new NormalInputContainer(ic);
-		result = new NormalOutputContainer();
-
 		calc.init();
 	}
 
@@ -108,6 +105,9 @@ public class MathInputScreen extends Screen {
 			e.printStackTrace();
 			WarpPI.getPlatform().exit(1);
 		}
+
+		userInput = new NormalInputContainer(ic);
+		result = new NormalOutputContainer();
 	}
 
 	@Override
@@ -117,9 +117,10 @@ public class MathInputScreen extends Screen {
 		} else {
 			ctx.getGraphicEngine().getRenderer().glClearColor(0xFFDC3C32);
 		}
-		if (userInput.beforeRender(dt)) {
-			mustRefresh = true;
-		}
+		if (userInput != null)
+			if (userInput.beforeRender(dt)) {
+				mustRefresh = true;
+			}
 		if (computingResult) {
 			computingElapsedTime += dt;
 			computingAnimationElapsedTime += dt;
@@ -147,7 +148,7 @@ public class MathInputScreen extends Screen {
 		final int padding = 4;
 		renderer.glColor(textColor);
 
-		userInput.draw(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display, renderer, padding, padding + 20);
+		userInput.draw(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display, renderer, padding, padding);
 
 		if (computingResult) {
 			renderer.glColor3f(1, 1, 1);
@@ -156,14 +157,14 @@ public class MathInputScreen extends Screen {
 			final int size = 32;
 			final int posY = computingAnimationIndex % 2;
 			final int posX = (computingAnimationIndex - posY) / 2;
-			renderer.glFillRect(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getWidth() - size - 4, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getHeight() - size - 4, size, size, leftX + size * posX, leftY + size * posY, size, size);
+			renderer.glFillRect(ctx.getWidth() - size - 4, ctx.getHeight() - size - 4, size, size, leftX + size * posX, leftY + size * posY, size, size);
 			if (computingBreakTipVisible) {
 				Utils.getFont(false).use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
 				renderer.glColor3f(0.75f, 0, 0);
-				renderer.glDrawStringRight(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getWidth() - 4 - size - 4, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getHeight() - size / 2 - renderer.getCurrentFont().getCharacterHeight() / 2 - 4, "Press (=) to stop");
+				renderer.glDrawStringRight(ctx.getWidth() - 4 - size - 4, ctx.getHeight() - size / 2 - renderer.getCurrentFont().getCharacterHeight() / 2 - 4, "Press (=) to stop");
 			}
 		} else if (!result.isContentEmpty()) {
-			result.draw(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display, renderer, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getWidth() - result.getWidth() - 2, WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display.getGraphicEngine().getHeight() - result.getHeight() - 2);
+			result.draw(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display, renderer, ctx.getWidth() - result.getWidth() - 2, ctx.getHeight() - result.getHeight() - 2);
 		}
 	}
 

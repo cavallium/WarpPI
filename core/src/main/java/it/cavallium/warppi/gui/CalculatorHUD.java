@@ -32,7 +32,7 @@ public class CalculatorHUD extends HUD {
 	}
 
 	@Override
-	public void render() {
+	public void render(RenderContext ctx) {
 		// TODO Auto-generated method stub
 
 	}
@@ -48,8 +48,8 @@ public class CalculatorHUD extends HUD {
 	}
 
 	@Override
-	public void renderTopmost() {
-		final Renderer r = d.renderer;
+	public void renderTopmost(RenderContext ctx) {
+		final Renderer r = ctx.getRenderer();
 		final DisplayOutputDevice display = d.display;
 		final GraphicEngine engine = display.getGraphicEngine();
 		final Skin guiSkin = d.guiSkin;
@@ -74,7 +74,7 @@ public class CalculatorHUD extends HUD {
 
 		final int brightness = (int) Math.ceil(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getBrightness() * 9);
 		if (brightness <= 10) {
-			r.glFillRect(display.getDisplaySize()[0] - (padding + 16), 2, 16, 16, 16 * brightness, 16 * 1, 16, 16);
+			r.glFillRect(ctx.getWidth() - (padding + 16), 2, 16, 16, 16 * brightness, 16 * 1, 16, 16);
 		} else {
 			WarpPI.getPlatform().getConsoleUtils().out().println(1, "Brightness error");
 		}
@@ -85,18 +85,18 @@ public class CalculatorHUD extends HUD {
 		final boolean canGoForward = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().canGoForward();
 
 		if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
-			r.glFillRect(display.getDisplaySize()[0] - (padding + 16), 2, 16, 16, 16 * 18, 16 * 0, 16, 16);
+			r.glFillRect(ctx.getWidth() - (padding + 16), 2, 16, 16, 16 * 18, 16 * 0, 16, 16);
 			padding += 18 + 6;
 		}
 
 		if (canGoBack && canGoForward) {
-			r.glFillRect(display.getDisplaySize()[0] - (padding + 16), 2, 16, 16, 16 * 14, 16 * 0, 16, 16);
+			r.glFillRect(ctx.getWidth() - (padding + 16), 2, 16, 16, 16 * 14, 16 * 0, 16, 16);
 		} else if (canGoBack) {
-			r.glFillRect(display.getDisplaySize()[0] - (padding + 16), 2, 16, 16, 16 * 15, 16 * 0, 16, 16);
+			r.glFillRect(ctx.getWidth() - (padding + 16), 2, 16, 16, 16 * 15, 16 * 0, 16, 16);
 		} else if (canGoForward) {
-			r.glFillRect(display.getDisplaySize()[0] - (padding + 16), 2, 16, 16, 16 * 16, 16 * 0, 16, 16);
+			r.glFillRect(ctx.getWidth() - (padding + 16), 2, 16, 16, 16 * 16, 16 * 0, 16, 16);
 		} else {
-			r.glFillRect(display.getDisplaySize()[0] - (padding + 16), 2, 16, 16, 16 * 17, 16 * 0, 16, 16);
+			r.glFillRect(ctx.getWidth() - (padding + 16), 2, 16, 16, 16 * 17, 16 * 0, 16, 16);
 		}
 
 		padding += 18;
@@ -106,13 +106,13 @@ public class CalculatorHUD extends HUD {
 
 		Utils.getFont(true, false).use(display);
 		r.glColor4i(255, 0, 0, 40);
-		r.glDrawStringLeft(1 + 1, display.getDisplaySize()[1] - 7 - 7 + 1, "WORK IN");
+		r.glDrawStringLeft(1 + 1, ctx.getHeight() - 7 - 7 + 1, "WORK IN");
 		r.glColor4i(255, 0, 0, 80);
-		r.glDrawStringLeft(1, display.getDisplaySize()[1] - 7 - 7, "WORK IN");
+		r.glDrawStringLeft(1, ctx.getHeight() - 7 - 7, "WORK IN");
 		r.glColor4i(255, 0, 0, 40);
-		r.glDrawStringLeft(1 + 1, display.getDisplaySize()[1] - 7 + 1, "PROGRESS.");
+		r.glDrawStringLeft(1 + 1, ctx.getHeight() - 7 + 1, "PROGRESS.");
 		r.glColor4i(255, 0, 0, 80);
-		r.glDrawStringLeft(1, display.getDisplaySize()[1] - 7, "PROGRESS.");
+		r.glDrawStringLeft(1, ctx.getHeight() - 7, "PROGRESS.");
 		
 		int currentDebugLine = 2;
 		if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
@@ -137,26 +137,46 @@ public class CalculatorHUD extends HUD {
 						} else {
 							r.glColor(0xFF990000);
 						}
-						r.glDrawStringLeft(0, display.getDisplaySize()[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "[" + String.format("%1$03d", session.debugScreenID) + "] " + title.toUpperCase());
+						r.glDrawStringLeft(0, ctx.getHeight() - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "[" + String.format("%1$03d", session.debugScreenID) + "] " + title.toUpperCase());
 						if (session == WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen()) {
 							r.glColor(0xFF00CC00);
 						} else {
 							r.glColor(0xFF990000);
 						}
-						r.glDrawStringLeft(0, display.getDisplaySize()[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "      " + title.toUpperCase());
+						r.glDrawStringLeft(0, ctx.getHeight() - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "      " + title.toUpperCase());
 					}	
 					currentDebugLine++;
 				}
 			}
 			r.glColor(0xFF000000);
-			r.glDrawStringLeft(5, display.getDisplaySize()[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "DEBUG ENABLED");
+			r.glDrawStringLeft(5, ctx.getHeight() - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "DEBUG ENABLED");
 		}
 	}
 
 	@Override
-	public void beforeRender(final float dt) {
+	public void beforeRender(ScreenContext ctx, final float dt) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public int getMarginLeft() {
+		return 0;
+	}
+
+	@Override
+	public int getMarginTop() {
+		return 20;
+	}
+
+	@Override
+	public int getMarginRight() {
+		return 0;
+	}
+
+	@Override
+	public int getMarginBottom() {
+		return 0;
 	}
 
 	@Override

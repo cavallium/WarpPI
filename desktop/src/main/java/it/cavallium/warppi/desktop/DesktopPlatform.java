@@ -7,7 +7,9 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
+import it.cavallium.warppi.event.TouchEvent;
 import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLDisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
 import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingDeviceState;
@@ -249,6 +251,7 @@ public class DesktopPlatform implements Platform {
 			if (device instanceof SwingDisplayOutputDevice) {
 				if (args.isCPUEngineForced()) {
 					this.displayOutputDevice = device;
+					break;
 				}
 			} else if (device instanceof JOGLDisplayOutputDevice) {
 				if (args.isGPUEngineForced()) {
@@ -275,9 +278,62 @@ public class DesktopPlatform implements Platform {
 			this.deviceStateDevice = new SwingDeviceState((SwingEngine) displayOutputDevice.getGraphicEngine());
 
 		} else if (displayOutputDevice instanceof JOGLDisplayOutputDevice) {
-			this.touchInputDevice = null;
-			this.keyboardInputDevice = null;
-			this.deviceStateDevice = null; //TODO: Implement
+			//TODO: implement a touch input device
+			this.touchInputDevice = new TouchInputDevice() {
+				@Override
+				public boolean getSwappedAxes() {
+					return false;
+				}
+
+				@Override
+				public boolean getInvertedX() {
+					return false;
+				}
+
+				@Override
+				public boolean getInvertedY() {
+					return false;
+				}
+
+				@Override
+				public void listenTouchEvents(Consumer<TouchEvent> touchEventListener) {
+
+				}
+
+				@Override
+				public void initialize() {
+
+				}
+			};
+			//TODO: implement a keyboard input device
+			this.keyboardInputDevice = new KeyboardInputDevice() {
+				@Override
+				public void initialize() {
+
+				}
+			};
+			this.deviceStateDevice = new DeviceStateDevice() {
+				@Override
+				public void initialize() {
+
+				}
+
+				@Override
+				public void waitForExit() {
+					while(true) {
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+
+				@Override
+				public void powerOff() {
+
+				}
+			}; //TODO: Implement
 		}
 	}
 

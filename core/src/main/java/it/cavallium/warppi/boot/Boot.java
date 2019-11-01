@@ -12,13 +12,12 @@ import it.cavallium.warppi.math.rules.RulesManager;
 public class Boot { 
  
 	public static void boot(final Platform platform, final String[] args) throws Exception { 
-		Future<Void> execution = WarpPI.start( 
+		WarpPI.start(
 				platform, 
 				new LoadingScreen(), 
 				new CalculatorHUD(), 
 				Boot.parseStartupArguments(args), 
-				Boot::loadCalculator); 
-		execution.get(); 
+				Boot::loadCalculator);
 	} 
  
 	private static void loadCalculator() throws Exception { 

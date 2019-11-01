@@ -1,6 +1,6 @@
 package it.cavallium.warppi.util;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -8,6 +8,8 @@ public class Timer {
 	public Timer(int intervalMillis, Runnable action) {
 		var thread = new Thread(() -> {
 			try {
+				Thread.sleep(intervalMillis);
+
 				AtomicLong lostTime = new AtomicLong();
 				while (!Thread.interrupted()) {
 					var time1 = System.currentTimeMillis();
@@ -24,7 +26,7 @@ public class Timer {
 				e.printStackTrace();
 			}
 		});
-		Engine.getPlatform().setThreadName(thread, "Timer");
+		WarpPI.getPlatform().setThreadName(thread, "Timer");
 		thread.setDaemon(true);
 		thread.start();
 	}
