@@ -5,6 +5,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.StaticVars;
@@ -118,8 +119,9 @@ public class SwingEngine implements GraphicEngine {
 
 	@Deprecated()
 	public void refresh() {
-		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error != null && WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error.length() > 0 || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen().mustBeRefreshed())
+		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error != null && WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error.length() > 0 || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen().mustBeRefreshed()) {
 			INSTANCE.c.paintImmediately(0, 0, getWidth(), getHeight());
+		}
 	}
 
 	@Override

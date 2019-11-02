@@ -377,6 +377,10 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 		BlockContainer.initialized = true;
 	}
 
+	public static boolean isInitialized() {
+		return BlockContainer.initialized;
+	}
+
 	public static BinaryFont getDefaultFont(final boolean small) {
 		BlockContainer.checkInitialized();
 		return BlockContainer.defFonts[small ? 1 : 0];

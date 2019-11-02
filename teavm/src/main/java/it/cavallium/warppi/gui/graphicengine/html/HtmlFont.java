@@ -47,9 +47,13 @@ public class HtmlFont extends RFTFont {
 	}
 
 	@Override
+	public boolean isInitialized() {
+		return super.isInitialized();
+	}
+
+	@Override
 	public void use(final DisplayOutputDevice d) {
-		if (d.getGraphicEngine().getRenderer() instanceof HtmlRenderer)
-			((HtmlRenderer) d.getGraphicEngine().getRenderer()).f = this;
+			((HtmlEngine) d.getGraphicEngine()).getRenderer().f = this;
 	}
 
 }

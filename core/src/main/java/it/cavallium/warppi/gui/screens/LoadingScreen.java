@@ -50,7 +50,7 @@ public class LoadingScreen extends Screen {
 			ended = true;
 			StaticVars.windowZoom.submit(previousZoomValue);
 			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().show();
-			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MarioScreen());
+			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MathInputScreen());
 		}
 		mustRefresh = true;
 	}
@@ -58,7 +58,7 @@ public class LoadingScreen extends Screen {
 	@Override
 	public void render(RenderContext ctx) {
 		DisplayOutputDevice display = d.display;
-		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(display);
 		ctx.getRenderer().glColor3i(255, 255, 255);
 		ctx.getRenderer().glFillRect(ctx.getWidth() / 2f - 80, ctx.getHeight() / 2f - 64, 160, 48, 0, 32, 160, 48);
 		ctx.getRenderer().glFillRect(ctx.getWidth() / 2f - 24, ctx.getHeight() / 2f - loadingTextTranslation, 48, 48, 160, 32, 48, 48);

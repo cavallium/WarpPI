@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import it.cavallium.warppi.boot.StartupArguments;
 import it.cavallium.warppi.device.DeviceStateDevice;
@@ -15,6 +16,7 @@ import it.cavallium.warppi.device.display.NoDisplaysAvailableException;
 import it.cavallium.warppi.device.display.NullBacklightOutputDevice;
 import it.cavallium.warppi.device.input.KeyboardInputDevice;
 import it.cavallium.warppi.device.input.TouchInputDevice;
+import it.cavallium.warppi.event.TouchEvent;
 import it.cavallium.warppi.gui.graphicengine.html.HtmlDeviceState;
 import it.cavallium.warppi.gui.graphicengine.html.HtmlDisplayOutputDevice;
 import org.teavm.jso.browser.Window;
@@ -224,7 +226,41 @@ public class TeaVMPlatform implements Platform {
 		if (displayOutputDevice instanceof HtmlDisplayOutputDevice) {
 			//this.touchInputDevice = new HtmlTouchInputDevice((HtmlEngine) displayOutputDevice.getGraphicEngine());
 
-			this.keyboardInputDevice = null;
+			//todo: implement
+			this.touchInputDevice = new TouchInputDevice() {
+				@Override
+				public boolean getSwappedAxes() {
+					return false;
+				}
+
+				@Override
+				public boolean getInvertedX() {
+					return false;
+				}
+
+				@Override
+				public boolean getInvertedY() {
+					return false;
+				}
+
+				@Override
+				public void listenTouchEvents(Consumer<TouchEvent> touchEventListener) {
+
+				}
+
+				@Override
+				public void initialize() {
+
+				}
+			};
+
+			//todo: implement
+			this.keyboardInputDevice = new KeyboardInputDevice() {
+				@Override
+				public void initialize() {
+
+				}
+			};
 
 			this.deviceStateDevice = new HtmlDeviceState((HtmlEngine) displayOutputDevice.getGraphicEngine());
 

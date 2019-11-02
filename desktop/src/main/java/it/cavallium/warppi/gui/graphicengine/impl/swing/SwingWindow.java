@@ -1,33 +1,19 @@
 package it.cavallium.warppi.gui.graphicengine.impl.swing;
 
-import java.awt.*;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import it.cavallium.warppi.StaticVars;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.input.Keyboard;
+import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
+import it.cavallium.warppi.util.EventSubmitter;
 
-import java.awt.event.MouseMotionListener;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
 import java.net.URISyntaxException;
-
-import javax.imageio.ImageIO;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
-import it.cavallium.warppi.WarpPI;
-import it.cavallium.warppi.device.input.Keyboard;
-import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.event.TouchEndEvent;
-import it.cavallium.warppi.event.TouchMoveEvent;
-import it.cavallium.warppi.event.TouchPoint;
-import it.cavallium.warppi.event.TouchStartEvent;
-import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
-import it.cavallium.warppi.util.EventSubmitter;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class SwingWindow extends JFrame {
 	private static final long serialVersionUID = 2945898937634075491L;
@@ -90,7 +76,7 @@ public class SwingWindow extends JFrame {
 				newSize[1] = 1;
 
 			var oldSize = disp.r.size;
- 			disp.r.size = new int[] { newSize[0], newSize[1] };
+			disp.r.size = new int[]{newSize[0], newSize[1]};
 
 			SwingRenderer.canvas2d = new int[disp.r.size[0] * disp.r.size[1]];
 			var oldG = disp.g;
@@ -124,12 +110,13 @@ public class SwingWindow extends JFrame {
 			}
 
 			@Override
-			public void componentMoved(final ComponentEvent e) {}
+			public void componentMoved(final ComponentEvent e) {
+			}
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
 				if (windowShown) {
-				onResize.submit(new Integer[] { c.getWidth() / mult, c.getHeight() / mult });
+					onResize.submit(new Integer[]{c.getWidth() / mult, c.getHeight() / mult});
 				}
 			}
 
@@ -162,7 +149,7 @@ public class SwingWindow extends JFrame {
 		StaticVars.windowZoom$.subscribe((newZoomValue) -> {
 			if (newZoomValue != mult) {
 				mult = (int) newZoomValue.floatValue();
-				onResize.submit(new Integer[] { getWWidth(), getWHeight() });
+				onResize.submit(new Integer[]{getWWidth(), getWHeight()});
 				WarpPI.getPlatform().getConsoleUtils().out().println(3, "Engine", "CPU", "Zoom changed");
 			}
 		});
@@ -232,11 +219,13 @@ public class SwingWindow extends JFrame {
 				Keyboard.keyRaw(row, col, true);
 				c.grabFocus();
 			}
+
 			@Override
 			public void mousePressed(MouseEvent e) {
 				Keyboard.keyRaw(row, col, false);
 				c.grabFocus();
 			}
+
 			@Override
 			public void mouseExited(MouseEvent e) {
 				if (b.state == 2) {
@@ -247,6 +236,7 @@ public class SwingWindow extends JFrame {
 				b.hover = false;
 				b.repaint();
 			}
+
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				if (b.state == 2) {
@@ -257,10 +247,11 @@ public class SwingWindow extends JFrame {
 				b.hover = true;
 				b.repaint();
 			}
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 		buttons[row][col] = b;

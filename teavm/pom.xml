@@ -22,7 +22,7 @@
 		<dependency>
 			<groupId>org.teavm</groupId>
 			<artifactId>teavm-classlib</artifactId>
-			<version>0.7.0-dev-916</version>
+			<version>0.7.0-dev-859</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -81,7 +81,7 @@
 			<plugin>
 				<groupId>org.teavm</groupId>
 				<artifactId>teavm-maven-plugin</artifactId>
-				<version>0.7.0-dev-916</version>
+				<version>0.7.0-dev-859</version>
 				<executions>
 					<execution>
 						<goals>
@@ -91,10 +91,12 @@
 						<configuration>
 							<mainClass>it.cavallium.warppi.teavm.TeaVMBoot</mainClass>
 							<mainPageIncluded>true</mainPageIncluded>
-							<debugInformationGenerated>true</debugInformationGenerated>
+							<debugInformationGenerated>false</debugInformationGenerated>
 							<sourceMapsGenerated>true</sourceMapsGenerated>
 							<sourceFilesCopied>true</sourceFilesCopied>
 							<optimizationLevel>FULL</optimizationLevel>
+							<minifying>true</minifying>
+							<runtime>SEPARATE</runtime>
 						</configuration>
 					</execution>
 				</executions>

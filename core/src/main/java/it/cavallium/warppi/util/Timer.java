@@ -27,7 +27,7 @@ public class Timer {
 			}
 		});
 		WarpPI.getPlatform().setThreadName(thread, "Timer");
-		thread.setDaemon(true);
+		WarpPI.getPlatform().setThreadDaemon(thread, true);
 		thread.start();
 	}
 }

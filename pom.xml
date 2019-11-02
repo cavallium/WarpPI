@@ -45,8 +45,19 @@
 		<!-- <module>hardware</module> -->
 		<module>desktop</module>
 		<module>engine-jogl</module>
-		<module>teavm</module>
 	</modules>
+
+	<profiles>
+		<profile>
+			<id>generate-js</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>teavm</module>
+			</modules>
+		</profile>
+	</profiles>
 
 	<repositories>
 		<repository>

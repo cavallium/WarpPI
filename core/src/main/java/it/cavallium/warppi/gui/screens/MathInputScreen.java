@@ -45,6 +45,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 public class MathInputScreen extends Screen {
 
 	private static final BinaryFont fontBig = Utils.getFont(false);
+	private final boolean isCloned;
 
 	public MathContext calc;
 	public InputContext ic;
@@ -64,6 +65,7 @@ public class MathInputScreen extends Screen {
 	public MathInputScreen() {
 		super();
 		historyBehavior = HistoryBehavior.NORMAL;
+		isCloned = false;
 	}
 
 	/**
@@ -81,6 +83,7 @@ public class MathInputScreen extends Screen {
 		this.mustRefresh = old.mustRefresh;
 		this.result = new NormalOutputContainer(old.result);
 		this.userInput = new NormalInputContainer(old.userInput, this.ic);
+		this.isCloned = true;
 	}
 
 	@Override
@@ -100,14 +103,18 @@ public class MathInputScreen extends Screen {
 	public void graphicInitialized(ScreenContext ctx) throws InterruptedException {
 		/* Fine caricamento */
 		try {
-			BlockContainer.initializeFonts(ctx.getGraphicEngine().loadFont("norm"), ctx.getGraphicEngine().loadFont("smal"));
+			if (!BlockContainer.isInitialized()) {
+				BlockContainer.initializeFonts(ctx.getGraphicEngine().loadFont("norm"), ctx.getGraphicEngine().loadFont("smal"));
+			}
 		} catch (final IOException e) {
 			e.printStackTrace();
 			WarpPI.getPlatform().exit(1);
 		}
 
-		userInput = new NormalInputContainer(ic);
-		result = new NormalOutputContainer();
+		if (!isCloned) {
+			userInput = new NormalInputContainer(ic);
+			result = new NormalOutputContainer();
+		}
 	}
 
 	@Override

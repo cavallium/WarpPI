@@ -2,6 +2,7 @@ package it.cavallium.warppi.gui.graphicengine.html;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.teavm.jso.browser.Window;
@@ -30,11 +31,9 @@ public class HtmlSkin implements Skin {
 
 	@Override
 	public void use(final DisplayOutputDevice d) {
-		if (d instanceof HtmlEngine) {
-			if (!initd)
-				initialize(d);
-			((HtmlEngine) d).getRenderer().currentSkin = this;
-		}
+		if (!initd)
+			initialize(d);
+		((HtmlEngine) d.getGraphicEngine()).getRenderer().currentSkin = this;
 	}
 
 	@Override
@@ -45,13 +44,13 @@ public class HtmlSkin implements Skin {
 	@Override
 	public void initialize(final DisplayOutputDevice d) {
 		final HTMLDocument doc = Window.current().getDocument();
-		Boolean[] done = new Boolean[]{false};
+		AtomicBoolean done = new AtomicBoolean(false);
 		imgEl = doc.createElement("img").cast();
 		imgEl.addEventListener("load", (Event e) -> {
-			done[0] = true;
+			done.set(true);
 		});
 		imgEl.setSrc(url);
-		while (!done[0]) {
+		while (!done.get()) {
 			try {Thread.sleep(15);} catch (Exception e) {}
 		}
 		skinSize = new int[] { imgEl.getNaturalWidth(), imgEl.getNaturalHeight() };

@@ -173,7 +173,102 @@ class NEWTWindow implements GLEventListener {
 		glWindow.addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(final KeyEvent arg0) {
-				Keyboard.debugKeyCode = arg0.getKeyCode();
+				switch (arg0.getKeyCode()) {
+					case KeyEvent.VK_ESCAPE:
+						Keyboard.keyPressed(Key.POWEROFF);
+						break;
+					case KeyEvent.VK_D:
+						Keyboard.keyPressed(Key.debug_DEG);
+						break;
+					case KeyEvent.VK_R:
+						Keyboard.keyPressed(Key.debug_RAD);
+						break;
+					case KeyEvent.VK_G:
+						Keyboard.keyPressed(Key.debug_GRA);
+						break;
+					case KeyEvent.VK_X:
+						if (Keyboard.alpha)
+							Keyboard.keyPressed(Key.LETTER_X);
+						else
+							Keyboard.keyPressed(Key.NONE);
+						break;
+					case KeyEvent.VK_P:
+						if (Keyboard.alpha)
+							Keyboard.keyPressed(Key.PI);
+						else
+							Keyboard.keyPressed(Key.NONE);
+						break;
+					case KeyEvent.VK_B:
+						if (Keyboard.shift)
+							Keyboard.keyPressed(Key.BRIGHTNESS_CYCLE_REVERSE);
+						else if (!Keyboard.shift && !Keyboard.alpha)
+							Keyboard.keyPressed(Key.BRIGHTNESS_CYCLE);
+						else
+							Keyboard.keyPressed(Key.ZOOM_MODE);
+						break;
+					case KeyEvent.VK_ENTER:
+						if (!Keyboard.shift && !Keyboard.alpha)
+							Keyboard.keyPressed(Key.SIMPLIFY);
+						else
+							Keyboard.keyPressed(Key.NONE);
+						int row = 2;
+						int col = 1;
+						Keyboard.debugKeysDown[row - 1][col - 1] = true;
+						break;
+					case KeyEvent.VK_1:
+						if (!Keyboard.shift && !Keyboard.alpha)
+							Keyboard.keyPressed(Key.debug1);
+						else
+							Keyboard.keyPressed(Key.NONE);
+						break;
+					case KeyEvent.VK_2:
+						if (!Keyboard.shift && !Keyboard.alpha)
+							Keyboard.keyPressed(Key.debug2);
+						else
+							Keyboard.keyPressed(Key.NONE);
+						break;
+					case KeyEvent.VK_3:
+						if (!Keyboard.shift && !Keyboard.alpha)
+							Keyboard.keyPressed(Key.debug3);
+						else
+							Keyboard.keyPressed(Key.NONE);
+						break;
+					case KeyEvent.VK_4:
+						if (!Keyboard.shift && !Keyboard.alpha)
+							Keyboard.keyPressed(Key.debug4);
+						else
+							Keyboard.keyPressed(Key.NONE);
+						break;
+					case KeyEvent.VK_5:
+						if (!Keyboard.shift && !Keyboard.alpha)
+							Keyboard.keyPressed(Key.debug5);
+						else
+							Keyboard.keyPressed(Key.NONE);
+						break;
+					case 0x15:
+					case KeyEvent.VK_SHIFT:
+						Keyboard.keyPressed(Key.SHIFT);
+						break;
+					case KeyEvent.VK_CONTROL:
+						Keyboard.keyPressed(Key.ALPHA);
+						break;
+					case KeyEvent.VK_M:
+						Keyboard.keyPressed(Key.SURD_MODE);
+						break;
+					case KeyEvent.VK_LEFT:
+						Keyboard.keyPressed(Key.LEFT);
+						break;
+					case KeyEvent.VK_RIGHT:
+						Keyboard.keyPressed(Key.RIGHT);
+						break;
+					case KeyEvent.VK_UP:
+						Keyboard.keyPressed(Key.UP);
+						break;
+					case KeyEvent.VK_DOWN:
+					case (short) 12:
+						Keyboard.keyPressed(Key.DOWN);
+						break;
+				}
 			}
 
 			@Override
@@ -269,34 +364,17 @@ class NEWTWindow implements GLEventListener {
 						Keyboard.keyPressed(Key.SURD_MODE);
 						break;
 					case KeyEvent.VK_LEFT:
-						//LEFT
-						row = 2;
-						col = 3;
-						Keyboard.debugKeysDown[row - 1][col - 1] = false;
+						Keyboard.keyReleased(Key.LEFT);
 						break;
 					case KeyEvent.VK_RIGHT:
-						//RIGHT
-						row = 2;
-						col = 5;
-						Keyboard.debugKeysDown[row - 1][col - 1] = false;
+						Keyboard.keyReleased(Key.RIGHT);
 						break;
 					case KeyEvent.VK_UP:
-						//UP
-						row = 1;
-						col = 4;
-						Keyboard.debugKeysDown[row - 1][col - 1] = false;
+						Keyboard.keyReleased(Key.UP);
 						break;
 					case KeyEvent.VK_DOWN:
-						//Down
-						row = 3;
-						col = 4;
-						Keyboard.debugKeysDown[row - 1][col - 1] = false;
-						break;
 					case (short) 12:
-						//Down
-						row = 2;
-						col = 4;
-						Keyboard.debugKeysDown[row - 1][col - 1] = false;
+						Keyboard.keyReleased(Key.DOWN);
 						break;
 				}
 			}

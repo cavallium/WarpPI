@@ -1,6 +1,7 @@
 package it.cavallium.warppi.gui.graphicengine.html;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import it.cavallium.warppi.util.EventSubmitter;
 import org.teavm.jso.JSBody;
@@ -28,7 +29,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 public class HtmlEngine implements GraphicEngine {
 
 	private boolean initialized;
-	public Semaphore exitSemaphore;
 	private static final HTMLDocument document = Window.current().getDocument();
 	private HTMLCanvasElement canvas;
 	private CanvasRenderingContext2D g;
@@ -39,6 +39,7 @@ public class HtmlEngine implements GraphicEngine {
 	private final int frameTime = (int) (1000d / 10d);
 	private final EventSubmitter<Integer[]> onResize = EventSubmitter.create();
 	private final EventSubmitter<Float> onZoom = EventSubmitter.create();
+	private AtomicBoolean exitRequested = new AtomicBoolean();
 
 	@Override
 	public int[] getSize() {
@@ -85,7 +86,6 @@ public class HtmlEngine implements GraphicEngine {
 
 	@Override
 	public void create(final Runnable onInitialized) {
-		exitSemaphore = WarpPI.getPlatform().newSemaphore(0);
 		width = -1;
 		height = -1;
 		canvas = (HTMLCanvasElement) HtmlEngine.document.createElement("canvas");
@@ -253,7 +253,7 @@ public class HtmlEngine implements GraphicEngine {
 	private void destroyEngine() {
 		HtmlEngine.document.getBody().removeChild(canvas);
 		initialized = false;
-		exitSemaphore.release();
+		exitRequested.set(true);
 	}
 
 	@Override
@@ -313,11 +313,13 @@ public class HtmlEngine implements GraphicEngine {
 	public void subscribeExit(Runnable subscriber) {
 		var thr = new Thread(() -> {
 			try {
-				exitSemaphore.acquire();
+				while(!exitRequested.get()) {
+					Thread.sleep(1000);
+				}
 			} catch (final InterruptedException e) {}
 			subscriber.run();
 		});
-		thr.setDaemon(true);
+		WarpPI.getPlatform().setThreadDaemon(thr, true);
 		thr.start();
 	}
 

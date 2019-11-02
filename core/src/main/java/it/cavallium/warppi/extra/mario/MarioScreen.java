@@ -210,8 +210,8 @@ public class MarioScreen extends Screen {
 				for (int ix = 0; ix < width; ix++) {
 					for (int iy = 0; iy < height; iy++) {
 						final double distX = Math.abs(playerX - ix);
-						final double distY = Math.abs(playerY - iy - 1.5d);
-						if (distX * distX + distY * distY / 2d < 25d) {
+						final double distY = Math.abs(playerY - iy - 1.2d);
+						if (distX * distX + distY * distY / 2d < 270d) {
 							final byte b = w.getBlockIdAt(ix, iy);
 							if (b == 0) {
 								if (blue != 1) {

@@ -87,7 +87,7 @@ public class TeaVMStorageUtils implements StorageUtils {
 					return new FileInputStream(targetFile);
 				else
 					TeaVMStorageUtils.resourcesCache.remove(path);
-			final URL res = new URL(getBasePath() + path);
+			final URL res = new URL(getBasePath() + (path.startsWith("/") ? path : "/" + path));
 			final InputStream initialStream = res.openStream();
 			final byte[] buffer = new byte[initialStream.available()];
 			initialStream.read(buffer);
