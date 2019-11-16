@@ -19,9 +19,11 @@ public class SwingWindow extends JFrame {
 	private static final long serialVersionUID = 2945898937634075491L;
 	private final int defaultWidth;
 	private final int defaultHeight;
+	private final SwingRenderer renderer;
+	private final Runnable destroyEngine;
+	private BufferedImage graphics;
 	public CustomCanvas c;
 	private RenderingLoop renderingLoop;
-	private final SwingEngine display;
 	private int mult = 1;
 	private final EventSubmitter<Integer[]> onResize;
 	private final EventSubmitter<Integer[]> onResize$;
@@ -31,8 +33,10 @@ public class SwingWindow extends JFrame {
 	private volatile boolean windowShown;
 	private volatile boolean forceRepaint;
 
-	public SwingWindow(final SwingEngine disp, int defaultWidth, int defaultHeight) {
-		display = disp;
+	public SwingWindow(final SwingRenderer renderer, final BufferedImage graphics, Runnable destroyEngine, int defaultWidth, int defaultHeight) {
+		this.renderer = renderer;
+		this.graphics = graphics;
+		this.destroyEngine = destroyEngine;
 		this.defaultWidth = defaultWidth;
 		this.defaultHeight = defaultHeight;
 		setLayout(new BorderLayout());
@@ -75,16 +79,16 @@ public class SwingWindow extends JFrame {
 			if (newSize[1] <= 0)
 				newSize[1] = 1;
 
-			var oldSize = disp.r.size;
-			disp.r.size = new int[]{newSize[0], newSize[1]};
+			var oldSize = renderer.size;
+			renderer.size = new int[]{newSize[0], newSize[1]};
 
-			SwingRenderer.canvas2d = new int[disp.r.size[0] * disp.r.size[1]];
-			var oldG = disp.g;
-			disp.g = new BufferedImage(disp.r.size[0], disp.r.size[1], BufferedImage.TYPE_INT_RGB);
-			Graphics2D g = (Graphics2D) disp.g.getGraphics();
+			SwingRenderer.canvas2d = new int[renderer.size[0] * renderer.size[1]];
+			var oldG = graphics;
+			this.graphics = new BufferedImage(renderer.size[0], renderer.size[1], BufferedImage.TYPE_INT_RGB);
+			Graphics2D g = (Graphics2D) graphics.getGraphics();
 			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 			g.setColor(Color.BLACK);
-			g.clearRect(0, 0, disp.r.size[0], disp.r.size[1]);
+			g.clearRect(0, 0, renderer.size[0], renderer.size[1]);
 			double oldRatio = (double) oldSize[0] / (double) oldSize[1];
 			double newRatio = (double) newSize[0] / (double) newSize[1];
 			int newFrameWidth;
@@ -98,7 +102,7 @@ public class SwingWindow extends JFrame {
 			}
 			g.drawImage(oldG, 0, 0, newFrameWidth, newFrameHeight, null);
 			forceRepaint = true;
-			display.repaint();
+			this.c.repaint();
 
 			return newSize;
 		});
@@ -147,11 +151,9 @@ public class SwingWindow extends JFrame {
 			}
 		});
 		StaticVars.windowZoom$.subscribe((newZoomValue) -> {
-			if (newZoomValue != mult) {
-				mult = (int) newZoomValue.floatValue();
-				onResize.submit(new Integer[]{getWWidth(), getWHeight()});
-				WarpPI.getPlatform().getConsoleUtils().out().println(3, "Engine", "CPU", "Zoom changed");
-			}
+			mult = (int) newZoomValue.floatValue();
+			onResize.submit(new Integer[]{getWWidth(), getWHeight()});
+			WarpPI.getPlatform().getConsoleUtils().out().println(3, "Engine", "CPU", "Zoom changed");
 		});
 	}
 
@@ -209,7 +211,7 @@ public class SwingWindow extends JFrame {
 		b.setText(Keyboard.getKeyName(row, col));
 		b.setBasicForeground(Color.BLACK);
 		Font f = b.getFont();
-		f = f.deriveFont(Font.BOLD, BTN_SIZE / 3);
+		f = f.deriveFont(Font.BOLD, BTN_SIZE / 3f);
 		b.setFont(f);
 		b.setBackground(new Color(200, 200, 200));
 		b.setFocusable(true);
@@ -334,7 +336,7 @@ public class SwingWindow extends JFrame {
 	}
 
 	public void sendPowerOffSignal() {
-		display.destroyEngine();
+		destroyEngine.run();
 		this.setVisible(false);
 		this.dispose();
 	}
@@ -357,10 +359,10 @@ public class SwingWindow extends JFrame {
 				renderingLoop.refresh(forceRepaint);
 
 
-				final int[] a = ((DataBufferInt) display.g.getRaster().getDataBuffer()).getData();
+				final int[] a = ((DataBufferInt) graphics.getRaster().getDataBuffer()).getData();
 				SwingRenderer.canvas2d = a;
-				g.clearRect(0, 0, display.r.size[0] * mult, display.r.size[1] * mult);
-				g.drawImage(display.g, 0, 0, display.r.size[0] * mult, display.r.size[1] * mult, null);
+				g.clearRect(0, 0, renderer.size[0] * mult, renderer.size[1] * mult);
+				g.drawImage(graphics, 0, 0, renderer.size[0] * mult, renderer.size[1] * mult, null);
 				//			long time2 = System.nanoTime();
 				//			double timeDelta = ((double)(time2-time1))/1000000000d;
 				//			double mediaAttuale = timeDelta;

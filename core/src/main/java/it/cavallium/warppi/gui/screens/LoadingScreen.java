@@ -33,9 +33,12 @@ public class LoadingScreen extends Screen {
 
 	@Override
 	public void initialized() throws InterruptedException {
-		previousZoomValue = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue());
+		float lastZoomValue = StaticVars.windowZoom.getLastValue();
+		previousZoomValue = StaticVars.windowZoomFunction.apply(lastZoomValue);
 		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().hide();
-		StaticVars.windowZoom.submit(1f);
+		if (lastZoomValue != 1.0f) {
+			StaticVars.windowZoom.submit(1f);
+		}
 	}
 	
 	@Override
@@ -48,7 +51,9 @@ public class LoadingScreen extends Screen {
 		endLoading += dt;
 		if (!ended && loaded && ((WarpPI.getPlatform().getSettings().isDebugEnabled() && endLoading >= 1.5f) || endLoading >= 3.5f)) {
 			ended = true;
-			StaticVars.windowZoom.submit(previousZoomValue);
+			if (previousZoomValue != 1.0f) {
+				StaticVars.windowZoom.submit(previousZoomValue);
+			}
 			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().show();
 			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MathInputScreen());
 		}

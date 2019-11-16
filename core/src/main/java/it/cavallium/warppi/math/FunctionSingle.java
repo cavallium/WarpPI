@@ -66,7 +66,7 @@ public abstract class FunctionSingle implements Function {
 
 	/**
 	 *
-	 * @param var
+	 * @param value
 	 *            Parameter.
 	 * @return A new instance of this function.
 	 */
@@ -124,4 +124,9 @@ public abstract class FunctionSingle implements Function {
 
 	@Override
 	public abstract boolean equals(Object o);
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + "(" + getParameter() + ")";
+	}
 }

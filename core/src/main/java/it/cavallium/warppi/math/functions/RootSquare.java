@@ -5,33 +5,37 @@ import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
 import it.cavallium.warppi.gui.expression.blocks.BlockSquareRoot;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionOperator;
+import it.cavallium.warppi.math.FunctionSingle;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-public class RootSquare extends FunctionOperator {
+public class RootSquare extends FunctionSingle {
 
-	public RootSquare(final MathContext root, final Function value2) {
-		super(root, new Number(root, 2), value2);
+	private final Number degree;
+
+	public RootSquare(final MathContext root, final Function value) {
+		super(root, value);
+		this.degree = new Number(root, 2);
 	}
 
 	@Override
 	public boolean equals(final Object o) {
 		if (o instanceof RootSquare) {
-			final FunctionOperator f = (FunctionOperator) o;
-			return parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2());
+			final RootSquare f = (RootSquare) o;
+			return parameter.equals(f.getParameter());
 		}
 		return false;
 	}
 
 	@Override
 	public RootSquare clone() {
-		return new RootSquare(mathContext, parameter2 == null ? null : parameter2.clone());
+		return new RootSquare(mathContext, parameter == null ? null : parameter.clone());
 	}
 
 	@Override
 	public RootSquare clone(MathContext c) {
-		return new RootSquare(c, parameter2 == null ? null : parameter2.clone(c));
+		return new RootSquare(c, parameter == null ? null : parameter.clone(c));
 	}
 
 	@Override
@@ -39,7 +43,7 @@ public class RootSquare extends FunctionOperator {
 		final ObjectArrayList<Block> result = new ObjectArrayList<>();
 		final BlockSquareRoot bsqr = new BlockSquareRoot();
 		final BlockContainer bsqrc = bsqr.getNumberContainer();
-		for (final Block b : getParameter2().toBlock(context)) {
+		for (final Block b : getParameter().toBlock(context)) {
 			bsqrc.appendBlockUnsafe(b);
 		}
 		bsqrc.recomputeDimensions();
@@ -51,5 +55,9 @@ public class RootSquare extends FunctionOperator {
 	@Override
 	public <Argument, Result> Result accept(final Function.Visitor<Argument, Result> visitor, final Argument argument) {
 		return visitor.visit(this, argument);
+	}
+
+	public Number getDegree() {
+		return degree;
 	}
 }

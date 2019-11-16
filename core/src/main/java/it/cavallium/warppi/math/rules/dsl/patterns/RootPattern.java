@@ -35,8 +35,8 @@ public class RootPattern extends VisitorPattern {
 
 	@Override
 	public Boolean visit(final RootSquare rootSquare, final Map<String, Function> subFunctions) {
-		return degree.match(rootSquare.getParameter1(), subFunctions)
-			&& radicand.match(rootSquare.getParameter2(), subFunctions);
+		return degree.match(rootSquare.getDegree(), subFunctions)
+			&& radicand.match(rootSquare.getParameter(), subFunctions);
 	}
 
 	@Override

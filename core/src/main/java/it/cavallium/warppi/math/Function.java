@@ -44,7 +44,7 @@ public interface Function {
 	/**
 	 * Deep clone this function, also change mathContext.
 	 *
-	 * @param mathContext new mathContext
+	 * @param newMathContext new mathContext
 	 * @return A clone of this function.
 	 */
 	Function clone(MathContext newMathContext);

@@ -4,13 +4,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.LinkedList;
 
+import it.cavallium.warppi.gui.expression.blocks.*;
 import org.nevec.rjm.BigDecimalMath;
 
-import it.cavallium.warppi.gui.expression.blocks.Block;
-import it.cavallium.warppi.gui.expression.blocks.BlockChar;
-import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
-import it.cavallium.warppi.gui.expression.blocks.BlockExponentialNotation;
-import it.cavallium.warppi.gui.expression.blocks.BlockPower;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.rules.Rule;
@@ -256,10 +252,10 @@ public class Number implements Function {
 			final BlockPower bp = new BlockExponentialNotation();
 			final BlockContainer bpec = bp.getExponentContainer();
 			for (final char c : numberParts[0].toCharArray()) {
-				result.add(new BlockChar(c));
+				result.add(new BlockNumericChar(c));
 			}
 			for (final char c : numberParts[1].toCharArray()) {
-				bpec.appendBlockUnsafe(new BlockChar(c));
+				bpec.appendBlockUnsafe(new BlockNumericChar(c));
 			} ;
 			bpec.recomputeDimensions();
 			bp.recomputeDimensions();
@@ -267,7 +263,7 @@ public class Number implements Function {
 			return result;
 		} else {
 			for (final char c : numberString.toCharArray()) {
-				result.add(new BlockChar(c));
+				result.add(new BlockNumericChar(c));
 			}
 		}
 		return result;

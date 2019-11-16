@@ -552,6 +552,14 @@ public class MathInputScreen extends Screen {
 							final MathSolver ms = new MathSolver(expr);
 							final ObjectArrayList<ObjectArrayList<Function>> resultSteps = ms.solveAllSteps();
 							resultSteps.add(0, Utils.newArrayList(expr));
+							int stepNumber = 0;
+							for (ObjectArrayList<Function> resultStep : resultSteps) {
+								stepNumber++;
+								WarpPI.getPlatform().getConsoleUtils().out().println(0, "STEP " + stepNumber);
+								for (Function function : resultStep) {
+									WarpPI.getPlatform().getConsoleUtils().out().println(0, " :: " + function.toString());
+								}
+							}
 							final ObjectArrayList<Function> resultExpressions = resultSteps.get(resultSteps.size() - 1);
 							for (final Function rr : resultExpressions) {
 								WarpPI.getPlatform().getConsoleUtils().out().println(0, "RESULT: " + rr.toString());

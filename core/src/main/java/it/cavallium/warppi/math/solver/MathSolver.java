@@ -87,7 +87,8 @@ public class MathSolver {
 			if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
 				WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, currFnc + " is " + (checkEquals(currFnc, lastFunctions[1][endStepState]) ? "" : "not ") + "equals to [1]:" + lastFunctions[1][endStepState]);
 			}
-		} while (consecutiveNullSteps < stepStates.length && !checkEquals(currFnc, lastFunctions[0][endStepState]) && !checkEquals(currFnc, lastFunctions[1][endStepState]));
+			//todo: check if the while condition is good with the OR or the AND in the second part. Before it was AND but it was terminating if it can do only two consecutive reductions, right before the second.
+		} while (consecutiveNullSteps < stepStates.length && (!checkEquals(currFnc, lastFunctions[0][endStepState]) || !checkEquals(currFnc, lastFunctions[1][endStepState])));
 		if (consecutiveNullSteps >= stepStates.length) {
 			WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", "Loop ended because " + consecutiveNullSteps + " >= " + stepStates.length);
 		} else if (checkEquals(currFnc, lastFunctions[0][endStepState])) {

@@ -4,8 +4,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.StaticVars;
@@ -59,7 +57,7 @@ public class SwingEngine implements GraphicEngine {
 		r = new SwingRenderer();
 		g = new BufferedImage(r.size[0], r.size[1], BufferedImage.TYPE_INT_RGB);
 		initialized = false;
-		INSTANCE = new SwingWindow(this, defaultWidth, defaultHeight);
+		INSTANCE = new SwingWindow(r, g, this::destroyEngine, defaultWidth, defaultHeight);
 		setResizable(WarpPI.getPlatform().getSettings().isDebugEnabled());
 		INSTANCE.setVisible(true);
 		initialized = true;
@@ -119,7 +117,7 @@ public class SwingEngine implements GraphicEngine {
 
 	@Deprecated()
 	public void refresh() {
-		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error != null && WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error.length() > 0 || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen().mustBeRefreshed()) {
+		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen() == null || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error != null && WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error.length() > 0 || WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen().mustBeRefreshed()) {
 			INSTANCE.c.paintImmediately(0, 0, getWidth(), getHeight());
 		}
 	}

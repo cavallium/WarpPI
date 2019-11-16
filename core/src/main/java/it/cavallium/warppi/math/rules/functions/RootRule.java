@@ -46,8 +46,7 @@ public class RootRule implements Rule {
 	*/
 	@Override
 	public ObjectArrayList<Function> execute(final Function f) throws Error, InterruptedException {
-		boolean isSquare = false;
-		if ((isSquare = f instanceof RootSquare) || f instanceof Root) {
+		if (f instanceof Root) {
 			final ObjectArrayList<Function> result = new ObjectArrayList<>();
 			final MathContext mathContext = f.getMathContext();
 			final Function variable1 = ((FunctionOperator) f).getParameter1();
@@ -69,7 +68,7 @@ public class RootRule implements Rule {
 						throw (Error) new Error(Errors.ERROR, ex.getMessage()).initCause(ex);
 					}
 			}
-			if (!isSquare && !isSolvable && variable1 instanceof Number && variable1.equals(new Number(mathContext, 2)))
+			if (!isSolvable && variable1 instanceof Number && variable1.equals(new Number(mathContext, 2)))
 				canBePorted = true;
 
 			if (isSolvable) {

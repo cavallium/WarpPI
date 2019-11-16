@@ -46,6 +46,14 @@ public class MultiplicationRule implements Rule {
 				//multiply a by b (a*b = c)
 				result.add(((Number) variable1).multiply((Number) variable2));
 				return result;
+			} else if (!(variable1 instanceof Number) && variable2 instanceof Number) {
+				//fix order: x*n -> n*x
+				result.add(new Multiplication(f.getMathContext(), variable2, variable1));
+				return result;
+			} else if (!(variable1 instanceof Multiplication) && variable2 instanceof Multiplication) {
+				//fix order: x*(y*z) -> (x*y)*z
+				result.add(new Multiplication(f.getMathContext(), new Multiplication(f.getMathContext(), variable1, ((Multiplication) variable2).getParameter1()), ((Multiplication) variable2).getParameter2()));
+				return result;
 			}
 		}
 		return null;

@@ -2,6 +2,7 @@ package it.cavallium.warppi.math.functions;
 
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockChar;
+import it.cavallium.warppi.gui.expression.blocks.BlockNumericChar;
 import it.cavallium.warppi.gui.expression.blocks.BlockParenthesis;
 import it.cavallium.warppi.math.*;
 import it.cavallium.warppi.util.Error;
@@ -64,7 +65,7 @@ public class Multiplication extends FunctionOperator {
 			} else {
 				result.addAll(sub1);
 			}
-			if (nearLeft instanceof BlockChar && nearRight instanceof BlockChar && !(par2 instanceof Negative) && !(par1 instanceof Number && par2 instanceof Number) && !(par1 instanceof Number && par2 instanceof Multiplication && ((Multiplication)par2).getParameter1() instanceof Number)) {
+			if (nearLeft instanceof BlockChar && nearRight instanceof BlockChar && !(nearLeft instanceof BlockNumericChar && nearRight instanceof BlockNumericChar) && !(par2 instanceof Negative) && !(par1 instanceof Number && par2 instanceof Number) && !(par1 instanceof Number && par2 instanceof Multiplication && ((Multiplication)par2).getParameter1() instanceof Number)) {
 
 			} else {
 				result.add(new BlockChar(MathematicalSymbols.MULTIPLICATION));

@@ -28,3 +28,14 @@ reduction ExponentRule16c:
 
 expansion ExponentRule17:
 	root(a, x) -> x ^ (1 / a)
+
+reduction ExponentRule18:
+	(a * b) * b -> a * (b^2)
+reduction ExponentRule18a:
+	(a * (b^c)) * b -> a * (b^(c + 1))
+reduction ExponentRule18b:
+	(a * b) * (b^c) -> a * (b^(c + 1))
+reduction ExponentRule18c:
+	(a * (b^c)) * (b^d) -> a * (b^(c + d))
+reduction ExponentRule18d:
+	(a * (b^2)) * b -> a * (b^3)

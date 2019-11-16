@@ -1,8 +1,8 @@
 package it.cavallium.warppi.math.rules;
 
-import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.Platform.ConsoleUtils;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Expression;
@@ -24,9 +24,10 @@ public class RulesManager {
 
 	public static ObjectArrayList<Rule>[] rules;
 
-	private RulesManager() {}
+	private RulesManager() {
+	}
 
-	@SuppressWarnings({ "unchecked" })
+	@SuppressWarnings({"unchecked"})
 	public static void initialize() {
 		WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG, "RulesManager", "Loading the rules");
 		RulesManager.rules = new ObjectArrayList[RuleType.values().length];
@@ -50,19 +51,20 @@ public class RulesManager {
 
 	private static void loadBuiltinRules() {
 		Stream.of(
-				new DivisionRule(),
-				new EmptyNumberRule(),
-				new ExpressionRule(),
-				new JokeRule(),
-				new MultiplicationRule(),
-				new NegativeRule(),
-				new NumberRule(),
-				new PowerRule(),
-				new RootRule(),
-				new SubtractionRule(),
-				new SumRule(),
-				new SumSubtractionRule(),
-				new VariableRule()
+			new DivisionRule(),
+			new EmptyNumberRule(),
+			new ExpressionRule(),
+			new JokeRule(),
+			new MultiplicationRule(),
+			new NegativeRule(),
+			new NumberRule(),
+			new PowerRule(),
+			new RootRule(),
+			new RootSquareRule(),
+			new SubtractionRule(),
+			new SumRule(),
+			new SumSubtractionRule(),
+			new VariableRule()
 		).forEach(RulesManager::addRule);
 	}
 
@@ -72,9 +74,9 @@ public class RulesManager {
 		final DslFilesException fileErrors = new DslFilesException();
 		for (final String path : platform.getRuleFilePaths()) {
 			platform.getConsoleUtils().out().println(
-					ConsoleUtils.OUTPUTLEVEL_NODEBUG,
-					"RulesManager",
-					"Found DSL rules file: " + path
+				ConsoleUtils.OUTPUTLEVEL_NODEBUG,
+				"RulesManager",
+				"Found DSL rules file: " + path
 			);
 
 			final String source;

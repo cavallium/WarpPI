@@ -54,3 +54,9 @@ expansion FractionsRule14b:
 	(a / b) * c -> (a * c) / b
 expansion FractionsRule14c:
 	a * (c / d) -> (a * c) / d
+
+reduction FractionsRule15:
+	(a / b) ^ 2 -> (a * a) / (b * b)
+
+reduction FractionsRule16:
+	(a / b) ^ c -> (a ^ c) / (b ^ c)
