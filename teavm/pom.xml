@@ -90,13 +90,11 @@
 						<phase>install</phase>
 						<configuration>
 							<mainClass>it.cavallium.warppi.teavm.TeaVMBoot</mainClass>
-							<mainPageIncluded>true</mainPageIncluded>
 							<debugInformationGenerated>false</debugInformationGenerated>
 							<sourceMapsGenerated>true</sourceMapsGenerated>
 							<sourceFilesCopied>true</sourceFilesCopied>
-							<optimizationLevel>FULL</optimizationLevel>
+							<optimizationLevel>SIMPLE</optimizationLevel>
 							<minifying>true</minifying>
-							<runtime>SEPARATE</runtime>
 						</configuration>
 					</execution>
 				</executions>
