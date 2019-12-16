@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.cavallium</groupId>
 		<artifactId>warppi</artifactId>
-		<version>0.9.0a3</version>
+		<version>0.10.0-alpha</version>
 	</parent>
 	<artifactId>warppi-engine-jogl</artifactId>
 
@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>it.cavallium</groupId>
 			<artifactId>warppi-core</artifactId>
-			<version>0.9.0a3</version>
+			<version>0.10.0-alpha</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jogamp.jogl</groupId>

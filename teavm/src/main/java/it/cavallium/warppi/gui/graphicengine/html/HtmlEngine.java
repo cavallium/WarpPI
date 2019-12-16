@@ -1,7 +1,9 @@
 package it.cavallium.warppi.gui.graphicengine.html;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import it.cavallium.warppi.util.EventSubmitter;
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.browser.Window;
@@ -16,12 +18,10 @@ import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.dom.html.HTMLInputElement;
 import org.teavm.jso.dom.xml.NodeList;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.Platform.Semaphore;
-import it.cavallium.warppi.device.Keyboard;
-import it.cavallium.warppi.flow.BehaviorSubject;
-import it.cavallium.warppi.flow.Observable;
+import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
 import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
@@ -29,7 +29,6 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 public class HtmlEngine implements GraphicEngine {
 
 	private boolean initialized;
-	public Semaphore exitSemaphore;
 	private static final HTMLDocument document = Window.current().getDocument();
 	private HTMLCanvasElement canvas;
 	private CanvasRenderingContext2D g;
@@ -38,8 +37,9 @@ public class HtmlEngine implements GraphicEngine {
 	private int width, height;
 	public int mult = 1;
 	private final int frameTime = (int) (1000d / 10d);
-	private final BehaviorSubject<Integer[]> onResize = BehaviorSubject.create();
-	private final BehaviorSubject<Float> onZoom = BehaviorSubject.create();
+	private final EventSubmitter<Integer[]> onResize = EventSubmitter.create();
+	private final EventSubmitter<Float> onZoom = EventSubmitter.create();
+	private AtomicBoolean exitRequested = new AtomicBoolean();
 
 	@Override
 	public int[] getSize() {
@@ -86,14 +86,13 @@ public class HtmlEngine implements GraphicEngine {
 
 	@Override
 	public void create(final Runnable onInitialized) {
-		exitSemaphore = Engine.getPlatform().newSemaphore(0);
 		width = -1;
 		height = -1;
 		canvas = (HTMLCanvasElement) HtmlEngine.document.createElement("canvas");
 		g = (CanvasRenderingContext2D) canvas.getContext("2d");
 		final HTMLInputElement keyInput = (HTMLInputElement) HtmlEngine.document.createElement("input");
 		StaticVars.windowZoom$.subscribe((zoom) -> {
-			onZoom.onNext(zoom);
+			onZoom.submit(zoom);
 		});
 		onZoom.subscribe((windowZoom) -> {
 			if (windowZoom != 0) {
@@ -109,8 +108,7 @@ public class HtmlEngine implements GraphicEngine {
 				width = 480 / windowZoom.intValue();
 				height = 320 / windowZoom.intValue();
 				this.mult = windowZoom.intValue();
-				StaticVars.screenSize[0] = width;
-				StaticVars.screenSize[1] = height;
+				onResize.submit(new Integer[] {width, height});
 			}
 		});
 		keyInput.setType("text");
@@ -249,9 +247,13 @@ public class HtmlEngine implements GraphicEngine {
 
 	@Override
 	public void destroy() {
+		sendPowerOffSignal();
+	}
+
+	private void destroyEngine() {
 		HtmlEngine.document.getBody().removeChild(canvas);
 		initialized = false;
-		exitSemaphore.release();
+		exitRequested.set(true);
 	}
 
 	@Override
@@ -277,14 +279,14 @@ public class HtmlEngine implements GraphicEngine {
 				e.printStackTrace();
 			}
 		});
-		Engine.getPlatform().setThreadName(th, "Canvas rendering thread");
-		Engine.getPlatform().setThreadDaemon(th);
+		WarpPI.getPlatform().setThreadName(th, "Canvas rendering thread");
+		WarpPI.getPlatform().setThreadDaemon(th);
 		th.start();
 	}
 
 	@Override
 	public void repaint() {
-		renderingLoop.refresh();
+		renderingLoop.refresh(false);
 	}
 
 	@Override
@@ -307,16 +309,23 @@ public class HtmlEngine implements GraphicEngine {
 		return new HtmlSkin(file);
 	}
 
-	@Override
-	public void waitForExit() {
-		try {
-			exitSemaphore.acquire();
-		} catch (final InterruptedException e) {}
+
+	public void subscribeExit(Runnable subscriber) {
+		var thr = new Thread(() -> {
+			try {
+				while(!exitRequested.get()) {
+					Thread.sleep(1000);
+				}
+			} catch (final InterruptedException e) {}
+			subscriber.run();
+		});
+		WarpPI.getPlatform().setThreadDaemon(thr, true);
+		thr.start();
 	}
 
 	@Override
 	public boolean isSupported() {
-		return Engine.getPlatform().isJavascript();
+		return WarpPI.getPlatform().isJavascript();
 	}
 
 	@Override
@@ -325,8 +334,11 @@ public class HtmlEngine implements GraphicEngine {
 	}
 
 	@Override
-	public Observable<Integer[]> onResize() {
+	public EventSubmitter<Integer[]> onResize() {
 		return onResize;
 	}
 
+	public void sendPowerOffSignal() {
+		destroyEngine();
+	}
 }

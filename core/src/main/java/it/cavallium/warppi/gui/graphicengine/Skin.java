@@ -3,15 +3,17 @@ package it.cavallium.warppi.gui.graphicengine;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
+
 public interface Skin {
 
 	void load(String file) throws IOException, URISyntaxException;
 
-	void initialize(GraphicEngine d);
+	void initialize(DisplayOutputDevice d);
 
 	boolean isInitialized();
 
-	void use(GraphicEngine d);
+	void use(DisplayOutputDevice d);
 
 	/**
 	 * May not be available before initialization

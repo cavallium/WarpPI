@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.rules.Rule;
@@ -40,7 +40,7 @@ public class MathSolver {
 	public ObjectArrayList<ObjectArrayList<Function>> solveAllSteps() throws InterruptedException, Error {
 		final ObjectArrayList<ObjectArrayList<Function>> steps = new ObjectArrayList<>();
 		ObjectArrayList<Function> lastFnc = null, currFnc = new ObjectArrayList<>();
-		Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", "Solving all steps. Input: " + initialFunction.toString());
+		WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", "Solving all steps. Input: " + initialFunction.toString());
 		currFnc.add(initialFunction);
 		long stepNumber = 0;
 		int initStepState = 0, endStepState = 0;
@@ -66,11 +66,11 @@ public class MathSolver {
 			}
 			lastFnc = currFnc;
 			initStepState = stepState.get();
-			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, "Starting step " + stepStates[initStepState] + ". Input: " + currFnc);
+			WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, "Starting step " + stepStates[initStepState] + ". Input: " + currFnc);
 			final ObjectArrayList<Function> stepResult = solveStep(lastFnc, stepState);
 			if (stepResult != null) {
 				for (final Function result : stepResult) {
-					Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, result.toString());
+					WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, result.toString());
 				}
 				currFnc = stepResult;
 				steps.add(currFnc);
@@ -78,22 +78,23 @@ public class MathSolver {
 			endStepState = stepState.get();
 			stepNumber++;
 
-			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, "Step result: " + stepResult);
-			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, "Step result details: Consecutive steps that did nothing: " + consecutiveNullSteps + ", this step did " + stepStateRepetitions + " simplifications.");
-			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, "Next step state: " + stepStates[endStepState]);
-			if (Engine.getPlatform().getSettings().isDebugEnabled()) {
-				Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, currFnc + " is " + (checkEquals(currFnc, lastFunctions[0][endStepState]) ? "" : "not ") + "equals to [0]:" + lastFunctions[0][endStepState]);
+			WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, "Step result: " + stepResult);
+			WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, "Step result details: Consecutive steps that did nothing: " + consecutiveNullSteps + ", this step did " + stepStateRepetitions + " simplifications.");
+			WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, "Next step state: " + stepStates[endStepState]);
+			if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
+				WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, currFnc + " is " + (checkEquals(currFnc, lastFunctions[0][endStepState]) ? "" : "not ") + "equals to [0]:" + lastFunctions[0][endStepState]);
 			}
-			if (Engine.getPlatform().getSettings().isDebugEnabled()) {
-				Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, currFnc + " is " + (checkEquals(currFnc, lastFunctions[1][endStepState]) ? "" : "not ") + "equals to [1]:" + lastFunctions[1][endStepState]);
+			if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
+				WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", stepName, currFnc + " is " + (checkEquals(currFnc, lastFunctions[1][endStepState]) ? "" : "not ") + "equals to [1]:" + lastFunctions[1][endStepState]);
 			}
-		} while (consecutiveNullSteps < stepStates.length && !checkEquals(currFnc, lastFunctions[0][endStepState]) && !checkEquals(currFnc, lastFunctions[1][endStepState]));
+			//todo: check if the while condition is good with the OR or the AND in the second part. Before it was AND but it was terminating if it can do only two consecutive reductions, right before the second.
+		} while (consecutiveNullSteps < stepStates.length && (!checkEquals(currFnc, lastFunctions[0][endStepState]) || !checkEquals(currFnc, lastFunctions[1][endStepState])));
 		if (consecutiveNullSteps >= stepStates.length) {
-			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", "Loop ended because " + consecutiveNullSteps + " >= " + stepStates.length);
+			WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", "Loop ended because " + consecutiveNullSteps + " >= " + stepStates.length);
 		} else if (checkEquals(currFnc, lastFunctions[0][endStepState])) {
-			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", "Loop ended because " + currFnc + " is equals to [0]:" + lastFunctions[0][endStepState]);
+			WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", "Loop ended because " + currFnc + " is equals to [0]:" + lastFunctions[0][endStepState]);
 		} else {
-			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", "Loop ended because " + currFnc + " is equals to [1]:" + lastFunctions[1][endStepState]);
+			WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", "Loop ended because " + currFnc + " is equals to [1]:" + lastFunctions[1][endStepState]);
 		}
 		return steps;
 	}
@@ -244,7 +245,7 @@ public class MathSolver {
 		if (appliedRules.isEmpty()) {
 			results = null;
 		}
-		if (Engine.getPlatform().getConsoleUtils().getOutputLevel() >= ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN & results != null && !appliedRules.isEmpty()) {
+		if (WarpPI.getPlatform().getConsoleUtils().getOutputLevel() >= ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN & results != null && !appliedRules.isEmpty()) {
 			final StringBuilder rulesStr = new StringBuilder();
 			for (final Rule r : appliedRules) {
 				rulesStr.append(r.getRuleName());
@@ -253,7 +254,7 @@ public class MathSolver {
 			if (rulesStr.length() > 0) {
 				rulesStr.setLength(rulesStr.length() - 1);
 			}
-			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", currentAcceptedRules.toString(), "Applied rules: " + rulesStr);
+			WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "Math Solver", currentAcceptedRules.toString(), "Applied rules: " + rulesStr);
 		}
 		return results;
 	}

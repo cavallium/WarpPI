@@ -1,9 +1,13 @@
 package it.cavallium.warppi.gui.screens;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.StaticVars;
+import it.cavallium.warppi.extra.mario.MarioScreen;
 import it.cavallium.warppi.gui.GraphicUtils;
 import it.cavallium.warppi.gui.HistoryBehavior;
+import it.cavallium.warppi.gui.RenderContext;
+import it.cavallium.warppi.gui.ScreenContext;
 
 public class LoadingScreen extends Screen {
 
@@ -21,7 +25,7 @@ public class LoadingScreen extends Screen {
 
 	@Override
 	public void created() throws InterruptedException {
-		Engine.INSTANCE.isLoaded().subscribe((loaded) -> {
+		WarpPI.INSTANCE.isLoaded().subscribe((loaded) -> {
 			this.loaded = loaded;
 		});
 		endLoading = 0;
@@ -29,37 +33,43 @@ public class LoadingScreen extends Screen {
 
 	@Override
 	public void initialized() throws InterruptedException {
-		previousZoomValue = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue());
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().hide();
-		StaticVars.windowZoom.onNext(1f);
+		float lastZoomValue = StaticVars.windowZoom.getLastValue();
+		previousZoomValue = StaticVars.windowZoomFunction.apply(lastZoomValue);
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().hide();
+		if (lastZoomValue != 1.0f) {
+			StaticVars.windowZoom.submit(1f);
+		}
 	}
 	
 	@Override
-	public void graphicInitialized() throws InterruptedException {}
+	public void graphicInitialized(ScreenContext ctx) throws InterruptedException {}
 
 	@Override
-	public void beforeRender(final float dt) {
+	public void beforeRender(ScreenContext ctx, final float dt) {
 		loadingTextTranslation = GraphicUtils.sinDeg(endLoading * 90f) * 10f;
 
 		endLoading += dt;
-		if (!ended && loaded && (Engine.getPlatform().getSettings().isDebugEnabled() || endLoading >= 3.5f)) {
+		if (!ended && loaded && ((WarpPI.getPlatform().getSettings().isDebugEnabled() && endLoading >= 1.5f) || endLoading >= 3.5f)) {
 			ended = true;
-			StaticVars.windowZoom.onNext(previousZoomValue);
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().show();
-			Engine.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MathInputScreen());
+			if (previousZoomValue != 1.0f) {
+				StaticVars.windowZoom.submit(previousZoomValue);
+			}
+			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().show();
+			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MathInputScreen());
 		}
 		mustRefresh = true;
 	}
 
 	@Override
-	public void render() {
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine);
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glColor3i(255, 255, 255);
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] / 2f - 80, StaticVars.screenSize[1] / 2f - 64, 160, 48, 0, 32, 160, 48);
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] / 2f - 24, StaticVars.screenSize[1] / 2f - loadingTextTranslation, 48, 48, 160, 32, 48, 48);
+	public void render(RenderContext ctx) {
+		DisplayOutputDevice display = d.display;
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(display);
+		ctx.getRenderer().glColor3i(255, 255, 255);
+		ctx.getRenderer().glFillRect(ctx.getWidth() / 2f - 80, ctx.getHeight() / 2f - 64, 160, 48, 0, 32, 160, 48);
+		ctx.getRenderer().glFillRect(ctx.getWidth() / 2f - 24, ctx.getHeight() / 2f - loadingTextTranslation, 48, 48, 160, 32, 48, 48);
 
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] - 224, StaticVars.screenSize[1] - 48, 224, 48, 0, 80, 224, 48);
-		Engine.INSTANCE.getHardwareDevice().getDisplayManager().renderer.glFillRect(StaticVars.screenSize[0] - 160 - 24 - 224, StaticVars.screenSize[1] - 48, 160, 48, 224, 80, 160, 48);
+		ctx.getRenderer().glFillRect(ctx.getWidth() - 224, ctx.getHeight() - 48, 224, 48, 0, 80, 224, 48);
+		ctx.getRenderer().glFillRect(ctx.getWidth() - 160 - 24 - 224, ctx.getHeight() - 48, 160, 48, 224, 80, 160, 48);
 
 	}
 

@@ -58,8 +58,6 @@ public class HtmlRenderer implements Renderer {
 			final boolean transparent) {
 		final int[] size = e.getSize();
 
-		x0 += StaticVars.screenPos[0];
-		y0 += StaticVars.screenPos[1];
 		final double incrementX = Math.abs((double) (x1 - x0) / (double) (s1 - s0));
 		final double incrementY = Math.abs((double) (y1 - y0) / (double) (t1 - t0));
 		final boolean flippedX = (x1 - x0) / (s1 - s0) < 0;
@@ -110,8 +108,6 @@ public class HtmlRenderer implements Renderer {
 
 	@Override
 	public void glFillColor(float x, float y, final float width, final float height) {
-		x += StaticVars.screenPos[0];
-		y += StaticVars.screenPos[1];
 		g.setFillStyle(currentColor);
 		g.fillRect(x * e.mult, y * e.mult, width * e.mult, height * e.mult);
 	}
@@ -123,8 +119,6 @@ public class HtmlRenderer implements Renderer {
 
 	@Override
 	public void glDrawStringLeft(float x, float y, final String textString) {
-		x += StaticVars.screenPos[0];
-		y += StaticVars.screenPos[1];
 
 		f.imgElCtx.setGlobalCompositeOperation("source-in");
 		f.imgElCtx.setFillStyle(currentColor);

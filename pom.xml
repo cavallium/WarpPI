@@ -5,7 +5,7 @@
 
 	<groupId>it.cavallium</groupId>
 	<artifactId>warppi</artifactId>
-	<version>0.9.0a3</version>
+	<version>0.10.0-alpha</version>
 	<packaging>pom</packaging>
 
 	<name>WarpPI Calculator</name>
@@ -42,13 +42,22 @@
 		<module>core</module>
 		<module>util</module>
 		<module>bigdecimal-math</module>
-		<module>Flow</module>
-		<module>rules</module>
 		<!-- <module>hardware</module> -->
 		<module>desktop</module>
 		<module>engine-jogl</module>
-		<module>teavm</module>
 	</modules>
+
+	<profiles>
+		<profile>
+			<id>generate-js</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<modules>
+				<module>teavm</module>
+			</modules>
+		</profile>
+	</profiles>
 
 	<repositories>
 		<repository>
@@ -93,9 +102,9 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.12</version>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter</artifactId>
+				<version>5.5.1</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>

@@ -55,4 +55,8 @@ public class Logarithm extends FunctionOperator {
 		return result;
 	}
 
+	@Override
+	public <Argument, Result> Result accept(final Function.Visitor<Argument, Result> visitor, final Argument argument) {
+		return visitor.visit(this, argument);
+	}
 }

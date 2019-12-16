@@ -1,0 +1,18 @@
+reduction VariableRule1a:
+	x*a + x*b -> (a + b) * x
+reduction VariableRule1b:
+	x*a - x*b -> (a - b) * x
+reduction VariableRule1c:
+	a*x + b*x -> (a + b) * x
+reduction VariableRule1d:
+	a*x - b*x -> (a - b) * x
+
+reduction VariableRule2a:
+	a*x + x -> (a + 1) * x
+reduction VariableRule2b:
+	a*x - x -> (a - 1) * x
+
+reduction VariableRule3a:
+	x + a*x -> (1 + a) * x
+reduction VariableRule3b:
+	x - a*x -> (1 - a) * x

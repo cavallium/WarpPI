@@ -1,5 +1,7 @@
 package it.cavallium.warppi.gui;
 
+import it.cavallium.warppi.gui.screens.Screen;
+
 public abstract class HUD implements GraphicalInterface {
 	public DisplayManager d;
 	public boolean created = false;
@@ -18,7 +20,7 @@ public abstract class HUD implements GraphicalInterface {
 	}
 
 	@Override
-	public void initializeGraphic() throws InterruptedException {
+	public void initializeGraphic(ScreenContext ctx) throws InterruptedException {
 		if (!graphicInitialized) {
 			graphicInitialized = true;
 			graphicInitialized();
@@ -42,15 +44,15 @@ public abstract class HUD implements GraphicalInterface {
 	public abstract void renderBackground();
 
 	@Override
-	public abstract void render();
+	public abstract void render(RenderContext ctx);
 
 	public abstract void renderTopmostBackground();
 
 	@Override
-	public abstract void renderTopmost();
+	public abstract void renderTopmost(RenderContext ctx);
 
 	@Override
-	public abstract void beforeRender(float dt);
+	public abstract void beforeRender(ScreenContext ctx, float dt);
 
 	@Override
 	public boolean mustBeRefreshed() {
@@ -65,4 +67,11 @@ public abstract class HUD implements GraphicalInterface {
 		visible = true;
 	}
 
+	public abstract int getMarginLeft();
+
+	public abstract int getMarginTop();
+
+	public abstract int getMarginRight();
+
+	public abstract int getMarginBottom();
 }

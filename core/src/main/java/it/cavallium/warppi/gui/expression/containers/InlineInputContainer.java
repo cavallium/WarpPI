@@ -3,6 +3,7 @@ package it.cavallium.warppi.gui.expression.containers;
 import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockChar;
+import it.cavallium.warppi.gui.expression.blocks.BlockNumericChar;
 
 public class InlineInputContainer extends InputContainer {
 
@@ -30,6 +31,21 @@ public class InlineInputContainer extends InputContainer {
 
 	@Override
 	public Block parseChar(final char c) {
-		return new BlockChar(c);
+		switch (c) {
+			case '0':
+			case '1':
+			case '2':
+			case '3':
+			case '4':
+			case '5':
+			case '6':
+			case '7':
+			case '8':
+			case '9':
+			case '.':
+				return new BlockNumericChar(c);
+			default:
+				return new BlockChar(c);
+		}
 	}
 }

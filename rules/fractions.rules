@@ -1,0 +1,62 @@
+calculation FractionsRule1:
+	0 / a -> 0
+
+calculation FractionsRule2:
+	a / 1 -> a
+
+expansion FractionsRule3:
+	a / a -> 1
+
+expansion FractionsRule4:
+	(a / b) ^ -1 -> b / a
+
+expansion FractionsRule5a:
+	(a / b) ^ (-1 * c) -> (b / a) ^ c
+expansion FractionsRule5b:
+	(a / b) ^ -c -> (b / a) ^ c
+
+expansion FractionsRule6:
+	a ^ -1 -> 1 / a
+
+expansion FractionsRule7a:
+	a ^ -b -> 1 / a^b
+expansion FractionsRule7b:
+	a ^ (-1 * b) -> 1 / a^b
+
+calculation FractionsRule8a:
+	(-1 * a) / (-1 * b) -> a / b
+calculation FractionsRule8b:
+	(-1 * a) / (b * -1) -> a / b
+calculation FractionsRule8c:
+	(a * -1) / (-1 * b) -> a / b
+calculation FractionsRule8d:
+	(a * -1) / (b * -1) -> a / b
+
+expansion FractionsRule9a:
+	(-1 * a) / b -> -1 * (a / b)
+expansion FractionsRule9b:
+	(a * -1) / b -> -1 * (a / b)
+
+expansion FractionsRule10a:
+	a / (-1 * b) -> -1 * (a / b)
+expansion FractionsRule10b:
+	a / (b * -1) -> -1 * (a / b)
+
+expansion FractionsRule11:
+	a / (b / c) -> (a * c) / b
+
+expansion FractionsRule12:
+	(b / c) / a -> b / (c * a)
+
+expansion FractionsRule14a:
+	(a / b) * (c / d) -> (a * c) / (b * d)
+expansion FractionsRule14b:
+	(a / b) * c -> (a * c) / b
+expansion FractionsRule14c:
+	a * (c / d) -> (a * c) / d
+
+reduction FractionsRule15:
+	(a / b) ^ 2 -> (a * a) / (b * b)
+
+reduction FractionsRule16:
+	(a / b) ^ c -> (a ^ c) / (b ^ c)

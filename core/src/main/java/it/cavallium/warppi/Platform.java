@@ -9,7 +9,12 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
+import it.cavallium.warppi.boot.StartupArguments;
+import it.cavallium.warppi.device.DeviceStateDevice;
+import it.cavallium.warppi.device.display.BacklightOutputDevice;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.input.KeyboardInputDevice;
+import it.cavallium.warppi.device.input.TouchInputDevice;
 import it.cavallium.warppi.util.Error;
 
 public interface Platform {
@@ -52,21 +57,29 @@ public interface Platform {
 
 	URLClassLoader newURLClassLoader(URL[] urls);
 
-	Map<String, GraphicEngine> getEnginesList();
+	TouchInputDevice getTouchInputDevice();
+	
+	KeyboardInputDevice getKeyboardInputDevice();
+	
+	DisplayOutputDevice getDisplayOutputDevice();
 
-	GraphicEngine getEngine(String string) throws NullPointerException;
+	BacklightOutputDevice getBacklightOutputDevice();
 
+	DeviceStateDevice getDeviceStateDevice();
+	
 	void throwNewExceptionInInitializerError(String text);
 
 	String[] stacktraceToString(Error e);
 
-	void loadPlatformRules();
-
-	void zip(String targetPath, String destinationFilePath, String password);
-
-	void unzip(String targetZipFilePath, String destinationFolderPath, String password);
-
-	boolean compile(String[] command, PrintWriter printWriter, PrintWriter errors);
+	/**
+	 * Determines the list of files containing DSL rules to load.
+	 *
+	 * @return a <code>List</code> of paths of files which contain DSL rules.
+	 * 		   Each <code>String</code> in the returned <code>List</code> can be passed as an argument to
+	 * 		   {@link StorageUtils#getResourceStream(String)} to access the corresponding file's contents.
+	 * @throws IOException if an IO error occurs while getting the list of rule file paths.
+	 */
+	List<String> getRuleFilePaths() throws IOException;
 
 	public interface Gpio {
 		int valueOutput();
@@ -97,7 +110,7 @@ public interface Platform {
 
 		Object getBoardType();
 	}
-
+	
 	public interface ConsoleUtils {
 		int OUTPUTLEVEL_NODEBUG = 0;
 		int OUTPUTLEVEL_DEBUG_MIN = 1;
@@ -203,5 +216,7 @@ public interface Platform {
 		}
 
 	}
+
+	void setArguments(StartupArguments args);
 
 }

@@ -1,34 +1,30 @@
 package it.cavallium.warppi.gui;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
-import it.cavallium.warppi.Engine;
-import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.Platform.Semaphore;
-import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.device.Keyboard;
-import it.cavallium.warppi.flow.Observable;
-import it.cavallium.warppi.flow.Pair;
-import it.cavallium.warppi.gui.graphicengine.BinaryFont;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
-import it.cavallium.warppi.gui.graphicengine.Renderer;
-import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
-import it.cavallium.warppi.gui.graphicengine.Skin;
-import it.cavallium.warppi.gui.graphicengine.impl.nogui.NoGuiEngine;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.display.BacklightOutputDevice;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.input.Keyboard;
+import it.cavallium.warppi.event.*;
+import it.cavallium.warppi.gui.graphicengine.*;
 import it.cavallium.warppi.gui.screens.Screen;
+import it.cavallium.warppi.util.Timer;
 import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.function.Consumer;
 
 public final class DisplayManager implements RenderingLoop {
 	private static final int tickDuration = 50;
 
 	private float brightness;
 
-	public final GraphicEngine engine;
-	public final HardwareDisplay monitor;
+	public final DisplayOutputDevice display;
+	public final GraphicEngine graphicEngine;
+	public final BacklightOutputDevice backlight;
 	public final boolean supportsPauses;
 	public Renderer renderer;
 
@@ -51,24 +47,23 @@ public final class DisplayManager implements RenderingLoop {
 	 */
 	public boolean forceRefresh;
 
-	public DisplayManager(final HardwareDisplay monitor, final HUD hud, final Screen screen, final String title) {
-		this.monitor = monitor;
+	public DisplayManager(final DisplayOutputDevice display, final BacklightOutputDevice backlight, final HUD hud, final Screen screen, final String title) {
+		this.display = display;
+		this.graphicEngine = display.getGraphicEngine();
+		this.backlight = backlight;
 		this.hud = hud;
 		initialTitle = title;
 		initialScreen = screen;
 
-		screenChange = Engine.getPlatform().newSemaphore();
-		engine = chooseGraphicEngine();
-		supportsPauses = engine.doesRefreshPauses();
+		screenChange = WarpPI.getPlatform().newSemaphore();
+		supportsPauses = graphicEngine.doesRefreshPauses();
 
-		glyphsHeight = new int[] { 9, 6, 12, 9 };
+		glyphsHeight = new int[]{9, 6, 12, 9};
 		displayDebugString = "";
 		errorMessages = new ObjectArrayList<>();
 	}
 
 	public void initialize() {
-		monitor.initialize();
-
 		try {
 			hud.d = this;
 			hud.create();
@@ -77,18 +72,17 @@ public final class DisplayManager implements RenderingLoop {
 			}
 		} catch (final Exception e) {
 			e.printStackTrace();
-			Engine.getPlatform().exit(0);
+			WarpPI.getPlatform().exit(0);
 		}
 
 		try {
-			engine.create();
-			renderer = engine.getRenderer();
-			engine.setTitle(initialTitle);
+			graphicEngine.create();
+			renderer = graphicEngine.getRenderer();
+			graphicEngine.setTitle(initialTitle);
 			loop();
 		} catch (final Exception ex) {
 			ex.printStackTrace();
 		}
-		monitor.shutdown();
 	}
 
 	/*
@@ -110,54 +104,6 @@ public final class DisplayManager implements RenderingLoop {
 	 * glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, skin_w, skin_h, 0, GL_RGBA,
 	 * GL_UNSIGNED_BYTE, skin); } catch (IOException ex) { ex.printStackTrace(); } }
 	 */
-
-	private GraphicEngine chooseGraphicEngine() {
-		GraphicEngine d;
-		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "framebuffer engine", null);
-		if (d != null && d.isSupported()) {
-			Engine.getPlatform().getConsoleUtils().out().println(1, "Using FB Graphic Engine");
-			return d;
-		}
-		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "CPU engine", null);
-		if (d != null && d.isSupported()) {
-			Engine.getPlatform().getConsoleUtils().out().println(1, "Using CPU Graphic Engine");
-			return d;
-		}
-		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "GPU engine", null);
-		if (d != null && d.isSupported()) {
-			Engine.getPlatform().getConsoleUtils().out().println(1, "Using GPU Graphic Engine");
-			return d;
-		}
-		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "headless 24 bit engine", null);
-		if (d != null && d.isSupported()) {
-			System.err.println(
-					"Using Headless 24 bit Engine! This is a problem! No other graphic engines are available.");
-			return d;
-		}
-		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "headless 256 colors engine", null);
-		if (d != null && d.isSupported()) {
-			System.err.println("Using Headless 256 Engine! This is a problem! No other graphic engines are available.");
-			return d;
-		}
-		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "headless 8 colors engine", null);
-		if (d != null && d.isSupported()) {
-			System.err
-					.println("Using Headless basic Engine! This is a problem! No other graphic engines are available.");
-			return d;
-		}
-		d = Utils.getOrDefault(Engine.getPlatform().getEnginesList(), "HTML5 engine", null);
-		if (d != null && d.isSupported()) {
-			Engine.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_NODEBUG,
-					"Using Html Graphic Engine");
-			return d;
-		}
-		d = new NoGuiEngine();
-		if (d != null && d.isSupported()) {
-			Engine.getPlatform().getConsoleUtils().out().println(1, "Using NoGui Graphic Engine");
-			return d;
-		}
-		throw new UnsupportedOperationException("No graphic engines available.");
-	}
 
 	public void closeScreen() {
 		boolean isLastSession = sessions[1] == null;
@@ -193,10 +139,10 @@ public final class DisplayManager implements RenderingLoop {
 		}
 		if (mustBeAddedToHistory) {
 			if (screen.historyBehavior == HistoryBehavior.NORMAL
-					|| screen.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
+				|| screen.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
 				if (currentSession > 0) {
 					final int sl = sessions.length; // TODO: I don't know why if i don't add +5 or more some items
-													// disappear
+					// disappear
 					List<Screen> newSessions = new LinkedList<>();
 					int i = 0;
 					for (Screen s : sessions) {
@@ -250,14 +196,14 @@ public final class DisplayManager implements RenderingLoop {
 			screenChange.release();
 		} catch (final Exception e) {
 			e.printStackTrace();
-			Engine.getPlatform().exit(0);
+			WarpPI.getPlatform().exit(0);
 		}
 	}
 
 	public void replaceScreen(final Screen screen) {
 		if (screen.initialized == false) {
 			if (screen.historyBehavior == HistoryBehavior.NORMAL
-					|| screen.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
+				|| screen.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
 				sessions[currentSession] = screen;
 			} else {
 				currentSession = -1;
@@ -276,7 +222,7 @@ public final class DisplayManager implements RenderingLoop {
 			screenChange.release();
 		} catch (final Exception e) {
 			e.printStackTrace();
-			Engine.getPlatform().exit(0);
+			WarpPI.getPlatform().exit(0);
 		}
 	}
 
@@ -354,77 +300,87 @@ public final class DisplayManager implements RenderingLoop {
 	}
 
 	private void load_skin() throws IOException {
-		guiSkin = engine.loadSkin("/skin.png");
+		guiSkin = graphicEngine.loadSkin("/skin.png");
 	}
 
 	private void load_fonts() throws IOException {
 		fonts = new BinaryFont[7];
-		fonts[0] = engine.loadFont("smal");
-		fonts[1] = engine.loadFont("smallest");
-		fonts[2] = engine.loadFont("norm");
-		fonts[3] = engine.loadFont("smal");
+		fonts[0] = graphicEngine.loadFont("smal");
+		fonts[1] = graphicEngine.loadFont("smallest");
+		fonts[2] = graphicEngine.loadFont("norm");
+		fonts[3] = graphicEngine.loadFont("smal");
 		// 4
 		// fonts[5] = engine.loadFont("square");
 	}
 
 	private void draw_init() {
-		if (engine.supportsFontRegistering()) {
-			final List<BinaryFont> fontsIterator = engine.getRegisteredFonts();
+		if (graphicEngine.supportsFontRegistering()) {
+			final List<BinaryFont> fontsIterator = graphicEngine.getRegisteredFonts();
 			for (final BinaryFont f : fontsIterator) {
 				if (!f.isInitialized()) {
-					f.initialize(engine);
+					f.initialize(display);
 				}
 			}
 		}
 		if (!screen.graphicInitialized) {
 			try {
-				screen.initializeGraphic();
+				var displaySize = display.getDisplaySize();
+				var scrWidth = displaySize[0] - hud.getMarginLeft() - hud.getMarginRight();
+				var scrHeight = displaySize[1] - hud.getMarginTop() - hud.getMarginBottom();
+				var scrCtx = new ScreenContext(graphicEngine, scrWidth, scrHeight);
+				screen.initializeGraphic(scrCtx);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		renderer.glClear(engine.getWidth(), engine.getHeight());
+		renderer.glClear(graphicEngine.getWidth(), graphicEngine.getHeight());
 	}
 
 	private void draw_world() {
+		var displaySize = display.getDisplaySize();
+		var scrWidth = displaySize[0] - hud.getMarginLeft() - hud.getMarginRight();
+		var scrHeight = displaySize[1] - hud.getMarginTop() - hud.getMarginBottom();
+		var scrCtx = new RenderContext(graphicEngine, renderer.getBoundedInstance(hud.getMarginLeft(), hud.getMarginTop(), scrWidth, scrHeight), scrWidth, scrHeight);
+		var fullCtx = new RenderContext(graphicEngine, renderer, displaySize[0], displaySize[1]);
+
 		renderer.glColor3i(255, 255, 255);
 
 		if (error != null) {
 			final BinaryFont fnt = Utils.getFont(false, false);
-			if (fnt != null && fnt != engine.getRenderer().getCurrentFont()) {
-				fnt.use(engine);
+			if (fnt != null && fnt != graphicEngine.getRenderer().getCurrentFont()) {
+				fnt.use(display);
 			}
 			renderer.glColor3i(129, 28, 22);
-			renderer.glDrawStringRight(StaticVars.screenSize[0] - 2,
-					StaticVars.screenSize[1] - (fnt.getCharacterHeight() + 2),
-					Engine.getPlatform().getSettings().getCalculatorNameUppercase() + " CALCULATOR");
+			renderer.glDrawStringRight(display.getDisplaySize()[0] - 2,
+				display.getDisplaySize()[1] - (fnt.getCharacterHeight() + 2),
+				WarpPI.getPlatform().getSettings().getCalculatorNameUppercase() + " CALCULATOR");
 			renderer.glColor3i(149, 32, 26);
-			renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, 22, error);
+			renderer.glDrawStringCenter(display.getDisplaySize()[0] / 2, 22, error);
 			renderer.glColor3i(164, 34, 28);
 			int i = 22;
 			for (final String stackPart : errorStackTrace) {
 				renderer.glDrawStringLeft(2, 22 + i, stackPart);
 				i += 11;
 			}
-			if (fonts[0] != null && fonts[0] != engine.getRenderer().getCurrentFont()) {
-				fonts[0].use(engine);
+			if (fonts[0] != null && fonts[0] != graphicEngine.getRenderer().getCurrentFont()) {
+				fonts[0].use(display);
 			}
 			renderer.glColor3i(129, 28, 22);
-			renderer.glDrawStringCenter(StaticVars.screenSize[0] / 2, 11, "UNEXPECTED EXCEPTION");
+			renderer.glDrawStringCenter(display.getDisplaySize()[0] / 2, 11, "UNEXPECTED EXCEPTION");
 		} else {
-			if (fonts[0] != null && fonts[0] != engine.getRenderer().getCurrentFont()) {
-				fonts[0].use(engine);
+			if (fonts[0] != null && fonts[0] != graphicEngine.getRenderer().getCurrentFont()) {
+				fonts[0].use(display);
 			}
 			if (hud.visible)
 				hud.renderBackground();
-			screen.render();
+			screen.render(scrCtx);
 			if (hud.visible) {
-				hud.render();
+				hud.render(fullCtx);
 				hud.renderTopmostBackground();
 			}
-			screen.renderTopmost();
+			screen.renderTopmost(fullCtx);
 			if (hud.visible)
-				hud.renderTopmost();
+				hud.renderTopmost(fullCtx);
 		}
 	}
 
@@ -436,8 +392,8 @@ public final class DisplayManager implements RenderingLoop {
 	private long precTime = -1;
 
 	@Override
-	public void refresh() {
-		if (supportsPauses == false || Keyboard.popRefreshRequest() || forceRefresh || screen.mustBeRefreshed()) {
+	public void refresh(boolean force) {
+		if (force || supportsPauses == false || Keyboard.popRefreshRequest() || forceRefresh || screen.mustBeRefreshed()) {
 			forceRefresh = false;
 			draw();
 		}
@@ -456,43 +412,40 @@ public final class DisplayManager implements RenderingLoop {
 				}
 			} catch (final Exception e) {
 				e.printStackTrace();
-				Engine.getPlatform().exit(0);
+				WarpPI.getPlatform().exit(0);
 			}
 
-			final Observable<Long> workTimer = Observable.interval(DisplayManager.tickDuration);
+			var displayRefreshManager = new DisplayRefreshManager(this::onRefresh);
+			new Timer(DisplayManager.tickDuration, displayRefreshManager::onTick);
+			graphicEngine.onResize().subscribe(displayRefreshManager::onResize);
 
-			final Observable<Integer[]> onResizeObservable = engine.onResize();
-			Observable<Pair<Long, Integer[]>> refreshObservable;
-			if (onResizeObservable == null) {
-				refreshObservable = workTimer.map((l) -> Pair.of(l, null));
-			} else {
-				refreshObservable = Observable.combineChanged(workTimer, engine.onResize());
-			}
-
-			refreshObservable.subscribe((pair) -> {
-				double dt = 0;
-				final long newtime = System.nanoTime();
-				if (precTime == -1) {
-					dt = DisplayManager.tickDuration;
-				} else {
-					dt = (newtime - precTime) / 1000d / 1000d;
-				}
-				precTime = newtime;
-
-				if (pair.getRight() != null) {
-					final Integer[] windowSize = pair.getRight();
-					StaticVars.screenSize[0] = windowSize[0];
-					StaticVars.screenSize[1] = windowSize[1];
-				}
-
-				screen.beforeRender((float) (dt / 1000d));
-			});
-
-			engine.start(getDrawable());
+			graphicEngine.start(getDrawable());
 		} catch (final Exception ex) {
 			ex.printStackTrace();
 		} finally {
 		}
+	}
+
+	private void onRefresh(Integer[] windowSize) {
+		double dt = 0;
+		final long newtime = System.nanoTime();
+		if (precTime == -1) {
+			dt = DisplayManager.tickDuration;
+		} else {
+			dt = (newtime - precTime) / 1000d / 1000d;
+		}
+		precTime = newtime;
+
+		if (windowSize != null) {
+			display.getDisplaySize()[0] = windowSize[0];
+			display.getDisplaySize()[1] = windowSize[1];
+		}
+
+		var displaySize = display.getDisplaySize();
+		var scrWidth = displaySize[0] - hud.getMarginLeft() - hud.getMarginRight();
+		var scrHeight = displaySize[1] - hud.getMarginTop() - hud.getMarginBottom();
+		var scrCtx = new ScreenContext(graphicEngine, scrWidth, scrHeight);
+		screen.beforeRender(scrCtx, (float) (dt / 1000d));
 	}
 
 	public void changeBrightness(final float change) {
@@ -502,7 +455,7 @@ public final class DisplayManager implements RenderingLoop {
 	public void setBrightness(final float newval) {
 		if (newval >= 0 && newval <= 1) {
 			brightness = newval;
-			monitor.setBrightness(brightness);
+			backlight.setBrightness(brightness);
 		}
 	}
 
@@ -538,7 +491,31 @@ public final class DisplayManager implements RenderingLoop {
 		renderer.glFillRect(x, y, uvX2 - uvX, uvY2 - uvY, uvX, uvY, uvX2 - uvX, uvY2 - uvY);
 	}
 
-	public void waitForExit() {
-		engine.waitForExit();
+	public Consumer<TouchEvent> getTouchEventListener() {
+		return (TouchEvent t) -> {
+			boolean refresh = false;
+			if (screen != null && screen.initialized && executeTouchEventOnScreen(t, screen)) {
+				refresh = true;
+			} else {
+				//Default behavior
+			}
+			if (refresh) {
+				forceRefresh = true;
+			}
+		};
+	}
+
+	private boolean executeTouchEventOnScreen(TouchEvent t, Screen scr) {
+		if (t instanceof TouchStartEvent) {
+			return scr.onTouchStart((TouchStartEvent) t);
+		} else if (t instanceof TouchMoveEvent) {
+			return scr.onTouchMove((TouchMoveEvent) t);
+		} else if (t instanceof TouchEndEvent) {
+			return scr.onTouchEnd((TouchEndEvent) t);
+		} else if (t instanceof TouchCancelEvent) {
+			return scr.onTouchCancel((TouchCancelEvent) t);
+		} else {
+			throw new UnsupportedOperationException();
+		}
 	}
 }

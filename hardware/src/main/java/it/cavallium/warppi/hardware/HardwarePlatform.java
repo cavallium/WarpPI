@@ -1,20 +1,29 @@
 package it.cavallium.warppi.hardware;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import it.cavallium.warppi.Platform;
+import it.cavallium.warppi.boot.StartupArguments;
+import it.cavallium.warppi.device.DeviceStateDevice;
+import it.cavallium.warppi.device.display.BacklightOutputDevice;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.display.NoDisplaysAvailableException;
+import it.cavallium.warppi.device.input.KeyboardInputDevice;
+import it.cavallium.warppi.device.input.PIHardwareTouchDevice;
+import it.cavallium.warppi.device.input.TouchInputDevice;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.impl.framebuffer.FBEngine;
+import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLDisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
 import it.cavallium.warppi.util.Error;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.model.ZipParameters;
-import net.lingala.zip4j.util.Zip4jConstants;
 
 public class HardwarePlatform implements Platform {
 
@@ -26,6 +35,11 @@ public class HardwarePlatform implements Platform {
 	private final Map<String, GraphicEngine> el;
 	private final HardwareSettings settings;
 	private Boolean runningOnRaspberryOverride = null;
+	private StartupArguments args;
+	private DisplayOutputDevice displayOutputDevice;
+	private BacklightOutputDevice backlightOutputDevice;
+	private KeyboardInputDevice keyboardInputDevice;
+	private TouchInputDevice touchInputDevice;
 
 	public HardwarePlatform() {
 		cu = new HardwareConsoleUtils();
@@ -123,16 +137,6 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public Map<String, GraphicEngine> getEnginesList() {
-		return el;
-	}
-
-	@Override
-	public GraphicEngine getEngine(final String string) throws NullPointerException {
-		return el.get(string);
-	}
-
-	@Override
 	public void throwNewExceptionInInitializerError(final String text) {
 		throw new ExceptionInInitializerError();
 	}
@@ -146,53 +150,18 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public void loadPlatformRules() {
-
-	}
-
-	@Override
-	public void zip(final String targetPath, final String destinationFilePath, final String password) {
-		try {
-			final ZipParameters parameters = new ZipParameters();
-			parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-			parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
-
-			if (password.length() > 0) {
-				parameters.setEncryptFiles(true);
-				parameters.setEncryptionMethod(Zip4jConstants.ENC_METHOD_AES);
-				parameters.setAesKeyStrength(Zip4jConstants.AES_STRENGTH_256);
-				parameters.setPassword(password);
+	public List<String> getRuleFilePaths() throws IOException {
+		final File dslRulesPath = getStorageUtils().get("rules/");
+		List<String> paths = new ArrayList<>();
+		if (dslRulesPath.exists()) {
+			for (final File file : getStorageUtils().walk(dslRulesPath)) {
+				final String path = file.toString();
+				if (path.endsWith(".rules")) {
+					paths.add(path);
+				}
 			}
-
-			final ZipFile zipFile = new ZipFile(destinationFilePath);
-
-			final File targetFile = new File(targetPath);
-			if (targetFile.isFile())
-				zipFile.addFile(targetFile, parameters);
-			else if (targetFile.isDirectory())
-				zipFile.addFolder(targetFile, parameters);
-
-		} catch (final Exception e) {
-			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void unzip(final String targetZipFilePath, final String destinationFolderPath, final String password) {
-		try {
-			final ZipFile zipFile = new ZipFile(targetZipFilePath);
-			if (zipFile.isEncrypted())
-				zipFile.setPassword(password);
-			zipFile.extractAll(destinationFolderPath);
-
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public boolean compile(final String[] command, final PrintWriter printWriter, final PrintWriter errors) {
-		return org.eclipse.jdt.internal.compiler.batch.Main.compile(command, printWriter, errors, null);
+		return paths;
 	}
 
 	@Override
@@ -227,6 +196,64 @@ public class HardwarePlatform implements Platform {
 			}
 		});
 		 */
+	}
+
+	@Override
+	public TouchInputDevice getTouchInputDevice() {
+		return touchInputDevice;
+	}
+
+	@Override
+	public KeyboardInputDevice getKeyboardInputDevice() {
+		return keyboardInputDevice;
+	}
+
+	@Override
+	public DisplayOutputDevice getDisplayOutputDevice() {
+		return displayOutputDevice;
+	}
+
+	@Override
+	public BacklightOutputDevice getBacklightOutputDevice() {
+		return backlightOutputDevice;
+	}
+
+	@Override
+	public void setArguments(StartupArguments args) {
+		this.args = args;
+		this.chooseDevices();
+	}
+
+	private void chooseDevices() {
+		List<DisplayOutputDevice> availableDevices = new ArrayList<>();
+		List<DisplayOutputDevice> guiDevices = List.of(new JOGLDisplayOutputDevice());
+		List<DisplayOutputDevice> consoleDevices = List.of();
+
+		if (args.isMSDOSModeEnabled() || args.isNoGUIEngineForced()) {
+			availableDevices.addAll(consoleDevices);
+		}
+		if (!args.isNoGUIEngineForced()) {
+			availableDevices.addAll(guiDevices);
+		}
+		
+		if (availableDevices.size() == 0) {
+			throw new NoDisplaysAvailableException();
+		}
+
+		for (DisplayOutputDevice device : availableDevices) {
+			if (device instanceof JOGLDisplayOutputDevice) {
+				if (args.isGPUEngineForced()) {
+					this.displayOutputDevice = device;
+					break;
+				}
+			}
+		}
+
+		if (this.displayOutputDevice == null) this.displayOutputDevice = availableDevices.get(0);
+
+		if (displayOutputDevice instanceof JOGLDisplayOutputDevice) {
+			this.touchInputDevice = new PIHardwareTouchDevice(false, false, false, (JOGLEngine) displayOutputDevice.getGraphicEngine());
+		}
 	}
 
 }

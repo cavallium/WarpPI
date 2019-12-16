@@ -1,17 +1,31 @@
 package it.cavallium.warppi.teavm;
 
-import java.io.PrintWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
+import it.cavallium.warppi.boot.StartupArguments;
+import it.cavallium.warppi.device.DeviceStateDevice;
+import it.cavallium.warppi.device.display.BacklightOutputDevice;
+import it.cavallium.warppi.device.display.NoDisplaysAvailableException;
+import it.cavallium.warppi.device.display.NullBacklightOutputDevice;
+import it.cavallium.warppi.device.input.KeyboardInputDevice;
+import it.cavallium.warppi.device.input.TouchInputDevice;
+import it.cavallium.warppi.event.TouchEvent;
+import it.cavallium.warppi.gui.graphicengine.html.HtmlDeviceState;
+import it.cavallium.warppi.gui.graphicengine.html.HtmlDisplayOutputDevice;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLDocument;
 
 import it.cavallium.warppi.Platform;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.html.HtmlEngine;
-import it.cavallium.warppi.math.rules.RulesManager;
 import it.cavallium.warppi.util.Error;
 
 public class TeaVMPlatform implements Platform {
@@ -20,10 +34,14 @@ public class TeaVMPlatform implements Platform {
 	private final TeaVMGpio gi;
 	private final TeaVMStorageUtils su;
 	private final String on;
-	private final Map<String, GraphicEngine> el;
 	private final TeaVMImageUtils pu;
 	private final TeaVMSettings settings;
 	private Boolean runningOnRaspberryOverride = null;
+	private StartupArguments args;
+	private DisplayOutputDevice displayOutputDevice;
+	private DeviceStateDevice deviceStateDevice;
+	private TouchInputDevice touchInputDevice;
+	private KeyboardInputDevice keyboardInputDevice;
 
 	public TeaVMPlatform() {
 		cu = new TeaVMConsoleUtils();
@@ -31,8 +49,6 @@ public class TeaVMPlatform implements Platform {
 		su = new TeaVMStorageUtils();
 		pu = new TeaVMImageUtils();
 		on = "JavaScript";
-		el = new HashMap<>();
-		el.put("HTML5 engine", new HtmlEngine());
 		settings = new TeaVMSettings();
 	}
 
@@ -122,16 +138,6 @@ public class TeaVMPlatform implements Platform {
 	}
 
 	@Override
-	public Map<String, GraphicEngine> getEnginesList() {
-		return el;
-	}
-
-	@Override
-	public GraphicEngine getEngine(final String string) throws NullPointerException {
-		return el.get(string);
-	}
-
-	@Override
 	public void throwNewExceptionInInitializerError(final String text) {
 		throw new NullPointerException();
 	}
@@ -141,72 +147,19 @@ public class TeaVMPlatform implements Platform {
 		return e.getMessage().toUpperCase().replace("\r", "").split("\n");
 	}
 
+	/**
+	 * Fetches the list of resource files containing DSL rules to load from the <code>/rules.list</code> resource on the server.
+	 * <p>
+	 * The <code>/rules.list</code> resource must exist and be a text file with zero or more lines.
+	 * Each line specifies the name of another resource containing DSL source code.
+	 * Blank lines aren't allowed, and resource names are interpreted exactly as written (without stripping
+	 * leading/trailing spaces, etc.)
+	 */
 	@Override
-	public void loadPlatformRules() {
-		RulesManager.addRule(new rules.functions.DivisionRule());
-		RulesManager.addRule(new rules.functions.EmptyNumberRule());
-		RulesManager.addRule(new rules.functions.ExpressionRule());
-		RulesManager.addRule(new rules.functions.JokeRule());
-		RulesManager.addRule(new rules.functions.MultiplicationRule());
-		RulesManager.addRule(new rules.functions.NegativeRule());
-		RulesManager.addRule(new rules.functions.NumberRule());
-		RulesManager.addRule(new rules.functions.PowerRule());
-		RulesManager.addRule(new rules.functions.RootRule());
-		RulesManager.addRule(new rules.functions.SubtractionRule());
-		RulesManager.addRule(new rules.functions.SumRule());
-		RulesManager.addRule(new rules.functions.SumSubtractionRule());
-		RulesManager.addRule(new rules.functions.VariableRule());
-		RulesManager.addRule(new rules.ExpandRule1());
-		RulesManager.addRule(new rules.ExpandRule2());
-		RulesManager.addRule(new rules.ExpandRule5());
-		RulesManager.addRule(new rules.ExponentRule1());
-		RulesManager.addRule(new rules.ExponentRule2());
-		RulesManager.addRule(new rules.ExponentRule3());
-		RulesManager.addRule(new rules.ExponentRule4());
-		RulesManager.addRule(new rules.ExponentRule8());
-		RulesManager.addRule(new rules.ExponentRule9());
-		RulesManager.addRule(new rules.ExponentRule15());
-		RulesManager.addRule(new rules.ExponentRule16());
-		RulesManager.addRule(new rules.ExponentRule17());
-		RulesManager.addRule(new rules.FractionsRule1());
-		RulesManager.addRule(new rules.FractionsRule2());
-		RulesManager.addRule(new rules.FractionsRule3());
-		RulesManager.addRule(new rules.FractionsRule4());
-		RulesManager.addRule(new rules.FractionsRule5());
-		RulesManager.addRule(new rules.FractionsRule6());
-		RulesManager.addRule(new rules.FractionsRule7());
-		RulesManager.addRule(new rules.FractionsRule8());
-		RulesManager.addRule(new rules.FractionsRule9());
-		RulesManager.addRule(new rules.FractionsRule10());
-		RulesManager.addRule(new rules.FractionsRule11());
-		RulesManager.addRule(new rules.FractionsRule12());
-		RulesManager.addRule(new rules.FractionsRule14());
-		RulesManager.addRule(new rules.NumberRule1());
-		RulesManager.addRule(new rules.NumberRule2());
-		RulesManager.addRule(new rules.NumberRule3());
-		RulesManager.addRule(new rules.NumberRule4());
-		RulesManager.addRule(new rules.NumberRule5());
-		RulesManager.addRule(new rules.NumberRule7());
-		RulesManager.addRule(new rules.UndefinedRule1());
-		RulesManager.addRule(new rules.UndefinedRule2());
-		RulesManager.addRule(new rules.VariableRule1());
-		RulesManager.addRule(new rules.VariableRule2());
-		RulesManager.addRule(new rules.VariableRule3());
-	}
-
-	@Override
-	public void zip(final String targetPath, final String destinationFilePath, final String password) {
-		throw new java.lang.UnsupportedOperationException("Not implemented.");
-	}
-
-	@Override
-	public void unzip(final String targetZipFilePath, final String destinationFolderPath, final String password) {
-		throw new java.lang.UnsupportedOperationException("Not implemented.");
-	}
-
-	@Override
-	public boolean compile(final String[] command, final PrintWriter printWriter, final PrintWriter errors) {
-		throw new java.lang.UnsupportedOperationException("Not implemented.");
+	public List<String> getRuleFilePaths() throws IOException {
+		try (final InputStream listStream = getStorageUtils().getResourceStream("/rules.list")) {
+			return getStorageUtils().readAllLines(listStream);
+		}
 	}
 
 	@Override
@@ -218,4 +171,99 @@ public class TeaVMPlatform implements Platform {
 		return false;
 	}
 
+
+	@Override
+	public TouchInputDevice getTouchInputDevice() {
+		return touchInputDevice;
+	}
+
+	@Override
+	public KeyboardInputDevice getKeyboardInputDevice() {
+		return keyboardInputDevice;
+	}
+
+	@Override
+	public DisplayOutputDevice getDisplayOutputDevice() {
+		return this.displayOutputDevice;
+	}
+
+	@Override
+	public BacklightOutputDevice getBacklightOutputDevice() {
+		return new NullBacklightOutputDevice();
+	}
+
+	@Override
+	public DeviceStateDevice getDeviceStateDevice() {
+		return this.deviceStateDevice;
+	}
+
+	@Override
+	public void setArguments(StartupArguments args) {
+		this.args = args;
+		this.chooseDevices();
+	}
+
+	private void chooseDevices() {
+		List<DisplayOutputDevice> availableDevices = new ArrayList<>();
+		List<DisplayOutputDevice> guiDevices = new ArrayList<>();
+		guiDevices.add(new HtmlDisplayOutputDevice());
+		List<DisplayOutputDevice> consoleDevices = new ArrayList<>();
+
+		if (args.isMSDOSModeEnabled() || args.isNoGUIEngineForced()) {
+			availableDevices.addAll(consoleDevices);
+		}
+		if (!args.isNoGUIEngineForced()) {
+			availableDevices.addAll(guiDevices);
+		}
+
+		if (availableDevices.size() == 0) {
+			throw new NoDisplaysAvailableException();
+		}
+
+		if (this.displayOutputDevice == null) this.displayOutputDevice = availableDevices.get(0);
+
+
+		if (displayOutputDevice instanceof HtmlDisplayOutputDevice) {
+			//this.touchInputDevice = new HtmlTouchInputDevice((HtmlEngine) displayOutputDevice.getGraphicEngine());
+
+			//todo: implement
+			this.touchInputDevice = new TouchInputDevice() {
+				@Override
+				public boolean getSwappedAxes() {
+					return false;
+				}
+
+				@Override
+				public boolean getInvertedX() {
+					return false;
+				}
+
+				@Override
+				public boolean getInvertedY() {
+					return false;
+				}
+
+				@Override
+				public void listenTouchEvents(Consumer<TouchEvent> touchEventListener) {
+
+				}
+
+				@Override
+				public void initialize() {
+
+				}
+			};
+
+			//todo: implement
+			this.keyboardInputDevice = new KeyboardInputDevice() {
+				@Override
+				public void initialize() {
+
+				}
+			};
+
+			this.deviceStateDevice = new HtmlDeviceState((HtmlEngine) displayOutputDevice.getGraphicEngine());
+
+		}
+	}
 }

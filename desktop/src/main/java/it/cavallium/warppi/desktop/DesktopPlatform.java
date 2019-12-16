@@ -5,21 +5,31 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.function.Consumer;
 
+import it.cavallium.warppi.event.TouchEvent;
+import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLDisplayOutputDevice;
+import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
+import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingDeviceState;
+import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingTouchInputDevice;
 import org.apache.commons.io.FileUtils;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.boot.StartupArguments;
+import it.cavallium.warppi.device.DeviceStateDevice;
+import it.cavallium.warppi.device.display.BacklightOutputDevice;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.display.NoDisplaysAvailableException;
+import it.cavallium.warppi.device.display.NullBacklightOutputDevice;
+import it.cavallium.warppi.device.input.KeyboardInputDevice;
+import it.cavallium.warppi.device.input.TouchInputDevice;
 import it.cavallium.warppi.Platform;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
-import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
+import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingDisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingEngine;
 import it.cavallium.warppi.util.CacheUtils;
 import it.cavallium.warppi.util.Error;
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.model.ZipParameters;
-import net.lingala.zip4j.util.Zip4jConstants;
 
 public class DesktopPlatform implements Platform {
 
@@ -28,9 +38,13 @@ public class DesktopPlatform implements Platform {
 	private final DesktopStorageUtils su;
 	private final ImageUtils pu;
 	private final String on;
-	private final Map<String, GraphicEngine> el;
 	private final DesktopSettings settings;
 	private Boolean runningOnRaspberryOverride = null;
+	private StartupArguments args;
+	private DisplayOutputDevice displayOutputDevice;
+	private DeviceStateDevice deviceStateDevice;
+	private TouchInputDevice touchInputDevice;
+	private KeyboardInputDevice keyboardInputDevice;
 
 	public DesktopPlatform() {
 		cu = new DesktopConsoleUtils();
@@ -38,9 +52,6 @@ public class DesktopPlatform implements Platform {
 		su = new DesktopStorageUtils();
 		pu = new DesktopImageUtils();
 		on = System.getProperty("os.name").toLowerCase();
-		el = new HashMap<>();
-		el.put("CPU engine", new SwingEngine());
-		el.put("GPU engine", new JOGLEngine());
 		settings = new DesktopSettings();
 	}
 
@@ -106,14 +117,14 @@ public class DesktopPlatform implements Platform {
 
 	@Override
 	public void alphaChanged(final boolean val) {
-		final GraphicEngine currentEngine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
+		final DisplayOutputDevice currentEngine = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display;
 		if (currentEngine instanceof SwingEngine)
 			((SwingEngine) currentEngine).setAlphaChanged(val);
 	}
 
 	@Override
 	public void shiftChanged(final boolean val) {
-		final GraphicEngine currentEngine = Engine.INSTANCE.getHardwareDevice().getDisplayManager().engine;
+		final DisplayOutputDevice currentEngine = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display;
 		if (currentEngine instanceof SwingEngine)
 			((SwingEngine) currentEngine).setShiftChanged(val);
 	}
@@ -134,16 +145,6 @@ public class DesktopPlatform implements Platform {
 	}
 
 	@Override
-	public Map<String, GraphicEngine> getEnginesList() {
-		return el;
-	}
-
-	@Override
-	public GraphicEngine getEngine(final String string) throws NullPointerException {
-		return el.get(string);
-	}
-
-	@Override
 	public void throwNewExceptionInInitializerError(final String text) {
 		throw new ExceptionInInitializerError();
 	}
@@ -157,53 +158,18 @@ public class DesktopPlatform implements Platform {
 	}
 
 	@Override
-	public void loadPlatformRules() {
-
-	}
-
-	@Override
-	public void zip(final String targetPath, final String destinationFilePath, final String password) {
-		try {
-			final ZipParameters parameters = new ZipParameters();
-			parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
-			parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
-
-			if (password.length() > 0) {
-				parameters.setEncryptFiles(true);
-				parameters.setEncryptionMethod(Zip4jConstants.ENC_METHOD_AES);
-				parameters.setAesKeyStrength(Zip4jConstants.AES_STRENGTH_256);
-				parameters.setPassword(password);
+	public List<String> getRuleFilePaths() throws IOException {
+		final File dslRulesPath = getStorageUtils().get("rules/");
+		List<String> paths = new ArrayList<>();
+		if (dslRulesPath.exists()) {
+			for (final File file : getStorageUtils().walk(dslRulesPath)) {
+				final String path = file.toString();
+				if (path.endsWith(".rules")) {
+					paths.add(path);
+				}
 			}
-
-			final ZipFile zipFile = new ZipFile(destinationFilePath);
-
-			final File targetFile = new File(targetPath);
-			if (targetFile.isFile())
-				zipFile.addFile(targetFile, parameters);
-			else if (targetFile.isDirectory())
-				zipFile.addFolder(targetFile, parameters);
-
-		} catch (final Exception e) {
-			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public void unzip(final String targetZipFilePath, final String destinationFolderPath, final String password) {
-		try {
-			final ZipFile zipFile = new ZipFile(targetZipFilePath);
-			if (zipFile.isEncrypted())
-				zipFile.setPassword(password);
-			zipFile.extractAll(destinationFolderPath);
-
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public boolean compile(final String[] command, final PrintWriter printWriter, final PrintWriter errors) {
-		return org.eclipse.jdt.internal.compiler.batch.Main.compile(command, printWriter, errors, null);
+		return paths;
 	}
 
 	@Override
@@ -214,14 +180,15 @@ public class DesktopPlatform implements Platform {
 			runningOnRaspberryOverride = false;
 		}
 	}
-	
+
 	@Override
 	public boolean isRunningOnRaspberry() {
-		if (runningOnRaspberryOverride != null) return runningOnRaspberryOverride;
+		if (runningOnRaspberryOverride != null)
+			return runningOnRaspberryOverride;
 		return CacheUtils.get("isRunningOnRaspberry", 24 * 60 * 60 * 1000, () -> {
-			if (Engine.getPlatform().isJavascript())
+			if (WarpPI.getPlatform().isJavascript())
 				return false;
-			if (Engine.getPlatform().getOsName().equals("Linux"))
+			if (WarpPI.getPlatform().getOsName().equals("Linux"))
 				try {
 					final File osRelease = new File("/etc", "os-release");
 					return FileUtils.readLines(osRelease, "UTF-8").stream().map(String::toLowerCase).anyMatch(line -> line.contains("raspbian") && line.contains("name"));
@@ -231,6 +198,143 @@ public class DesktopPlatform implements Platform {
 			else
 				return false;
 		});
+	}
+
+	@Override
+	public TouchInputDevice getTouchInputDevice() {
+		return touchInputDevice;
+	}
+
+	@Override
+	public KeyboardInputDevice getKeyboardInputDevice() {
+		return keyboardInputDevice;
+	}
+
+	@Override
+	public DisplayOutputDevice getDisplayOutputDevice() {
+		return this.displayOutputDevice;
+	}
+
+	@Override
+	public BacklightOutputDevice getBacklightOutputDevice() {
+		return new NullBacklightOutputDevice();
+	}
+
+	@Override
+	public DeviceStateDevice getDeviceStateDevice() {
+		return this.deviceStateDevice;
+	}
+
+	@Override
+	public void setArguments(StartupArguments args) {
+		this.args = args;
+		this.chooseDevices();
+	}
+
+	private void chooseDevices() {
+		List<DisplayOutputDevice> availableDevices = new ArrayList<>();
+		List<DisplayOutputDevice> guiDevices = List.of(new SwingDisplayOutputDevice(), new JOGLDisplayOutputDevice());
+		List<DisplayOutputDevice> consoleDevices = List.of();
+
+		if (args.isMSDOSModeEnabled() || args.isNoGUIEngineForced()) {
+			availableDevices.addAll(consoleDevices);
+		}
+		if (!args.isNoGUIEngineForced()) {
+			availableDevices.addAll(guiDevices);
+		}
+		
+		if (availableDevices.size() == 0) {
+			throw new NoDisplaysAvailableException();
+		}
+
+		for (DisplayOutputDevice device : availableDevices) {
+			if (device instanceof SwingDisplayOutputDevice) {
+				if (args.isCPUEngineForced()) {
+					this.displayOutputDevice = device;
+					break;
+				}
+			} else if (device instanceof JOGLDisplayOutputDevice) {
+				if (args.isGPUEngineForced()) {
+					this.displayOutputDevice = device;
+					break;
+				}
+			}
+		}
+
+		if (this.displayOutputDevice == null) this.displayOutputDevice = availableDevices.get(0);
+
+
+		if (displayOutputDevice instanceof SwingDisplayOutputDevice) {
+			this.touchInputDevice = new SwingTouchInputDevice((SwingEngine) displayOutputDevice.getGraphicEngine());
+
+			//TODO: implement a keyboard input device
+			this.keyboardInputDevice = new KeyboardInputDevice() {
+				@Override
+				public void initialize() {
+
+				}
+			};
+
+			this.deviceStateDevice = new SwingDeviceState((SwingEngine) displayOutputDevice.getGraphicEngine());
+
+		} else if (displayOutputDevice instanceof JOGLDisplayOutputDevice) {
+			//TODO: implement a touch input device
+			this.touchInputDevice = new TouchInputDevice() {
+				@Override
+				public boolean getSwappedAxes() {
+					return false;
+				}
+
+				@Override
+				public boolean getInvertedX() {
+					return false;
+				}
+
+				@Override
+				public boolean getInvertedY() {
+					return false;
+				}
+
+				@Override
+				public void listenTouchEvents(Consumer<TouchEvent> touchEventListener) {
+
+				}
+
+				@Override
+				public void initialize() {
+
+				}
+			};
+			//TODO: implement a keyboard input device
+			this.keyboardInputDevice = new KeyboardInputDevice() {
+				@Override
+				public void initialize() {
+
+				}
+			};
+			this.deviceStateDevice = new DeviceStateDevice() {
+				@Override
+				public void initialize() {
+
+				}
+
+				@Override
+				public void waitForExit() {
+					while(true) {
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+
+				@Override
+				public void powerOff() {
+
+				}
+			}; //TODO: Implement
+		}
 	}
 
 }

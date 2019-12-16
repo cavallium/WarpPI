@@ -1,8 +1,9 @@
 package it.cavallium.warppi.gui;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.StaticVars;
-import it.cavallium.warppi.device.Keyboard;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.gui.graphicengine.Skin;
@@ -31,7 +32,7 @@ public class CalculatorHUD extends HUD {
 	}
 
 	@Override
-	public void render() {
+	public void render(RenderContext ctx) {
 		// TODO Auto-generated method stub
 
 	}
@@ -39,23 +40,25 @@ public class CalculatorHUD extends HUD {
 	@Override
 	public void renderTopmostBackground() {
 		final Renderer r = d.renderer;
-		final GraphicEngine engine = d.engine;
+		final DisplayOutputDevice display = d.display;
+		final GraphicEngine engine = display.getGraphicEngine();
 
 		r.glColor(0xFFc5c2af);
 		r.glFillColor(0, 0, engine.getWidth(), 20);
 	}
 
 	@Override
-	public void renderTopmost() {
-		final Renderer r = d.renderer;
-		final GraphicEngine engine = d.engine;
+	public void renderTopmost(RenderContext ctx) {
+		final Renderer r = ctx.getRenderer();
+		final DisplayOutputDevice display = d.display;
+		final GraphicEngine engine = display.getGraphicEngine();
 		final Skin guiSkin = d.guiSkin;
 
 		//DRAW TOP
 		r.glColor3i(0, 0, 0);
 		r.glDrawLine(0, 20, engine.getWidth() - 1, 20);
 		r.glColor3i(255, 255, 255);
-		guiSkin.use(engine);
+		guiSkin.use(display);
 		if (Keyboard.shift) {
 			r.glFillRect(2 + 18 * 0, 2, 16, 16, 16 * 2, 16 * 0, 16, 16);
 		} else {
@@ -69,31 +72,31 @@ public class CalculatorHUD extends HUD {
 
 		int padding = 2;
 
-		final int brightness = (int) Math.ceil(Engine.INSTANCE.getHardwareDevice().getDisplayManager().getBrightness() * 9);
+		final int brightness = (int) Math.ceil(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getBrightness() * 9);
 		if (brightness <= 10) {
-			r.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * brightness, 16 * 1, 16, 16);
+			r.glFillRect(ctx.getWidth() - (padding + 16), 2, 16, 16, 16 * brightness, 16 * 1, 16, 16);
 		} else {
-			Engine.getPlatform().getConsoleUtils().out().println(1, "Brightness error");
+			WarpPI.getPlatform().getConsoleUtils().out().println(1, "Brightness error");
 		}
 
 		padding += 18 + 6;
 
-		final boolean canGoBack = Engine.INSTANCE.getHardwareDevice().getDisplayManager().canGoBack();
-		final boolean canGoForward = Engine.INSTANCE.getHardwareDevice().getDisplayManager().canGoForward();
+		final boolean canGoBack = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().canGoBack();
+		final boolean canGoForward = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().canGoForward();
 
-		if (Engine.getPlatform().getSettings().isDebugEnabled()) {
-			r.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 18, 16 * 0, 16, 16);
+		if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
+			r.glFillRect(ctx.getWidth() - (padding + 16), 2, 16, 16, 16 * 18, 16 * 0, 16, 16);
 			padding += 18 + 6;
 		}
 
 		if (canGoBack && canGoForward) {
-			r.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 14, 16 * 0, 16, 16);
+			r.glFillRect(ctx.getWidth() - (padding + 16), 2, 16, 16, 16 * 14, 16 * 0, 16, 16);
 		} else if (canGoBack) {
-			r.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 15, 16 * 0, 16, 16);
+			r.glFillRect(ctx.getWidth() - (padding + 16), 2, 16, 16, 16 * 15, 16 * 0, 16, 16);
 		} else if (canGoForward) {
-			r.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 16, 16 * 0, 16, 16);
+			r.glFillRect(ctx.getWidth() - (padding + 16), 2, 16, 16, 16 * 16, 16 * 0, 16, 16);
 		} else {
-			r.glFillRect(StaticVars.screenSize[0] - (padding + 16), 2, 16, 16, 16 * 17, 16 * 0, 16, 16);
+			r.glFillRect(ctx.getWidth() - (padding + 16), 2, 16, 16, 16 * 17, 16 * 0, 16, 16);
 		}
 
 		padding += 18;
@@ -101,23 +104,23 @@ public class CalculatorHUD extends HUD {
 		//DRAW BOTTOM
 		r.glDrawStringLeft(2, 90, d.displayDebugString);
 
-		Utils.getFont(true, false).use(engine);
+		Utils.getFont(true, false).use(display);
 		r.glColor4i(255, 0, 0, 40);
-		r.glDrawStringLeft(1 + 1, StaticVars.screenSize[1] - 7 - 7 + 1, "WORK IN");
+		r.glDrawStringLeft(1 + 1, ctx.getHeight() - 7 - 7 + 1, "WORK IN");
 		r.glColor4i(255, 0, 0, 80);
-		r.glDrawStringLeft(1, StaticVars.screenSize[1] - 7 - 7, "WORK IN");
+		r.glDrawStringLeft(1, ctx.getHeight() - 7 - 7, "WORK IN");
 		r.glColor4i(255, 0, 0, 40);
-		r.glDrawStringLeft(1 + 1, StaticVars.screenSize[1] - 7 + 1, "PROGRESS.");
+		r.glDrawStringLeft(1 + 1, ctx.getHeight() - 7 + 1, "PROGRESS.");
 		r.glColor4i(255, 0, 0, 80);
-		r.glDrawStringLeft(1, StaticVars.screenSize[1] - 7, "PROGRESS.");
+		r.glDrawStringLeft(1, ctx.getHeight() - 7, "PROGRESS.");
 		
 		int currentDebugLine = 2;
-		if (Engine.getPlatform().getSettings().isDebugEnabled()) {
+		if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
 			ObjectArrayList<Screen> allSessions = new ObjectArrayList<>();
-			for (Screen session : Engine.INSTANCE.getHardwareDevice().getDisplayManager().sessions) {
+			for (Screen session : WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().sessions) {
 				allSessions.add(0, session);
 			}
-			Screen curScreen = Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
+			Screen curScreen = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 			if (curScreen.historyBehavior == HistoryBehavior.DONT_KEEP_IN_HISTORY) {
 				allSessions.add(curScreen);
 			}
@@ -126,7 +129,7 @@ public class CalculatorHUD extends HUD {
 				if (session != null) {
 					String title = session.getSessionTitle();
 					if (title != null && title.length() > 0) {
-						Utils.getFont(true).use(engine);
+						Utils.getFont(true).use(display);
 						if (session.historyBehavior == HistoryBehavior.DONT_KEEP_IN_HISTORY) {
 							r.glColor(0xFF3333FF);
 						} else if (session.historyBehavior == HistoryBehavior.ALWAYS_KEEP_IN_HISTORY) {
@@ -134,26 +137,46 @@ public class CalculatorHUD extends HUD {
 						} else {
 							r.glColor(0xFF990000);
 						}
-						r.glDrawStringLeft(0, StaticVars.screenSize[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "[" + String.format("%1$03d", session.debugScreenID) + "]" + title.toUpperCase());
-						if (session == Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen()) {
+						r.glDrawStringLeft(0, ctx.getHeight() - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "[" + String.format("%1$03d", session.debugScreenID) + "] " + title.toUpperCase());
+						if (session == WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen()) {
 							r.glColor(0xFF00CC00);
 						} else {
 							r.glColor(0xFF990000);
 						}
-						r.glDrawStringLeft(0, StaticVars.screenSize[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "      " + title.toUpperCase());
+						r.glDrawStringLeft(0, ctx.getHeight() - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "      " + title.toUpperCase());
 					}	
 					currentDebugLine++;
 				}
 			}
 			r.glColor(0xFF000000);
-			r.glDrawStringLeft(5, StaticVars.screenSize[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "DEBUG ENABLED");
+			r.glDrawStringLeft(5, ctx.getHeight() - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "DEBUG ENABLED");
 		}
 	}
 
 	@Override
-	public void beforeRender(final float dt) {
+	public void beforeRender(ScreenContext ctx, final float dt) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public int getMarginLeft() {
+		return 0;
+	}
+
+	@Override
+	public int getMarginTop() {
+		return 20;
+	}
+
+	@Override
+	public int getMarginRight() {
+		return 0;
+	}
+
+	@Override
+	public int getMarginBottom() {
+		return 0;
 	}
 
 	@Override

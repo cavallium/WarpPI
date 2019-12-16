@@ -1,6 +1,8 @@
 package it.cavallium.warppi.gui.screens;
 
 import it.cavallium.warppi.gui.HistoryBehavior;
+import it.cavallium.warppi.gui.RenderContext;
+import it.cavallium.warppi.gui.ScreenContext;
 
 public class EmptyScreen extends Screen {
 
@@ -20,16 +22,16 @@ public class EmptyScreen extends Screen {
 	public void initialized() throws InterruptedException {}
 
 	@Override
-	public void graphicInitialized() throws InterruptedException {}
+	public void graphicInitialized(ScreenContext ctx) throws InterruptedException {}
 
 	@Override
-	public void render() {
+	public void render(RenderContext ctx) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void beforeRender(final float dt) {
+	public void beforeRender(ScreenContext ctx, final float dt) {
 
 	}
 

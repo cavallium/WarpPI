@@ -1,29 +1,32 @@
 package it.cavallium.warppi.gui.graphicengine;
 
+import it.cavallium.warppi.util.EventSubscriber;
+
 import java.io.IOException;
 import java.util.List;
-
-import it.cavallium.warppi.flow.Observable;
+import java.util.function.Consumer;
 
 public interface GraphicEngine {
 
 	int[] getSize();
 
+	boolean isSupported();
+	
 	boolean isInitialized();
 
 	void setTitle(String title);
 
 	void setResizable(boolean r);
 
-	void setDisplayMode(final int ww, final int wh);
+	void setDisplayMode(int ww, int wh);
 
+	void create(Runnable object);
+	
 	default void create() {
 		create(null);
 	};
 
-	void create(Runnable object);
-
-	Observable<Integer[]> onResize();
+	EventSubscriber<Integer[]> onResize();
 
 	int getWidth();
 
@@ -42,10 +45,6 @@ public interface GraphicEngine {
 	BinaryFont loadFont(String path, String fontName) throws IOException;
 
 	Skin loadSkin(String file) throws IOException;
-
-	void waitForExit();
-
-	boolean isSupported();
 
 	boolean doesRefreshPauses();
 

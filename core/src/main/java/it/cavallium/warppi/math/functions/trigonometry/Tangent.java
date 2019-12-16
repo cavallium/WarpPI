@@ -15,7 +15,10 @@ public class Tangent extends FunctionSingle {
 
 	@Override
 	public boolean equals(final Object o) {
-		// TODO Auto-generated method stub
+		if (o instanceof Tangent) {
+			final FunctionSingle f = (FunctionSingle) o;
+			return parameter.equals(f.getParameter());
+		}
 		return false;
 	}
 
@@ -37,4 +40,8 @@ public class Tangent extends FunctionSingle {
 		return null;
 	}
 
+	@Override
+	public <Argument, Result> Result accept(final Function.Visitor<Argument, Result> visitor, final Argument argument) {
+		return visitor.visit(this, argument);
+	}
 }

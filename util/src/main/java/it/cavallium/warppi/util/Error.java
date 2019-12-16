@@ -1,6 +1,6 @@
 package it.cavallium.warppi.util;
 
-public class Error extends java.lang.Throwable {
+public class Error extends java.lang.Exception {
 
 	/**
 	 *

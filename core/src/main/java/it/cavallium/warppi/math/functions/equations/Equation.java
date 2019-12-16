@@ -58,7 +58,10 @@ public class Equation extends FunctionOperator {
 
 	@Override
 	public boolean equals(final Object o) {
-		// TODO Auto-generated method stub
+		if (o instanceof Equation) {
+			final FunctionOperator f = (FunctionOperator) o;
+			return parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2());
+		}
 		return false;
 	}
 
@@ -68,4 +71,8 @@ public class Equation extends FunctionOperator {
 		return null;
 	}
 
+	@Override
+	public <Argument, Result> Result accept(final Function.Visitor<Argument, Result> visitor, final Argument argument) {
+		return visitor.visit(this, argument);
+	}
 }

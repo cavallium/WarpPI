@@ -17,7 +17,7 @@ import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureData;
 import com.jogamp.opengl.util.texture.TextureIO;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 
@@ -272,7 +272,7 @@ public class JOGLRenderer implements Renderer {
 		final int imgW = img.getWidth();
 		final int imgH = img.getHeight();
 		img = null;
-		Engine.getPlatform().gc();
+		WarpPI.getPlatform().gc();
 		return new OpenedTextureData(imgW, imgH, f, isResource);
 	}
 
@@ -301,7 +301,7 @@ public class JOGLRenderer implements Renderer {
 		final Texture tex = TextureIO.newTexture(f, false);
 		if (deleteOnExit && f.exists())
 			try {
-				if (Engine.getPlatform().getSettings().isDebugEnabled())
+				if (WarpPI.getPlatform().getSettings().isDebugEnabled())
 					throw new IOException("Delete on exit!");
 				f.delete();
 			} catch (final Exception ex) {

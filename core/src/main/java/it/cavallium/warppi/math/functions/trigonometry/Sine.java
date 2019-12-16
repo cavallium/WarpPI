@@ -19,9 +19,7 @@ public class Sine extends FunctionSingle {
 	public boolean equals(final Object o) {
 		if (o instanceof Sine) {
 			final FunctionSingle f = (FunctionSingle) o;
-			if (parameter.equals(f.getParameter())) {
-				return true;
-			}
+			return parameter.equals(f.getParameter());
 		}
 		return false;
 	}
@@ -51,4 +49,8 @@ public class Sine extends FunctionSingle {
 		return result;
 	}
 
+	@Override
+	public <Argument, Result> Result accept(final Function.Visitor<Argument, Result> visitor, final Argument argument) {
+		return visitor.visit(this, argument);
+	}
 }

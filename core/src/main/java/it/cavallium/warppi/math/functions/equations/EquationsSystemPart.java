@@ -1,6 +1,7 @@
 package it.cavallium.warppi.math.functions.equations;
 
 import it.cavallium.warppi.gui.expression.blocks.Block;
+import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionSingle;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.util.Error;
@@ -34,4 +35,8 @@ public class EquationsSystemPart extends FunctionSingle {
 		return null;
 	}
 
+	@Override
+	public <Argument, Result> Result accept(final Function.Visitor<Argument, Result> visitor, final Argument argument) {
+		return visitor.visit(this, argument);
+	}
 }

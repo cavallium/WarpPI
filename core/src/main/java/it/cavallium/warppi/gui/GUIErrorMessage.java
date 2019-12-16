@@ -1,6 +1,6 @@
 package it.cavallium.warppi.gui;
 
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 import it.cavallium.warppi.util.Error;
 
@@ -20,9 +20,9 @@ public class GUIErrorMessage {
 		creationTime = System.currentTimeMillis();
 	}
 
-	public void draw(final GraphicEngine g, final Renderer r, final String msg) {
-		final int scrW = g.getWidth();
-		final int scrH = g.getHeight();
+	public void draw(final DisplayOutputDevice g, final Renderer r, final String msg) {
+		final int scrW = g.getGraphicEngine().getWidth();
+		final int scrH = g.getGraphicEngine().getHeight();
 		final int width = 200;
 		final int height = 20;
 		final int margin = 4;

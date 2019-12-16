@@ -2,7 +2,7 @@ package it.cavallium.warppi.gui.graphicengine.impl.framebuffer;
 
 import java.io.IOException;
 
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
+import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.impl.common.RFTFont;
 
 public class FBFont extends RFTFont {
@@ -16,7 +16,7 @@ public class FBFont extends RFTFont {
 	}
 
 	@Override
-	public void use(final GraphicEngine d) {
+	public void use(final DisplayOutputDevice d) {
 		@SuppressWarnings("unused")
 		final FBEngine dfb = (FBEngine) d;
 		// TODO: implement

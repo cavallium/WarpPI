@@ -1,6 +1,6 @@
 package it.cavallium.warppi.device.chip;
 
-import it.cavallium.warppi.Engine;
+import it.cavallium.warppi.WarpPI;
 
 public class ParallelToSerial {
 
@@ -18,16 +18,16 @@ public class ParallelToSerial {
 
 	public boolean[] read() {
 		final boolean[] data = new boolean[8];
-		Engine.getPlatform().getGpio().digitalWrite(CLK_INH, Engine.getPlatform().getGpio().valueHigh());
-		Engine.getPlatform().getGpio().digitalWrite(SH_LD, Engine.getPlatform().getGpio().valueLow());
-		Engine.getPlatform().getGpio().delayMicroseconds(1);
-		Engine.getPlatform().getGpio().digitalWrite(SH_LD, Engine.getPlatform().getGpio().valueHigh());
-		Engine.getPlatform().getGpio().digitalWrite(CLK_INH, Engine.getPlatform().getGpio().valueLow());
+		WarpPI.getPlatform().getGpio().digitalWrite(CLK_INH, WarpPI.getPlatform().getGpio().valueHigh());
+		WarpPI.getPlatform().getGpio().digitalWrite(SH_LD, WarpPI.getPlatform().getGpio().valueLow());
+		WarpPI.getPlatform().getGpio().delayMicroseconds(1);
+		WarpPI.getPlatform().getGpio().digitalWrite(SH_LD, WarpPI.getPlatform().getGpio().valueHigh());
+		WarpPI.getPlatform().getGpio().digitalWrite(CLK_INH, WarpPI.getPlatform().getGpio().valueLow());
 
 		for (int i = 7; i >= 0; i--) {
-			Engine.getPlatform().getGpio().digitalWrite(CLK, Engine.getPlatform().getGpio().valueHigh());
-			Engine.getPlatform().getGpio().digitalWrite(CLK, Engine.getPlatform().getGpio().valueLow());
-			data[i] = Engine.getPlatform().getGpio().digitalRead(QH) == Engine.getPlatform().getGpio().valueHigh() ? true : false;
+			WarpPI.getPlatform().getGpio().digitalWrite(CLK, WarpPI.getPlatform().getGpio().valueHigh());
+			WarpPI.getPlatform().getGpio().digitalWrite(CLK, WarpPI.getPlatform().getGpio().valueLow());
+			data[i] = WarpPI.getPlatform().getGpio().digitalRead(QH) == WarpPI.getPlatform().getGpio().valueHigh() ? true : false;
 		}
 
 		return data;

@@ -2,11 +2,9 @@ package it.cavallium.warppi.math.functions;
 
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockChar;
+import it.cavallium.warppi.gui.expression.blocks.BlockNumericChar;
 import it.cavallium.warppi.gui.expression.blocks.BlockParenthesis;
-import it.cavallium.warppi.math.Function;
-import it.cavallium.warppi.math.FunctionOperator;
-import it.cavallium.warppi.math.MathContext;
-import it.cavallium.warppi.math.MathematicalSymbols;
+import it.cavallium.warppi.math.*;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
@@ -24,11 +22,7 @@ public class Multiplication extends FunctionOperator {
 	public boolean equals(final Object o) {
 		if (o instanceof Multiplication) {
 			final FunctionOperator f = (FunctionOperator) o;
-			if (parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2())) {
-				return true;
-			} else if (parameter1.equals(f.getParameter2()) && parameter2.equals(f.getParameter1())) {
-				return true;
-			}
+			return parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2());
 		}
 		return false;
 	}
@@ -71,7 +65,7 @@ public class Multiplication extends FunctionOperator {
 			} else {
 				result.addAll(sub1);
 			}
-			if (nearLeft instanceof BlockChar && nearRight instanceof BlockChar && !(par2 instanceof Negative) && !(par1 instanceof Number && par2 instanceof Number) && !(par1 instanceof Number && par2 instanceof Multiplication && ((Multiplication)par2).getParameter1() instanceof Number)) {
+			if (nearLeft instanceof BlockChar && nearRight instanceof BlockChar && !(nearLeft instanceof BlockNumericChar && nearRight instanceof BlockNumericChar) && !(par2 instanceof Negative) && !(par1 instanceof Number && par2 instanceof Number) && !(par1 instanceof Number && par2 instanceof Multiplication && ((Multiplication)par2).getParameter1() instanceof Number)) {
 
 			} else {
 				result.add(new BlockChar(MathematicalSymbols.MULTIPLICATION));
@@ -85,6 +79,11 @@ public class Multiplication extends FunctionOperator {
 			}
 			return result;
 		}
+	}
+
+	@Override
+	public <Argument, Result> Result accept(final Function.Visitor<Argument, Result> visitor, final Argument argument) {
+		return visitor.visit(this, argument);
 	}
 
 	public boolean isNegative() {

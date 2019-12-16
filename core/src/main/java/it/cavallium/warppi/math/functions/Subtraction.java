@@ -2,10 +2,7 @@ package it.cavallium.warppi.math.functions;
 
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockChar;
-import it.cavallium.warppi.math.Function;
-import it.cavallium.warppi.math.FunctionOperator;
-import it.cavallium.warppi.math.MathContext;
-import it.cavallium.warppi.math.MathematicalSymbols;
+import it.cavallium.warppi.math.*;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
@@ -43,4 +40,8 @@ public class Subtraction extends FunctionOperator {
 		return result;
 	}
 
+	@Override
+	public <Argument, Result> Result accept(final Function.Visitor<Argument, Result> visitor, final Argument argument) {
+		return visitor.visit(this, argument);
+	}
 }

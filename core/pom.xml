@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.cavallium</groupId>
 		<artifactId>warppi</artifactId>
-		<version>0.9.0a3</version>
+		<version>0.10.0-alpha</version>
 	</parent>
 	<artifactId>warppi-core</artifactId>
 
@@ -16,18 +16,13 @@
 	<dependencies>
 		<dependency>
 			<groupId>it.cavallium</groupId>
-			<artifactId>warppi-flow</artifactId>
-			<version>1.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>it.cavallium</groupId>
 			<artifactId>warppi-util</artifactId>
-			<version>0.9.0a3</version>
+			<version>0.10.0-alpha</version>
 		</dependency>
 		<dependency>
 			<groupId>it.cavallium</groupId>
 			<artifactId>bigdecimal-math</artifactId>
-			<version>0.9.0a3</version>
+			<version>0.10.0-alpha</version>
 		</dependency>
 		<dependency>
 			<groupId>it.unimi.dsi</groupId>
@@ -46,8 +41,8 @@
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -1,5 +1,7 @@
 package it.cavallium.warppi.gui.graphicengine;
 
+import it.cavallium.warppi.gui.graphicengine.impl.common.ReboundedRenderer;
+
 public interface Renderer {
 	void glColor3i(int r, int gg, int b);
 
@@ -42,4 +44,8 @@ public interface Renderer {
 	void glClearSkin();
 
 	BinaryFont getCurrentFont();
+
+	default Renderer getBoundedInstance(int dx, int dy, int width, int height) {
+		return new ReboundedRenderer(this, dx, dy, width, height);
+	}
 }

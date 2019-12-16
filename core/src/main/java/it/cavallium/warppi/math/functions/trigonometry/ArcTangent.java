@@ -16,7 +16,10 @@ public class ArcTangent extends FunctionSingle {
 
 	@Override
 	public boolean equals(final Object o) {
-		// TODO Auto-generated method stub
+		if (o instanceof ArcTangent) {
+			final FunctionSingle f = (FunctionSingle) o;
+			return parameter.equals(f.getParameter());
+		}
 		return false;
 	}
 
@@ -38,4 +41,8 @@ public class ArcTangent extends FunctionSingle {
 		throw new Error(Errors.NOT_IMPLEMENTED, "Unknown function " + getClass().getSimpleName());
 	}
 
+	@Override
+	public <Argument, Result> Result accept(final Function.Visitor<Argument, Result> visitor, final Argument argument) {
+		return visitor.visit(this, argument);
+	}
 }
