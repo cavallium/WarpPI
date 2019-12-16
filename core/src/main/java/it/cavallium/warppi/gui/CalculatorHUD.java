@@ -134,7 +134,7 @@ public class CalculatorHUD extends HUD {
 						} else {
 							r.glColor(0xFF990000);
 						}
-						r.glDrawStringLeft(0, StaticVars.screenSize[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "[" + String.format("%1$03d", session.debugScreenID) + "] " + title.toUpperCase());
+						r.glDrawStringLeft(0, StaticVars.screenSize[1] - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "[" + String.format("%1$03d", session.debugScreenID) + "]" + title.toUpperCase());
 						if (session == Engine.INSTANCE.getHardwareDevice().getDisplayManager().getScreen()) {
 							r.glColor(0xFF00CC00);
 						} else {

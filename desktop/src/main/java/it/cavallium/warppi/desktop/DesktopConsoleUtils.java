@@ -49,9 +49,9 @@ public class DesktopConsoleUtils implements it.cavallium.warppi.Platform.Console
 				if (StaticVars.outputLevel >= level) {
 					final String time = getTimeString();
 					if (StaticVars.outputLevel == 0)
-						println(System.out, "[" + time + "] " + str);
+						println(System.out, "[" + time + "]" + str);
 					else
-						println(System.out, "[" + time + "] " + str);
+						println(System.out, "[" + time + "]" + str);
 				}
 			}
 
@@ -69,9 +69,9 @@ public class DesktopConsoleUtils implements it.cavallium.warppi.Platform.Console
 				if (StaticVars.outputLevel >= level) {
 					final String time = getTimeString();
 					if (StaticVars.outputLevel == 0)
-						println(System.out, "[" + time + "][" + prefix + "] " + str);
+						println(System.out, "[" + time + "][" + prefix + "]" + str);
 					else
-						println(System.out, "[" + time + "][" + prefix + "] " + str);
+						println(System.out, "[" + time + "][" + prefix + "]" + str);
 				}
 			}
 

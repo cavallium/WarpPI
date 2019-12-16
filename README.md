@@ -9,7 +9,7 @@ Step-by-step algebra calculator for Raspberry PI.
 # Live preview
 This preview has been built using TeaVM: a JVM made in javascript.
 Obviously it runs slower than the original.
-https://local.cavallium.it/webtests/warppiweb/
+https://local.cavallium.it/calculator/
 
 # Keypad PCB
 https://workspace.circuitmaker.com/Projects/Details/Andrea-Cavalli/Scientific-calculator-Keypad
