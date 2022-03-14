@@ -20,7 +20,6 @@ import it.cavallium.warppi.device.input.KeyboardInputDevice;
 import it.cavallium.warppi.device.input.PIHardwareTouchDevice;
 import it.cavallium.warppi.device.input.TouchInputDevice;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
-import it.cavallium.warppi.gui.graphicengine.impl.framebuffer.FBEngine;
 import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLDisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
 import it.cavallium.warppi.util.Error;
@@ -29,7 +28,7 @@ public class HardwarePlatform implements Platform {
 
 	private final HardwareConsoleUtils cu;
 	private final HardwareGpio gi;
-	private final HardwareStorageUtils su;
+	private final HardwarePlatformStorage su;
 	private final ImageUtils pu;
 	private final String on;
 	private final Map<String, GraphicEngine> el;
@@ -44,12 +43,11 @@ public class HardwarePlatform implements Platform {
 	public HardwarePlatform() {
 		cu = new HardwareConsoleUtils();
 		gi = new HardwareGpio();
-		su = new HardwareStorageUtils();
+		su = new HardwarePlatformStorage();
 		pu = new HardwareImageUtils();
 		on = System.getProperty("os.name").toLowerCase();
 		el = new HashMap<>();
-		el.put("GPU engine", new JOGLEngine());
-		el.put("framebuffer engine", new FBEngine());
+		el.put("GPU engine", new JOGLEngine(480, 320));
 		settings = new HardwareSettings();
 	}
 
@@ -64,7 +62,7 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public StorageUtils getStorageUtils() {
+	public PlatformStorage getPlatformStorage() {
 		return su;
 	}
 
@@ -151,10 +149,10 @@ public class HardwarePlatform implements Platform {
 
 	@Override
 	public List<String> getRuleFilePaths() throws IOException {
-		final File dslRulesPath = getStorageUtils().get("rules/");
+		final File dslRulesPath = getPlatformStorage().get("rules/");
 		List<String> paths = new ArrayList<>();
 		if (dslRulesPath.exists()) {
-			for (final File file : getStorageUtils().walk(dslRulesPath)) {
+			for (final File file : getPlatformStorage().walk(dslRulesPath)) {
 				final String path = file.toString();
 				if (path.endsWith(".rules")) {
 					paths.add(path);
@@ -216,6 +214,11 @@ public class HardwarePlatform implements Platform {
 	@Override
 	public BacklightOutputDevice getBacklightOutputDevice() {
 		return backlightOutputDevice;
+	}
+
+	@Override
+	public DeviceStateDevice getDeviceStateDevice() {
+		return null;
 	}
 
 	@Override

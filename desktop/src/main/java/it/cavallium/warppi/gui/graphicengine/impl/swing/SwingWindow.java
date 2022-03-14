@@ -205,7 +205,7 @@ public class SwingWindow extends JFrame {
 	}
 
 	private void createBtn(final int row, final int col) throws IOException, URISyntaxException {
-		final BufferedImage img = ImageIO.read(WarpPI.getPlatform().getStorageUtils().getResourceStream("/desktop-buttons.png"));
+		final BufferedImage img = ImageIO.read(WarpPI.getPlatform().getPlatformStorage().getResourceStream("/desktop-buttons.png"));
 		final SwingAdvancedButton b = new SwingAdvancedButton(img, new Dimension((int) (BTN_SIZE * 1.5), BTN_SIZE));
 		b.drawDefaultComponent = false;
 		b.setText(Keyboard.getKeyName(row, col));

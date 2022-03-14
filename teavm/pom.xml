@@ -91,10 +91,10 @@
 						<configuration>
 							<mainClass>it.cavallium.warppi.teavm.TeaVMBoot</mainClass>
 							<debugInformationGenerated>false</debugInformationGenerated>
-							<sourceMapsGenerated>true</sourceMapsGenerated>
-							<sourceFilesCopied>true</sourceFilesCopied>
+							<sourceMapsGenerated>false</sourceMapsGenerated>
+							<sourceFilesCopied>false</sourceFilesCopied>
 							<optimizationLevel>SIMPLE</optimizationLevel>
-							<minifying>true</minifying>
+							<minifying>false</minifying>
 						</configuration>
 					</execution>
 				</executions>

@@ -1,7 +1,6 @@
 package it.cavallium.warppi.gui.graphicengine.impl.jogl;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -30,7 +29,7 @@ public class JOGLSkin implements Skin {
 	@Override
 	public void load(final String file) throws IOException {
 		final boolean isResource = !Files.exists(Paths.get(file));
-		if (isResource && WarpPI.getPlatform().getStorageUtils().getResourceStream(file) == null)
+		if (isResource && WarpPI.getPlatform().getPlatformStorage().getResourceStream(file) == null)
 			throw new IOException("File '" + file + "' not found!");
 		texturePath = file;
 		this.isResource = isResource;

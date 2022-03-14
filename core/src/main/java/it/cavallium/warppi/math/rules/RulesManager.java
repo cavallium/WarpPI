@@ -80,8 +80,8 @@ public class RulesManager {
 			);
 
 			final String source;
-			try (final InputStream resource = platform.getStorageUtils().getResourceStream(path)) {
-				source = platform.getStorageUtils().read(resource);
+			try (final InputStream resource = platform.getPlatformStorage().getResourceStream(path)) {
+				source = platform.getPlatformStorage().read(resource);
 			}
 
 			try {

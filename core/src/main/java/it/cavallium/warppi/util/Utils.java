@@ -578,7 +578,7 @@ public class Utils {
 
 	public static InputStream getResourceStreamSafe(final String string) throws IOException, URISyntaxException {
 		try {
-			return WarpPI.getPlatform().getStorageUtils().getResourceStream(string);
+			return WarpPI.getPlatform().getPlatformStorage().getResourceStream(string);
 		} catch (final Exception ex) {
 			return null;
 		}

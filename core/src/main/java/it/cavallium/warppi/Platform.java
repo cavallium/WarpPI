@@ -3,11 +3,9 @@ package it.cavallium.warppi;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
-import java.util.Map;
 
 import it.cavallium.warppi.boot.StartupArguments;
 import it.cavallium.warppi.device.DeviceStateDevice;
@@ -23,7 +21,7 @@ public interface Platform {
 
 	Gpio getGpio();
 
-	StorageUtils getStorageUtils();
+	PlatformStorage getPlatformStorage();
 
 	ImageUtils getImageUtils();
 
@@ -76,7 +74,7 @@ public interface Platform {
 	 *
 	 * @return a <code>List</code> of paths of files which contain DSL rules.
 	 * 		   Each <code>String</code> in the returned <code>List</code> can be passed as an argument to
-	 * 		   {@link StorageUtils#getResourceStream(String)} to access the corresponding file's contents.
+	 * 		   {@link PlatformStorage#getResourceStream(String)} to access the corresponding file's contents.
 	 * @throws IOException if an IO error occurs while getting the list of rule file paths.
 	 */
 	List<String> getRuleFilePaths() throws IOException;
@@ -135,7 +133,7 @@ public interface Platform {
 		}
 	}
 
-	public interface StorageUtils {
+	public interface PlatformStorage {
 		int OpenOptionWrite = 0;
 		int OpenOptionCreate = 1;
 
@@ -170,7 +168,7 @@ public interface Platform {
 
 		List<String> readAllLines(InputStream input) throws IOException;
 
-		String getBasePath();
+		File getRootPath();
 	}
 
 	public interface Semaphore {

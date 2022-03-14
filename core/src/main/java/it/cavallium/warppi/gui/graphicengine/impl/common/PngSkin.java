@@ -25,7 +25,7 @@ public abstract class PngSkin implements Skin {
 		if (!file.startsWith("/")) {
 			file = "/" + file;
 		}
-		final ImageReader r = WarpPI.getPlatform().getImageUtils().load(WarpPI.getPlatform().getStorageUtils().getResourceStream(file));
+		final ImageReader r = WarpPI.getPlatform().getImageUtils().load(WarpPI.getPlatform().getPlatformStorage().getResourceStream(file));
 		if (r == null) {
 			skinData = new int[0];
 			skinSize = new int[] { 0, 0 };

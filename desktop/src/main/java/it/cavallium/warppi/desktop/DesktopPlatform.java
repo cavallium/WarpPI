@@ -11,7 +11,6 @@ import java.util.function.Consumer;
 
 import it.cavallium.warppi.event.TouchEvent;
 import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLDisplayOutputDevice;
-import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
 import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingDeviceState;
 import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingTouchInputDevice;
 import org.apache.commons.io.FileUtils;
@@ -35,7 +34,7 @@ public class DesktopPlatform implements Platform {
 
 	private final DesktopConsoleUtils cu;
 	private final DesktopGpio gi;
-	private final DesktopStorageUtils su;
+	private final DesktopPlatformStorage su;
 	private final ImageUtils pu;
 	private final String on;
 	private final DesktopSettings settings;
@@ -49,7 +48,7 @@ public class DesktopPlatform implements Platform {
 	public DesktopPlatform() {
 		cu = new DesktopConsoleUtils();
 		gi = new DesktopGpio();
-		su = new DesktopStorageUtils();
+		su = new DesktopPlatformStorage();
 		pu = new DesktopImageUtils();
 		on = System.getProperty("os.name").toLowerCase();
 		settings = new DesktopSettings();
@@ -66,7 +65,7 @@ public class DesktopPlatform implements Platform {
 	}
 
 	@Override
-	public StorageUtils getStorageUtils() {
+	public PlatformStorage getPlatformStorage() {
 		return su;
 	}
 
@@ -159,10 +158,10 @@ public class DesktopPlatform implements Platform {
 
 	@Override
 	public List<String> getRuleFilePaths() throws IOException {
-		final File dslRulesPath = getStorageUtils().get("rules/");
+		final File dslRulesPath = getPlatformStorage().get("rules/");
 		List<String> paths = new ArrayList<>();
 		if (dslRulesPath.exists()) {
-			for (final File file : getStorageUtils().walk(dslRulesPath)) {
+			for (final File file : getPlatformStorage().walk(dslRulesPath)) {
 				final String path = file.toString();
 				if (path.endsWith(".rules")) {
 					paths.add(path);

@@ -1,17 +1,21 @@
 package it.cavallium.warppi.gui.graphicengine.html;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.net.URL;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.commons.lang3.ArrayUtils;
+import it.cavallium.warppi.teavm.TeaVMStorageUtils;
+import org.teavm.jso.JSBody;
+import org.teavm.jso.JSFunctor;
+import org.teavm.jso.JSObject;
 import org.teavm.jso.browser.Window;
+import org.teavm.jso.canvas.CanvasImageSource;
 import org.teavm.jso.dom.events.Event;
 import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLImageElement;
 
 import it.cavallium.warppi.WarpPI;
-import it.cavallium.warppi.Platform.Semaphore;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.Skin;
 
@@ -22,8 +26,7 @@ public class HtmlSkin implements Skin {
 	private int[] skinSize;
 
 	private boolean initd;
-
-	private HTMLImageElement imgEl;
+	private CanvasImageSource imgEl;
 
 	public HtmlSkin(final String file) throws IOException {
 		load(file);
@@ -38,23 +41,33 @@ public class HtmlSkin implements Skin {
 
 	@Override
 	public void load(String file) throws IOException {
-		url = WarpPI.getPlatform().getStorageUtils().getBasePath() + (!file.startsWith("/") ? "/" : "") + file;
+		File path = new File(WarpPI.getPlatform().getPlatformStorage().getRootPath(), file);
+		this.url = TeaVMStorageUtils.getUrl(path).toString();
 	}
 
 	@Override
 	public void initialize(final DisplayOutputDevice d) {
 		final HTMLDocument doc = Window.current().getDocument();
 		AtomicBoolean done = new AtomicBoolean(false);
-		imgEl = doc.createElement("img").cast();
-		imgEl.addEventListener("load", (Event e) -> {
+
+		loadImage(url, (width, height, imageSource) -> {
+			skinSize = new int[] {width, height};
+			this.imgEl = imageSource;
 			done.set(true);
 		});
-		imgEl.setSrc(url);
+
 		while (!done.get()) {
 			try {Thread.sleep(15);} catch (Exception e) {}
 		}
-		skinSize = new int[] { imgEl.getNaturalWidth(), imgEl.getNaturalHeight() };
 		initd = true;
+	}
+
+	@JSBody(params = { "url", "loadHandler" }, script = "var image = new Image(); image.onload = function(evt) { loadHandler(image.naturalWidth, image.naturalHeight, image);}; image.src = url;")
+	public static native void loadImage(String url, LoadHandler loadHandler);
+
+	@JSFunctor
+	public interface LoadHandler extends JSObject {
+		void onLoad(int width, int height, CanvasImageSource imageSource);
 	}
 
 	@Override
@@ -76,7 +89,7 @@ public class HtmlSkin implements Skin {
 		return url;
 	}
 
-	public final HTMLImageElement getImgElement() {
+	public final CanvasImageSource getImgElement() {
 		return imgEl;
 	}
 }

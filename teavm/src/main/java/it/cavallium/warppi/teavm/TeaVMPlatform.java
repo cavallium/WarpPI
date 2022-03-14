@@ -4,9 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 import it.cavallium.warppi.boot.StartupArguments;
@@ -24,7 +22,6 @@ import org.teavm.jso.dom.html.HTMLDocument;
 
 import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.html.HtmlEngine;
 import it.cavallium.warppi.util.Error;
 
@@ -32,7 +29,7 @@ public class TeaVMPlatform implements Platform {
 
 	private final TeaVMConsoleUtils cu;
 	private final TeaVMGpio gi;
-	private final TeaVMStorageUtils su;
+	private final TeaVMPlatformStorage su;
 	private final String on;
 	private final TeaVMImageUtils pu;
 	private final TeaVMSettings settings;
@@ -46,7 +43,7 @@ public class TeaVMPlatform implements Platform {
 	public TeaVMPlatform() {
 		cu = new TeaVMConsoleUtils();
 		gi = new TeaVMGpio();
-		su = new TeaVMStorageUtils();
+		su = new TeaVMPlatformStorage();
 		pu = new TeaVMImageUtils();
 		on = "JavaScript";
 		settings = new TeaVMSettings();
@@ -63,7 +60,7 @@ public class TeaVMPlatform implements Platform {
 	}
 
 	@Override
-	public StorageUtils getStorageUtils() {
+	public PlatformStorage getPlatformStorage() {
 		return su;
 	}
 
@@ -157,8 +154,8 @@ public class TeaVMPlatform implements Platform {
 	 */
 	@Override
 	public List<String> getRuleFilePaths() throws IOException {
-		try (final InputStream listStream = getStorageUtils().getResourceStream("/rules.list")) {
-			return getStorageUtils().readAllLines(listStream);
+		try (final InputStream listStream = getPlatformStorage().getResourceStream("/rules.list")) {
+			return getPlatformStorage().readAllLines(listStream);
 		}
 	}
 
