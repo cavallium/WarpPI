@@ -47,7 +47,6 @@ import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.texture.Texture;
 
 import it.cavallium.warppi.WarpPI;
-import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.event.Key;
@@ -174,208 +173,47 @@ class NEWTWindow implements GLEventListener {
 			@Override
 			public void keyPressed(final KeyEvent arg0) {
 				switch (arg0.getKeyCode()) {
-					case KeyEvent.VK_ESCAPE:
-						Keyboard.keyPressed(Key.POWEROFF);
-						break;
-					case KeyEvent.VK_D:
-						Keyboard.keyPressed(Key.debug_DEG);
-						break;
-					case KeyEvent.VK_R:
-						Keyboard.keyPressed(Key.debug_RAD);
-						break;
-					case KeyEvent.VK_G:
-						Keyboard.keyPressed(Key.debug_GRA);
-						break;
-					case KeyEvent.VK_X:
-						if (Keyboard.alpha)
-							Keyboard.keyPressed(Key.LETTER_X);
-						else
-							Keyboard.keyPressed(Key.NONE);
-						break;
-					case KeyEvent.VK_P:
-						if (Keyboard.alpha)
-							Keyboard.keyPressed(Key.PI);
-						else
-							Keyboard.keyPressed(Key.NONE);
-						break;
-					case KeyEvent.VK_B:
-						if (Keyboard.shift)
-							Keyboard.keyPressed(Key.BRIGHTNESS_CYCLE_REVERSE);
-						else if (!Keyboard.shift && !Keyboard.alpha)
-							Keyboard.keyPressed(Key.BRIGHTNESS_CYCLE);
-						else
-							Keyboard.keyPressed(Key.ZOOM_MODE);
-						break;
 					case KeyEvent.VK_ENTER:
-						if (!Keyboard.shift && !Keyboard.alpha)
-							Keyboard.keyPressed(Key.SIMPLIFY);
-						else
-							Keyboard.keyPressed(Key.NONE);
 						int row = 2;
 						int col = 1;
 						Keyboard.debugKeysDown[row - 1][col - 1] = true;
 						break;
-					case KeyEvent.VK_1:
-						if (!Keyboard.shift && !Keyboard.alpha)
-							Keyboard.keyPressed(Key.debug1);
-						else
-							Keyboard.keyPressed(Key.NONE);
-						break;
-					case KeyEvent.VK_2:
-						if (!Keyboard.shift && !Keyboard.alpha)
-							Keyboard.keyPressed(Key.debug2);
-						else
-							Keyboard.keyPressed(Key.NONE);
-						break;
-					case KeyEvent.VK_3:
-						if (!Keyboard.shift && !Keyboard.alpha)
-							Keyboard.keyPressed(Key.debug3);
-						else
-							Keyboard.keyPressed(Key.NONE);
-						break;
-					case KeyEvent.VK_4:
-						if (!Keyboard.shift && !Keyboard.alpha)
-							Keyboard.keyPressed(Key.debug4);
-						else
-							Keyboard.keyPressed(Key.NONE);
-						break;
-					case KeyEvent.VK_5:
-						if (!Keyboard.shift && !Keyboard.alpha)
-							Keyboard.keyPressed(Key.debug5);
-						else
-							Keyboard.keyPressed(Key.NONE);
-						break;
-					case 0x15:
-					case KeyEvent.VK_SHIFT:
-						Keyboard.keyPressed(Key.SHIFT);
-						break;
-					case KeyEvent.VK_CONTROL:
-						Keyboard.keyPressed(Key.ALPHA);
-						break;
-					case KeyEvent.VK_M:
-						Keyboard.keyPressed(Key.SURD_MODE);
-						break;
-					case KeyEvent.VK_LEFT:
-						Keyboard.keyPressed(Key.LEFT);
-						break;
-					case KeyEvent.VK_RIGHT:
-						Keyboard.keyPressed(Key.RIGHT);
-						break;
-					case KeyEvent.VK_UP:
-						Keyboard.keyPressed(Key.UP);
-						break;
-					case KeyEvent.VK_DOWN:
-					case (short) 12:
-						Keyboard.keyPressed(Key.DOWN);
-						break;
+					default: {
+					}
+				}
+				Key click = convertSimpleKey(arg0);
+				if (click != null) {
+					Keyboard.keyPressed(click);
 				}
 			}
 
 			@Override
 			public void keyReleased(final KeyEvent arg0) {
 				switch (arg0.getKeyCode()) {
-					case KeyEvent.VK_ESCAPE:
-						Keyboard.keyReleased(Key.POWEROFF);
-						break;
-					case KeyEvent.VK_D:
-						Keyboard.keyReleased(Key.debug_DEG);
-						break;
-					case KeyEvent.VK_R:
-						Keyboard.keyReleased(Key.debug_RAD);
-						break;
-					case KeyEvent.VK_G:
-						Keyboard.keyReleased(Key.debug_GRA);
-						break;
-					case KeyEvent.VK_X:
-						if (Keyboard.alpha)
-							Keyboard.keyReleased(Key.LETTER_X);
-						else
-							Keyboard.keyReleased(Key.NONE);
-						break;
-					case KeyEvent.VK_P:
-						if (Keyboard.alpha)
-							Keyboard.keyReleased(Key.PI);
-						else
-							Keyboard.keyReleased(Key.NONE);
-						break;
-					case KeyEvent.VK_B:
-						if (Keyboard.shift)
-							Keyboard.keyReleased(Key.BRIGHTNESS_CYCLE_REVERSE);
-						else if (!Keyboard.shift && !Keyboard.alpha)
-							Keyboard.keyReleased(Key.BRIGHTNESS_CYCLE);
-						else
-							Keyboard.keyReleased(Key.ZOOM_MODE);
-						break;
 					case KeyEvent.VK_ENTER:
-						if (!Keyboard.shift && !Keyboard.alpha)
-							Keyboard.keyReleased(Key.SIMPLIFY);
-						else
-							Keyboard.keyReleased(Key.NONE);
 						int row = 2;
 						int col = 1;
 						Keyboard.debugKeysDown[row - 1][col - 1] = false;
 						break;
-					case KeyEvent.VK_1:
-						if (!Keyboard.shift && !Keyboard.alpha)
-							Keyboard.keyReleased(Key.debug1);
-						else
-							Keyboard.keyReleased(Key.NONE);
-						break;
-					case KeyEvent.VK_2:
-						if (!Keyboard.shift && !Keyboard.alpha)
-							Keyboard.keyReleased(Key.debug2);
-						else
-							Keyboard.keyReleased(Key.NONE);
-						break;
-					case KeyEvent.VK_3:
-						if (!Keyboard.shift && !Keyboard.alpha)
-							Keyboard.keyReleased(Key.debug3);
-						else
-							Keyboard.keyReleased(Key.NONE);
-						break;
-					case KeyEvent.VK_4:
-						if (!Keyboard.shift && !Keyboard.alpha)
-							Keyboard.keyReleased(Key.debug4);
-						else
-							Keyboard.keyReleased(Key.NONE);
-						break;
-					case KeyEvent.VK_5:
-						if (!Keyboard.shift && !Keyboard.alpha)
-							Keyboard.keyReleased(Key.debug5);
-						else
-							Keyboard.keyReleased(Key.NONE);
-						break;
 					case 0x15:
 					case KeyEvent.VK_SHIFT:
-						Keyboard.keyReleased(Key.SHIFT);
 						if (Keyboard.shift) {
 							Keyboard.keyPressed(Key.SHIFT);
 							Keyboard.keyReleased(Key.SHIFT);
 						}
 						break;
 					case KeyEvent.VK_CONTROL:
-						Keyboard.keyReleased(Key.ALPHA);
 						if (Keyboard.alpha) {
 							Keyboard.keyPressed(Key.ALPHA);
 							Keyboard.keyReleased(Key.ALPHA);
 						}
 						break;
-					case KeyEvent.VK_M:
-						Keyboard.keyPressed(Key.SURD_MODE);
-						break;
-					case KeyEvent.VK_LEFT:
-						Keyboard.keyReleased(Key.LEFT);
-						break;
-					case KeyEvent.VK_RIGHT:
-						Keyboard.keyReleased(Key.RIGHT);
-						break;
-					case KeyEvent.VK_UP:
-						Keyboard.keyReleased(Key.UP);
-						break;
-					case KeyEvent.VK_DOWN:
-					case (short) 12:
-						Keyboard.keyReleased(Key.DOWN);
-						break;
+					default: {
+					}
+				}
+				Key click = convertSimpleKey(arg0);
+				if (click != null) {
+					Keyboard.keyReleased(click);
 				}
 			}
 		});
@@ -384,6 +222,91 @@ class NEWTWindow implements GLEventListener {
 		final Animator animator = new Animator();
 		animator.add(glWindow);
 		animator.start();
+	}
+
+	private Key convertSimpleKey(KeyEvent event) {
+		switch (event.getKeyChar()) {
+			case '+': {
+				if (event.isControlDown()) {
+					return Key.ZOOM_MODE;
+				} else {
+					return Key.PLUS;
+				}
+			}
+			case '-': return Key.MINUS;
+			case '*': return Key.MULTIPLY;
+			case '/': return Key.DIVIDE;
+			case 'd': case 'D': return Key.debug_DEG;
+			case 'r': case 'R': return Key.debug_RAD;
+			case 'g': case 'G': return Key.debug_GRA;
+			case 'x': case 'X': return Key.LETTER_X;
+			case 'y': case 'Y': return Key.LETTER_Y;
+			case 'p': case 'P': return Key.PI;
+			case 'b': return Key.BRIGHTNESS_CYCLE;
+			case 'B': return Key.BRIGHTNESS_CYCLE_REVERSE;
+			case '=': return Key.SIMPLIFY;
+			case '0': return Key.NUM0;
+			case '1': return Key.NUM1;
+			case '2': return Key.NUM2;
+			case '3': return Key.NUM3;
+			case '4': return Key.NUM4;
+			case '5': return Key.NUM5;
+			case '6': return Key.NUM6;
+			case '7': return Key.NUM7;
+			case '8': return Key.NUM8;
+			case '9': return Key.NUM9;
+			case 'm': case 'M': return Key.SURD_MODE;
+		}
+		switch (event.getKeyCode()) {
+			case KeyEvent.VK_ESCAPE:
+				return Key.POWEROFF;
+			case KeyEvent.VK_ENTER:
+				if (!Keyboard.shift && !Keyboard.alpha)
+					return Key.OK;
+				else
+					return Key.NONE;
+			case KeyEvent.VK_F1:
+				return Key.debug1;
+			case KeyEvent.VK_F2:
+				return Key.debug2;
+			case KeyEvent.VK_F3:
+				return Key.debug3;
+			case KeyEvent.VK_F4:
+				return Key.debug4;
+			case KeyEvent.VK_F5:
+				return Key.debug5;
+			case 0x15:
+			case KeyEvent.VK_SHIFT:
+				return Key.SHIFT;
+			case KeyEvent.VK_CONTROL:
+				return Key.ALPHA;
+			case KeyEvent.VK_LEFT:
+				if (Keyboard.alpha) {
+					return Key.HISTORY_BACK;
+				} else {
+					return Key.LEFT;
+				}
+			case KeyEvent.VK_RIGHT:
+				if (Keyboard.alpha) {
+					return Key.HISTORY_FORWARD;
+				} else {
+					return Key.RIGHT;
+				}
+			case KeyEvent.VK_UP:
+				return Key.UP;
+			case KeyEvent.VK_DOWN:
+			case (short) 12:
+				return Key.DOWN;
+			case KeyEvent.VK_BACK_SPACE:
+				return Key.DELETE;
+			case KeyEvent.VK_DELETE:
+				if (Keyboard.alpha) {
+					return Key.RESET;
+				} else {
+					return null;
+				}
+			default: return null;
+		}
 	}
 
 	@Override

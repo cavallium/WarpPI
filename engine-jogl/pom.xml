@@ -12,6 +12,12 @@
 
 	<name>WarpPI Calculator JOGL Engine</name>
 	<description>WarpPI Calculator engine-jogl project</description>
+	<repositories>
+		<repository>
+			<id>jogamp</id>
+			<url>https://jogamp.org/deployment/maven/</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>it.cavallium</groupId>
@@ -21,12 +27,12 @@
 		<dependency>
 			<groupId>org.jogamp.jogl</groupId>
 			<artifactId>jogl-all-main</artifactId>
-			<version>2.3.2</version>
+			<version>2.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jogamp.gluegen</groupId>
 			<artifactId>gluegen-rt-main</artifactId>
-			<version>2.3.2</version>
+			<version>2.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>ar.com.hjg</groupId>

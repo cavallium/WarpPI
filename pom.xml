@@ -61,14 +61,6 @@
 
 	<repositories>
 		<repository>
-			<id>teavm-dev</id>
-			<url>https://dl.bintray.com/konsoletyper/teavm</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<layout>default</layout>
-		</repository>
-		<repository>
 			<id>oss-snapshots-repo</id>
 			<name>Sonatype OSS Maven Repository</name>
 			<url>https://oss.sonatype.org/content/groups/public</url>
@@ -84,14 +76,6 @@
 	</repositories>
 
 	<pluginRepositories>
-		<pluginRepository>
-			<id>1_teavm-dev</id>
-			<url>https://dl.bintray.com/konsoletyper/teavm</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<layout>default</layout>
-		</pluginRepository>
 		<pluginRepository>
 			<id>sonatype</id>
 			<url>https://oss.sonatype.org/content/repositories/releases/</url>

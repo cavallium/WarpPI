@@ -1,6 +1,7 @@
 package it.cavallium.warppi.extra.mario;
 
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.StaticVars;
@@ -75,6 +76,7 @@ public class MarioScreen extends Screen {
 			if (MarioScreen.gpuTest3 == null) {
 				try {
 					MarioScreen.gpuTest3 = d.display.getGraphicEngine().loadSkin("N:\\gputest\\font_gputest3.png");
+				} catch (final NoSuchFileException ignored) {
 				} catch (final Exception ex) {
 					ex.printStackTrace();
 				}
@@ -112,6 +114,7 @@ public class MarioScreen extends Screen {
 			if (MarioScreen.gpuTest3 == null) {
 				try {
 					MarioScreen.gpuTest3 = d.display.getGraphicEngine().loadSkin("N:\\gputest\\font_gputest3.png");
+				} catch (final NoSuchFileException ignored) {
 				} catch (final Exception ex) {
 					ex.printStackTrace();
 				}
