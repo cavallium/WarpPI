@@ -36,12 +36,12 @@ public class BlockChar extends Block {
 	}
 
 	@Override
-	public boolean putBlock(final Caret caret, final Block newBlock) {
+	public boolean appendBlock(final Caret caret, final Block newBlock, boolean splitAdjacent) {
 		return false;
 	}
 
 	@Override
-	public boolean delBlock(final Caret caret) {
+	public boolean deleteBlock(final Caret caret) {
 		return false;
 	}
 

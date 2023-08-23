@@ -9,7 +9,6 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.parser.features.FeatureDivision;
 import it.cavallium.warppi.math.parser.features.interfaces.Feature;
 import it.cavallium.warppi.util.Error;
-import it.unimi.dsi.fastutil.objects.AbstractObjectList;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class BlockDivision extends Block {
@@ -48,10 +47,10 @@ public class BlockDivision extends Block {
 	}
 
 	@Override
-	public boolean putBlock(final Caret caret, final Block newBlock) {
+	public boolean appendBlock(final Caret caret, final Block newBlock, boolean splitAdjacent) {
 		boolean added = false;
-		added = added | containerUp.putBlock(caret, newBlock);
-		added = added | containerDown.putBlock(caret, newBlock);
+		added = added | containerUp.appendBlock(caret, newBlock, splitAdjacent);
+		added = added | containerDown.appendBlock(caret, newBlock, splitAdjacent);
 		if (added) {
 			recomputeDimensions();
 		}
@@ -59,10 +58,10 @@ public class BlockDivision extends Block {
 	}
 
 	@Override
-	public boolean delBlock(final Caret caret) {
+	public boolean deleteBlock(final Caret caret) {
 		boolean removed = false;
-		removed = removed | containerUp.delBlock(caret);
-		removed = removed | containerDown.delBlock(caret);
+		removed = removed | containerUp.deleteBlock(caret);
+		removed = removed | containerDown.deleteBlock(caret);
 		if (removed) {
 			recomputeDimensions();
 		}

@@ -56,7 +56,7 @@ public abstract class BlockParenthesisAbstract extends Block implements IParenth
 		BlockContainer.getDefaultFont(small).use(ge);
 		r.glColor(BlockContainer.getDefaultColor());
 		if (prefix != null) {
-			r.glDrawStringLeft(x + 1, y + line - chh / 2, prefix);
+			r.glDrawStringLeft(x + 1, y + line - chh / 2f, prefix);
 		}
 		r.glDrawCharLeft(x + prw, y, '╭');
 		r.glDrawCharLeft(x + prw, y + height - chh, '╰');
@@ -73,9 +73,9 @@ public abstract class BlockParenthesisAbstract extends Block implements IParenth
 	}
 
 	@Override
-	public boolean putBlock(final Caret caret, final Block newBlock) {
+	public boolean appendBlock(final Caret caret, final Block newBlock, boolean splitAdjacent) {
 		boolean added = false;
-		added = added | containerNumber.putBlock(caret, newBlock);
+		added = added | containerNumber.appendBlock(caret, newBlock, splitAdjacent);
 		if (added) {
 			recomputeDimensions();
 		}
@@ -83,9 +83,9 @@ public abstract class BlockParenthesisAbstract extends Block implements IParenth
 	}
 
 	@Override
-	public boolean delBlock(final Caret caret) {
+	public boolean deleteBlock(final Caret caret) {
 		boolean removed = false;
-		removed = removed | containerNumber.delBlock(caret);
+		removed = removed | containerNumber.deleteBlock(caret);
 		if (removed) {
 			recomputeDimensions();
 		}

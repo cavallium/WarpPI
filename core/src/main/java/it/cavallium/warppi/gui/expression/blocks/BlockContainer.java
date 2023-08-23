@@ -1,7 +1,5 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
-import java.util.Arrays;
-
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.GraphicalElement;
@@ -213,7 +211,7 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 		caret.skip(1);
 	}
 
-	public boolean putBlock(final Caret caret, final Block newBlock) {
+	public boolean appendBlock(final Caret caret, final Block newBlock, boolean splitAdjacent) {
 		boolean added = false;
 
 		if (caret.getRemaining() == 0) {
@@ -225,7 +223,7 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 		for (final Block b : content) {
 			caret.skip(1);
 			pos++;
-			added = added | b.putBlock(caret, newBlock);
+			added = added | b.appendBlock(caret, newBlock, splitAdjacent);
 			if (caret.getRemaining() == 0) {
 				addBlock(pos, newBlock);
 				added = true;
@@ -238,7 +236,7 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 		return added;
 	}
 
-	public boolean delBlock(final Caret caret) {
+	public boolean deleteBlock(final Caret caret) {
 		boolean removed = false;
 
 		int pos = 0;
@@ -247,7 +245,7 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 			pos++;
 			final int deltaCaret = caret.getRemaining();
 			final int caretOldPos = caret.getPosition();
-			removed = removed | b.delBlock(caret);
+			removed = removed | b.deleteBlock(caret);
 			if (caret.getRemaining() == 0 || removed == false && deltaCaret >= 0 && caret.getRemaining() < 0) {
 				ObjectArrayList<Block> blocks = this.getBlockAt(pos - 1).get().getInnerBlocks();
 				ObjectArrayList<BlockContainer> innerContainers = this.getBlockAt(pos - 1).get().getInnerContainers();

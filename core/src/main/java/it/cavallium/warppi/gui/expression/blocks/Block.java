@@ -47,9 +47,9 @@ public abstract class Block implements TreeBlock, GraphicalElement {
 	 */
 	public abstract void draw(DisplayOutputDevice ge, Renderer r, int x, int y, Caret caret);
 
-	public abstract boolean putBlock(Caret caret, Block newBlock);
+	public abstract boolean appendBlock(Caret caret, Block newBlock, boolean splitAdjacent);
 
-	public abstract boolean delBlock(Caret caret);
+	public abstract boolean deleteBlock(Caret caret);
 
 	public abstract BlockReference<?> getBlock(Caret caret);
 	

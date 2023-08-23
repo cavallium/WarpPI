@@ -80,10 +80,10 @@ public class BlockLogarithm extends Block implements IParenthesis {
 	}
 
 	@Override
-	public boolean putBlock(final Caret caret, final Block newBlock) {
+	public boolean appendBlock(final Caret caret, final Block newBlock, boolean splitAdjacent) {
 		boolean added = false;
-		added = added | containerBase.putBlock(caret, newBlock);
-		added = added | containerNumber.putBlock(caret, newBlock);
+		added = added | containerBase.appendBlock(caret, newBlock, splitAdjacent);
+		added = added | containerNumber.appendBlock(caret, newBlock, splitAdjacent);
 		if (added) {
 			recomputeDimensions();
 		}
@@ -91,10 +91,10 @@ public class BlockLogarithm extends Block implements IParenthesis {
 	}
 
 	@Override
-	public boolean delBlock(final Caret caret) {
+	public boolean deleteBlock(final Caret caret) {
 		boolean removed = false;
-		removed = removed | containerBase.delBlock(caret);
-		removed = removed | containerNumber.delBlock(caret);
+		removed = removed | containerBase.deleteBlock(caret);
+		removed = removed | containerNumber.deleteBlock(caret);
 		if (removed) {
 			recomputeDimensions();
 		}

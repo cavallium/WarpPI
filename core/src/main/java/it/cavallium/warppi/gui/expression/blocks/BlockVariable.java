@@ -1,7 +1,5 @@
 package it.cavallium.warppi.gui.expression.blocks;
 
-import java.util.Arrays;
-
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.event.KeyPressedEvent;
@@ -108,12 +106,12 @@ public class BlockVariable extends Block {
 	}
 
 	@Override
-	public boolean putBlock(final Caret caret, final Block newBlock) {
+	public boolean appendBlock(final Caret caret, final Block newBlock, boolean splitAdjacent) {
 		return false;
 	}
 
 	@Override
-	public boolean delBlock(final Caret caret) {
+	public boolean deleteBlock(final Caret caret) {
 		return false;
 	}
 

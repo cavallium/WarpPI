@@ -28,6 +28,10 @@
 
 package it.cavallium.warppi.gui.graphicengine.impl.jogl;
 
+import com.jogamp.nativewindow.AbstractGraphicsDevice;
+import com.jogamp.nativewindow.egl.EGLGraphicsDevice;
+import com.jogamp.newt.Display;
+import com.jogamp.newt.Screen;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.WindowEvent;
@@ -51,6 +55,11 @@ import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.util.EventSubmitter;
+import jogamp.newt.driver.bcm.vc.iv.DisplayDriver;
+import jogamp.newt.driver.bcm.vc.iv.ScreenDriver;
+
+import java.io.IOException;
+import java.util.NoSuchElementException;
 
 /**
  *
@@ -63,7 +72,7 @@ class NEWTWindow implements GLEventListener {
 	private final JOGLEngine engine;
 	private final JOGLRenderer renderer;
 	public GLWindow window;
-	public volatile float windowZoom = 1;
+	public volatile float windowZoom = 1f;
 	public int[] realWindowSize;
 	public Runnable onInitialized;
 	public volatile boolean refreshViewport;
@@ -79,7 +88,7 @@ class NEWTWindow implements GLEventListener {
 		engine.size[0] = engine.getSize()[0];
 		engine.size[1] = engine.getSize()[1];
 		realWindowSize = new int[] { engine.getSize()[0], engine.getSize()[1] };
-		windowZoom = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue());
+		windowZoom = StaticVars.windowZoom.getLastValue();
 		onRealResize = EventSubmitter.create(new Integer[] { (int) (engine.getSize()[0] * windowZoom), (int) (engine.getSize()[1] * windowZoom) });
 
 		onRealResize.subscribe((realSize) -> {
@@ -90,7 +99,7 @@ class NEWTWindow implements GLEventListener {
 			onResizeEvent.submit(new Integer[] { engine.size[0], engine.size[1] });
 			refreshViewport = true;
 		});
-		StaticVars.windowZoom$.subscribe(onZoom::submit);
+		StaticVars.windowZoom.subscribe(onZoom::submit);
 		onZoom.subscribe((z) -> {
 			if (windowZoom != 0) {
 				windowZoom = z;
@@ -105,7 +114,12 @@ class NEWTWindow implements GLEventListener {
 
 	public void create() {
 		System.out.println("Loading OpenGL...");
-		System.out.println(GLProfile.glAvailabilityToString());
+		GLProfile.initSingleton();
+		try {
+			System.out.println(GLProfile.glAvailabilityToString());
+		} catch (Exception ex) {
+			System.out.println("OpenGL Capabilities are not available. " + ex.getLocalizedMessage());
+		}
 		if (!GLProfile.isAvailable(GLProfile.GL2ES1)) {
 			System.err.println("Le OpenGL non sono presenti su questo computer!");
 			return;

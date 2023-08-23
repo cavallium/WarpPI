@@ -39,9 +39,9 @@ public class BlockPower2 extends Block {
 	}
 
 	@Override
-	public boolean putBlock(final Caret caret, final Block newBlock) {
+	public boolean appendBlock(final Caret caret, final Block newBlock, boolean splitAdjacent) {
 		boolean added = false;
-		added = added | containerExponent.putBlock(caret, newBlock);
+		added = added | containerExponent.appendBlock(caret, newBlock, splitAdjacent);
 		if (added) {
 			recomputeDimensions();
 		}
@@ -49,9 +49,9 @@ public class BlockPower2 extends Block {
 	}
 
 	@Override
-	public boolean delBlock(final Caret caret) {
+	public boolean deleteBlock(final Caret caret) {
 		boolean removed = false;
-		removed = removed | containerExponent.delBlock(caret);
+		removed = removed | containerExponent.deleteBlock(caret);
 		if (removed) {
 			recomputeDimensions();
 		}

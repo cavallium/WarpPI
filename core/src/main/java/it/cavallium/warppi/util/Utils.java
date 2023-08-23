@@ -395,7 +395,7 @@ public class Utils {
 	}
 
 	public static final BinaryFont getFont(final boolean small) {
-		return Utils.getFont(small, StaticVars.zoomed);
+		return Utils.getFont(small, StaticVars.zoomedFonts);
 	}
 
 	public static final BinaryFont getFont(final boolean small, final boolean zoomed) {
@@ -417,7 +417,7 @@ public class Utils {
 	}
 
 	public static final int getFontHeight(final boolean small) {
-		return Utils.getFontHeight(small, StaticVars.zoomed);
+		return Utils.getFontHeight(small, StaticVars.zoomedFonts);
 	}
 
 	public static final int getFontHeight(final boolean small, final boolean zoomed) {

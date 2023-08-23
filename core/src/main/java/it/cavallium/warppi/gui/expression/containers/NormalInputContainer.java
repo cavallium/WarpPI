@@ -3,20 +3,7 @@ package it.cavallium.warppi.gui.expression.containers;
 import it.cavallium.warppi.gui.expression.Caret;
 import it.cavallium.warppi.gui.expression.CaretState;
 import it.cavallium.warppi.gui.expression.InputContext;
-import it.cavallium.warppi.gui.expression.blocks.Block;
-import it.cavallium.warppi.gui.expression.blocks.BlockChar;
-import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
-import it.cavallium.warppi.gui.expression.blocks.BlockDivision;
-import it.cavallium.warppi.gui.expression.blocks.BlockLogarithm;
-import it.cavallium.warppi.gui.expression.blocks.BlockNumericChar;
-import it.cavallium.warppi.gui.expression.blocks.BlockParenthesis;
-import it.cavallium.warppi.gui.expression.blocks.BlockPower;
-import it.cavallium.warppi.gui.expression.blocks.BlockPower2;
-import it.cavallium.warppi.gui.expression.blocks.BlockReference;
-import it.cavallium.warppi.gui.expression.blocks.BlockSine;
-import it.cavallium.warppi.gui.expression.blocks.BlockSquareRoot;
-import it.cavallium.warppi.gui.expression.blocks.BlockVariable;
-import it.cavallium.warppi.gui.expression.blocks.IParenthesis;
+import it.cavallium.warppi.gui.expression.blocks.*;
 import it.cavallium.warppi.math.MathematicalSymbols;
 
 public class NormalInputContainer extends InputContainer {

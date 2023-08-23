@@ -9,6 +9,7 @@ import it.cavallium.warppi.gui.expression.ExtraMenu;
 import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
+import it.cavallium.warppi.gui.expression.blocks.BlockDivision;
 import it.cavallium.warppi.gui.expression.blocks.BlockReference;
 import it.cavallium.warppi.gui.expression.layouts.InputLayout;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
@@ -76,7 +77,11 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 	public void typeBlock(final Block b) {
 		if (b != null) {
 			caret.resetRemaining();
-			if (root.putBlock(caret, b)) {
+
+			// todo: allow blocks to dinamically choose insert mode
+			var splitAdjacent = b instanceof BlockDivision;
+
+			if (root.appendBlock(caret, b, splitAdjacent)) {
 				caret.setPosition(caret.getPosition() + b.getCaretDeltaPositionAfterCreation());
 				maxPosition = root.computeCaretMaxBound();
 				root.recomputeDimensions();
@@ -93,7 +98,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 
 	public void del() {
 		caret.resetRemaining();
-		if (root.delBlock(caret)) {
+		if (root.deleteBlock(caret)) {
 			root.recomputeDimensions();
 		}
 		if (caret.getPosition() > 0) {

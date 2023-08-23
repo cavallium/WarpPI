@@ -34,7 +34,7 @@ public class LoadingScreen extends Screen {
 	@Override
 	public void initialized() throws InterruptedException {
 		float lastZoomValue = StaticVars.windowZoom.getLastValue();
-		previousZoomValue = StaticVars.windowZoomFunction.apply(lastZoomValue);
+		previousZoomValue = lastZoomValue;
 		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().hide();
 		if (lastZoomValue != 1.0f) {
 			StaticVars.windowZoom.submit(1f);

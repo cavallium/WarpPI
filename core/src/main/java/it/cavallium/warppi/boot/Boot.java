@@ -44,7 +44,7 @@ public class Boot {
 			case "-noraspi": 
 				args.setRaspberryModeAllowed(false); 
 				break; 
-			case "nogui": 
+				case "nogui":
 				args.setNoGUIEngineForced(true); 
 				break; 
 			case "ms-dos": 
