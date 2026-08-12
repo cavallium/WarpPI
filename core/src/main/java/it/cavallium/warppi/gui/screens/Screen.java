@@ -6,9 +6,9 @@ import it.cavallium.warppi.gui.*;
 
 public abstract class Screen implements KeyboardEventListener, TouchEventListener, GraphicalInterface {
 	public DisplayManager d;
-	public boolean created = false;
-	public boolean initialized = false;
-	public boolean graphicInitialized = false;
+	public volatile boolean created = false;
+	public volatile boolean initialized = false;
+	public volatile boolean graphicInitialized = false;
 	public HistoryBehavior historyBehavior = HistoryBehavior.NORMAL;
 	
 	public static long lastDebugScreenID = 1;
@@ -19,27 +19,31 @@ public abstract class Screen implements KeyboardEventListener, TouchEventListene
 	}
 
 	@Override
-	public void initializeGraphic(ScreenContext ctx) throws InterruptedException {
+	public final synchronized void initializeGraphic(ScreenContext ctx) throws InterruptedException {
 		if (!graphicInitialized) {
-			graphicInitialized = true;
 			graphicInitialized(ctx);
-		}
-	}
-	
-	@Override
-	public void initialize() throws InterruptedException {
-		if (!initialized) {
-			initialized = true;
-			initialized();
+			graphicInitialized = true;
 		}
 	}
 
 	@Override
-	public void create() throws InterruptedException {
-		if (!created) {
-			created = true;
-			created();
+	public final synchronized void initialize() throws InterruptedException {
+		if (!initialized) {
+			initialized();
+			initialized = true;
 		}
+	}
+
+	@Override
+	public final synchronized void create() throws InterruptedException {
+		if (!created) {
+			created();
+			created = true;
+		}
+	}
+
+	public final boolean isReadyForInput() {
+		return graphicInitialized && initialized;
 	}
 
 	/**

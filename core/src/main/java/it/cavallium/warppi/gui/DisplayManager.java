@@ -35,7 +35,7 @@ public final class DisplayManager implements RenderingLoop {
 	public String[] errorStackTrace;
 	public final int[] glyphsHeight;
 
-	private Screen screen;
+	private volatile Screen screen;
 	private final HUD hud;
 	private final String initialTitle;
 	private Screen initialScreen;
@@ -484,7 +484,9 @@ public final class DisplayManager implements RenderingLoop {
 	public Consumer<TouchEvent> getTouchEventListener() {
 		return (TouchEvent t) -> {
 			boolean refresh = false;
-			if (screen != null && screen.initialized && executeTouchEventOnScreen(t, screen)) {
+			final Screen currentScreen = screen;
+			if (currentScreen != null && currentScreen.isReadyForInput()
+					&& executeTouchEventOnScreen(t, currentScreen)) {
 				refresh = true;
 			} else {
 				//Default behavior

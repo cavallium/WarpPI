@@ -962,12 +962,14 @@ public class Keyboard {
 			final Screen scr = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 			boolean refresh = false;
 			boolean scrdone = false;
-			try {
-				scrdone = scr.onKeyPressed(new KeyPressedEvent(k));
-			} catch (final Exception ex) {
-				new GUIErrorMessage(ex);
+			if (scr != null && scr.isReadyForInput()) {
+				try {
+					scrdone = scr.onKeyPressed(new KeyPressedEvent(k));
+				} catch (final Exception ex) {
+					new GUIErrorMessage(ex);
+				}
 			}
-			if (scr != null && scr.initialized && scrdone) {
+			if (scrdone) {
 				refresh = true;
 			} else {
 				switch (k) {
@@ -1052,7 +1054,7 @@ public class Keyboard {
 		boolean refresh = false;
 		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager() != null) {
 			final Screen scr = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
-			if (scr != null && scr.initialized && scr.onKeyReleased(new KeyReleasedEvent(k))) {
+			if (scr != null && scr.isReadyForInput() && scr.onKeyReleased(new KeyReleasedEvent(k))) {
 				refresh = true;
 			} else {
 				switch (k) {
