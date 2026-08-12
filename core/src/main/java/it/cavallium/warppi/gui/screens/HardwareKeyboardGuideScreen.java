@@ -35,7 +35,7 @@ public final class HardwareKeyboardGuideScreen extends Screen {
 	@Override
 	public void render(final RenderContext ctx) {
 		final Renderer renderer = ctx.getRenderer();
-		d.fonts[1].use(d.display);
+		d.fonts[0].use(d.display);
 		drawHeader(renderer, ctx.getWidth());
 
 		int y = HEADER_HEIGHT;
