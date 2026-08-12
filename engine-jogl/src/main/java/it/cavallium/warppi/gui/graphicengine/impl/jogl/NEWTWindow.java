@@ -29,6 +29,8 @@
 package it.cavallium.warppi.gui.graphicengine.impl.jogl;
 
 import com.jogamp.nativewindow.NativeWindowFactory;
+import com.jogamp.newt.event.MouseAdapter;
+import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.WindowEvent;
 import com.jogamp.newt.event.WindowListener;
 import com.jogamp.newt.event.WindowUpdateEvent;
@@ -46,8 +48,8 @@ import com.jogamp.opengl.util.Animator;
 import com.jogamp.opengl.util.texture.Texture;
 
 import it.cavallium.warppi.WarpPI;
-import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.StaticVars;
+import it.cavallium.warppi.device.input.HardwareKeyboardLayout.Layer;
 import it.cavallium.warppi.util.EventSubmitter;
 
 /**
@@ -63,9 +65,12 @@ class NEWTWindow implements GLEventListener {
 
 	private final JOGLEngine engine;
 	private final JOGLRenderer renderer;
+	private final JOGLKeyboardPanel keyboardPanel;
 	public GLWindow window;
 	public volatile float windowZoom = 1;
 	public int[] realWindowSize;
+	private volatile int displaySurfaceHeight;
+	private volatile int keyboardSurfaceHeight;
 	public Runnable onInitialized;
 	public volatile boolean refreshViewport;
 
@@ -77,31 +82,44 @@ class NEWTWindow implements GLEventListener {
 	public NEWTWindow(final JOGLEngine engine) {
 		this.engine = engine;
 		renderer = engine.getRenderer();
+		keyboardPanel = engine.isRaspberryProductionMode()
+				? null : new JOGLKeyboardPanel(engine.getKeyboardLayer());
 		engine.size[0] = engine.getSize()[0];
 		engine.size[1] = engine.getSize()[1];
-		realWindowSize = new int[] { engine.getSize()[0], engine.getSize()[1] };
 		windowZoom = StaticVars.windowZoom.getLastValue();
-		onRealResize = EventSubmitter.create(new Integer[] { (int) (engine.getSize()[0] * windowZoom), (int) (engine.getSize()[1] * windowZoom) });
+		if (windowZoom <= 0)
+			windowZoom = 1;
+		final int initialWidth = Math.max(1, Math.round(engine.getSize()[0] * windowZoom));
+		final int initialHeight = Math.max(1, Math.round(engine.getSize()[1] * windowZoom))
+				+ (keyboardPanel == null ? 0 : JOGLKeyboardPanel.LOGICAL_HEIGHT);
+		realWindowSize = new int[] { initialWidth, initialHeight };
+		updateSurfaceLayout();
+		onRealResize = EventSubmitter.create(new Integer[] { initialWidth, initialHeight });
 
 		onRealResize.subscribe((realSize) -> {
-			realWindowSize[0] = realSize[0];
-			realWindowSize[1] = realSize[1];
-			engine.size[0] = realSize[0] / (int) windowZoom;
-			engine.size[1] = realSize[1] / (int) windowZoom;
+			realWindowSize[0] = Math.max(1, realSize[0]);
+			realWindowSize[1] = Math.max(1, realSize[1]);
+			updateSurfaceLayout();
 			onResizeEvent.submit(new Integer[] { engine.size[0], engine.size[1] });
 			refreshViewport = true;
 		});
 		StaticVars.windowZoom.subscribe(onZoom::submit);
 		onZoom.subscribe((z) -> {
-			if (windowZoom != 0) {
-				windowZoom = z;
-				engine.size[0] = (int) (realWindowSize[0] / windowZoom);
-				engine.size[1] = (int) (realWindowSize[1] / windowZoom);
-				engine.getSize()[0] = engine.size[0];
-				engine.getSize()[1] = engine.size[1];
-				refreshViewport = true;
-			}
+			if (z <= 0)
+				return;
+			windowZoom = z;
+			updateSurfaceLayout();
+			onResizeEvent.submit(new Integer[] { engine.size[0], engine.size[1] });
+			refreshViewport = true;
 		});
+	}
+
+	private void updateSurfaceLayout() {
+		keyboardSurfaceHeight = keyboardPanel == null ? 0
+				: JOGLKeyboardPanel.surfaceHeight(realWindowSize[1]);
+		displaySurfaceHeight = Math.max(1, realWindowSize[1] - keyboardSurfaceHeight);
+		engine.size[0] = Math.max(1, (int) (realWindowSize[0] / windowZoom));
+		engine.size[1] = Math.max(1, (int) (displaySurfaceHeight / windowZoom));
 	}
 
 	public void create() {
@@ -142,6 +160,7 @@ class NEWTWindow implements GLEventListener {
 
 			@Override
 			public void windowDestroyed(final WindowEvent e) {
+				releaseKeyboardPanel();
 				if (engine.isInitialized())
 					engine.destroy();
 			}
@@ -155,6 +174,7 @@ class NEWTWindow implements GLEventListener {
 			@Override
 			public void windowLostFocus(final WindowEvent e) {
 				keyboardInput.releaseAll();
+				releaseKeyboardPanel();
 			}
 
 			@Override
@@ -176,11 +196,55 @@ class NEWTWindow implements GLEventListener {
 
 		});
 		glWindow.addKeyListener(keyboardInput);
+		if (keyboardPanel != null) {
+			glWindow.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mousePressed(final MouseEvent event) {
+					if (event.getButton() == MouseEvent.BUTTON1)
+						pressKeyboardPanel(event);
+				}
+
+				@Override
+				public void mouseReleased(final MouseEvent event) {
+					if (event.getButton() == MouseEvent.BUTTON1)
+						releaseKeyboardPanel();
+				}
+
+				@Override
+				public void mouseExited(final MouseEvent event) {
+					releaseKeyboardPanel();
+				}
+			});
+		}
 
 		glWindow.addGLEventListener(this /* GLEventListener */);
 		final Animator animator = new Animator();
 		animator.add(glWindow);
 		animator.start();
+	}
+
+	private void pressKeyboardPanel(final MouseEvent event) {
+		if (keyboardSurfaceHeight <= 0)
+			return;
+		final int windowWidth = Math.max(1, window.getWidth());
+		final int windowHeight = Math.max(1, window.getHeight());
+		final float surfaceX = event.getX() * (float) realWindowSize[0] / windowWidth;
+		final float surfaceY = event.getY() * (float) realWindowSize[1] / windowHeight;
+		if (surfaceY < displaySurfaceHeight)
+			return;
+		final float panelY = (surfaceY - displaySurfaceHeight)
+				* JOGLKeyboardPanel.LOGICAL_HEIGHT / keyboardSurfaceHeight;
+		keyboardPanel.press(surfaceX, panelY, realWindowSize[0]);
+	}
+
+	private void releaseKeyboardPanel() {
+		if (keyboardPanel != null)
+			keyboardPanel.release();
+	}
+
+	void setKeyboardLayer(final Layer layer) {
+		if (keyboardPanel != null)
+			keyboardPanel.setLayer(layer);
 	}
 
 	private void configureNativeWindowing() {
@@ -252,19 +316,17 @@ class NEWTWindow implements GLEventListener {
 		JOGLRenderer.gl = gl;
 		onGLContext.submit(gl);
 
-		final boolean linear = windowZoom % (int) windowZoom != 0f;
-		if (refreshViewport) {
+		final boolean linear = Math.abs(windowZoom - Math.round(windowZoom)) > 0.001f;
+		final boolean viewportChanged = refreshViewport;
+		if (keyboardPanel != null) {
+			configureViewport(gl, 0, keyboardSurfaceHeight, realWindowSize[0], displaySurfaceHeight,
+					engine.size[0], engine.size[1]);
+		} else if (viewportChanged) {
+			configureViewport(gl, 0, 0, realWindowSize[0], realWindowSize[1],
+					engine.size[0], engine.size[1]);
+		}
+		if (viewportChanged) {
 			refreshViewport = false;
-			gl.glViewport(0, 0, realWindowSize[0], realWindowSize[1]);
-
-			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-			gl.glLoadIdentity();
-
-			gl.glOrtho(0.0, engine.size[0], engine.size[1], 0.0, -1, 1);
-
-			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-			gl.glLoadIdentity();
-
 			for (final Texture t : engine.registeredTextures) {
 				t.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, linear ? GL.GL_LINEAR : GL.GL_NEAREST);
 				t.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
@@ -286,6 +348,11 @@ class NEWTWindow implements GLEventListener {
 		engine.repaint();
 
 		renderer.endDrawCycle();
+		if (keyboardPanel != null && keyboardSurfaceHeight > 0) {
+			configureViewport(gl, 0, 0, realWindowSize[0], keyboardSurfaceHeight,
+					realWindowSize[0], JOGLKeyboardPanel.LOGICAL_HEIGHT);
+			keyboardPanel.render(renderer, realWindowSize[0], engine.getKeyboardFont());
+		}
 
 		gl.glDisableClientState(GLPointerFunc.GL_COLOR_ARRAY);
 		gl.glDisableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
@@ -295,18 +362,28 @@ class NEWTWindow implements GLEventListener {
 
 	}
 
+	private static void configureViewport(final GL2ES1 gl, final int x, final int y,
+			final int surfaceWidth, final int surfaceHeight,
+			final int logicalWidth, final int logicalHeight) {
+		gl.glViewport(x, y, Math.max(1, surfaceWidth), Math.max(1, surfaceHeight));
+		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+		gl.glLoadIdentity();
+		gl.glOrtho(0.0, Math.max(1, logicalWidth), Math.max(1, logicalHeight), 0.0, -1, 1);
+		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+		gl.glLoadIdentity();
+	}
+
 	void setSize(final int width, final int height) {
-		int zoom = (int) windowZoom;
-		if (zoom == 0)
-			zoom = onZoom.getLastValue().intValue();
-		if (zoom == 0)
-			zoom = 1;
-		window.setSize(width * zoom, height * zoom);
-		onRealResize.submit(new Integer[] { width * zoom, height * zoom });
+		final int realWidth = Math.max(1, Math.round(width * windowZoom));
+		final int realHeight = Math.max(1, Math.round(height * windowZoom))
+				+ (keyboardPanel == null ? 0 : JOGLKeyboardPanel.LOGICAL_HEIGHT);
+		window.setSize(realWidth, realHeight);
+		onRealResize.submit(new Integer[] { realWidth, realHeight });
 	}
 
 	@Override
 	public void dispose(final GLAutoDrawable drawable) {
+		releaseKeyboardPanel();
 		System.out.println("cleanup");
 //		final GL2ES1 gl = drawable.getGL().getGL2ES1();
 	}

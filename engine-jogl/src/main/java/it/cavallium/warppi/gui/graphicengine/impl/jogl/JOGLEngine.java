@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Semaphore;
 
@@ -14,6 +15,8 @@ import com.jogamp.opengl.util.texture.Texture;
 
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.StaticVars;
+import it.cavallium.warppi.device.input.HardwareKeyboardLayout;
+import it.cavallium.warppi.device.input.HardwareKeyboardLayout.Layer;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
@@ -30,6 +33,8 @@ public class JOGLEngine implements GraphicEngine {
 	private RenderingLoop d;
 	private JOGLRenderer r;
 	private final Map<String, JOGLFont> fontCache = new HashMap<>();
+	private volatile JOGLFont keyboardFont;
+	private volatile Layer keyboardLayer = Layer.NORMAL;
 	int[] size;
 	private final CopyOnWriteArrayList<BinaryFont> registeredFonts = new CopyOnWriteArrayList<>();
 	private final Semaphore exitSemaphore = new Semaphore(0);
@@ -61,7 +66,7 @@ public class JOGLEngine implements GraphicEngine {
 			wnd.window.setPosition(0, 0);
 		wnd.window.setResizable(r);
 		wnd.window.setUndecorated(!r);
-		wnd.window.setPointerVisible(false);
+		wnd.window.setPointerVisible(!raspberryProductionMode);
 	}
 
 	@Override
@@ -80,6 +85,7 @@ public class JOGLEngine implements GraphicEngine {
 		created = false;
 		raspberryProductionMode = Boolean.getBoolean(RASPBERRY_PRODUCTION_PROPERTY)
 				|| WarpPI.getPlatform().isRunningOnRaspberry();
+		keyboardLayer = HardwareKeyboardLayout.activeLayer();
 		this.getSize();
 		size = new int[] { this.getSize()[0], this.getSize()[1] };
 		created = true;
@@ -98,6 +104,14 @@ public class JOGLEngine implements GraphicEngine {
 
 	boolean isRaspberryProductionMode() {
 		return raspberryProductionMode;
+	}
+
+	Layer getKeyboardLayer() {
+		return keyboardLayer;
+	}
+
+	JOGLFont getKeyboardFont() {
+		return keyboardFont;
 	}
 
 	/**
@@ -137,7 +151,7 @@ public class JOGLEngine implements GraphicEngine {
 	public void start(final RenderingLoop d) {
 		this.d = d;
 		wnd.window.setVisible(true);
-		wnd.window.setPointerVisible(false);
+		wnd.window.setPointerVisible(!raspberryProductionMode);
 		if (raspberryProductionMode) {
 			final int screenWidth = wnd.window.getScreen().getWidth();
 			final int screenHeight = wnd.window.getScreen().getHeight();
@@ -166,6 +180,14 @@ public class JOGLEngine implements GraphicEngine {
 	}
 
 	@Override
+	public void keyboardLayerChanged(final Layer layer) {
+		keyboardLayer = Objects.requireNonNull(layer, "layer");
+		final NEWTWindow currentWindow = wnd;
+		if (currentWindow != null)
+			currentWindow.setKeyboardLayer(keyboardLayer);
+	}
+
+	@Override
 	public JOGLRenderer getRenderer() {
 		return r;
 	}
@@ -173,23 +195,34 @@ public class JOGLEngine implements GraphicEngine {
 	@Override
 	public BinaryFont loadFont(final String name) throws IOException {
 		for (final Entry<String, JOGLFont> entry : fontCache.entrySet())
-			if (entry.getKey().equals(name))
+			if (entry.getKey().equals(name)) {
+				rememberKeyboardFont(name, entry.getValue());
 				return entry.getValue();
+			}
 		final JOGLFont font = new JOGLFont(name);
 		this.registerFont(font);
 		fontCache.put(name, font);
+		rememberKeyboardFont(name, font);
 		return font;
 	}
 
 	@Override
 	public BinaryFont loadFont(final String path, final String name) throws IOException {
 		for (final Entry<String, JOGLFont> entry : fontCache.entrySet())
-			if (entry.getKey().equals(name))
+			if (entry.getKey().equals(name)) {
+				rememberKeyboardFont(name, entry.getValue());
 				return entry.getValue();
+			}
 		final JOGLFont font = new JOGLFont(path, name);
 		this.registerFont(font);
 		fontCache.put(name, font);
+		rememberKeyboardFont(name, font);
 		return font;
+	}
+
+	private void rememberKeyboardFont(final String name, final JOGLFont font) {
+		if ("smallest".equals(name))
+			keyboardFont = font;
 	}
 
 	@Override
