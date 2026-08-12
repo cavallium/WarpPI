@@ -96,14 +96,39 @@ final class JOGLKeyboardPanel {
 			final PhysicalRow row = HardwareKeyboardLayout.rows().get(rowIndex);
 			final float y = rowTop(rowIndex) + (KEY_HEIGHT - font.charH) / 2f;
 			for (final PhysicalKey key : row.keys()) {
-				if (key.mapping(layer) == Key.NONE)
+				final Key mapping = key.mapping(layer);
+				if (mapping == Key.NONE)
 					continue;
 				setTextColor(renderer);
 				final float centerX = keyLeft(width, row, key.slot()) + keyWidth(width) / 2f;
-				renderer.glDrawStringCenter(centerX, y, key.compactLabel(layer));
+				renderer.glDrawStringCenter(centerX, y, panelLabelFor(mapping));
 			}
 		}
 		renderer.endDrawCycle();
+	}
+
+	/**
+	 * Readable, fixed-width ASCII captions for the on-screen keypad. Captions are
+	 * kept short so they remain clear inside the narrow physical-key layout.
+	 */
+	static String panelLabelFor(final Key key) {
+		return switch (Objects.requireNonNull(key, "key")) {
+			case SHIFT -> "SHF";
+			case HISTORY_BACK -> "H-";
+			case HISTORY_FORWARD -> "H+";
+			case SURD_MODE -> "S/D";
+			case SIMPLIFY -> "SIMP";
+			case RESET -> "CLR";
+			case LEFT -> "<";
+			case RIGHT -> ">";
+			case UP -> "^";
+			case DOWN -> "v";
+			case SETTINGS -> "MENU";
+			default -> {
+				final String compact = HardwareKeyboardLayout.compactLabelFor(key);
+				yield compact.length() <= 4 ? compact : compact.substring(0, 4);
+			}
+		};
 	}
 
 	private void setBorderColor(final JOGLRenderer renderer, final PhysicalKey key) {
