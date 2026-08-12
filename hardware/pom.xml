@@ -26,21 +26,6 @@
 			<version>0.10.0-alpha</version>
 		</dependency>
 		<dependency>
-			<groupId>com.pi4j</groupId>
-			<artifactId>pi4j-core</artifactId>
-			<version>${pi4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.pi4j</groupId>
-			<artifactId>pi4j-plugin-raspberrypi</artifactId>
-			<version>${pi4j.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.pi4j</groupId>
-			<artifactId>pi4j-plugin-gpiod</artifactId>
-			<version>${pi4j.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>ar.com.hjg</groupId>
 			<artifactId>pngj</artifactId>
 		</dependency>
@@ -62,6 +47,13 @@
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<argLine>--enable-native-access=ALL-UNNAMED --illegal-native-access=deny</argLine>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
 			</plugin>
 			<!-- Maven Assembly Plugin -->
@@ -78,6 +70,9 @@
 						<manifest>
 							<mainClass>it.cavallium.warppi.hardware.HardwareBoot</mainClass>
 						</manifest>
+						<manifestEntries>
+							<Enable-Native-Access>ALL-UNNAMED</Enable-Native-Access>
+						</manifestEntries>
 					</archive>
 
 				</configuration>

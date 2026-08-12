@@ -101,7 +101,7 @@ public class WarpPI {
 			WarpPI.getPlatform().setRunningOnRaspberry(false);
 		}
 		if (WarpPI.getPlatform().isRunningOnRaspberry()) {
-			WarpPI.getPlatform().getGpio().wiringPiSetupPhys();
+			WarpPI.getPlatform().getGpio().initialize();
 		} else {
 			if (WarpPI.getPlatform().isJavascript() == false) {
 				WarpPI.getPlatform().getSettings().setDebugEnabled(true);

@@ -3,6 +3,8 @@ package it.cavallium.warppi.device.input;
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.Platform.Gpio;
+import it.cavallium.warppi.Platform.Gpio.DigitalInput;
+import it.cavallium.warppi.Platform.Gpio.DigitalOutput;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.device.chip.ParallelToSerial;
 import it.cavallium.warppi.device.chip.SerialToParallel;
@@ -24,15 +26,13 @@ public class Keyboard {
 	public static volatile boolean alpha = false;
 	public static volatile boolean shift = false;
 
-	//From Serial
-	private static final int RCK_pin = 35;
-	private static final int SCK_and_CLK_pin = 38;
-	private static final int SER_pin = 36;
-
-	//To Serial
-	private static final int SH_LD_pin = 37;
-	private static final int QH_pin = 40;
-	private static final int CLK_INH_pin = 33;
+	// BCM GPIO line numbers for the keypad's 74HC595 and 74HC165.
+	private static final int OUTPUT_LATCH_GPIO = 19;
+	private static final int SHARED_CLOCK_GPIO = 20;
+	private static final int OUTPUT_DATA_GPIO = 16;
+	private static final int INPUT_LOAD_GPIO = 26;
+	private static final int INPUT_DATA_GPIO = 21;
+	private static final int INPUT_CLOCK_INHIBIT_GPIO = 13;
 
 	private static final Key[][] pressedRawKeys = new Key[MATRIX_SIZE][MATRIX_SIZE];
 	public static volatile boolean[][] debugKeysDown = new boolean[8][8];
@@ -90,10 +90,15 @@ public class Keyboard {
 
 	private static void runRaspberryKeyboard() throws InterruptedException {
 		final Gpio gpio = WarpPI.getPlatform().getGpio();
-		configureKeyboardPins(gpio);
-		final SerialToParallel columns = new SerialToParallel(gpio, RCK_pin, SCK_and_CLK_pin, SER_pin);
-		final ParallelToSerial rows = new ParallelToSerial(gpio, SH_LD_pin, CLK_INH_pin, QH_pin,
-				SCK_and_CLK_pin);
+		final DigitalOutput clockInhibit = gpio.output(INPUT_CLOCK_INHIBIT_GPIO, true);
+		final DigitalOutput outputLatch = gpio.output(OUTPUT_LATCH_GPIO, false);
+		final DigitalOutput outputData = gpio.output(OUTPUT_DATA_GPIO, false);
+		final DigitalOutput inputLoad = gpio.output(INPUT_LOAD_GPIO, true);
+		final DigitalOutput sharedClock = gpio.output(SHARED_CLOCK_GPIO, false);
+		final DigitalInput inputData = gpio.input(INPUT_DATA_GPIO);
+		final SerialToParallel columns = new SerialToParallel(outputLatch, sharedClock, outputData);
+		final ParallelToSerial rows = new ParallelToSerial(inputLoad, clockInhibit, inputData, sharedClock,
+				gpio::delayMicroseconds);
 		final KeyboardMatrixScanner scanner = new KeyboardMatrixScanner(columns, rows, Keyboard::onMatrixTransition,
 				MATRIX_DEBOUNCE_SAMPLES);
 
@@ -107,33 +112,20 @@ public class Keyboard {
 			try {
 				scanner.releaseAll();
 			} finally {
-				setKeyboardPinsIdle(gpio, columns);
+				setKeyboardPinsIdle(clockInhibit, inputLoad, outputLatch, outputData, sharedClock, columns);
 			}
 		}
 	}
 
-	private static void configureKeyboardPins(final Gpio gpio) {
-		gpio.pinMode(CLK_INH_pin, gpio.valueOutput());
-		gpio.pinMode(RCK_pin, gpio.valueOutput());
-		gpio.pinMode(SER_pin, gpio.valueOutput());
-		gpio.pinMode(SH_LD_pin, gpio.valueOutput());
-		gpio.pinMode(SCK_and_CLK_pin, gpio.valueOutput());
-		gpio.pinMode(QH_pin, gpio.valueInput());
-
-		gpio.digitalWrite(CLK_INH_pin, gpio.valueHigh());
-		gpio.digitalWrite(RCK_pin, gpio.valueLow());
-		gpio.digitalWrite(SER_pin, gpio.valueLow());
-		gpio.digitalWrite(SH_LD_pin, gpio.valueHigh());
-		gpio.digitalWrite(SCK_and_CLK_pin, gpio.valueLow());
-	}
-
-	private static void setKeyboardPinsIdle(final Gpio gpio, final SerialToParallel columns) {
-		gpio.digitalWrite(CLK_INH_pin, gpio.valueHigh());
-		gpio.digitalWrite(SH_LD_pin, gpio.valueHigh());
+	private static void setKeyboardPinsIdle(final DigitalOutput clockInhibit, final DigitalOutput inputLoad,
+			final DigitalOutput outputLatch, final DigitalOutput outputData, final DigitalOutput sharedClock,
+			final SerialToParallel columns) {
+		clockInhibit.set(true);
+		inputLoad.set(true);
 		columns.writeByte(0);
-		gpio.digitalWrite(SER_pin, gpio.valueLow());
-		gpio.digitalWrite(RCK_pin, gpio.valueLow());
-		gpio.digitalWrite(SCK_and_CLK_pin, gpio.valueLow());
+		outputData.set(false);
+		outputLatch.set(false);
+		sharedClock.set(false);
 	}
 
 	private static void onMatrixTransition(final int row, final int column, final boolean pressed) {

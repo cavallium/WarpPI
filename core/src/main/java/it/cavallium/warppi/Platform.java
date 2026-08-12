@@ -81,34 +81,33 @@ public interface Platform {
 	 */
 	List<String> getRuleFilePaths() throws IOException;
 
-	public interface Gpio {
-		int valueOutput();
+	public interface Gpio extends AutoCloseable {
+		/** Opens the platform GPIO device and acquires its register mapping. */
+		void initialize() throws IOException;
 
-		int valuePwmOutput();
+		/** Returns a digital input for a Broadcom (BCM) GPIO line number. */
+		DigitalInput input(int bcmPin);
 
-		int valueInput();
+		/**
+		 * Returns a digital output for a BCM GPIO line number. The requested level
+		 * is applied before the line is switched to output mode.
+		 */
+		DigitalOutput output(int bcmPin, boolean initialHigh);
 
-		int valueHigh();
+		void delayMicroseconds(int microseconds);
 
-		int valueLow();
+		@Override
+		void close();
 
-		Object valueUnknownBoardType();
+		@FunctionalInterface
+		interface DigitalInput {
+			boolean isHigh();
+		}
 
-		void wiringPiSetupPhys();
-
-		void pinMode(int i, int type);
-
-		void digitalWrite(int pin, int val);
-
-		void digitalWrite(int pin, boolean val);
-
-		void pwmWrite(int pin, int val);
-
-		void delayMicroseconds(int t);
-
-		int digitalRead(int pin);
-
-		Object getBoardType();
+		@FunctionalInterface
+		interface DigitalOutput {
+			void set(boolean high);
+		}
 	}
 	
 	public interface ConsoleUtils {

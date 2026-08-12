@@ -1,34 +1,26 @@
 package it.cavallium.warppi.device.chip;
 
 import java.util.Objects;
+import java.util.function.IntConsumer;
 
-import it.cavallium.warppi.Platform.Gpio;
-import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.Platform.Gpio.DigitalInput;
+import it.cavallium.warppi.Platform.Gpio.DigitalOutput;
 
-public class ParallelToSerial {
+public final class ParallelToSerial {
 
-	private final Gpio gpio;
-	private final int shiftLoad;
-	private final int clockInhibit;
-	private final int serialData;
-	private final int clock;
-	private final int high;
-	private final int low;
+	private final DigitalOutput shiftLoad;
+	private final DigitalOutput clockInhibit;
+	private final DigitalInput serialData;
+	private final DigitalOutput clock;
+	private final IntConsumer delayMicroseconds;
 
-	public ParallelToSerial(final int shiftLoadPin, final int clockInhibitPin, final int serialDataPin,
-			final int clockPin) {
-		this(WarpPI.getPlatform().getGpio(), shiftLoadPin, clockInhibitPin, serialDataPin, clockPin);
-	}
-
-	public ParallelToSerial(final Gpio gpio, final int shiftLoadPin, final int clockInhibitPin,
-			final int serialDataPin, final int clockPin) {
-		this.gpio = Objects.requireNonNull(gpio);
-		this.shiftLoad = shiftLoadPin;
-		this.clockInhibit = clockInhibitPin;
-		this.serialData = serialDataPin;
-		this.clock = clockPin;
-		this.high = gpio.valueHigh();
-		this.low = gpio.valueLow();
+	public ParallelToSerial(final DigitalOutput shiftLoad, final DigitalOutput clockInhibit,
+			final DigitalInput serialData, final DigitalOutput clock, final IntConsumer delayMicroseconds) {
+		this.shiftLoad = Objects.requireNonNull(shiftLoad);
+		this.clockInhibit = Objects.requireNonNull(clockInhibit);
+		this.serialData = Objects.requireNonNull(serialData);
+		this.clock = Objects.requireNonNull(clock);
+		this.delayMicroseconds = Objects.requireNonNull(delayMicroseconds);
 	}
 
 	/**
@@ -36,40 +28,27 @@ public class ParallelToSerial {
 	 * Bit seven is input H and bit zero is input A.
 	 */
 	public int readByte() {
-		gpio.digitalWrite(clockInhibit, high);
-		gpio.digitalWrite(clock, low);
-		gpio.digitalWrite(shiftLoad, low);
-		gpio.delayMicroseconds(1);
-		gpio.digitalWrite(shiftLoad, high);
-		gpio.digitalWrite(clockInhibit, low);
+		clockInhibit.set(true);
+		clock.set(false);
+		shiftLoad.set(false);
+		delayMicroseconds.accept(1);
+		shiftLoad.set(true);
+		clockInhibit.set(false);
 
 		int data = 0;
 		try {
 			for (int bit = 7; bit >= 0; bit--) {
-				if (gpio.digitalRead(serialData) == high)
+				if (serialData.isHigh())
 					data |= 1 << bit;
 				if (bit > 0) {
-					gpio.digitalWrite(clock, high);
-					gpio.digitalWrite(clock, low);
+					clock.set(true);
+					clock.set(false);
 				}
 			}
 			return data;
 		} finally {
-			gpio.digitalWrite(clockInhibit, high);
-			gpio.digitalWrite(clock, low);
+			clockInhibit.set(true);
+			clock.set(false);
 		}
-	}
-
-	/**
-	 * @deprecated Prefer {@link #readByte()} to avoid allocating a boolean array
-	 *             for each transfer.
-	 */
-	@Deprecated
-	public boolean[] read() {
-		final int value = readByte();
-		final boolean[] data = new boolean[Byte.SIZE];
-		for (int bit = 0; bit < Byte.SIZE; bit++)
-			data[bit] = (value & 1 << bit) != 0;
-		return data;
 	}
 }
