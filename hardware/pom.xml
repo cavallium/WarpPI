@@ -53,7 +53,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4.1</version>
 				<configuration>
 					<!-- get all project dependencies -->
 					<descriptorRefs>
@@ -81,7 +80,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.0.2</version>
 				<configuration>
 					<encoding>UTF-8</encoding>
 				</configuration>

@@ -28,10 +28,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>11</java.version>
-		<maven.compiler.source>11</maven.compiler.source>
-		<maven.compiler.target>11</maven.compiler.target>
-		<maven.compiler.release>11</maven.compiler.release>
+		<java.version>21</java.version>
+		<maven.compiler.release>${java.version}</maven.compiler.release>
 		<src.dir>src/main/java</src.dir>
 		<src.dir2>src/main/java</src.dir2>
 		<src.resdir>src/main/resources</src.resdir>
@@ -132,11 +130,6 @@
 				<artifactId>pngj</artifactId>
 				<version>2.1.0</version>
 			</dependency>
-			<dependency>
-				<groupId>ar.com.hjg</groupId>
-				<artifactId>pngj</artifactId>
-				<version>2.1.0</version>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
 
@@ -147,12 +140,12 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.8.0</version>
+					<version>3.15.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-source-plugin</artifactId>
-					<version>3.0.1</version>
+					<version>3.4.0</version>
 					<executions>
 						<execution>
 							<id>attach-sources</id>
@@ -166,23 +159,27 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
-					<version>2.22.0</version>
-					<configuration>
-						<useSystemClassLoader>false</useSystemClassLoader>
-						<argLine>
-							--illegal-access=permit
-						</argLine>
-					</configuration>
+					<version>3.5.6</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.felix</groupId>
 					<artifactId>maven-bundle-plugin</artifactId>
-					<version>3.5.1</version>
+					<version>6.1.0</version>
 				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.0.2</version>
+					<version>3.5.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>3.5.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>3.8.0</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
@@ -190,7 +187,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>versions-maven-plugin</artifactId>
-				<version>2.5</version>
+				<version>2.21.0</version>
 				<configuration>
 					<generateBackupPoms>false</generateBackupPoms>
 				</configuration>
@@ -198,28 +195,26 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
-				<version>2.22.0</version>
-				<configuration>
-					<argLine>
-						--illegal-access=permit
-					</argLine>
-				</configuration>
+				<version>3.5.6</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-enforcer-plugin</artifactId>
-				<version>3.0.0-M2</version>
+				<version>3.6.3</version>
 				<executions>
 					<execution>
-						<id>enforce-maven</id>
+						<id>enforce-build-environment</id>
 						<goals>
 							<goal>enforce</goal>
 						</goals>
 						<configuration>
 							<rules>
 								<requireMavenVersion>
-									<version>3.0</version>
+									<version>[3.9.0,)</version>
 								</requireMavenVersion>
+								<requireJavaVersion>
+									<version>[21,)</version>
+								</requireJavaVersion>
 							</rules>
 						</configuration>
 					</execution>
