@@ -30,6 +30,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<java.version>21</java.version>
 		<maven.compiler.release>${java.version}</maven.compiler.release>
+		<pi4j.version>3.0.4</pi4j.version>
 		<teavm.version>0.15.0</teavm.version>
 		<src.dir>src/main/java</src.dir>
 		<src.dir2>src/main/java</src.dir2>
@@ -41,7 +42,7 @@
 		<module>core</module>
 		<module>util</module>
 		<module>bigdecimal-math</module>
-		<!-- <module>hardware</module> -->
+		<module>hardware</module>
 		<module>desktop</module>
 		<module>engine-jogl</module>
 	</modules>

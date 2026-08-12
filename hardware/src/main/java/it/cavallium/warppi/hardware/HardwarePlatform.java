@@ -6,9 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.boot.StartupArguments;
@@ -16,61 +14,48 @@ import it.cavallium.warppi.device.DeviceStateDevice;
 import it.cavallium.warppi.device.display.BacklightOutputDevice;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.device.display.NoDisplaysAvailableException;
+import it.cavallium.warppi.device.display.NullBacklightOutputDevice;
+import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.device.input.KeyboardInputDevice;
 import it.cavallium.warppi.device.input.PIHardwareTouchDevice;
 import it.cavallium.warppi.device.input.TouchInputDevice;
-import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
-import it.cavallium.warppi.gui.graphicengine.impl.framebuffer.FBEngine;
 import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLDisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLEngine;
 import it.cavallium.warppi.util.Error;
 
-public class HardwarePlatform implements Platform {
-
-	private final HardwareConsoleUtils cu;
-	private final HardwareGpio gi;
-	private final HardwareStorageUtils su;
-	private final ImageUtils pu;
-	private final String on;
-	private final Map<String, GraphicEngine> el;
-	private final HardwareSettings settings;
-	private Boolean runningOnRaspberryOverride = null;
-	private StartupArguments args;
+public final class HardwarePlatform implements Platform {
+	private final HardwareConsoleUtils consoleUtils = new HardwareConsoleUtils();
+	private final HardwareGpio gpio = new HardwareGpio();
+	private final HardwareStorageUtils storageUtils = new HardwareStorageUtils();
+	private final ImageUtils imageUtils = new HardwareImageUtils();
+	private final String osName = System.getProperty("os.name").toLowerCase();
+	private final HardwareSettings settings = new HardwareSettings();
+	private final BacklightOutputDevice backlightOutputDevice = new NullBacklightOutputDevice();
+	private Boolean runningOnRaspberryOverride;
+	private StartupArguments arguments;
 	private DisplayOutputDevice displayOutputDevice;
-	private BacklightOutputDevice backlightOutputDevice;
 	private KeyboardInputDevice keyboardInputDevice;
 	private TouchInputDevice touchInputDevice;
-
-	public HardwarePlatform() {
-		cu = new HardwareConsoleUtils();
-		gi = new HardwareGpio();
-		su = new HardwareStorageUtils();
-		pu = new HardwareImageUtils();
-		on = System.getProperty("os.name").toLowerCase();
-		el = new HashMap<>();
-		el.put("GPU engine", new JOGLEngine());
-		el.put("framebuffer engine", new FBEngine());
-		settings = new HardwareSettings();
-	}
+	private DeviceStateDevice deviceStateDevice;
 
 	@Override
 	public ConsoleUtils getConsoleUtils() {
-		return cu;
+		return consoleUtils;
 	}
 
 	@Override
 	public Gpio getGpio() {
-		return gi;
+		return gpio;
 	}
 
 	@Override
 	public StorageUtils getStorageUtils() {
-		return su;
+		return storageUtils;
 	}
 
 	@Override
 	public ImageUtils getImageUtils() {
-		return pu;
+		return imageUtils;
 	}
 
 	@Override
@@ -79,23 +64,27 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public void setThreadName(final Thread t, final String name) {
-		t.setName(name);
+	public void setThreadName(final Thread thread, final String name) {
+		thread.setName(name);
 	}
 
 	@Override
-	public void setThreadDaemon(final Thread t) {
-		t.setDaemon(true);
+	public void setThreadDaemon(final Thread thread) {
+		thread.setDaemon(true);
 	}
 
 	@Override
-	public void setThreadDaemon(final Thread t, final boolean value) {
-		t.setDaemon(value);
+	public void setThreadDaemon(final Thread thread, final boolean value) {
+		thread.setDaemon(value);
 	}
 
 	@Override
 	public void exit(final int value) {
-		System.exit(value);
+		try {
+			gpio.close();
+		} finally {
+			System.exit(value);
+		}
 	}
 
 	@Override
@@ -110,16 +99,16 @@ public class HardwarePlatform implements Platform {
 
 	@Override
 	public String getOsName() {
-		return on;
+		return osName;
 	}
 
 	@Override
-	public void alphaChanged(final boolean val) {
-
+	public void alphaChanged(final boolean value) {
 	}
 
 	@Override
-	public void shiftChanged(final boolean val) {}
+	public void shiftChanged(final boolean value) {
+	}
 
 	@Override
 	public Semaphore newSemaphore() {
@@ -127,8 +116,8 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public Semaphore newSemaphore(final int i) {
-		return new HardwareSemaphore(i);
+	public Semaphore newSemaphore(final int permits) {
+		return new HardwareSemaphore(permits);
 	}
 
 	@Override
@@ -138,64 +127,38 @@ public class HardwarePlatform implements Platform {
 
 	@Override
 	public void throwNewExceptionInInitializerError(final String text) {
-		throw new ExceptionInInitializerError();
+		throw new ExceptionInInitializerError(text);
 	}
 
 	@Override
-	public String[] stacktraceToString(final Error e) {
-		final StringWriter sw = new StringWriter();
-		final PrintWriter pw = new PrintWriter(sw);
-		e.printStackTrace(pw);
-		return sw.toString().toUpperCase().replace("\t", "    ").replace("\r", "").split("\n");
+	public String[] stacktraceToString(final Error error) {
+		final StringWriter writer = new StringWriter();
+		error.printStackTrace(new PrintWriter(writer));
+		return writer.toString().toUpperCase().replace("\t", "    ").replace("\r", "").split("\n");
 	}
 
 	@Override
 	public List<String> getRuleFilePaths() throws IOException {
-		final File dslRulesPath = getStorageUtils().get("rules/");
-		List<String> paths = new ArrayList<>();
-		if (dslRulesPath.exists()) {
-			for (final File file : getStorageUtils().walk(dslRulesPath)) {
+		final File rulesPath = storageUtils.get("rules/");
+		final List<String> paths = new ArrayList<>();
+		if (rulesPath.exists()) {
+			for (final File file : storageUtils.walk(rulesPath)) {
 				final String path = file.toString();
-				if (path.endsWith(".rules")) {
+				if (path.endsWith(".rules"))
 					paths.add(path);
-				}
 			}
 		}
 		return paths;
 	}
 
 	@Override
-	public void setRunningOnRaspberry(boolean b) {
-		runningOnRaspberryOverride = b;
+	public void setRunningOnRaspberry(final boolean value) {
+		runningOnRaspberryOverride = value;
 	}
-	
+
 	@Override
 	public boolean isRunningOnRaspberry() {
-		if (runningOnRaspberryOverride != null) return runningOnRaspberryOverride;
-		return true;
-		/*
-		return CacheUtils.get("isRunningOnRaspberry", 24 * 60 * 60 * 1000, () -> {
-			if (Engine.getPlatform().isJavascript())
-				return false;
-			try {
-				// Check if it's a raspberry using pi4j
-				return Engine.getPlatform().getGpio().getBoardType() != Engine.getPlatform().getGpio().valueUnknownBoardType();
-			} catch (final Exception e) {
-				// Check if it's a raspberry using other methods
-				if (Engine.getPlatform().getOsName().equals("Linux")) {
-					try {
-						final File osRelease = new File("/etc", "os-release");
-						return FileUtils.readLines(osRelease, "UTF-8").stream().map(String::toLowerCase).anyMatch(line -> line.contains("raspbian") && line.contains("name"));
-					} catch (IOException readException) {
-						return false;
-					}
-		
-				} else {
-					return false;
-				}
-			}
-		});
-		 */
+		return runningOnRaspberryOverride == null || runningOnRaspberryOverride;
 	}
 
 	@Override
@@ -219,41 +182,47 @@ public class HardwarePlatform implements Platform {
 	}
 
 	@Override
-	public void setArguments(StartupArguments args) {
-		this.args = args;
-		this.chooseDevices();
+	public DeviceStateDevice getDeviceStateDevice() {
+		return deviceStateDevice;
+	}
+
+	@Override
+	public void setArguments(final StartupArguments arguments) {
+		this.arguments = arguments;
+		chooseDevices();
 	}
 
 	private void chooseDevices() {
-		List<DisplayOutputDevice> availableDevices = new ArrayList<>();
-		List<DisplayOutputDevice> guiDevices = List.of(new JOGLDisplayOutputDevice());
-		List<DisplayOutputDevice> consoleDevices = List.of();
-
-		if (args.isMSDOSModeEnabled() || args.isNoGUIEngineForced()) {
-			availableDevices.addAll(consoleDevices);
-		}
-		if (!args.isNoGUIEngineForced()) {
-			availableDevices.addAll(guiDevices);
-		}
-		
-		if (availableDevices.size() == 0) {
+		final List<DisplayOutputDevice> availableDevices = new ArrayList<>();
+		if (!arguments.isNoGUIEngineForced())
+			availableDevices.add(new JOGLDisplayOutputDevice());
+		if (availableDevices.isEmpty())
 			throw new NoDisplaysAvailableException();
-		}
 
-		for (DisplayOutputDevice device : availableDevices) {
-			if (device instanceof JOGLDisplayOutputDevice) {
-				if (args.isGPUEngineForced()) {
-					this.displayOutputDevice = device;
-					break;
+		displayOutputDevice = availableDevices.get(0);
+		final JOGLEngine engine = (JOGLEngine) displayOutputDevice.getGraphicEngine();
+		touchInputDevice = new PIHardwareTouchDevice(false, false, false, engine);
+		final Keyboard keyboard = new Keyboard();
+		keyboardInputDevice = keyboard::startKeyboard;
+		deviceStateDevice = new DeviceStateDevice() {
+			@Override
+			public void initialize() {
+			}
+
+			@Override
+			public void waitForExit() {
+				try {
+					engine.waitForExit();
+				} catch (final InterruptedException e) {
+					Thread.currentThread().interrupt();
+					engine.destroy();
 				}
 			}
-		}
 
-		if (this.displayOutputDevice == null) this.displayOutputDevice = availableDevices.get(0);
-
-		if (displayOutputDevice instanceof JOGLDisplayOutputDevice) {
-			this.touchInputDevice = new PIHardwareTouchDevice(false, false, false, (JOGLEngine) displayOutputDevice.getGraphicEngine());
-		}
+			@Override
+			public void powerOff() {
+				engine.destroy();
+			}
+		};
 	}
-
 }

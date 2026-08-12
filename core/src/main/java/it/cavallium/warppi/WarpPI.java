@@ -102,7 +102,6 @@ public class WarpPI {
 		}
 		if (WarpPI.getPlatform().isRunningOnRaspberry()) {
 			WarpPI.getPlatform().getGpio().wiringPiSetupPhys();
-			WarpPI.getPlatform().getGpio().pinMode(12, WarpPI.getPlatform().getGpio().valuePwmOutput());
 		} else {
 			if (WarpPI.getPlatform().isJavascript() == false) {
 				WarpPI.getPlatform().getSettings().setDebugEnabled(true);
