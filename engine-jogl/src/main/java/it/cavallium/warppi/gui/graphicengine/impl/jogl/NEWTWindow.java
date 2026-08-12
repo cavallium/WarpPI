@@ -28,6 +28,7 @@
 
 package it.cavallium.warppi.gui.graphicengine.impl.jogl;
 
+import com.jogamp.nativewindow.NativeWindowFactory;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.WindowEvent;
@@ -60,6 +61,7 @@ import it.cavallium.warppi.util.EventSubmitter;
  */
 
 class NEWTWindow implements GLEventListener {
+	private static final String RASPBERRY_NATIVE_WINDOW_TYPE = ".bcm.vc.iv";
 
 	private final JOGLEngine engine;
 	private final JOGLRenderer renderer;
@@ -105,6 +107,7 @@ class NEWTWindow implements GLEventListener {
 	}
 
 	public void create() {
+		configureNativeWindowing();
 		System.out.println("Loading OpenGL...");
 		System.out.println(GLProfile.glAvailabilityToString());
 		if (!GLProfile.isAvailable(GLProfile.GL2ES1)) {
@@ -388,6 +391,24 @@ class NEWTWindow implements GLEventListener {
 		final Animator animator = new Animator();
 		animator.add(glWindow);
 		animator.start();
+	}
+
+	private void configureNativeWindowing() {
+		if (!engine.isRaspberryProductionMode())
+			return;
+
+		// These must be set before NativeWindowFactory or GLProfile initializes.
+		System.setProperty("java.awt.headless", "true");
+		System.setProperty("nativewindow.ws.name", RASPBERRY_NATIVE_WINDOW_TYPE);
+
+		final String detectedType = NativeWindowFactory.getNativeWindowType(false);
+		final String selectedType = NativeWindowFactory.getNativeWindowType(true);
+		if (!RASPBERRY_NATIVE_WINDOW_TYPE.equals(detectedType)
+				|| !RASPBERRY_NATIVE_WINDOW_TYPE.equals(selectedType)) {
+			throw new IllegalStateException("Refusing non-native Raspberry NEWT backend: detected="
+					+ detectedType + ", selected=" + selectedType);
+		}
+		System.out.println("NEWT native backend: " + selectedType);
 	}
 
 	@Override

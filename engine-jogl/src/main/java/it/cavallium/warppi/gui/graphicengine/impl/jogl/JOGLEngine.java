@@ -21,9 +21,11 @@ import it.cavallium.warppi.gui.graphicengine.Skin;
 import it.cavallium.warppi.util.EventSubscriber;
 
 public class JOGLEngine implements GraphicEngine {
+	private static final String RASPBERRY_PRODUCTION_PROPERTY = "warppi.production.raspberry";
 
 	private volatile boolean initialized;
 	private volatile boolean created;
+	private boolean raspberryProductionMode;
 	private NEWTWindow wnd;
 	private RenderingLoop d;
 	private JOGLRenderer r;
@@ -76,6 +78,8 @@ public class JOGLEngine implements GraphicEngine {
 	public void create(final Runnable onInitialized) {
 		initialized = false;
 		created = false;
+		raspberryProductionMode = Boolean.getBoolean(RASPBERRY_PRODUCTION_PROPERTY)
+				|| WarpPI.getPlatform().isRunningOnRaspberry();
 		this.getSize();
 		size = new int[] { this.getSize()[0], this.getSize()[1] };
 		created = true;
@@ -85,9 +89,15 @@ public class JOGLEngine implements GraphicEngine {
 		wnd = new NEWTWindow(this);
 		wnd.create();
 		setDisplayMode(this.getSize()[0], this.getSize()[1]);
-		setResizable(WarpPI.getPlatform().getSettings().isDebugEnabled());
+		setResizable(!raspberryProductionMode);
+		if (raspberryProductionMode && !wnd.window.setFullscreen(true))
+			throw new IllegalStateException("NEWT rejected Raspberry production fullscreen mode");
 		initialized = true;
 		wnd.onInitialized = onInitialized;
+	}
+
+	boolean isRaspberryProductionMode() {
+		return raspberryProductionMode;
 	}
 
 	/**
@@ -128,6 +138,21 @@ public class JOGLEngine implements GraphicEngine {
 		this.d = d;
 		wnd.window.setVisible(true);
 		wnd.window.setPointerVisible(false);
+		if (raspberryProductionMode) {
+			final int screenWidth = wnd.window.getScreen().getWidth();
+			final int screenHeight = wnd.window.getScreen().getHeight();
+			if (!wnd.window.isFullscreen()
+					|| wnd.window.getX() != 0
+					|| wnd.window.getY() != 0
+					|| wnd.window.getSurfaceWidth() != screenWidth
+					|| wnd.window.getSurfaceHeight() != screenHeight) {
+				throw new IllegalStateException("NEWT did not create an exact fullscreen surface: window="
+						+ wnd.window.getX() + "," + wnd.window.getY() + " "
+						+ wnd.window.getSurfaceWidth() + "x" + wnd.window.getSurfaceHeight()
+						+ ", screen=" + screenWidth + "x" + screenHeight);
+			}
+			System.out.println("NEWT Raspberry production fullscreen: " + screenWidth + "x" + screenHeight);
+		}
 	}
 
 	@Override
