@@ -221,7 +221,7 @@ public class JOGLEngine implements GraphicEngine {
 	}
 
 	private void rememberKeyboardFont(final String name, final JOGLFont font) {
-		if ("smallest".equals(name))
+		if ("smal".equals(name))
 			keyboardFont = font;
 	}
 
