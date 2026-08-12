@@ -106,15 +106,26 @@ public class TeaVMPlatform implements Platform {
 	@Override
 	public void alphaChanged(final boolean alpha) {
 		this.alpha = alpha;
-		final HTMLDocument doc = Window.current().getDocument();
-		doc.getBody().setClassName((shift ? "shift " : "") + (alpha ? "alpha" : ""));
+		updateKeyboardLayerClasses();
 	}
 
 	@Override
 	public void shiftChanged(final boolean shift) {
 		this.shift = shift;
+		updateKeyboardLayerClasses();
+	}
+
+	private void updateKeyboardLayerClasses() {
 		final HTMLDocument doc = Window.current().getDocument();
-		doc.getBody().setClassName((shift ? "shift " : "") + (alpha ? "alpha" : ""));
+		setBodyClass(doc, "shift", shift);
+		setBodyClass(doc, "alpha", alpha);
+	}
+
+	private static void setBodyClass(final HTMLDocument document, final String className, final boolean enabled) {
+		if (enabled && !document.getBody().getClassList().contains(className))
+			document.getBody().getClassList().add(className);
+		else if (!enabled && document.getBody().getClassList().contains(className))
+			document.getBody().getClassList().remove(className);
 	}
 
 	@Override
