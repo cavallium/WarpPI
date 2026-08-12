@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.StaticVars;
+import it.cavallium.warppi.device.input.HardwareKeyboardLayout.Layer;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
@@ -226,12 +227,9 @@ public class SwingEngine implements GraphicEngine {
 		return true;
 	}
 
-	public void setAlphaChanged(final boolean val) {
-		INSTANCE.setAlphaChanged(val);
-	}
-
-	public void setShiftChanged(final boolean val) {
-		INSTANCE.setShiftChanged(val);
+	@Override
+	public void keyboardLayerChanged(final Layer layer) {
+		INSTANCE.setKeyboardLayer(layer);
 	}
 
 	public Insets getInsets() {

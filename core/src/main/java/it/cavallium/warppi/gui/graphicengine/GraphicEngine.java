@@ -1,5 +1,6 @@
 package it.cavallium.warppi.gui.graphicengine;
 
+import it.cavallium.warppi.device.input.HardwareKeyboardLayout.Layer;
 import it.cavallium.warppi.util.EventSubscriber;
 
 import java.io.IOException;
@@ -37,6 +38,9 @@ public interface GraphicEngine {
 	void start(RenderingLoop d);
 
 	void repaint();
+
+	/** Notifies engines that render a keypad when its visible mapping changes. */
+	default void keyboardLayerChanged(final Layer layer) {}
 
 	Renderer getRenderer();
 

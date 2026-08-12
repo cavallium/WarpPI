@@ -182,7 +182,7 @@ public class SwingWindow extends JFrame {
 		buttonsPanel.setVisible(true);
 		for (final PhysicalRow physicalRow : HardwareKeyboardLayout.rows())
 			createPhysicalRow(physicalRow, buttonImage);
-		refreshKeyboardLayer();
+		refreshKeyboardLayer(HardwareKeyboardLayout.activeLayer());
 
 		var size = super.getSize();
 		super.setSize(size.width, size.height + buttonsPanelContainer.getHeight());
@@ -277,20 +277,15 @@ public class SwingWindow extends JFrame {
 		rowPanel.add(b);
 	}
 
-	public void setAlphaChanged(final boolean val) {
-		refreshKeyboardLayer();
+	public void setKeyboardLayer(final Layer layer) {
+		refreshKeyboardLayer(layer);
 	}
 
-	public void setShiftChanged(final boolean val) {
-		refreshKeyboardLayer();
-	}
-
-	private void refreshKeyboardLayer() {
+	private void refreshKeyboardLayer(final Layer layer) {
 		if (!SwingUtilities.isEventDispatchThread()) {
-			SwingUtilities.invokeLater(this::refreshKeyboardLayer);
+			SwingUtilities.invokeLater(() -> refreshKeyboardLayer(layer));
 			return;
 		}
-		final Layer layer = HardwareKeyboardLayout.activeLayer();
 		for (final PhysicalRow physicalRow : HardwareKeyboardLayout.rows())
 			for (final PhysicalKey key : physicalRow.keys()) {
 				final SwingAdvancedButton btn = buttons[key.matrixRow()][key.matrixColumn()];

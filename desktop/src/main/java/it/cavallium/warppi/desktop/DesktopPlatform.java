@@ -24,6 +24,7 @@ import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.device.display.NoDisplaysAvailableException;
 import it.cavallium.warppi.device.display.NullBacklightOutputDevice;
 import it.cavallium.warppi.device.input.KeyboardInputDevice;
+import it.cavallium.warppi.device.input.HardwareKeyboardLayout;
 import it.cavallium.warppi.device.input.TouchInputDevice;
 import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.gui.graphicengine.impl.swing.SwingDisplayOutputDevice;
@@ -112,16 +113,17 @@ public class DesktopPlatform implements Platform {
 
 	@Override
 	public void alphaChanged(final boolean val) {
-		final DisplayOutputDevice currentEngine = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display;
-		if (currentEngine instanceof SwingEngine)
-			((SwingEngine) currentEngine).setAlphaChanged(val);
+		notifyKeyboardLayerChanged();
 	}
 
 	@Override
 	public void shiftChanged(final boolean val) {
-		final DisplayOutputDevice currentEngine = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display;
-		if (currentEngine instanceof SwingEngine)
-			((SwingEngine) currentEngine).setShiftChanged(val);
+		notifyKeyboardLayerChanged();
+	}
+
+	private void notifyKeyboardLayerChanged() {
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().graphicEngine
+				.keyboardLayerChanged(HardwareKeyboardLayout.activeLayer());
 	}
 
 	@Override
