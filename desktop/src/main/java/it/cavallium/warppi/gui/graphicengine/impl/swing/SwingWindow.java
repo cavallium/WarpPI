@@ -2,7 +2,12 @@ package it.cavallium.warppi.gui.graphicengine.impl.swing;
 
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.device.input.HardwareKeyboardLayout;
+import it.cavallium.warppi.device.input.HardwareKeyboardLayout.Layer;
+import it.cavallium.warppi.device.input.HardwareKeyboardLayout.PhysicalKey;
+import it.cavallium.warppi.device.input.HardwareKeyboardLayout.PhysicalRow;
 import it.cavallium.warppi.device.input.Keyboard;
+import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
 import it.cavallium.warppi.util.EventSubmitter;
 
@@ -162,6 +167,8 @@ public class SwingWindow extends JFrame {
 		if (StaticVars.startupArguments.isZoomed())
 			BTN_SIZE *= 2;
 
+		final BufferedImage buttonImage = ImageIO.read(
+				WarpPI.getPlatform().getStorageUtils().getResourceStream("/desktop-buttons.png"));
 		buttons = new SwingAdvancedButton[8][8];
 		final JPanel buttonsPanelContainer = new JPanel();
 		buttonsPanelContainer.setLayout(new FlowLayout());
@@ -169,44 +176,60 @@ public class SwingWindow extends JFrame {
 		this.add(buttonsPanelContainer, BorderLayout.PAGE_END);
 		buttonsPanel = new JPanel();
 		buttonsPanelContainer.add(buttonsPanel, BorderLayout.CENTER);
-		buttonsPanel.setLayout(new GridLayout(9, 7));
+		buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.Y_AXIS));
 		buttonsPanel.setBackground(Color.BLACK);
 		buttonsPanel.setDoubleBuffered(false);
 		buttonsPanel.setVisible(true);
-		for (int row = 0; row < 5; row++)
-			for (int col = 0; col < 7; col++)
-				if (row == 0 && col == 2 || row == 0 && col == 4 || row == 2 && col == 2) {
-					createBlankBox();
-				} else {
-					createBtn(row, col);
-				}
-		for (int row = 5; row < 8; row++) {
-			createBlankBox();
-			for (int col = 0; col < 5; col++)
-				createBtn(row, col);
-			createBlankBox();
-		}
-		final int b = 7;
-		createBlankBox();
-		for (int a = 4; a >= 0; a--)
-			createBtn(a, b);
-		createBlankBox();
+		for (final PhysicalRow physicalRow : HardwareKeyboardLayout.rows())
+			createPhysicalRow(physicalRow, buttonImage);
 
 		var size = super.getSize();
 		super.setSize(size.width, size.height + buttonsPanelContainer.getHeight());
 		super.pack();
 	}
 
-	private void createBlankBox() {
+	private void createPhysicalRow(final PhysicalRow physicalRow, final BufferedImage buttonImage)
+			throws IOException, URISyntaxException {
+		final JPanel rowPanel = new JPanel(new GridLayout(1, physicalRow.slotCount()));
+		final int slotWidth = (int) (BTN_SIZE * 1.5);
+		final Dimension rowSize = new Dimension(slotWidth * physicalRow.slotCount(), BTN_SIZE);
+		rowPanel.setPreferredSize(rowSize);
+		rowPanel.setMinimumSize(rowSize);
+		rowPanel.setMaximumSize(rowSize);
+		rowPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+		rowPanel.setBackground(Color.BLACK);
+		rowPanel.setDoubleBuffered(false);
+		buttonsPanel.add(rowPanel);
+
+		for (int slot = 0; slot < physicalRow.slotCount(); slot++) {
+			final PhysicalKey key = keyAtSlot(physicalRow, slot);
+			if (key == null)
+				createBlankBox(rowPanel);
+			else
+				createBtn(rowPanel, key, buttonImage);
+		}
+	}
+
+	private static PhysicalKey keyAtSlot(final PhysicalRow row, final int slot) {
+		for (final PhysicalKey key : row.keys())
+			if (key.slot() == slot)
+				return key;
+		return null;
+	}
+
+	private void createBlankBox(final JPanel rowPanel) {
 		final JPanel l = new JPanel();
 		l.setPreferredSize(new Dimension((int) (BTN_SIZE * 1.5), BTN_SIZE));
 		l.setBackground(Color.BLACK);
-		buttonsPanel.add(l);
+		rowPanel.add(l);
 	}
 
-	private void createBtn(final int row, final int col) throws IOException, URISyntaxException {
-		final BufferedImage img = ImageIO.read(WarpPI.getPlatform().getStorageUtils().getResourceStream("/desktop-buttons.png"));
-		final SwingAdvancedButton b = new SwingAdvancedButton(img, new Dimension((int) (BTN_SIZE * 1.5), BTN_SIZE));
+	private void createBtn(final JPanel rowPanel, final PhysicalKey key, final BufferedImage buttonImage)
+			throws IOException, URISyntaxException {
+		final int row = key.matrixRow();
+		final int col = key.matrixColumn();
+		final SwingAdvancedButton b = new SwingAdvancedButton(
+				buttonImage, new Dimension((int) (BTN_SIZE * 1.5), BTN_SIZE));
 		b.drawDefaultComponent = false;
 		b.setText(Keyboard.getKeyName(row, col));
 		b.setBasicForeground(Color.BLACK);
@@ -257,41 +280,31 @@ public class SwingWindow extends JFrame {
 			}
 		});
 		buttons[row][col] = b;
-		buttonsPanel.add(b);
+		rowPanel.add(b);
 	}
 
 	public void setAlphaChanged(final boolean val) {
-		for (int row = 0; row < buttons.length; row++)
-			for (int col = 0; col < buttons[0].length; col++) {
-				final SwingAdvancedButton btn = buttons[row][col];
-				if (btn != null) {
-					btn.setText(Keyboard.getKeyName(row, col));
-					if (row == 0 && col == 1)
-						if (val)
-							btn.state = 2;
-						else
-							btn.state = 0;
-					if (val && Keyboard.hasKeyName(row, col))
-						btn.setBasicForeground(Color.RED);
-					else
-						btn.setBasicForeground(Color.BLACK);
-				}
-			}
+		refreshKeyboardLayer();
 	}
 
 	public void setShiftChanged(final boolean val) {
+		refreshKeyboardLayer();
+	}
+
+	private void refreshKeyboardLayer() {
+		final Layer layer = HardwareKeyboardLayout.activeLayer();
 		for (int row = 0; row < buttons.length; row++)
 			for (int col = 0; col < buttons[0].length; col++) {
 				final SwingAdvancedButton btn = buttons[row][col];
 				if (btn != null) {
-					btn.setText(Keyboard.getKeyName(row, col));
-					if (row == 0 && col == 0)
-						if (val)
-							btn.state = 2;
-						else
-							btn.state = 0;
-					if (val && Keyboard.hasKeyName(row, col))
-						btn.setBasicForeground(new Color(255, 120, 0));
+					final Key normal = HardwareKeyboardLayout.mappingAt(row, col, Layer.NORMAL);
+					final Key active = HardwareKeyboardLayout.mappingAt(row, col, layer);
+					btn.setText(HardwareKeyboardLayout.labelFor(active));
+					btn.state = (row == 0 && col == 0 && layer == Layer.SHIFT
+							|| row == 0 && col == 1 && layer == Layer.ALT_ALPHA) ? 2 : 0;
+					if (active != Key.NONE && active != normal)
+						btn.setBasicForeground(layer == Layer.ALT_ALPHA
+								? new Color(244, 67, 54) : new Color(33, 150, 243));
 					else
 						btn.setBasicForeground(Color.BLACK);
 				}
