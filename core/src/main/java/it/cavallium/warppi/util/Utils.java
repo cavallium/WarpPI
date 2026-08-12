@@ -434,26 +434,23 @@ public class Utils {
 		}
 	}
 
+	public static byte[] convertStreamToByteArray(final InputStream stream) throws IOException {
+		try (stream; ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+			final byte[] buffer = new byte[8192];
+			int count;
+			while ((count = stream.read(buffer)) != -1)
+				output.write(buffer, 0, count);
+			return output.toByteArray();
+		}
+	}
+
+	/**
+	 * @deprecated The reported size is only a hint for many stream types. The
+	 *             stream is always read to EOF.
+	 */
+	@Deprecated
 	public static byte[] convertStreamToByteArray(final InputStream stream, final long size) throws IOException {
-
-		// check to ensure that file size is not larger than Integer.MAX_VALUE.
-		if (size > Integer.MAX_VALUE) {
-			return new byte[0];
-		}
-
-		final byte[] buffer = new byte[(int) size];
-		final ByteArrayOutputStream os = new ByteArrayOutputStream();
-
-		int line = 0;
-		// read bytes from stream, and store them in buffer
-		while ((line = stream.read(buffer)) != -1) {
-			// Writes bytes from byte array (buffer) into output stream.
-			os.write(buffer, 0, line);
-		}
-		stream.close();
-		os.flush();
-		os.close();
-		return os.toByteArray();
+		return convertStreamToByteArray(stream);
 	}
 
 	public static int[] realBytes(final byte[] bytes) {

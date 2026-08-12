@@ -72,7 +72,7 @@ public class RAWFont {
 
 	private void loadFont(final String string) throws IOException {
 		final URL res = ClassUtils.classLoader.getClass().getResource(string);
-		final int[] file = Utils.realBytes(Utils.convertStreamToByteArray(res.openStream(), res.getFile().length()));
+		final int[] file = Utils.realBytes(Utils.convertStreamToByteArray(res.openStream()));
 		final int filelength = file.length;
 		if (filelength >= 16) {
 			if (file[0x0] == 114 && file[0x1] == 97 && file[0x2] == 119 && file[0x3] == 0xFF && file[0x8] == 0xFF && file[0xD] == 0xFF) {

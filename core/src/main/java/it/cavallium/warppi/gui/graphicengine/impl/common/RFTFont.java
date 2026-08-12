@@ -1,12 +1,8 @@
 package it.cavallium.warppi.gui.graphicengine.impl.common;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform.ConsoleUtils;
@@ -101,8 +97,8 @@ public abstract class RFTFont implements BinaryFont {
 		if (!string.startsWith("/")) {
 			string = "/" + string;
 		}
-		InputStream res = WarpPI.getPlatform().getStorageUtils().getResourceStream(string);
-		final int[] file = Utils.realBytes(Utils.convertStreamToByteArray(res, res.available()));
+		final InputStream resource = WarpPI.getPlatform().getStorageUtils().getResourceStream(string);
+		final int[] file = Utils.realBytes(Utils.convertStreamToByteArray(resource));
 		final int filelength = file.length;
 		if (filelength >= 16) {
 			if (file[0x0] == 114 && file[0x1] == 97 && file[0x2] == 119 && file[0x3] == 0xFF && file[0x8] == 0xFF && file[0xD] == 0xFF) {
