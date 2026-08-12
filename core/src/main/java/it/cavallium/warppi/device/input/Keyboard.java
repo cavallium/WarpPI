@@ -712,183 +712,16 @@ public class Keyboard {
 		return Keyboard.debugKeysDown[row - 1][col - 1];
 	}
 
-	static final String[][][] KeyLabelsMap = /* [ROW, COLUMN, (0:normal 1:shift 2:alpha)] */
-			{ { /* ROW 0 */
-					{ "⇪", "⇪", null }, /* 0,0 */
-					{ "A", null, "A" }, /* 0,1 */
-					{ "", null, null }, /* 0,2 */
-					{ "⇧", null, null }, /* 0,3 */
-					{ "", null, null }, /* 0,4 */
-					{ "GUIDE", "GUIDE", "GUIDE" }, /* 0,5 */
-					{ "☼", "☼", null }, /* 0,6 */
-					{ "↩", null, null } /* 0,7 */
-			}, { /* ROW 1 */
-					{ "", null, null }, /* 1,0 */
-					{ "", null, null }, /* 1,1 */
-					{ "⇦", null, null }, /* 1,2 */
-					{ "OK", null, null }, /* 1,3 */
-					{ "⇨", null, null }, /* 1,4 */
-					{ "≪", null, null }, /* 1,5 */
-					{ "≫", null, null }, /* 1,6 */
-					{ "", null, null } /* 1,7 */
-			}, { /* ROW 2 */
-					{ "", null, null }, /* 2,0 */
-					{ "√▯", null, null }, /* 2,1 */
-					{ "", null, null }, /* 2,2 */
-					{ "⇩", null, null }, /* 2,3 */
-					{ "↶", null, null }, /* 2,4 */
-					{ "", null, null }, /* 2,5 */
-					{ "", null, null }, /* 2,6 */
-					{ "", null, null } /* 2,7 */
-			}, { /* ROW 3 */
-					{ "", null, null }, /* 3,0 */
-					{ "", null, null }, /* 3,1 */
-					{ "▯^▯", null, null }, /* 3,2 */
-					{ "▯^2", null, null }, /* 3,3 */
-					{ "", null, null }, /* 3,4 */
-					{ "", null, null }, /* 3,5 */
-					{ "", null, null }, /* 3,6 */
-					{ ".", null, "y" } /* 3,7 */
-			}, { /* ROW 4 */
-					{ "", null, null }, /* 4,0 */
-					{ "", null, null }, /* 4,1 */
-					{ "(▯)", null, null }, /* 4,2 */
-					{ ")", null, null }, /* 4,3 */
-					{ "", null, null }, /* 4,4 */
-					{ "S⇔D", null, null }, /* 4,5 */
-					{ "", null, null }, /* 4,6 */
-					{ "0", null, "x" } /* 4,7 */
-			}, { /* ROW 5 */
-					{ "7", null, null }, /* 5,0 */
-					{ "8", null, null }, /* 5,1 */
-					{ "9", null, null }, /* 5,2 */
-					{ "⌫", null, null }, /* 5,3 */
-					{ "RESET", null, null }, /* 5,4 */
-					{ "", null, null }, /* 5,5 */
-					{ "", null, null }, /* 5,6 */
-					{ "", null, null } /* 5,7 */
-			}, { /* ROW 6 */
-					{ "4", null, null }, /* 6,0 */
-					{ "5", null, null }, /* 6,1 */
-					{ "6", null, null }, /* 6,2 */
-					{ "*", null, null }, /* 6,3 */
-					{ "/", null, null }, /* 6,4 */
-					{ "", null, null }, /* 6,5 */
-					{ "", null, null }, /* 6,6 */
-					{ "", null, null } /* 6,7 */
-			}, { /* ROW 7 */
-					{ "1", null, null }, /* 7,0 */
-					{ "2", null, null }, /* 7,1 */
-					{ "3", null, null }, /* 7,2 */
-					{ "+", null, null }, /* 7,3 */
-					{ "-", null, null }, /* 7,4 */
-					{ "", null, null }, /* 7,5 */
-					{ "", null, null }, /* 7,6 */
-					{ "", null, null } /* 7,7 */
-			} };
-
-	static final Key[][][] keyMap = /* [ROW, COLUMN, (0:normal 1:shift 2:alpha)] */
-			{ { /* ROW 0 */
-					{ Key.SHIFT, Key.SHIFT, Key.SHIFT }, /* 0,0 */
-					{ Key.ALPHA, Key.ALPHA, Key.ALPHA }, /* 0,1 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 0,2 */
-					{ Key.UP, Key.NONE, Key.NONE }, /* 0,3 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 0,4 */
-					{ Key.SETTINGS, Key.SETTINGS, Key.SETTINGS }, /* 0,5 */
-					{ Key.BRIGHTNESS_CYCLE, Key.BRIGHTNESS_CYCLE_REVERSE, Key.ZOOM_MODE }, /* 0,6 */
-					{ Key.SIMPLIFY, Key.STEP, Key.NONE } /* 0,7 */
-			}, { /* ROW 1 */
-					{ Key.F4, Key.F4, Key.F4 }, /* 1,0 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 1,1 */
-					{ Key.LEFT, Key.NONE, Key.NONE }, /* 1,2 */
-					{ Key.OK, Key.NONE, Key.NONE }, /* 1,3 */
-					{ Key.RIGHT, Key.NONE, Key.NONE }, /* 1,4 */
-					{ Key.HISTORY_BACK, Key.NONE, Key.NONE }, /* 1,5 */
-					{ Key.HISTORY_FORWARD, Key.NONE, Key.NONE }, /* 1,6 */
-					{ Key.NONE, Key.PI, Key.DRG_CYCLE } /* 1,7 */
-			}, { /* ROW 2 */
-					{ Key.F3, Key.F3, Key.F3 }, /* 2,0 */
-					{ Key.SQRT, Key.ROOT, Key.NONE }, /* 2,1 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 2,2 */
-					{ Key.DOWN, Key.NONE, Key.NONE }, /* 2,3 */
-					{ Key.BACK, Key.NONE, Key.NONE }, /* 2,4 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 2,5 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 2,6 */
-					{ Key.NONE, Key.NONE, Key.LETTER_Z } /* 2,7 */
-			}, { /* ROW 3 */
-					{ Key.F2, Key.F2, Key.F2 }, /* 3,0 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 3,1 */
-					{ Key.POWER_OF_x, Key.NONE, Key.NONE }, /* 3,2 */
-					{ Key.POWER_OF_2, Key.NONE, Key.NONE }, /* 3,3 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 3,4 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 3,5 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 3,6 */
-					{ Key.DOT, Key.NONE, Key.LETTER_Y } /* 3,7 */
-			}, { /* ROW 4 */
-					{ Key.F1, Key.F1, Key.F1 }, /* 4,0 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 4,1 */
-					{ Key.PARENTHESIS_OPEN, Key.NONE, Key.NONE }, /* 4,2 */
-					{ Key.PARENTHESIS_CLOSE, Key.NONE, Key.NONE }, /* 4,3 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 4,4 */
-					{ Key.SURD_MODE, Key.NONE, Key.NONE }, /* 4,5 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 4,6 */
-					{ Key.NUM0, Key.NONE, Key.LETTER_X } /* 4,7 */
-			}, { /* ROW 5 */
-					{ Key.NUM7, Key.NONE, Key.NONE }, /* 5,0 */
-					{ Key.NUM8, Key.NONE, Key.NONE }, /* 5,1 */
-					{ Key.NUM9, Key.NONE, Key.NONE }, /* 5,2 */
-					{ Key.DELETE, Key.NONE, Key.NONE }, /* 5,3 */
-					{ Key.RESET, Key.NONE, Key.NONE }, /* 5,4 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 5,5 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 5,6 */
-					{ Key.NONE, Key.NONE, Key.NONE } /* 5,7 */
-			}, { /* ROW 6 */
-					{ Key.NUM4, Key.NONE, Key.NONE }, /* 6,0 */
-					{ Key.NUM5, Key.NONE, Key.NONE }, /* 6,1 */
-					{ Key.NUM6, Key.NONE, Key.NONE }, /* 6,2 */
-					{ Key.MULTIPLY, Key.NONE, Key.NONE }, /* 6,3 */
-					{ Key.DIVIDE, Key.NONE, Key.NONE }, /* 6,4 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 6,5 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 6,6 */
-					{ Key.NONE, Key.NONE, Key.NONE } /* 6,7 */
-			}, { /* ROW 7 */
-					{ Key.NUM1, Key.NONE, Key.NONE }, /* 7,0 */
-					{ Key.NUM2, Key.NONE, Key.NONE }, /* 7,1 */
-					{ Key.NUM3, Key.NONE, Key.NONE }, /* 7,2 */
-					{ Key.PLUS, Key.PLUS_MINUS, Key.NONE }, /* 7,3 */
-					{ Key.MINUS, Key.NONE, Key.NONE }, /* 7,4 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 7,5 */
-					{ Key.NONE, Key.NONE, Key.NONE }, /* 7,6 */
-					{ Key.NONE, Key.NONE, Key.NONE } /* 7,7 */
-			} };
-
 	public static String getKeyName(final int row, final int col) {
 		return Keyboard.getKeyName(row, col, Keyboard.shift, Keyboard.alpha);
 	}
 
 	public static String getKeyName(final int row, final int col, final boolean shift, final boolean alpha) {
-		final String[] keyValues = Keyboard.KeyLabelsMap[row][col];
-		if (shift) {
-			if (keyValues[1] != null) {
-				return keyValues[1];
-			}
-		} else if (alpha) {
-			if (keyValues[2] != null) {
-				return keyValues[2];
-			}
-		}
-		return keyValues[0];
+		return HardwareKeyboardLayout.labelFor(HardwareKeyboardLayout.mappingAt(row, col, shift, alpha));
 	}
 
 	public static boolean hasKeyName(final int row, final int col) {
-		final String[] keyValues = Keyboard.KeyLabelsMap[row][col];
-		if (Keyboard.shift) {
-			return keyValues[1] != null;
-		} else if (Keyboard.alpha) {
-			return keyValues[2] != null;
-		} else {
-			return true;
-		}
+		return HardwareKeyboardLayout.mappingAt(row, col, Keyboard.shift, Keyboard.alpha) != Key.NONE;
 	}
 
 	/**
@@ -920,8 +753,8 @@ public class Keyboard {
 
 		if (pressedRawKeys[row][column] != null)
 			return null;
-		final Key mappedKey = keyMap[row][column][shiftActive ? 1 : alphaActive ? 2 : 0];
-		pressedRawKeys[row][column] = mappedKey != null ? mappedKey : Key.NONE;
+		pressedRawKeys[row][column] = HardwareKeyboardLayout.mappingAt(
+				row, column, shiftActive, alphaActive);
 		return pressedRawKeys[row][column];
 	}
 

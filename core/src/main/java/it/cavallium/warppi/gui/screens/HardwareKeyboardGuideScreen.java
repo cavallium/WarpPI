@@ -103,7 +103,7 @@ public final class HardwareKeyboardGuideScreen extends Screen {
 			final PhysicalKey key, final Layer layer) {
 		setLayerTextColor(renderer, layer, layer == activeLayer);
 		renderer.glDrawStringLeft(x + 3, y, layer.abbreviation());
-		renderer.glDrawStringRight(x + width - 3, y, key.label(layer));
+		renderer.glDrawStringRight(x + width - 3, y, key.compactLabel(layer));
 	}
 
 	private static void setLayerBackgroundColor(final Renderer renderer, final Layer layer) {

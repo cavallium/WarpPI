@@ -2,6 +2,7 @@ package it.cavallium.warppi.device.input;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import it.cavallium.warppi.device.input.HardwareKeyboardLayout.Layer;
 import it.cavallium.warppi.device.input.HardwareKeyboardLayout.PhysicalKey;
 import it.cavallium.warppi.device.input.HardwareKeyboardLayout.PhysicalRow;
+import it.cavallium.warppi.event.Key;
 
 class HardwareKeyboardLayoutTest {
 
@@ -46,14 +48,26 @@ class HardwareKeyboardLayoutTest {
 	@Test
 	void exposesNormalShiftAndAltAlphaMeaningsWithoutFallback() {
 		final PhysicalKey brightness = find(0, 6);
-		assertEquals("BRI+", brightness.label(Layer.NORMAL));
-		assertEquals("BRI-", brightness.label(Layer.SHIFT));
+		assertEquals("BRI+", brightness.compactLabel(Layer.NORMAL));
+		assertEquals("BRI-", brightness.compactLabel(Layer.SHIFT));
 		assertEquals("ZOOM", brightness.label(Layer.ALT_ALPHA));
 
 		final PhysicalKey bottomZero = find(4, 7);
 		assertEquals("0", bottomZero.label(Layer.NORMAL));
-		assertEquals("-", bottomZero.label(Layer.SHIFT));
-		assertEquals("X", bottomZero.label(Layer.ALT_ALPHA));
+		assertEquals("", bottomZero.label(Layer.SHIFT));
+		assertEquals("x", bottomZero.label(Layer.ALT_ALPHA));
+		assertEquals(Key.NONE, bottomZero.mapping(Layer.SHIFT));
+	}
+
+	@Test
+	void derivesConstantTimeMatrixLookupFromPhysicalKeys() {
+		assertEquals(Key.PLUS, HardwareKeyboardLayout.mappingAt(7, 3, false, false));
+		assertEquals(Key.PLUS_MINUS, HardwareKeyboardLayout.mappingAt(7, 3, true, false));
+		assertEquals(Key.NONE, HardwareKeyboardLayout.mappingAt(7, 3, false, true));
+		assertEquals(Key.LETTER_Z, HardwareKeyboardLayout.mappingAt(2, 7, false, true));
+		assertEquals(Key.NONE, HardwareKeyboardLayout.mappingAt(0, 2, false, false));
+		assertThrows(IllegalArgumentException.class,
+				() -> HardwareKeyboardLayout.mappingAt(8, 0, false, false));
 	}
 
 	@Test
@@ -71,8 +85,8 @@ class HardwareKeyboardLayoutTest {
 		for (final PhysicalRow row : HardwareKeyboardLayout.rows()) {
 			for (final PhysicalKey key : row.keys()) {
 				for (final Layer layer : Layer.values()) {
-					assertTrue(key.label(layer).length() <= 8,
-							() -> key + " has an oversized " + layer + " label: " + key.label(layer));
+					assertTrue(key.compactLabel(layer).length() <= 8,
+							() -> key + " has an oversized " + layer + " label: " + key.compactLabel(layer));
 				}
 			}
 		}

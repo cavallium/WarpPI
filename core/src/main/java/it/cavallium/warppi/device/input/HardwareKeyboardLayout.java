@@ -6,12 +6,12 @@ import java.util.Objects;
 import it.cavallium.warppi.event.Key;
 
 /**
- * Physical key placement for the calculator keypad.
+ * Physical placement, electrical coordinates, and logical mappings of the
+ * calculator keypad.
  *
  * <p>The keypad is electrically addressed as an 8-by-8 matrix, but it is not
- * physically an 8-by-8 grid. In particular, its top rows contain gaps, its
- * lower rows are five keys wide, and the bottom row is connected sideways to
- * matrix column 7.</p>
+ * physically an 8-by-8 grid. Its top rows contain gaps, its lower rows are five
+ * keys wide, and its bottom row is connected sideways to matrix column 7.</p>
  */
 public final class HardwareKeyboardLayout {
 	private static final int MATRIX_SIZE = Byte.SIZE;
@@ -35,7 +35,8 @@ public final class HardwareKeyboardLayout {
 		}
 	}
 
-	public record PhysicalKey(int slot, int matrixRow, int matrixColumn) {
+	public record PhysicalKey(int slot, int matrixRow, int matrixColumn,
+			Key normal, Key shift, Key altAlpha) {
 		public PhysicalKey {
 			if (slot < 0)
 				throw new IllegalArgumentException("Negative physical key slot: " + slot);
@@ -44,14 +45,25 @@ public final class HardwareKeyboardLayout {
 				throw new IllegalArgumentException(
 						"Invalid keyboard matrix position: " + matrixRow + "," + matrixColumn);
 			}
+			Objects.requireNonNull(normal, "normal");
+			Objects.requireNonNull(shift, "shift");
+			Objects.requireNonNull(altAlpha, "altAlpha");
 		}
 
 		public Key mapping(final Layer layer) {
-			return Keyboard.keyMap[matrixRow][matrixColumn][Objects.requireNonNull(layer).mapIndex];
+			return switch (Objects.requireNonNull(layer, "layer")) {
+				case NORMAL -> normal;
+				case SHIFT -> shift;
+				case ALT_ALPHA -> altAlpha;
+			};
 		}
 
 		public String label(final Layer layer) {
 			return labelFor(mapping(layer));
+		}
+
+		public String compactLabel(final Layer layer) {
+			return compactLabelFor(mapping(layer));
 		}
 	}
 
@@ -72,19 +84,69 @@ public final class HardwareKeyboardLayout {
 	}
 
 	private static final List<PhysicalRow> ROWS = validate(List.of(
-			row(7, key(0, 0, 0), key(1, 0, 1), key(3, 0, 3), key(5, 0, 5), key(6, 0, 6)),
-			row(7, key(0, 1, 0), key(1, 1, 1), key(2, 1, 2), key(3, 1, 3),
-					key(4, 1, 4), key(5, 1, 5), key(6, 1, 6)),
-			row(7, key(0, 2, 0), key(1, 2, 1), key(3, 2, 3), key(4, 2, 4),
-					key(5, 2, 5), key(6, 2, 6)),
-			row(7, key(0, 3, 0), key(1, 3, 1), key(2, 3, 2), key(3, 3, 3),
-					key(4, 3, 4), key(5, 3, 5), key(6, 3, 6)),
-			row(7, key(0, 4, 0), key(1, 4, 1), key(2, 4, 2), key(3, 4, 3),
-					key(4, 4, 4), key(5, 4, 5), key(6, 4, 6)),
-			row(5, key(0, 5, 0), key(1, 5, 1), key(2, 5, 2), key(3, 5, 3), key(4, 5, 4)),
-			row(5, key(0, 6, 0), key(1, 6, 1), key(2, 6, 2), key(3, 6, 3), key(4, 6, 4)),
-			row(5, key(0, 7, 0), key(1, 7, 1), key(2, 7, 2), key(3, 7, 3), key(4, 7, 4)),
-			row(5, key(0, 4, 7), key(1, 3, 7), key(2, 2, 7), key(3, 1, 7), key(4, 0, 7))));
+			row(7,
+					persistentKey(0, 0, 0, Key.SHIFT),
+					persistentKey(1, 0, 1, Key.ALPHA),
+					key(3, 0, 3, Key.UP),
+					persistentKey(5, 0, 5, Key.SETTINGS),
+					key(6, 0, 6, Key.BRIGHTNESS_CYCLE, Key.BRIGHTNESS_CYCLE_REVERSE, Key.ZOOM_MODE)),
+			row(7,
+					persistentKey(0, 1, 0, Key.F4),
+					key(1, 1, 1, Key.NONE),
+					key(2, 1, 2, Key.LEFT),
+					key(3, 1, 3, Key.OK),
+					key(4, 1, 4, Key.RIGHT),
+					key(5, 1, 5, Key.HISTORY_BACK),
+					key(6, 1, 6, Key.HISTORY_FORWARD)),
+			row(7,
+					persistentKey(0, 2, 0, Key.F3),
+					key(1, 2, 1, Key.SQRT, Key.ROOT, Key.NONE),
+					key(3, 2, 3, Key.DOWN),
+					key(4, 2, 4, Key.BACK),
+					key(5, 2, 5, Key.NONE),
+					key(6, 2, 6, Key.NONE)),
+			row(7,
+					persistentKey(0, 3, 0, Key.F2),
+					key(1, 3, 1, Key.NONE),
+					key(2, 3, 2, Key.POWER_OF_x),
+					key(3, 3, 3, Key.POWER_OF_2),
+					key(4, 3, 4, Key.NONE),
+					key(5, 3, 5, Key.NONE),
+					key(6, 3, 6, Key.NONE)),
+			row(7,
+					persistentKey(0, 4, 0, Key.F1),
+					key(1, 4, 1, Key.NONE),
+					key(2, 4, 2, Key.PARENTHESIS_OPEN),
+					key(3, 4, 3, Key.PARENTHESIS_CLOSE),
+					key(4, 4, 4, Key.NONE),
+					key(5, 4, 5, Key.SURD_MODE),
+					key(6, 4, 6, Key.NONE)),
+			row(5,
+					key(0, 5, 0, Key.NUM7),
+					key(1, 5, 1, Key.NUM8),
+					key(2, 5, 2, Key.NUM9),
+					key(3, 5, 3, Key.DELETE),
+					key(4, 5, 4, Key.RESET)),
+			row(5,
+					key(0, 6, 0, Key.NUM4),
+					key(1, 6, 1, Key.NUM5),
+					key(2, 6, 2, Key.NUM6),
+					key(3, 6, 3, Key.MULTIPLY),
+					key(4, 6, 4, Key.DIVIDE)),
+			row(5,
+					key(0, 7, 0, Key.NUM1),
+					key(1, 7, 1, Key.NUM2),
+					key(2, 7, 2, Key.NUM3),
+					key(3, 7, 3, Key.PLUS, Key.PLUS_MINUS, Key.NONE),
+					key(4, 7, 4, Key.MINUS)),
+			row(5,
+					key(0, 4, 7, Key.NUM0, Key.NONE, Key.LETTER_X),
+					key(1, 3, 7, Key.DOT, Key.NONE, Key.LETTER_Y),
+					key(2, 2, 7, Key.NONE, Key.NONE, Key.LETTER_Z),
+					key(3, 1, 7, Key.NONE, Key.PI, Key.DRG_CYCLE),
+					key(4, 0, 7, Key.SIMPLIFY, Key.STEP, Key.NONE))));
+
+	private static final Key[][][] MATRIX_MAPPINGS = createMatrixMappings(ROWS);
 
 	private HardwareKeyboardLayout() {}
 
@@ -93,26 +155,40 @@ public final class HardwareKeyboardLayout {
 	}
 
 	public static Layer activeLayer() {
-		if (Keyboard.shift)
+		return activeLayer(Keyboard.shift, Keyboard.alpha);
+	}
+
+	public static Layer activeLayer(final boolean shift, final boolean alpha) {
+		if (shift)
 			return Layer.SHIFT;
-		if (Keyboard.alpha)
+		if (alpha)
 			return Layer.ALT_ALPHA;
 		return Layer.NORMAL;
 	}
 
+	public static Key mappingAt(final int matrixRow, final int matrixColumn,
+			final boolean shift, final boolean alpha) {
+		return mappingAt(matrixRow, matrixColumn, activeLayer(shift, alpha));
+	}
+
+	public static Key mappingAt(final int matrixRow, final int matrixColumn, final Layer layer) {
+		validateMatrixPosition(matrixRow, matrixColumn);
+		return MATRIX_MAPPINGS[matrixRow][matrixColumn][Objects.requireNonNull(layer, "layer").mapIndex];
+	}
+
+	/** Labels used by the desktop and web keyboards. */
 	public static String labelFor(final Key key) {
-		return switch (Objects.requireNonNull(key)) {
-			case NONE -> "-";
-			case SHIFT -> "SHIFT";
-			case ALPHA -> "ALT";
-			case HISTORY_BACK -> "<HIST";
-			case HISTORY_FORWARD -> "HIST>";
-			case SURD_MODE -> "S<->D";
+		return switch (Objects.requireNonNull(key, "key")) {
+			case NONE -> "";
+			case SHIFT -> "⇪";
+			case ALPHA -> "A";
+			case HISTORY_BACK -> "≪";
+			case HISTORY_FORWARD -> "≫";
+			case SURD_MODE -> "S⇔D";
 			case DRG_CYCLE -> "D/R/G";
 			case STEP -> "STEP";
-			case SIMPLIFY -> "SIMPLIFY";
-			case BRIGHTNESS_CYCLE -> "BRI+";
-			case BRIGHTNESS_CYCLE_REVERSE -> "BRI-";
+			case SIMPLIFY -> "↩";
+			case BRIGHTNESS_CYCLE, BRIGHTNESS_CYCLE_REVERSE -> "☼";
 			case DOT -> ".";
 			case NUM0 -> "0";
 			case NUM1 -> "1";
@@ -128,32 +204,70 @@ public final class HardwareKeyboardLayout {
 			case PARENTHESIS_CLOSE -> ")";
 			case PLUS -> "+";
 			case MINUS -> "-";
-			case PLUS_MINUS -> "+/-";
+			case PLUS_MINUS -> "±";
 			case MULTIPLY -> "*";
 			case DIVIDE -> "/";
+			case DELETE -> "⌫";
+			case RESET -> "RESET";
+			case LEFT -> "⇦";
+			case RIGHT -> "⇨";
+			case UP -> "⇧";
+			case DOWN -> "⇩";
+			case OK -> "OK";
+			case SQRT -> "√";
+			case ROOT -> "ⁿ√";
+			case POWER_OF_2 -> "^2";
+			case POWER_OF_x -> "^x";
+			case PI -> "π";
+			case SETTINGS -> "GUIDE";
+			case F1 -> "F1";
+			case F2 -> "F2";
+			case F3 -> "F3";
+			case F4 -> "F4";
+			case BACK -> "↶";
+			case ZOOM_MODE -> "ZOOM";
+			case LETTER_X -> "x";
+			case LETTER_Y -> "y";
+			case LETTER_Z -> "z";
+			default -> key.name();
+		};
+	}
+
+	/** Short ASCII labels used by the fixed-width on-device guide. */
+	public static String compactLabelFor(final Key key) {
+		return switch (Objects.requireNonNull(key, "key")) {
+			case NONE -> "-";
+			case SHIFT -> "SHIFT";
+			case ALPHA -> "ALT";
+			case HISTORY_BACK -> "<HIST";
+			case HISTORY_FORWARD -> "HIST>";
+			case SURD_MODE -> "S<->D";
+			case DRG_CYCLE -> "D/R/G";
+			case STEP -> "STEP";
+			case SIMPLIFY -> "SIMPLIFY";
+			case BRIGHTNESS_CYCLE -> "BRI+";
+			case BRIGHTNESS_CYCLE_REVERSE -> "BRI-";
+			case PARENTHESIS_OPEN -> "(";
+			case PARENTHESIS_CLOSE -> ")";
+			case PLUS_MINUS -> "+/-";
 			case DELETE -> "DEL";
 			case RESET -> "CLEAR";
 			case LEFT -> "LEFT";
 			case RIGHT -> "RIGHT";
 			case UP -> "UP";
 			case DOWN -> "DOWN";
-			case OK -> "OK";
 			case SQRT -> "SQRT";
 			case ROOT -> "ROOT";
 			case POWER_OF_2 -> "x^2";
 			case POWER_OF_x -> "x^y";
 			case PI -> "PI";
 			case SETTINGS -> "GUIDE";
-			case F1 -> "F1";
-			case F2 -> "F2";
-			case F3 -> "F3";
-			case F4 -> "F4";
 			case BACK -> "BACK";
 			case ZOOM_MODE -> "ZOOM";
 			case LETTER_X -> "X";
 			case LETTER_Y -> "Y";
 			case LETTER_Z -> "Z";
-			default -> key.name();
+			default -> labelFor(key);
 		};
 	}
 
@@ -161,8 +275,18 @@ public final class HardwareKeyboardLayout {
 		return new PhysicalRow(slotCount, List.of(keys));
 	}
 
-	private static PhysicalKey key(final int slot, final int matrixRow, final int matrixColumn) {
-		return new PhysicalKey(slot, matrixRow, matrixColumn);
+	private static PhysicalKey key(final int slot, final int matrixRow, final int matrixColumn, final Key normal) {
+		return key(slot, matrixRow, matrixColumn, normal, Key.NONE, Key.NONE);
+	}
+
+	private static PhysicalKey key(final int slot, final int matrixRow, final int matrixColumn,
+			final Key normal, final Key shift, final Key altAlpha) {
+		return new PhysicalKey(slot, matrixRow, matrixColumn, normal, shift, altAlpha);
+	}
+
+	private static PhysicalKey persistentKey(final int slot, final int matrixRow, final int matrixColumn,
+			final Key mapping) {
+		return key(slot, matrixRow, matrixColumn, mapping, mapping, mapping);
 	}
 
 	private static List<PhysicalRow> validate(final List<PhysicalRow> rows) {
@@ -181,5 +305,24 @@ public final class HardwareKeyboardLayout {
 		if (keyCount != PHYSICAL_KEY_COUNT)
 			throw new IllegalStateException("Expected " + PHYSICAL_KEY_COUNT + " physical keys, got " + keyCount);
 		return List.copyOf(rows);
+	}
+
+	private static Key[][][] createMatrixMappings(final List<PhysicalRow> rows) {
+		final Key[][][] mappings = new Key[MATRIX_SIZE][MATRIX_SIZE][Layer.values().length];
+		for (int row = 0; row < MATRIX_SIZE; row++)
+			for (int column = 0; column < MATRIX_SIZE; column++)
+				for (final Layer layer : Layer.values())
+					mappings[row][column][layer.mapIndex] = Key.NONE;
+
+		for (final PhysicalRow row : rows)
+			for (final PhysicalKey key : row.keys())
+				for (final Layer layer : Layer.values())
+					mappings[key.matrixRow()][key.matrixColumn()][layer.mapIndex] = key.mapping(layer);
+		return mappings;
+	}
+
+	private static void validateMatrixPosition(final int matrixRow, final int matrixColumn) {
+		if (matrixRow < 0 || matrixRow >= MATRIX_SIZE || matrixColumn < 0 || matrixColumn >= MATRIX_SIZE)
+			throw new IllegalArgumentException("Keyboard coordinates must be between 0 and 7");
 	}
 }
