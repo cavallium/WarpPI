@@ -64,8 +64,12 @@ public class HtmlEngine implements GraphicEngine {
 			#keyboard .shift { left: 0; color: #0d47a1; }
 			body.alpha:not(.shift) #keyboard button[a],
 			body.shift:not(.alpha) #keyboard button[s] { color: transparent; }
-			body.alpha #keyboard #alphabtn { color: #f44336; }
-			body.shift #keyboard #shiftbtn { color: #2196f3; }
+			body.alpha #keyboard #alphabtn {
+			  color: #f44336; background: #fce4ec; outline: .2vh solid #f44336;
+			}
+			body.shift #keyboard #shiftbtn {
+			  color: #2196f3; background: #e3f2fd; outline: .2vh solid #2196f3;
+			}
 			body.alpha:not(.shift) #keyboard .alpha,
 			body.shift:not(.alpha) #keyboard .shift {
 			  top: 0; left: 0; width: 100%; height: 100%; padding: 0;
@@ -271,7 +275,7 @@ public class HtmlEngine implements GraphicEngine {
 	}
 
 	private static String keyTitle(final PhysicalKey key) {
-		return "S" + (key.matrixRow() + 1) + (key.matrixColumn() + 1)
+		return key.switchLabel()
 				+ " — N " + key.compactLabel(Layer.NORMAL)
 				+ ", S " + key.compactLabel(Layer.SHIFT)
 				+ ", A " + key.compactLabel(Layer.ALT_ALPHA);
