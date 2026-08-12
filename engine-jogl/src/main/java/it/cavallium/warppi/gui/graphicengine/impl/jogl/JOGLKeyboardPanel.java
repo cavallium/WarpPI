@@ -169,10 +169,13 @@ final class JOGLKeyboardPanel {
 		}
 	}
 
-	static int surfaceHeight(final int totalSurfaceHeight) {
+	static int surfaceHeight(final int totalSurfaceHeight, final float effectivePixelScale) {
 		if (totalSurfaceHeight <= 1)
 			return 0;
-		return Math.min(LOGICAL_HEIGHT,
+		if (!Float.isFinite(effectivePixelScale) || effectivePixelScale <= 0)
+			throw new IllegalArgumentException("Invalid effective pixel scale: " + effectivePixelScale);
+		final int preferredHeight = Math.max(1, Math.round(LOGICAL_HEIGHT * effectivePixelScale));
+		return Math.min(preferredHeight,
 				Math.min(totalSurfaceHeight - 1, Math.max(1, Math.round(totalSurfaceHeight * 0.46f))));
 	}
 

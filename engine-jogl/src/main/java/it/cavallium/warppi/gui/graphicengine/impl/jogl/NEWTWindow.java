@@ -29,6 +29,7 @@
 package it.cavallium.warppi.gui.graphicengine.impl.jogl;
 
 import com.jogamp.nativewindow.NativeWindowFactory;
+import com.jogamp.nativewindow.ScalableSurface;
 import com.jogamp.newt.event.MouseAdapter;
 import com.jogamp.newt.event.MouseEvent;
 import com.jogamp.newt.event.WindowEvent;
@@ -62,15 +63,19 @@ class NEWTWindow implements GLEventListener {
 	private static final String RASPBERRY_NATIVE_WINDOW_TYPE = ".bcm.vc.iv";
 	private static final String DISABLE_LINUX_KEY_TRACKER = "newt.disable.LinuxKeyEventTracker";
 	private static final String DISABLE_LINUX_MOUSE_TRACKER = "newt.disable.LinuxMouseTracker";
+	private static final float SCALE_EPSILON = 0.001f;
 
 	private final JOGLEngine engine;
 	private final JOGLRenderer renderer;
 	private final JOGLKeyboardPanel keyboardPanel;
+	private final float desktopScale;
 	public GLWindow window;
-	public volatile float windowZoom = 1;
-	public int[] realWindowSize;
-	private volatile int displaySurfaceHeight;
-	private volatile int keyboardSurfaceHeight;
+	private volatile float calculatorZoom = 1;
+	private volatile float surfaceScaleX = ScalableSurface.IDENTITY_PIXELSCALE;
+	private volatile float surfaceScaleY = ScalableSurface.IDENTITY_PIXELSCALE;
+	private volatile int windowLogicalWidth;
+	private volatile int windowLogicalHeight;
+	private volatile SurfaceLayout surfaceLayout;
 	public Runnable onInitialized;
 	public volatile boolean refreshViewport;
 
@@ -82,45 +87,141 @@ class NEWTWindow implements GLEventListener {
 	public NEWTWindow(final JOGLEngine engine) {
 		this.engine = engine;
 		renderer = engine.getRenderer();
+		desktopScale = engine.getDesktopScale();
 		keyboardPanel = engine.isRaspberryProductionMode()
 				? null : new JOGLKeyboardPanel(engine.getKeyboardLayer());
 		engine.size[0] = engine.getSize()[0];
 		engine.size[1] = engine.getSize()[1];
-		windowZoom = StaticVars.windowZoom.getLastValue();
-		if (windowZoom <= 0)
-			windowZoom = 1;
-		final int initialWidth = Math.max(1, Math.round(engine.getSize()[0] * windowZoom));
-		final int initialHeight = Math.max(1, Math.round(engine.getSize()[1] * windowZoom))
-				+ (keyboardPanel == null ? 0 : JOGLKeyboardPanel.LOGICAL_HEIGHT);
-		realWindowSize = new int[] { initialWidth, initialHeight };
-		updateSurfaceLayout();
-		onRealResize = EventSubmitter.create(new Integer[] { initialWidth, initialHeight });
+		windowLogicalWidth = engine.size[0];
+		windowLogicalHeight = engine.size[1];
+		calculatorZoom = normalizedScale(StaticVars.windowZoom.getLastValue());
+		final WindowUnits initialWindowSize = windowUnitsFor(engine.getSize()[0], engine.getSize()[1],
+				windowCompensation(desktopScale, surfaceScaleX),
+				windowCompensation(desktopScale, surfaceScaleY), keyboardPanel != null);
+		final int initialSurfaceWidth = Math.max(1, Math.round(initialWindowSize.width() * surfaceScaleX));
+		final int initialSurfaceHeight = Math.max(1, Math.round(initialWindowSize.height() * surfaceScaleY));
+		surfaceLayout = calculateSurfaceLayout(initialSurfaceWidth, initialSurfaceHeight,
+				calculatorZoom, resolvedDesktopScaleX(), resolvedDesktopScaleY(), keyboardPanel != null);
+		onRealResize = EventSubmitter.create(new Integer[] { initialSurfaceWidth, initialSurfaceHeight });
 
-		onRealResize.subscribe((realSize) -> {
-			realWindowSize[0] = Math.max(1, realSize[0]);
-			realWindowSize[1] = Math.max(1, realSize[1]);
-			updateSurfaceLayout();
-			onResizeEvent.submit(new Integer[] { engine.size[0], engine.size[1] });
-			refreshViewport = true;
-		});
+		onRealResize.subscribe((surfaceSize) -> applySurfaceLayout(surfaceSize[0], surfaceSize[1]));
 		StaticVars.windowZoom.subscribe(onZoom::submit);
 		onZoom.subscribe((z) -> {
-			if (z <= 0)
+			if (z == null || !Float.isFinite(z) || z <= 0 || Math.abs(z - calculatorZoom) < SCALE_EPSILON)
 				return;
-			windowZoom = z;
-			updateSurfaceLayout();
-			onResizeEvent.submit(new Integer[] { engine.size[0], engine.size[1] });
-			refreshViewport = true;
+			calculatorZoom = z;
+			final SurfaceLayout currentLayout = surfaceLayout;
+			if (currentLayout != null)
+				applySurfaceLayout(currentLayout.surfaceWidth(), currentLayout.surfaceHeight());
 		});
 	}
 
-	private void updateSurfaceLayout() {
-		keyboardSurfaceHeight = keyboardPanel == null ? 0
-				: JOGLKeyboardPanel.surfaceHeight(realWindowSize[1]);
-		displaySurfaceHeight = Math.max(1, realWindowSize[1] - keyboardSurfaceHeight);
-		engine.size[0] = Math.max(1, (int) (realWindowSize[0] / windowZoom));
-		engine.size[1] = Math.max(1, (int) (displaySurfaceHeight / windowZoom));
+	private void applySurfaceLayout(final int surfaceWidth, final int surfaceHeight) {
+		final SurfaceLayout layout = calculateSurfaceLayout(surfaceWidth, surfaceHeight,
+				calculatorZoom, resolvedDesktopScaleX(), resolvedDesktopScaleY(), keyboardPanel != null);
+		surfaceLayout = layout;
+		engine.size[0] = layout.logicalWidth();
+		engine.size[1] = layout.logicalHeight();
+		windowLogicalWidth = layout.windowLogicalWidth();
+		windowLogicalHeight = layout.windowLogicalHeight();
+		onResizeEvent.submit(new Integer[] { layout.logicalWidth(), layout.logicalHeight() });
+		refreshViewport = true;
 	}
+
+	private boolean refreshSurfaceScale() {
+		final GLWindow currentWindow = window;
+		if (currentWindow == null)
+			return false;
+		final float[] currentScale = currentWindow.getCurrentSurfaceScale(new float[2]);
+		final float newScaleX = normalizedScale(currentScale[0]);
+		final float newScaleY = normalizedScale(currentScale[1]);
+		if (Math.abs(newScaleX - surfaceScaleX) < SCALE_EPSILON
+				&& Math.abs(newScaleY - surfaceScaleY) < SCALE_EPSILON)
+			return false;
+		surfaceScaleX = newScaleX;
+		surfaceScaleY = newScaleY;
+		return true;
+	}
+
+	private float resolvedDesktopScaleX() {
+		return Math.max(desktopScale, surfaceScaleX);
+	}
+
+	private float resolvedDesktopScaleY() {
+		return Math.max(desktopScale, surfaceScaleY);
+	}
+
+	private boolean resizeWindow(final int logicalWidth, final int logicalHeight) {
+		windowLogicalWidth = Math.max(1, logicalWidth);
+		windowLogicalHeight = Math.max(1, logicalHeight);
+		final GLWindow currentWindow = window;
+		if (currentWindow == null)
+			return false;
+		final WindowUnits target = windowUnitsFor(windowLogicalWidth, windowLogicalHeight,
+				windowCompensation(desktopScale, surfaceScaleX),
+				windowCompensation(desktopScale, surfaceScaleY), keyboardPanel != null);
+		if (currentWindow.getWidth() == target.width() && currentWindow.getHeight() == target.height())
+			return false;
+		currentWindow.setSize(target.width(), target.height());
+		return true;
+	}
+
+	private static float normalizedScale(final Float scale) {
+		return scale != null && Float.isFinite(scale) && scale > 0
+				? scale : ScalableSurface.IDENTITY_PIXELSCALE;
+	}
+
+	static WindowUnits windowUnitsFor(final int logicalWidth, final int logicalHeight,
+			final float surfaceCompensationX, final float surfaceCompensationY,
+			final boolean hasKeyboard) {
+		final float checkedCompensationX = requireScale(surfaceCompensationX, "surface compensation X");
+		final float checkedCompensationY = requireScale(surfaceCompensationY, "surface compensation Y");
+		final int keyboardHeight = hasKeyboard ? JOGLKeyboardPanel.LOGICAL_HEIGHT : 0;
+		return new WindowUnits(
+				Math.max(1, Math.round(Math.max(1, logicalWidth) * checkedCompensationX)),
+				Math.max(1, Math.round((Math.max(1, logicalHeight) + keyboardHeight)
+						* checkedCompensationY)));
+	}
+
+	static float windowCompensation(final float desktopScale, final float surfaceScale) {
+		final float checkedSurfaceScale = requireScale(surfaceScale, "JOGL surface scale");
+		return Math.max(requireScale(desktopScale, "desktop scale"), checkedSurfaceScale)
+				/ checkedSurfaceScale;
+	}
+
+	static SurfaceLayout calculateSurfaceLayout(final int surfaceWidth, final int surfaceHeight,
+			final float calculatorZoom, final float deviceScaleX, final float deviceScaleY,
+			final boolean hasKeyboard) {
+		final int checkedSurfaceWidth = Math.max(1, surfaceWidth);
+		final int checkedSurfaceHeight = Math.max(1, surfaceHeight);
+		final float checkedCalculatorZoom = requireScale(calculatorZoom, "calculator zoom");
+		final float checkedDeviceScaleX = requireScale(deviceScaleX, "device scale X");
+		final float checkedDeviceScaleY = requireScale(deviceScaleY, "device scale Y");
+		final float effectiveScaleX = checkedCalculatorZoom * checkedDeviceScaleX;
+		final float effectiveScaleY = checkedCalculatorZoom * checkedDeviceScaleY;
+		if (!Float.isFinite(effectiveScaleX) || !Float.isFinite(effectiveScaleY))
+			throw new IllegalArgumentException("Combined pixel scale is too large");
+		final int keyboardHeight = hasKeyboard
+				? JOGLKeyboardPanel.surfaceHeight(checkedSurfaceHeight, checkedDeviceScaleY) : 0;
+		final int displayHeight = Math.max(1, checkedSurfaceHeight - keyboardHeight);
+		return new SurfaceLayout(checkedSurfaceWidth, checkedSurfaceHeight, displayHeight, keyboardHeight,
+				Math.max(1, Math.round(checkedSurfaceWidth / checkedDeviceScaleX)),
+				Math.max(1, Math.round(displayHeight / checkedDeviceScaleY)),
+				Math.max(1, Math.round(checkedSurfaceWidth / effectiveScaleX)),
+				Math.max(1, Math.round(displayHeight / effectiveScaleY)));
+	}
+
+	private static float requireScale(final float scale, final String name) {
+		if (!Float.isFinite(scale) || scale <= 0)
+			throw new IllegalArgumentException("Invalid " + name + ": " + scale);
+		return scale;
+	}
+
+	record WindowUnits(int width, int height) {}
+
+	record SurfaceLayout(int surfaceWidth, int surfaceHeight, int displaySurfaceHeight,
+			int keyboardSurfaceHeight, int windowLogicalWidth, int windowLogicalHeight,
+			int logicalWidth, int logicalHeight) {}
 
 	public void create() {
 		configureNativeWindowing();
@@ -146,6 +247,9 @@ class NEWTWindow implements GLEventListener {
 
 		final GLWindow glWindow = GLWindow.create(caps);
 		window = glWindow;
+		glWindow.setSurfaceScale(new float[] {
+				ScalableSurface.AUTOMAX_PIXELSCALE, ScalableSurface.AUTOMAX_PIXELSCALE });
+		refreshSurfaceScale();
 		final NEWTKeyboardInput keyboardInput = new NEWTKeyboardInput();
 
 		glWindow.setTitle("WarpPI Calculator by Andrea Cavalli (@Cavallium)");
@@ -224,17 +328,19 @@ class NEWTWindow implements GLEventListener {
 	}
 
 	private void pressKeyboardPanel(final MouseEvent event) {
-		if (keyboardSurfaceHeight <= 0)
+		final SurfaceLayout layout = surfaceLayout;
+		if (layout == null || layout.keyboardSurfaceHeight() <= 0)
 			return;
 		final int windowWidth = Math.max(1, window.getWidth());
 		final int windowHeight = Math.max(1, window.getHeight());
-		final float surfaceX = event.getX() * (float) realWindowSize[0] / windowWidth;
-		final float surfaceY = event.getY() * (float) realWindowSize[1] / windowHeight;
-		if (surfaceY < displaySurfaceHeight)
+		final float surfaceX = event.getX() * (float) layout.surfaceWidth() / windowWidth;
+		final float surfaceY = event.getY() * (float) layout.surfaceHeight() / windowHeight;
+		if (surfaceY < layout.displaySurfaceHeight())
 			return;
-		final float panelY = (surfaceY - displaySurfaceHeight)
-				* JOGLKeyboardPanel.LOGICAL_HEIGHT / keyboardSurfaceHeight;
-		keyboardPanel.press(surfaceX, panelY, realWindowSize[0]);
+		final float panelX = surfaceX * layout.windowLogicalWidth() / layout.surfaceWidth();
+		final float panelY = (surfaceY - layout.displaySurfaceHeight())
+				* JOGLKeyboardPanel.LOGICAL_HEIGHT / layout.keyboardSurfaceHeight();
+		keyboardPanel.press(panelX, panelY, layout.windowLogicalWidth());
 	}
 
 	private void releaseKeyboardPanel() {
@@ -307,7 +413,10 @@ class NEWTWindow implements GLEventListener {
 
 	@Override
 	public void reshape(final GLAutoDrawable glad, final int x, final int y, final int width, final int height) {
-		onRealResize.submit(new Integer[] { width, height });
+		if (refreshSurfaceScale() && resizeWindow(windowLogicalWidth, windowLogicalHeight))
+			return;
+		onRealResize.submit(new Integer[] {
+				Math.max(1, glad.getSurfaceWidth()), Math.max(1, glad.getSurfaceHeight()) });
 	}
 
 	@Override
@@ -316,14 +425,27 @@ class NEWTWindow implements GLEventListener {
 		JOGLRenderer.gl = gl;
 		onGLContext.submit(gl);
 
-		final boolean linear = Math.abs(windowZoom - Math.round(windowZoom)) > 0.001f;
+		if (refreshSurfaceScale()) {
+			if (resizeWindow(windowLogicalWidth, windowLogicalHeight)) {
+				JOGLRenderer.gl = null;
+				return;
+			}
+			applySurfaceLayout(glad.getSurfaceWidth(), glad.getSurfaceHeight());
+		}
+		final SurfaceLayout layout = surfaceLayout;
+		if (layout == null)
+			return;
+		final float effectiveScaleX = calculatorZoom * resolvedDesktopScaleX();
+		final float effectiveScaleY = calculatorZoom * resolvedDesktopScaleY();
+		final boolean linear = isFractional(effectiveScaleX) || isFractional(effectiveScaleY);
 		final boolean viewportChanged = refreshViewport;
 		if (keyboardPanel != null) {
-			configureViewport(gl, 0, keyboardSurfaceHeight, realWindowSize[0], displaySurfaceHeight,
-					engine.size[0], engine.size[1]);
+			configureViewport(gl, 0, layout.keyboardSurfaceHeight(),
+					layout.surfaceWidth(), layout.displaySurfaceHeight(),
+					layout.logicalWidth(), layout.logicalHeight());
 		} else if (viewportChanged) {
-			configureViewport(gl, 0, 0, realWindowSize[0], realWindowSize[1],
-					engine.size[0], engine.size[1]);
+			configureViewport(gl, 0, 0, layout.surfaceWidth(), layout.surfaceHeight(),
+					layout.logicalWidth(), layout.logicalHeight());
 		}
 		if (viewportChanged) {
 			refreshViewport = false;
@@ -348,10 +470,10 @@ class NEWTWindow implements GLEventListener {
 		engine.repaint();
 
 		renderer.endDrawCycle();
-		if (keyboardPanel != null && keyboardSurfaceHeight > 0) {
-			configureViewport(gl, 0, 0, realWindowSize[0], keyboardSurfaceHeight,
-					realWindowSize[0], JOGLKeyboardPanel.LOGICAL_HEIGHT);
-			keyboardPanel.render(renderer, realWindowSize[0], engine.getKeyboardFont());
+		if (keyboardPanel != null && layout.keyboardSurfaceHeight() > 0) {
+			configureViewport(gl, 0, 0, layout.surfaceWidth(), layout.keyboardSurfaceHeight(),
+					layout.windowLogicalWidth(), JOGLKeyboardPanel.LOGICAL_HEIGHT);
+			keyboardPanel.render(renderer, layout.windowLogicalWidth(), engine.getKeyboardFont());
 		}
 
 		gl.glDisableClientState(GLPointerFunc.GL_COLOR_ARRAY);
@@ -360,6 +482,10 @@ class NEWTWindow implements GLEventListener {
 
 		JOGLRenderer.gl = null;
 
+	}
+
+	private static boolean isFractional(final float scale) {
+		return Math.abs(scale - Math.round(scale)) > SCALE_EPSILON;
 	}
 
 	private static void configureViewport(final GL2ES1 gl, final int x, final int y,
@@ -374,11 +500,7 @@ class NEWTWindow implements GLEventListener {
 	}
 
 	void setSize(final int width, final int height) {
-		final int realWidth = Math.max(1, Math.round(width * windowZoom));
-		final int realHeight = Math.max(1, Math.round(height * windowZoom))
-				+ (keyboardPanel == null ? 0 : JOGLKeyboardPanel.LOGICAL_HEIGHT);
-		window.setSize(realWidth, realHeight);
-		onRealResize.submit(new Integer[] { realWidth, realHeight });
+		resizeWindow(width, height);
 	}
 
 	@Override

@@ -3,6 +3,7 @@ package it.cavallium.warppi.gui.graphicengine.impl.jogl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +47,27 @@ class JOGLKeyboardPanelTest {
 
 	@Test
 	void keyboardViewportKeepsTheDisplayUsableWhenWindowShrinks() {
-		assertEquals(JOGLKeyboardPanel.LOGICAL_HEIGHT, JOGLKeyboardPanel.surfaceHeight(584));
-		assertEquals(138, JOGLKeyboardPanel.surfaceHeight(300));
-		assertEquals(1, JOGLKeyboardPanel.surfaceHeight(2));
-		assertEquals(0, JOGLKeyboardPanel.surfaceHeight(1));
+		assertEquals(JOGLKeyboardPanel.LOGICAL_HEIGHT, JOGLKeyboardPanel.surfaceHeight(584, 1f));
+		assertEquals(2 * JOGLKeyboardPanel.LOGICAL_HEIGHT, JOGLKeyboardPanel.surfaceHeight(1168, 2f));
+		assertEquals(138, JOGLKeyboardPanel.surfaceHeight(300, 2f));
+		assertEquals(1, JOGLKeyboardPanel.surfaceHeight(2, 1f));
+		assertEquals(0, JOGLKeyboardPanel.surfaceHeight(1, 1f));
+		assertThrows(IllegalArgumentException.class, () -> JOGLKeyboardPanel.surfaceHeight(584, 0f));
+	}
+
+	@Test
+	void panelCaptionsFitTheReadableNormalFontAndRemainAscii() {
+		for (final PhysicalRow row : HardwareKeyboardLayout.rows())
+			for (final PhysicalKey key : row.keys())
+				for (final Layer layer : Layer.values()) {
+					if (key.mapping(layer) == it.cavallium.warppi.event.Key.NONE)
+						continue;
+					final String label = JOGLKeyboardPanel.panelLabelFor(key.mapping(layer));
+					assertTrue(!label.isBlank() && label.length() <= 4,
+							() -> key + " has an unreadable " + layer + " panel label: " + label);
+					assertTrue(label.chars().allMatch(character -> character >= 32 && character <= 126),
+							() -> key + " has a non-ASCII " + layer + " panel label: " + label);
+				}
 	}
 
 	@Test

@@ -95,18 +95,19 @@ public class JOGLEngine implements GraphicEngine {
 	public void create(final Runnable onInitialized) {
 		initialized = false;
 		created = false;
+		final int initialDisplayWidth = size[0];
+		final int initialDisplayHeight = size[1];
 		raspberryProductionMode = Boolean.getBoolean(RASPBERRY_PRODUCTION_PROPERTY)
 				|| WarpPI.getPlatform().isRunningOnRaspberry();
 		keyboardLayer = HardwareKeyboardLayout.activeLayer();
-		this.getSize();
-		size = new int[] { this.getSize()[0], this.getSize()[1] };
+		size = new int[] { initialDisplayWidth, initialDisplayHeight };
 		created = true;
 		registeredTextures = new LinkedList<>();
 		unregisteredTextures = new LinkedList<>();
 		r = new JOGLRenderer();
 		wnd = new NEWTWindow(this);
 		wnd.create();
-		setDisplayMode(this.getSize()[0], this.getSize()[1]);
+		setDisplayMode(initialDisplayWidth, initialDisplayHeight);
 		setResizable(!raspberryProductionMode);
 		if (raspberryProductionMode && !wnd.window.setFullscreen(true))
 			throw new IllegalStateException("NEWT rejected Raspberry production fullscreen mode");
