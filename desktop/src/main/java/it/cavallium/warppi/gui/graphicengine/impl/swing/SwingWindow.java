@@ -182,6 +182,7 @@ public class SwingWindow extends JFrame {
 		buttonsPanel.setVisible(true);
 		for (final PhysicalRow physicalRow : HardwareKeyboardLayout.rows())
 			createPhysicalRow(physicalRow, buttonImage);
+		refreshKeyboardLayer();
 
 		var size = super.getSize();
 		super.setSize(size.width, size.height + buttonsPanelContainer.getHeight());
@@ -285,22 +286,24 @@ public class SwingWindow extends JFrame {
 	}
 
 	private void refreshKeyboardLayer() {
+		if (!SwingUtilities.isEventDispatchThread()) {
+			SwingUtilities.invokeLater(this::refreshKeyboardLayer);
+			return;
+		}
 		final Layer layer = HardwareKeyboardLayout.activeLayer();
-		for (int row = 0; row < buttons.length; row++)
-			for (int col = 0; col < buttons[0].length; col++) {
-				final SwingAdvancedButton btn = buttons[row][col];
-				if (btn != null) {
-					final Key normal = HardwareKeyboardLayout.mappingAt(row, col, Layer.NORMAL);
-					final Key active = HardwareKeyboardLayout.mappingAt(row, col, layer);
-					btn.setText(HardwareKeyboardLayout.labelFor(active));
-					btn.state = (row == 0 && col == 0 && layer == Layer.SHIFT
-							|| row == 0 && col == 1 && layer == Layer.ALT_ALPHA) ? 2 : 0;
-					if (active != Key.NONE && active != normal)
-						btn.setBasicForeground(layer == Layer.ALT_ALPHA
-								? new Color(244, 67, 54) : new Color(33, 150, 243));
-					else
-						btn.setBasicForeground(Color.BLACK);
-				}
+		for (final PhysicalRow physicalRow : HardwareKeyboardLayout.rows())
+			for (final PhysicalKey key : physicalRow.keys()) {
+				final SwingAdvancedButton btn = buttons[key.matrixRow()][key.matrixColumn()];
+				final Key active = key.mapping(layer);
+				final boolean activeModifier = key.isActiveModifier(layer);
+				btn.setText(key.label(layer));
+				btn.state = activeModifier ? 2 : 0;
+				if (activeModifier || active != Key.NONE && active != key.normal())
+					btn.setBasicForeground(layer == Layer.ALT_ALPHA
+							? new Color(244, 67, 54) : new Color(33, 150, 243));
+				else
+					btn.setBasicForeground(Color.BLACK);
+				btn.repaint();
 			}
 	}
 

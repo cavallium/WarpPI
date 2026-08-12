@@ -11,7 +11,7 @@ import it.cavallium.warppi.gui.RenderContext;
 import it.cavallium.warppi.gui.ScreenContext;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
 
-/** Displays all three meanings of every key in the calculator's physical layout. */
+/** Displays the active meaning of every key in the calculator's physical layout. */
 public final class HardwareKeyboardGuideScreen extends Screen {
 	private static final int BACKGROUND_COLOR = 0xFFF1EFE5;
 	private static final int HEADER_HEIGHT = 23;
@@ -79,31 +79,31 @@ public final class HardwareKeyboardGuideScreen extends Screen {
 	}
 
 	private void drawKey(final Renderer renderer, final int x, final int y, final int width, final PhysicalKey key) {
+		final boolean activeModifier = key.isActiveModifier(activeLayer);
 		if (key.mapping(Layer.NORMAL) == Key.NONE
 				&& key.mapping(Layer.SHIFT) == Key.NONE
 				&& key.mapping(Layer.ALT_ALPHA) == Key.NONE) {
 			renderer.glColor3i(218, 216, 207);
+		} else if (activeModifier) {
+			setActiveModifierBackgroundColor(renderer, activeLayer);
 		} else {
 			setLayerBackgroundColor(renderer, activeLayer);
 		}
 		renderer.glFillColor(x + 1, y + 1, width - 2, KEY_HEIGHT - 2);
 
-		renderer.glColor3i(65, 65, 60);
+		if (activeModifier)
+			setLayerTextColor(renderer, activeLayer, true);
+		else
+			renderer.glColor3i(65, 65, 60);
 		renderer.glDrawLine(x, y, x + width, y);
 		renderer.glDrawLine(x + width, y, x + width, y + KEY_HEIGHT);
 		renderer.glDrawLine(x + width, y + KEY_HEIGHT, x, y + KEY_HEIGHT);
 		renderer.glDrawLine(x, y + KEY_HEIGHT, x, y);
 
-		drawLayer(renderer, x, y + 2, width, key, Layer.NORMAL);
-		drawLayer(renderer, x, y + 9, width, key, Layer.SHIFT);
-		drawLayer(renderer, x, y + 16, width, key, Layer.ALT_ALPHA);
-	}
-
-	private void drawLayer(final Renderer renderer, final int x, final int y, final int width,
-			final PhysicalKey key, final Layer layer) {
-		setLayerTextColor(renderer, layer, layer == activeLayer);
-		renderer.glDrawStringLeft(x + 3, y, layer.abbreviation());
-		renderer.glDrawStringRight(x + width - 3, y, key.compactLabel(layer));
+		renderer.glColor3i(95, 95, 88);
+		renderer.glDrawStringLeft(x + 3, y + 2, key.switchLabel());
+		setLayerTextColor(renderer, activeLayer, true);
+		renderer.glDrawStringCenter(x + width / 2, y + 14, key.compactLabel(activeLayer));
 	}
 
 	private static void setLayerBackgroundColor(final Renderer renderer, final Layer layer) {
@@ -111,6 +111,14 @@ public final class HardwareKeyboardGuideScreen extends Screen {
 			case NORMAL -> renderer.glColor3i(250, 249, 242);
 			case SHIFT -> renderer.glColor3i(222, 234, 250);
 			case ALT_ALPHA -> renderer.glColor3i(250, 226, 230);
+		}
+	}
+
+	private static void setActiveModifierBackgroundColor(final Renderer renderer, final Layer layer) {
+		switch (layer) {
+			case NORMAL -> renderer.glColor3i(250, 249, 242);
+			case SHIFT -> renderer.glColor3i(151, 190, 238);
+			case ALT_ALPHA -> renderer.glColor3i(239, 166, 177);
 		}
 	}
 

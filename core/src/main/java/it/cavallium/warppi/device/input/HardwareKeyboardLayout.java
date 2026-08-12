@@ -65,6 +65,20 @@ public final class HardwareKeyboardLayout {
 		public String compactLabel(final Layer layer) {
 			return compactLabelFor(mapping(layer));
 		}
+
+		/** Returns whether this key is the modifier selecting the displayed layer. */
+		public boolean isActiveModifier(final Layer layer) {
+			return switch (Objects.requireNonNull(layer, "layer")) {
+				case NORMAL -> false;
+				case SHIFT -> normal == Key.SHIFT;
+				case ALT_ALPHA -> normal == Key.ALPHA;
+			};
+		}
+
+		/** PCB switch identifier, for example {@code S11} or {@code S58}. */
+		public String switchLabel() {
+			return "S" + (matrixRow + 1) + (matrixColumn + 1);
+		}
 	}
 
 	public record PhysicalRow(int slotCount, List<PhysicalKey> keys) {

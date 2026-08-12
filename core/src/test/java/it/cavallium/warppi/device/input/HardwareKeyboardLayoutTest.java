@@ -92,6 +92,21 @@ class HardwareKeyboardLayoutTest {
 	}
 
 	@Test
+	void identifiesPcbSwitchesAndOnlyTheActiveModifier() {
+		final PhysicalKey shift = find(0, 0);
+		final PhysicalKey alpha = find(0, 1);
+
+		assertEquals("S11", shift.switchLabel());
+		assertEquals("S12", alpha.switchLabel());
+		assertEquals("S58", find(4, 7).switchLabel());
+		assertTrue(shift.isActiveModifier(Layer.SHIFT));
+		assertFalse(shift.isActiveModifier(Layer.NORMAL));
+		assertFalse(shift.isActiveModifier(Layer.ALT_ALPHA));
+		assertTrue(alpha.isActiveModifier(Layer.ALT_ALPHA));
+		assertFalse(alpha.isActiveModifier(Layer.SHIFT));
+	}
+
+	@Test
 	void allPhysicalKeyLabelsFitTheCompactGuide() {
 		for (final PhysicalRow row : HardwareKeyboardLayout.rows()) {
 			for (final PhysicalKey key : row.keys()) {
