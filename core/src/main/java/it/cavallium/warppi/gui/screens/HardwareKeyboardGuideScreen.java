@@ -36,40 +36,37 @@ public final class HardwareKeyboardGuideScreen extends Screen {
 	public void render(final RenderContext ctx) {
 		final Renderer renderer = ctx.getRenderer();
 		d.fonts[1].use(d.display);
-		final int characterWidth = renderer.getCurrentFont().getCharacterWidth();
-		drawHeader(renderer, ctx.getWidth(), characterWidth);
+		drawHeader(renderer, ctx.getWidth());
 
 		int y = HEADER_HEIGHT;
 		for (int rowIndex = 0; rowIndex < HardwareKeyboardLayout.rows().size(); rowIndex++) {
 			if (rowIndex == 5 || rowIndex == 8)
 				y += 2;
-			drawRow(renderer, ctx.getWidth(), y, HardwareKeyboardLayout.rows().get(rowIndex), characterWidth);
+			drawRow(renderer, ctx.getWidth(), y, HardwareKeyboardLayout.rows().get(rowIndex));
 			y += ROW_HEIGHT;
 		}
 	}
 
-	private void drawHeader(final Renderer renderer, final int width, final int characterWidth) {
+	private void drawHeader(final Renderer renderer, final int width) {
 		renderer.glColor3i(35, 35, 32);
-		drawTextLeft(renderer, 3, 2, "KEYBOARD GUIDE", characterWidth);
-		drawTextRight(renderer, width - 3, 2, "GUIDE/BACK: CLOSE", characterWidth);
+		renderer.glDrawStringLeft(3, 2, "KEYBOARD GUIDE");
+		renderer.glDrawStringRight(width - 3, 2, "GUIDE/BACK: CLOSE");
 
-		drawLegend(renderer, width / 4, Layer.NORMAL, "N NORMAL", characterWidth);
-		drawLegend(renderer, width / 2, Layer.SHIFT, "S SHIFT", characterWidth);
-		drawLegend(renderer, width * 3 / 4, Layer.ALT_ALPHA, "A ALT/ALPHA", characterWidth);
+		drawLegend(renderer, width / 4, Layer.NORMAL, "N NORMAL");
+		drawLegend(renderer, width / 2, Layer.SHIFT, "S SHIFT");
+		drawLegend(renderer, width * 3 / 4, Layer.ALT_ALPHA, "A ALT/ALPHA");
 	}
 
-	private void drawLegend(final Renderer renderer, final int centerX, final Layer layer, final String text,
-			final int characterWidth) {
+	private void drawLegend(final Renderer renderer, final int centerX, final Layer layer, final String text) {
 		if (layer == activeLayer) {
 			setLayerBackgroundColor(renderer, layer);
 			renderer.glFillColor(centerX - 40, 10, 80, 11);
 		}
 		setLayerTextColor(renderer, layer, true);
-		drawTextCenter(renderer, centerX, 12, text, characterWidth);
+		renderer.glDrawStringCenter(centerX, 12, text);
 	}
 
-	private void drawRow(final Renderer renderer, final int width, final int y, final PhysicalRow row,
-			final int characterWidth) {
+	private void drawRow(final Renderer renderer, final int width, final int y, final PhysicalRow row) {
 		final int inset = row.slotCount() == 5 ? 6 : 3;
 		for (int keyIndex = 0; keyIndex < row.keys().size(); keyIndex++) {
 			final PhysicalKey key = row.keys().get(keyIndex);
@@ -77,12 +74,11 @@ public final class HardwareKeyboardGuideScreen extends Screen {
 			final int slotRight = (key.slot() + 1) * width / row.slotCount();
 			final int x = slotLeft + inset;
 			final int keyWidth = slotRight - slotLeft - 2 * inset;
-			drawKey(renderer, x, y, keyWidth, key, characterWidth);
+			drawKey(renderer, x, y, keyWidth, key);
 		}
 	}
 
-	private void drawKey(final Renderer renderer, final int x, final int y, final int width,
-			final PhysicalKey key, final int characterWidth) {
+	private void drawKey(final Renderer renderer, final int x, final int y, final int width, final PhysicalKey key) {
 		if (key.mapping(Layer.NORMAL) == Key.NONE
 				&& key.mapping(Layer.SHIFT) == Key.NONE
 				&& key.mapping(Layer.ALT_ALPHA) == Key.NONE) {
@@ -98,34 +94,16 @@ public final class HardwareKeyboardGuideScreen extends Screen {
 		renderer.glDrawLine(x + width, y + KEY_HEIGHT, x, y + KEY_HEIGHT);
 		renderer.glDrawLine(x, y + KEY_HEIGHT, x, y);
 
-		drawLayer(renderer, x, y + 2, width, key, Layer.NORMAL, characterWidth);
-		drawLayer(renderer, x, y + 9, width, key, Layer.SHIFT, characterWidth);
-		drawLayer(renderer, x, y + 16, width, key, Layer.ALT_ALPHA, characterWidth);
+		drawLayer(renderer, x, y + 2, width, key, Layer.NORMAL);
+		drawLayer(renderer, x, y + 9, width, key, Layer.SHIFT);
+		drawLayer(renderer, x, y + 16, width, key, Layer.ALT_ALPHA);
 	}
 
 	private void drawLayer(final Renderer renderer, final int x, final int y, final int width,
-			final PhysicalKey key, final Layer layer, final int characterWidth) {
+			final PhysicalKey key, final Layer layer) {
 		setLayerTextColor(renderer, layer, layer == activeLayer);
-		drawTextLeft(renderer, x + 3, y, layer.abbreviation(), characterWidth);
-		drawTextRight(renderer, x + width - 3, y, key.label(layer), characterWidth);
-	}
-
-	/* JOGL's string helper creates temporary arrays. This screen is redrawn continuously, so
-	 * render its short, fixed-width labels character-by-character without per-frame garbage. */
-	private static void drawTextLeft(final Renderer renderer, final int x, final int y, final String text,
-			final int characterWidth) {
-		for (int i = 0; i < text.length(); i++)
-			renderer.glDrawCharLeft(x + i * characterWidth, y, text.charAt(i));
-	}
-
-	private static void drawTextCenter(final Renderer renderer, final int centerX, final int y, final String text,
-			final int characterWidth) {
-		drawTextLeft(renderer, centerX - text.length() * characterWidth / 2, y, text, characterWidth);
-	}
-
-	private static void drawTextRight(final Renderer renderer, final int rightX, final int y, final String text,
-			final int characterWidth) {
-		drawTextLeft(renderer, rightX - text.length() * characterWidth, y, text, characterWidth);
+		renderer.glDrawStringLeft(x + 3, y, layer.abbreviation());
+		renderer.glDrawStringRight(x + width - 3, y, key.label(layer));
 	}
 
 	private static void setLayerBackgroundColor(final Renderer renderer, final Layer layer) {

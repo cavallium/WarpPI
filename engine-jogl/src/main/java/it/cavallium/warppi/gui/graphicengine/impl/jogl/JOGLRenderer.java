@@ -52,8 +52,8 @@ public class JOGLRenderer implements Renderer {
 	FloatBuffer fbColors;
 	int fbElements;
 
-	float[] currentColor = new float[24];
-	float[] currentClearColorARGBf = new float[] { 1f, 197f / 255f, 194f / 255f, 175f / 255f };
+	final float[] currentColor = new float[JOGLRenderer.colSize * JOGLRenderer.ELEMENT_VERTICES_COUNT];
+	final float[] currentClearColorARGBf = { 1f, 197f / 255f, 194f / 255f, 175f / 255f };
 	boolean currentTexEnabled;
 	Texture currentTex;
 	float currentTexWidth;
@@ -63,24 +63,17 @@ public class JOGLRenderer implements Renderer {
 
 	@Override
 	public void glColor3i(final int r, final int gg, final int b) {
-		final float red = r / 255f;
-		final float gre = gg / 255f;
-		final float blu = b / 255f;
-		//currentColor = new float[] { red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, };
-		currentColor = new float[] { red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, }; //OK
+		setColor(r / 255f, gg / 255f, b / 255f, 1.0f);
 	}
 
 	@Override
 	public void glColor3f(final float red, final float gre, final float blu) {
-		// currentColor = new float[] { red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, };
-		currentColor = new float[] { red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, red, gre, blu, 1.0f, };//OK
+		setColor(red, gre, blu, 1.0f);
 	}
 
 	@Override
 	public void glColor4f(final float red, final float gre, final float blu, final float alp) {
-		// currentColor = new float[] { red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, };
-		currentColor = new float[] { red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, };//ok
-
+		setColor(red, gre, blu, alp);
 	}
 
 	@Override
@@ -108,12 +101,17 @@ public class JOGLRenderer implements Renderer {
 
 	@Override
 	public void glColor4i(final int r, final int g, final int b, final int a) {
-		final float red = r / 255f;
-		final float gre = g / 255f;
-		final float blu = b / 255f;
-		final float alp = a / 255f;
-		//currentColor = new float[] { red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, };
-		currentColor = new float[] { red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, red, gre, blu, alp, };//OK
+		setColor(r / 255f, g / 255f, b / 255f, a / 255f);
+	}
+
+	private void setColor(final float red, final float green, final float blue, final float alpha) {
+		for (int vertex = 0; vertex < JOGLRenderer.ELEMENT_VERTICES_COUNT; vertex++) {
+			final int offset = vertex * JOGLRenderer.colSize;
+			currentColor[offset] = red;
+			currentColor[offset + 1] = green;
+			currentColor[offset + 2] = blue;
+			currentColor[offset + 3] = alpha;
+		}
 	}
 
 	@Override
@@ -122,12 +120,19 @@ public class JOGLRenderer implements Renderer {
 		final float gre = green / 255f;
 		final float blu = blue / 255f;
 		final float alp = alpha / 255f;
-		currentClearColorARGBf = new float[] { alp, ros, gre, blu };
+		setClearColor(alp, ros, gre, blu);
 	}
 
 	@Override
 	public void glClearColor4f(final float red, final float green, final float blue, final float alpha) {
-		currentClearColorARGBf = new float[] { alpha, red, green, blue };
+		setClearColor(alpha, red, green, blue);
+	}
+
+	private void setClearColor(final float alpha, final float red, final float green, final float blue) {
+		currentClearColorARGBf[0] = alpha;
+		currentClearColorARGBf[1] = red;
+		currentClearColorARGBf[2] = green;
+		currentClearColorARGBf[3] = blue;
 	}
 
 	@Override
@@ -168,12 +173,7 @@ public class JOGLRenderer implements Renderer {
 		//NV4 = V3
 		//NV5 = V2
 
-		final float[] vertices = { x, y + height, 0.0f, x + width, y + height, 0.0f, x, y, 0.0f, x, y, 0.0f, x + width, y + height, 0.0f, x + width, y, 0.0f };
-		final float[] tex_vertices = { uvX, uvY, uvX + uvWidth, uvY, uvX, uvY + uvHeight, uvX, uvY + uvHeight, uvX + uvWidth, uvY, uvX + uvWidth, uvY + uvHeight };
-		fbElements++;
-		fbVertices.put(vertices);
-		fbTextures.put(tex_vertices);
-		fbColors.put(currentColor);
+		putQuad(x, y, x + width, y + height, uvX, uvY, uvX + uvWidth, uvY + uvHeight);
 	}
 
 	@Override
@@ -194,25 +194,34 @@ public class JOGLRenderer implements Renderer {
 		//NV4 = V3
 		//NV5 = V2
 
-		final float[] vertices = { x0, y0 + h1, 0.0f, x0 + w1, y0 + h1, 0.0f, x0, y0, 0.0f, x0, y0, 0.0f, x0 + w1, y0 + h1, 0.0f, x0 + w1, y0, 0.0f, };
-		final float[] tex_vertices = { 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, };
+		putQuad(x0, y0, x0 + w1, y0 + h1, 0.0f, 0.0f, 1.0f, 1.0f);
+	}
+
+	private void putQuad(final float x0, final float y0, final float x1, final float y1,
+			final float u0, final float v0, final float u1, final float v1) {
 		fbElements++;
-		fbVertices.put(vertices);
-		fbTextures.put(tex_vertices);
+		fbVertices
+				.put(x0).put(y1).put(0.0f)
+				.put(x1).put(y1).put(0.0f)
+				.put(x0).put(y0).put(0.0f)
+				.put(x0).put(y0).put(0.0f)
+				.put(x1).put(y1).put(0.0f)
+				.put(x1).put(y0).put(0.0f);
+		fbTextures
+				.put(u0).put(v0)
+				.put(u1).put(v0)
+				.put(u0).put(v1)
+				.put(u0).put(v1)
+				.put(u1).put(v0)
+				.put(u1).put(v1);
 		fbColors.put(currentColor);
 	}
 
 	@Override
 	public void glDrawStringLeft(final float x, final float y, final String text) {
 		final int txtLen = text.length();
-		final int[] txtArray = currentFont.getCharIndexes(text);
-		int tableIndexX;
-		int tableIndexY;
-		for (int currentCharIndex = 0; currentCharIndex < txtLen; currentCharIndex++) {
-			tableIndexX = txtArray[currentCharIndex] % currentFont.memoryWidthOfEachColumn;
-			tableIndexY = (txtArray[currentCharIndex] - tableIndexX) / currentFont.memoryWidthOfEachColumn;
-			glFillRect(x + (float) currentCharIndex * (float) currentFont.charW, y, currentFont.charW, currentFont.charH, tableIndexX * currentFont.charW, tableIndexY * currentFont.charH, currentFont.charW, currentFont.charH);
-		}
+		for (int currentCharIndex = 0; currentCharIndex < txtLen; currentCharIndex++)
+			drawChar(x + (float) currentCharIndex * currentFont.charW, y, text.charAt(currentCharIndex));
 	}
 
 	@Override
@@ -227,6 +236,10 @@ public class JOGLRenderer implements Renderer {
 
 	@Override
 	public void glDrawCharLeft(final int x, final int y, final char ch) {
+		drawChar(x, y, ch);
+	}
+
+	private void drawChar(final float x, final float y, final char ch) {
 		final int index = currentFont.getCharIndex(ch);
 		final int tableIndexX = index % currentFont.memoryWidthOfEachColumn;
 		final int tableIndexY = (index - tableIndexX) / currentFont.memoryWidthOfEachColumn;

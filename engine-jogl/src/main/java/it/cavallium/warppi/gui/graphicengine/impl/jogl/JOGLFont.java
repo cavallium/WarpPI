@@ -80,16 +80,13 @@ public class JOGLFont implements BinaryFont {
 
 	public int[] getCharIndexes(final String txt) {
 		final int[] indexes = new int[txt.length()];
-		int i = 0;
-		for (final char c : txt.toCharArray()) {
-			indexes[i] = compressIndex((c & 0xFFFF) - minCharIndex);
-			i++;
-		}
+		for (int i = 0; i < txt.length(); i++)
+			indexes[i] = getCharIndex(txt.charAt(i));
 		return indexes;
 	}
 
 	public int getCharIndex(final char c) {
-		final int originalIndex = c & 0xFFFF;
+		final int originalIndex = (c & 0xFFFF) - minCharIndex;
 		return compressIndex(originalIndex);
 	}
 
