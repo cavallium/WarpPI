@@ -73,9 +73,9 @@ public abstract class BlockParenthesisAbstract extends Block implements IParenth
 	}
 
 	@Override
-	public boolean putBlock(final Caret caret, final Block newBlock) {
+	public boolean insertBlock(final Caret caret, final Block newBlock) {
 		boolean added = false;
-		added = added | containerNumber.putBlock(caret, newBlock);
+		added = added | containerNumber.insertBlock(caret, newBlock);
 		if (added) {
 			recomputeDimensions();
 		}
@@ -83,9 +83,9 @@ public abstract class BlockParenthesisAbstract extends Block implements IParenth
 	}
 
 	@Override
-	public boolean delBlock(final Caret caret) {
+	public boolean deleteBlock(final Caret caret) {
 		boolean removed = false;
-		removed = removed | containerNumber.delBlock(caret);
+		removed = removed | containerNumber.deleteBlock(caret);
 		if (removed) {
 			recomputeDimensions();
 		}

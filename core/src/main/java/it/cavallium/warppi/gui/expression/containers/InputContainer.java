@@ -76,7 +76,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 	public void typeBlock(final Block b) {
 		if (b != null) {
 			caret.resetRemaining();
-			if (root.putBlock(caret, b)) {
+			if (root.insertBlock(caret, b)) {
 				caret.setPosition(caret.getPosition() + b.getCaretDeltaPositionAfterCreation());
 				maxPosition = root.computeCaretMaxBound();
 				root.recomputeDimensions();
@@ -93,7 +93,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 
 	public void del() {
 		caret.resetRemaining();
-		if (root.delBlock(caret)) {
+		if (root.deleteBlock(caret)) {
 			root.recomputeDimensions();
 		}
 		if (caret.getPosition() > 0) {

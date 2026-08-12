@@ -48,10 +48,10 @@ public class BlockDivision extends Block {
 	}
 
 	@Override
-	public boolean putBlock(final Caret caret, final Block newBlock) {
+	public boolean insertBlock(final Caret caret, final Block newBlock) {
 		boolean added = false;
-		added = added | containerUp.putBlock(caret, newBlock);
-		added = added | containerDown.putBlock(caret, newBlock);
+		added = added | containerUp.insertBlock(caret, newBlock);
+		added = added | containerDown.insertBlock(caret, newBlock);
 		if (added) {
 			recomputeDimensions();
 		}
@@ -59,10 +59,10 @@ public class BlockDivision extends Block {
 	}
 
 	@Override
-	public boolean delBlock(final Caret caret) {
+	public boolean deleteBlock(final Caret caret) {
 		boolean removed = false;
-		removed = removed | containerUp.delBlock(caret);
-		removed = removed | containerDown.delBlock(caret);
+		removed = removed | containerUp.deleteBlock(caret);
+		removed = removed | containerDown.deleteBlock(caret);
 		if (removed) {
 			recomputeDimensions();
 		}
