@@ -1,8 +1,7 @@
 package it.cavallium.warppi.math.functions.equations;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockChar;
@@ -29,23 +28,14 @@ public class Equation extends FunctionOperator {
 	}
 
 	//WORK IN PROGRESS
-	public ObjectArrayList<Equation> solveStep(final char charIncognita) {
-		ObjectArrayList<Equation> result = new ObjectArrayList<>();
-		result.add(clone());
+	public ObjectArrayList<Equation> solveStep(final char variableCharacter) {
 		for (final SolveMethod t : SolveMethod.techniques) {
-			final ObjectArrayList<Equation> newResults = new ObjectArrayList<>();
-			final int sz = result.size();
-			for (int n = 0; n < sz; n++) {
-				newResults.addAll(t.solve(result.get(n)));
+			final ObjectArrayList<Equation> result = t.solve(this, variableCharacter);
+			if (!result.isEmpty()) {
+				return result;
 			}
-			final Set<Equation> hs = new HashSet<>();
-			hs.addAll(newResults);
-			newResults.clear();
-			newResults.addAll(hs);
-			result = newResults;
 		}
-		// TODO: controllare se è a posto
-		return result;
+		return new ObjectArrayList<>();
 	}
 
 	@Override
@@ -60,11 +50,9 @@ public class Equation extends FunctionOperator {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (o instanceof Equation) {
-			final FunctionOperator f = (FunctionOperator) o;
-			return parameter1.equals(f.getParameter1()) && parameter2.equals(f.getParameter2());
-		}
-		return false;
+		return o instanceof Equation
+				&& Objects.equals(parameter1, ((Equation) o).parameter1)
+				&& Objects.equals(parameter2, ((Equation) o).parameter2);
 	}
 
 	@Override

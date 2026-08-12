@@ -10,6 +10,7 @@ import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.math.Function;
+import it.cavallium.warppi.math.functions.equations.Equation;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
 import it.cavallium.warppi.util.Error;
@@ -76,10 +77,15 @@ public class MathSolver {
 				next = applyRules(current, state.ruleType, seenStates);
 				if (next == null) {
 					if (state == StepState.REDUCTION) {
-						return steps;
+						next = solveEquations(current, seenStates);
+						if (next == null) {
+							return steps;
+						}
+						state = StepState.CALCULATION;
+					} else {
+						state = state.next();
+						continue;
 					}
-					state = state.next();
-					continue;
 				}
 				if (state == StepState.REDUCTION) {
 					state = StepState.CALCULATION;
@@ -100,6 +106,30 @@ public class MathSolver {
 		throw limitExceeded("pass", MAX_PASSES);
 	}
 
+	private ObjectArrayList<Function> solveEquations(final ObjectArrayList<Function> functions,
+			final Set<Set<Function>> seenStates) throws InterruptedException, Error {
+		for (int branchIndex = 0; branchIndex < functions.size(); branchIndex++) {
+			checkInterrupted();
+			final Function function = functions.get(branchIndex);
+			if (!(function instanceof Equation)) {
+				continue;
+			}
+			for (final SolveMethod technique : SolveMethod.techniques) {
+				final ObjectArrayList<Equation> solutions = technique.solve((Equation) function);
+				if (solutions.isEmpty()) {
+					continue;
+				}
+				final ObjectArrayList<Function> candidate = replaceBranch(
+						functions, branchIndex, solutions, "Equation solver");
+				final Set<Function> state = new HashSet<>(candidate);
+				if (seenStates.add(state)) {
+					return candidate;
+				}
+			}
+		}
+		return null;
+	}
+
 	private ObjectArrayList<Function> applyRules(final ObjectArrayList<Function> functions,
 			final RuleType ruleType, final Set<Set<Function>> seenStates) throws InterruptedException, Error {
 		final ObjectArrayList<Rule> rules = initialFunction.getMathContext().getAcceptableRules(ruleType);
@@ -116,7 +146,7 @@ public class MathSolver {
 					continue;
 				}
 				final ObjectArrayList<Function> candidate = replaceBranch(
-						functions, branchIndex, ruleResults, rule);
+						functions, branchIndex, ruleResults, "Rule " + rule.getRuleName());
 				final Set<Function> candidateState = new HashSet<>(candidate);
 				if (seenStates.contains(candidateState)) {
 					continue;
@@ -147,7 +177,7 @@ public class MathSolver {
 				final List<Function> results = function.simplify(rule);
 				if (results != null && !results.isEmpty()
 						&& originalState.equals(new HashSet<>(replaceBranch(
-							expanded, branchIndex, results, rule)))) {
+							expanded, branchIndex, results, "Rule " + rule.getRuleName())))) {
 					return true;
 				}
 			}
@@ -156,7 +186,8 @@ public class MathSolver {
 	}
 
 	private ObjectArrayList<Function> replaceBranch(final ObjectArrayList<Function> functions,
-			final int branchIndex, final List<Function> replacements, final Rule rule) throws Error {
+			final int branchIndex, final List<? extends Function> replacements,
+			final String source) throws Error {
 		final LinkedHashSet<Function> uniqueResults = new LinkedHashSet<>();
 		for (int i = 0; i < branchIndex; i++) {
 			addBranch(uniqueResults, functions.get(i));
@@ -164,7 +195,7 @@ public class MathSolver {
 		for (final Function result : replacements) {
 			if (result == null) {
 				throw new Error(Errors.ERROR,
-						"Rule " + rule.getRuleName() + " returned a null branch.");
+						source + " returned a null branch.");
 			}
 			addBranch(uniqueResults, result);
 		}
