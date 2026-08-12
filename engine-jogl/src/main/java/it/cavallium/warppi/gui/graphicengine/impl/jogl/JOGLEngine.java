@@ -199,7 +199,7 @@ public class JOGLEngine implements GraphicEngine {
 				rememberKeyboardFont(name, entry.getValue());
 				return entry.getValue();
 			}
-		final JOGLFont font = new JOGLFont(name);
+		final JOGLFont font = new JOGLFont(name, !raspberryProductionMode);
 		this.registerFont(font);
 		fontCache.put(name, font);
 		rememberKeyboardFont(name, font);
