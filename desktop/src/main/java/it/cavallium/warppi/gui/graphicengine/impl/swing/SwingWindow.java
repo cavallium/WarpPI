@@ -22,35 +22,53 @@ import java.net.URISyntaxException;
 
 public class SwingWindow extends JFrame {
 	private static final long serialVersionUID = 2945898937634075491L;
+	private static final int BASE_BUTTON_SIZE = 32;
+	private static final int BASE_PANEL_GAP = 5;
 	private final int defaultWidth;
 	private final int defaultHeight;
 	private final SwingRenderer renderer;
 	private final Runnable destroyEngine;
+	private final float desktopScale;
 	private BufferedImage graphics;
 	public CustomCanvas c;
 	private RenderingLoop renderingLoop;
-	private int mult = 1;
+	private volatile float calculatorZoom;
+	private volatile float toolkitScale;
+	private volatile float toolkitCompensation;
 	private final EventSubmitter<Integer[]> onResize;
 	private final EventSubmitter<Integer[]> onResize$;
 	public JPanel buttonsPanel;
+	private JPanel buttonsPanelContainer;
 	private SwingAdvancedButton[][] buttons;
-	private int BTN_SIZE;
+	private int buttonSize;
 	private volatile boolean windowShown;
 	private volatile boolean forceRepaint;
 
-	public SwingWindow(final SwingRenderer renderer, final BufferedImage graphics, Runnable destroyEngine, int defaultWidth, int defaultHeight) {
+	public SwingWindow(final SwingRenderer renderer, final BufferedImage graphics, final Runnable destroyEngine,
+			final int defaultWidth, final int defaultHeight) {
+		this(renderer, graphics, destroyEngine, defaultWidth, defaultHeight, 1f);
+	}
+
+	public SwingWindow(final SwingRenderer renderer, final BufferedImage graphics, final Runnable destroyEngine,
+			final int defaultWidth, final int defaultHeight, final float desktopScale) {
 		this.renderer = renderer;
 		this.graphics = graphics;
 		this.destroyEngine = destroyEngine;
 		this.defaultWidth = defaultWidth;
 		this.defaultHeight = defaultHeight;
+		this.desktopScale = desktopScale;
+		calculatorZoom = SwingScaling.normalizeCalculatorZoom(StaticVars.windowZoom.getLastValue());
+		toolkitScale = SwingScaling.toolkitScale(getGraphicsConfiguration());
+		toolkitCompensation = SwingScaling.toolkitCompensation(desktopScale, toolkitScale);
 		setLayout(new BorderLayout());
 		setBackground(Color.BLACK);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		c = new CustomCanvas();
 		c.setMinimumSize(new Dimension(0, 0));
-		c.setPreferredSize(new Dimension(defaultWidth, defaultHeight));
-		c.setSize(defaultWidth, defaultHeight);
+		final Dimension initialCanvasSize = SwingScaling.toUserSize(
+				defaultWidth, defaultHeight, toolkitCompensation);
+		c.setPreferredSize(initialCanvasSize);
+		c.setSize(initialCanvasSize);
 		c.setDoubleBuffered(false);
 		this.add(c, BorderLayout.CENTER);
 		try {
@@ -62,8 +80,6 @@ public class SwingWindow extends JFrame {
 		Toolkit.getDefaultToolkit().setDynamicLayout(false);
 		// Transparent 16 x 16 pixel cursor image.
 		final BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-
-		mult = StaticVars.windowZoom.getLastValue().intValue();
 
 		if (!WarpPI.getPlatform().getSettings().isDebugEnabled()) {
 			// Create a new blank cursor.
@@ -120,12 +136,15 @@ public class SwingWindow extends JFrame {
 
 			@Override
 			public void componentMoved(final ComponentEvent e) {
+				refreshToolkitScale();
 			}
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
 				if (windowShown) {
-					onResize.submit(new Integer[]{c.getWidth() / mult, c.getHeight() / mult});
+					onResize.submit(new Integer[] {
+							SwingScaling.toLogicalUnits(c.getWidth(), calculatorZoom, toolkitCompensation),
+							SwingScaling.toLogicalUnits(c.getHeight(), calculatorZoom, toolkitCompensation) });
 				}
 			}
 
@@ -155,23 +174,18 @@ public class SwingWindow extends JFrame {
 
 			}
 		});
-		StaticVars.windowZoom.subscribe((newZoomValue) -> {
-			mult = (int) newZoomValue.floatValue();
-			onResize.submit(new Integer[]{getWWidth(), getWHeight()});
-			WarpPI.getPlatform().getConsoleUtils().out().println(3, "Engine", "CPU", "Zoom changed");
-		});
+		StaticVars.windowZoom.subscribe(this::setCalculatorZoom);
 	}
 
 	private void setupButtonsPanel() throws IOException, URISyntaxException {
-		BTN_SIZE = 32;
-		if (StaticVars.startupArguments.isZoomed())
-			BTN_SIZE *= 2;
+		buttonSize = SwingScaling.toUserUnits(BASE_BUTTON_SIZE, toolkitCompensation);
 
 		final BufferedImage buttonImage = ImageIO.read(
 				WarpPI.getPlatform().getStorageUtils().getResourceStream("/desktop-buttons.png"));
 		buttons = new SwingAdvancedButton[8][8];
-		final JPanel buttonsPanelContainer = new JPanel();
-		buttonsPanelContainer.setLayout(new FlowLayout());
+		buttonsPanelContainer = new JPanel();
+		final int panelGap = SwingScaling.toUserUnits(BASE_PANEL_GAP, toolkitCompensation);
+		buttonsPanelContainer.setLayout(new FlowLayout(FlowLayout.CENTER, panelGap, panelGap));
 		buttonsPanelContainer.setBackground(Color.BLACK);
 		this.add(buttonsPanelContainer, BorderLayout.PAGE_END);
 		buttonsPanel = new JPanel();
@@ -192,8 +206,8 @@ public class SwingWindow extends JFrame {
 	private void createPhysicalRow(final PhysicalRow physicalRow, final BufferedImage buttonImage)
 			throws IOException, URISyntaxException {
 		final JPanel rowPanel = new JPanel(new GridLayout(1, physicalRow.slotCount()));
-		final int slotWidth = (int) (BTN_SIZE * 1.5);
-		final Dimension rowSize = new Dimension(slotWidth * physicalRow.slotCount(), BTN_SIZE);
+		final int slotWidth = Math.round(buttonSize * 1.5f);
+		final Dimension rowSize = new Dimension(slotWidth * physicalRow.slotCount(), buttonSize);
 		rowPanel.setPreferredSize(rowSize);
 		rowPanel.setMinimumSize(rowSize);
 		rowPanel.setMaximumSize(rowSize);
@@ -213,7 +227,7 @@ public class SwingWindow extends JFrame {
 
 	private void createBlankBox(final JPanel rowPanel) {
 		final JPanel l = new JPanel();
-		l.setPreferredSize(new Dimension((int) (BTN_SIZE * 1.5), BTN_SIZE));
+		l.setPreferredSize(new Dimension(Math.round(buttonSize * 1.5f), buttonSize));
 		l.setBackground(Color.BLACK);
 		rowPanel.add(l);
 	}
@@ -223,12 +237,12 @@ public class SwingWindow extends JFrame {
 		final int row = key.matrixRow();
 		final int col = key.matrixColumn();
 		final SwingAdvancedButton b = new SwingAdvancedButton(
-				buttonImage, new Dimension((int) (BTN_SIZE * 1.5), BTN_SIZE));
+				buttonImage, new Dimension(Math.round(buttonSize * 1.5f), buttonSize));
 		b.drawDefaultComponent = false;
 		b.setText(Keyboard.getKeyName(row, col));
 		b.setBasicForeground(Color.BLACK);
 		Font f = b.getFont();
-		f = f.deriveFont(Font.BOLD, BTN_SIZE / 3f);
+		f = f.deriveFont(Font.BOLD, buttonSize / 3f);
 		b.setFont(f);
 		b.setBackground(new Color(200, 200, 200));
 		b.setFocusable(true);
@@ -277,6 +291,80 @@ public class SwingWindow extends JFrame {
 		rowPanel.add(b);
 	}
 
+	private void setCalculatorZoom(final Float requestedZoom) {
+		final float newZoom = SwingScaling.normalizeCalculatorZoom(requestedZoom);
+		if (!SwingUtilities.isEventDispatchThread()) {
+			SwingUtilities.invokeLater(() -> applyCalculatorZoom(newZoom));
+			return;
+		}
+		applyCalculatorZoom(newZoom);
+	}
+
+	private void applyCalculatorZoom(final float newZoom) {
+		if (Math.abs(newZoom - calculatorZoom) < 0.001f)
+			return;
+		calculatorZoom = newZoom;
+		onResize.submit(new Integer[] { getWWidth(), getWHeight() });
+		forceRepaint = true;
+		c.repaint();
+		WarpPI.getPlatform().getConsoleUtils().out().println(3, "Engine", "CPU", "Zoom changed");
+	}
+
+	private void refreshToolkitScale() {
+		final float newToolkitScale = SwingScaling.toolkitScale(getGraphicsConfiguration());
+		final float newCompensation = SwingScaling.toolkitCompensation(desktopScale, newToolkitScale);
+		if (Math.abs(newToolkitScale - toolkitScale) < 0.001f
+				&& Math.abs(newCompensation - toolkitCompensation) < 0.001f)
+			return;
+		final int windowWidth = SwingScaling.toLogicalUnits(c.getWidth(), 1f, toolkitCompensation);
+		final int windowHeight = SwingScaling.toLogicalUnits(c.getHeight(), 1f, toolkitCompensation);
+		toolkitScale = newToolkitScale;
+		toolkitCompensation = newCompensation;
+		applyWindowSizes(windowWidth, windowHeight);
+	}
+
+	private void applyWindowSizes(final int windowWidth, final int windowHeight) {
+		final Dimension canvasSize = SwingScaling.toUserSize(
+				windowWidth, windowHeight, toolkitCompensation);
+		c.setPreferredSize(canvasSize);
+		c.setSize(canvasSize);
+		resizeButtonsPanel();
+		super.pack();
+		onResize.submit(new Integer[] { getWWidth(), getWHeight() });
+		forceRepaint = true;
+		c.repaint();
+	}
+
+	private void resizeButtonsPanel() {
+		buttonSize = SwingScaling.toUserUnits(BASE_BUTTON_SIZE, toolkitCompensation);
+		final int panelGap = SwingScaling.toUserUnits(BASE_PANEL_GAP, toolkitCompensation);
+		buttonsPanelContainer.setLayout(new FlowLayout(FlowLayout.CENTER, panelGap, panelGap));
+		for (int rowIndex = 0; rowIndex < HardwareKeyboardLayout.rows().size(); rowIndex++) {
+			final PhysicalRow physicalRow = HardwareKeyboardLayout.rows().get(rowIndex);
+			final JPanel rowPanel = (JPanel) buttonsPanel.getComponent(rowIndex);
+			final int slotWidth = Math.round(buttonSize * 1.5f);
+			final Dimension rowSize = new Dimension(slotWidth * physicalRow.slotCount(), buttonSize);
+			setFixedSize(rowPanel, rowSize);
+			final Dimension keySize = new Dimension(slotWidth, buttonSize);
+			for (final Component component : rowPanel.getComponents()) {
+				setFixedSize(component, keySize);
+				if (component instanceof SwingAdvancedButton button) {
+					button.backgroundSize = keySize;
+					button.setFont(button.getFont().deriveFont(Font.BOLD, buttonSize / 3f));
+				}
+			}
+		}
+		buttonsPanelContainer.revalidate();
+		buttonsPanelContainer.repaint();
+	}
+
+	private static void setFixedSize(final Component component, final Dimension size) {
+		component.setMinimumSize(size);
+		component.setMaximumSize(size);
+		component.setPreferredSize(size);
+		component.setSize(size);
+	}
+
 	public void setKeyboardLayer(final Layer layer) {
 		refreshKeyboardLayer(layer);
 	}
@@ -309,8 +397,10 @@ public class SwingWindow extends JFrame {
 	@Deprecated
 	@Override
 	public void setSize(final int width, final int height) {
-		c.setSize(new Dimension(width * mult, height * mult));
-		c.setPreferredSize(new Dimension(width * mult, height * mult));
+		final Dimension canvasSize = SwingScaling.toUserSize(
+				width, height, toolkitCompensation);
+		c.setSize(canvasSize);
+		c.setPreferredSize(canvasSize);
 		super.pack();
 	}
 
@@ -318,14 +408,20 @@ public class SwingWindow extends JFrame {
 		return new Dimension(getWWidth(), getWHeight());
 	}
 
+	Dimension calculatorViewportSize(final int windowWidth, final int windowHeight) {
+		return new Dimension(
+				Math.max(1, Math.round(windowWidth / calculatorZoom)),
+				Math.max(1, Math.round(windowHeight / calculatorZoom)));
+	}
+
 	public int getWWidth() {
 		if (!windowShown) return defaultWidth;
-		return c.getWidth() / mult;
+		return SwingScaling.toLogicalUnits(c.getWidth(), calculatorZoom, toolkitCompensation);
 	}
 
 	public int getWHeight() {
 		if (!windowShown) return defaultHeight;
-		return c.getHeight() / mult;
+		return SwingScaling.toLogicalUnits(c.getHeight(), calculatorZoom, toolkitCompensation);
 	}
 
 	public void setRenderingLoop(final RenderingLoop renderingLoop) {
@@ -365,8 +461,8 @@ public class SwingWindow extends JFrame {
 
 				final int[] a = ((DataBufferInt) graphics.getRaster().getDataBuffer()).getData();
 				SwingRenderer.canvas2d = a;
-				g.clearRect(0, 0, renderer.size[0] * mult, renderer.size[1] * mult);
-				g.drawImage(graphics, 0, 0, renderer.size[0] * mult, renderer.size[1] * mult, null);
+				g.clearRect(0, 0, getWidth(), getHeight());
+				g.drawImage(graphics, 0, 0, getWidth(), getHeight(), null);
 				//			long time2 = System.nanoTime();
 				//			double timeDelta = ((double)(time2-time1))/1000000000d;
 				//			double mediaAttuale = timeDelta;

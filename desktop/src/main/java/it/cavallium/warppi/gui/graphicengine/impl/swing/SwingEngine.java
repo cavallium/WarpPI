@@ -49,9 +49,10 @@ public class SwingEngine implements GraphicEngine {
 	@Override
 	public void setDisplayMode(final int ww, final int wh) {
 		INSTANCE.setSize(ww, wh);
-		r.size = new int[] { ww, wh };
-		SwingRenderer.canvas2d = new int[ww * wh];
-		g = new BufferedImage(ww, wh, BufferedImage.TYPE_INT_RGB);
+		final Dimension viewportSize = INSTANCE.calculatorViewportSize(ww, wh);
+		r.size = new int[] { viewportSize.width, viewportSize.height };
+		SwingRenderer.canvas2d = new int[viewportSize.width * viewportSize.height];
+		g = new BufferedImage(viewportSize.width, viewportSize.height, BufferedImage.TYPE_INT_RGB);
 	}
 
 	@Override
@@ -64,7 +65,7 @@ public class SwingEngine implements GraphicEngine {
 		r = new SwingRenderer();
 		g = new BufferedImage(r.size[0], r.size[1], BufferedImage.TYPE_INT_RGB);
 		initialized = false;
-		INSTANCE = new SwingWindow(r, g, this::destroyEngine, defaultWidth, defaultHeight);
+		INSTANCE = new SwingWindow(r, g, this::destroyEngine, defaultWidth, defaultHeight, desktopScale);
 		setResizable(WarpPI.getPlatform().getSettings().isDebugEnabled());
 		INSTANCE.setVisible(true);
 		initialized = true;

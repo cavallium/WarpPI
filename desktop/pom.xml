@@ -43,6 +43,11 @@
 			<groupId>ar.com.hjg</groupId>
 			<artifactId>pngj</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 	<build>
 		<resources>
