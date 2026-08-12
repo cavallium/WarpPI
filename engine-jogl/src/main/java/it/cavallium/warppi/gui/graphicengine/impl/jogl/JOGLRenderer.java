@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 
@@ -274,7 +275,20 @@ public class JOGLRenderer implements Renderer {
 	}
 
 	static OpenedTextureData openTexture(final String file, final boolean isResource) throws GLException, IOException {
-		BufferedImage img = ImageIO.read(isResource ? JOGLRenderer.class.getResource(file) : new File(file).toURI().toURL());
+		final URL imageUrl;
+		if (isResource) {
+			String resourcePath = file.replace('\\', '/');
+			if (!resourcePath.startsWith("/"))
+				resourcePath = "/" + resourcePath;
+			imageUrl = JOGLRenderer.class.getResource(resourcePath);
+			if (imageUrl == null)
+				throw new IOException("Texture resource '" + file + "' not found");
+		} else {
+			imageUrl = new File(file).toURI().toURL();
+		}
+		final BufferedImage img = ImageIO.read(imageUrl);
+		if (img == null)
+			throw new IOException("Unsupported or invalid texture image '" + file + "'");
 		File f;
 		if (isResource) {
 			f = Files.createTempFile("texture-", ".png").toFile();

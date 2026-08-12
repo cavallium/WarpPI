@@ -3,12 +3,32 @@ package it.cavallium.warppi.gui.graphicengine.impl.jogl;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.nio.file.Files;
 
 import org.junit.jupiter.api.Test;
 
 class JOGLRendererTest {
+
+	@Test
+	void opensRootClasspathTextureWithoutLeadingSlash() throws IOException {
+		final JOGLRenderer.OpenedTextureData texture = JOGLRenderer.openTexture("test.png", true);
+		try {
+			assertEquals(64, texture.w);
+			assertEquals(64, texture.h);
+		} finally {
+			Files.deleteIfExists(texture.f.toPath());
+		}
+	}
+
+	@Test
+	void reportsMissingClasspathTextureAsIOException() {
+		assertThrows(IOException.class,
+				() -> JOGLRenderer.openTexture("missing-optional-debug-texture.png", true));
+	}
 
 	@Test
 	void reusesColorStorage() {

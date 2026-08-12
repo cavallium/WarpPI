@@ -1,7 +1,6 @@
 package it.cavallium.warppi.gui.graphicengine.impl.jogl;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -30,7 +29,7 @@ public class JOGLSkin implements Skin {
 	@Override
 	public void load(final String file) throws IOException {
 		final boolean isResource = !Files.exists(Paths.get(file));
-		if (isResource && WarpPI.getPlatform().getStorageUtils().getResourceStream(file) == null)
+		if (isResource && !WarpPI.getPlatform().getStorageUtils().doesResourceExist(file))
 			throw new IOException("File '" + file + "' not found!");
 		texturePath = file;
 		this.isResource = isResource;
@@ -38,6 +37,8 @@ public class JOGLSkin implements Skin {
 
 	@Override
 	public void initialize(final DisplayOutputDevice d) {
+		if (initialized)
+			return;
 		try {
 			final OpenedTextureData i = JOGLRenderer.openTexture(texturePath, isResource);
 			t = JOGLRenderer.importTexture(i.f, i.deleteOnExit);
@@ -45,9 +46,8 @@ public class JOGLSkin implements Skin {
 			h = i.h;
 			((JOGLEngine) d.getGraphicEngine()).registerTexture(t);
 			initialized = true;
-		} catch (GLException | IOException e) {
-			e.printStackTrace();
-			System.exit(1);
+		} catch (final GLException | IOException e) {
+			throw new GLException("Failed to initialize texture '" + texturePath + "'", e);
 		}
 	}
 

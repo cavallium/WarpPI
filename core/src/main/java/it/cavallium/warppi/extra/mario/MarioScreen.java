@@ -75,10 +75,9 @@ public class MarioScreen extends Screen {
 			if (MarioScreen.gpuTest3 == null) {
 				try {
 					MarioScreen.gpuTest3 = d.display.getGraphicEngine().loadSkin("gputest/font_gputest3.png");
-				} catch (final Exception ex) {
-					ex.printStackTrace();
-				}
+				} catch (final Exception ex) {}
 			}
+			initializeOptionalGpuTestSkin();
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
@@ -112,12 +111,26 @@ public class MarioScreen extends Screen {
 			if (MarioScreen.gpuTest3 == null) {
 				try {
 					MarioScreen.gpuTest3 = d.display.getGraphicEngine().loadSkin("font_gputest3.png");
-				} catch (final Exception ex) {
-					ex.printStackTrace();
-				}
+				} catch (final Exception ex) {}
 			}
 		} catch (final IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void initializeOptionalGpuTestSkin() {
+		MarioScreen.gpuTest3 = initializeOptionalSkin(MarioScreen.gpuTest3, d.display);
+	}
+
+	static Skin initializeOptionalSkin(final Skin candidate, final DisplayOutputDevice display) {
+		if (candidate == null || candidate.isInitialized())
+			return candidate;
+		try {
+			candidate.initialize(display);
+			return candidate;
+		} catch (final RuntimeException exception) {
+			System.err.println("Optional Mario GPU test texture disabled: " + exception.getMessage());
+			return null;
 		}
 	}
 
