@@ -57,6 +57,16 @@ class HardwareKeyboardLayoutTest {
 	}
 
 	@Test
+	void guideKeyRemainsAvailableInEveryLayer() {
+		final PhysicalKey guide = find(0, 5);
+		for (final Layer layer : Layer.values())
+			assertEquals("GUIDE", guide.label(layer));
+		assertEquals("GUIDE", Keyboard.getKeyName(0, 5, false, false));
+		assertEquals("GUIDE", Keyboard.getKeyName(0, 5, true, false));
+		assertEquals("GUIDE", Keyboard.getKeyName(0, 5, false, true));
+	}
+
+	@Test
 	void allPhysicalKeyLabelsFitTheCompactGuide() {
 		for (final PhysicalRow row : HardwareKeyboardLayout.rows()) {
 			for (final PhysicalKey key : row.keys()) {

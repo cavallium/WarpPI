@@ -14,6 +14,7 @@ import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.event.KeyboardEventListener;
 import it.cavallium.warppi.extra.mario.MarioScreen;
 import it.cavallium.warppi.extra.tetris.TetrisScreen;
+import it.cavallium.warppi.gui.screens.HardwareKeyboardGuideScreen;
 import it.cavallium.warppi.gui.screens.KeyboardDebugScreen;
 import it.cavallium.warppi.gui.screens.Screen;
 
@@ -718,7 +719,7 @@ public class Keyboard {
 					{ "", null, null }, /* 0,2 */
 					{ "⇧", null, null }, /* 0,3 */
 					{ "", null, null }, /* 0,4 */
-					{ "", null, null }, /* 0,5 */
+					{ "GUIDE", "GUIDE", "GUIDE" }, /* 0,5 */
 					{ "☼", "☼", null }, /* 0,6 */
 					{ "↩", null, null } /* 0,7 */
 			}, { /* ROW 1 */
@@ -793,7 +794,7 @@ public class Keyboard {
 					{ Key.NONE, Key.NONE, Key.NONE }, /* 0,2 */
 					{ Key.UP, Key.NONE, Key.NONE }, /* 0,3 */
 					{ Key.NONE, Key.NONE, Key.NONE }, /* 0,4 */
-					{ Key.SETTINGS, Key.NONE, Key.NONE }, /* 0,5 */
+					{ Key.SETTINGS, Key.SETTINGS, Key.SETTINGS }, /* 0,5 */
 					{ Key.BRIGHTNESS_CYCLE, Key.BRIGHTNESS_CYCLE_REVERSE, Key.ZOOM_MODE }, /* 0,6 */
 					{ Key.SIMPLIFY, Key.STEP, Key.NONE } /* 0,7 */
 			}, { /* ROW 1 */
@@ -966,6 +967,11 @@ public class Keyboard {
 				switch (k) {
 					case POWEROFF:
 						WarpPI.INSTANCE.getHardwareDevice().getDeviceStateDevice().powerOff();
+						break;
+					case SETTINGS:
+						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager()
+								.setScreen(new HardwareKeyboardGuideScreen());
+						refresh = true;
 						break;
 					case NONE:
 						break;
