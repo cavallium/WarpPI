@@ -82,7 +82,7 @@ class NEWTWindow implements GLEventListener {
 		engine.size[0] = engine.getSize()[0];
 		engine.size[1] = engine.getSize()[1];
 		realWindowSize = new int[] { engine.getSize()[0], engine.getSize()[1] };
-		windowZoom = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue());
+		windowZoom = StaticVars.windowZoom.getLastValue();
 		onRealResize = EventSubmitter.create(new Integer[] { (int) (engine.getSize()[0] * windowZoom), (int) (engine.getSize()[1] * windowZoom) });
 
 		onRealResize.subscribe((realSize) -> {
@@ -93,7 +93,7 @@ class NEWTWindow implements GLEventListener {
 			onResizeEvent.submit(new Integer[] { engine.size[0], engine.size[1] });
 			refreshViewport = true;
 		});
-		StaticVars.windowZoom$.subscribe(onZoom::submit);
+		StaticVars.windowZoom.subscribe(onZoom::submit);
 		onZoom.subscribe((z) -> {
 			if (windowZoom != 0) {
 				windowZoom = z;

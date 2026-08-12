@@ -91,7 +91,7 @@ public class WarpPI {
 	private void initializeEnvironment(final StartupArguments args) throws IOException {
 		ClassUtils.classLoader = this.getClass();
 		StaticVars.startupArguments = args;
-		StaticVars.debugWindow2x = args.isZoomed();
+		StaticVars.initializeWindowZoom(args.isZoomed());
 		if (args.isVerboseLoggingEnabled() || args.isDebugEnabled()) {
 			StaticVars.outputLevel = ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE;
 		}

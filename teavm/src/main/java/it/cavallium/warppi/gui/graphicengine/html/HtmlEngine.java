@@ -91,7 +91,7 @@ public class HtmlEngine implements GraphicEngine {
 		canvas = (HTMLCanvasElement) HtmlEngine.document.createElement("canvas");
 		g = (CanvasRenderingContext2D) canvas.getContext("2d");
 		final HTMLInputElement keyInput = (HTMLInputElement) HtmlEngine.document.createElement("input");
-		StaticVars.windowZoom$.subscribe((zoom) -> {
+		StaticVars.windowZoom.subscribe((zoom) -> {
 			onZoom.submit(zoom);
 		});
 		onZoom.subscribe((windowZoom) -> {

@@ -58,7 +58,7 @@ public class SwingWindow extends JFrame {
 		// Transparent 16 x 16 pixel cursor image.
 		final BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 
-		mult = StaticVars.windowZoomFunction.apply(StaticVars.windowZoom.getLastValue()).intValue();
+		mult = StaticVars.windowZoom.getLastValue().intValue();
 
 		if (!WarpPI.getPlatform().getSettings().isDebugEnabled()) {
 			// Create a new blank cursor.
@@ -150,7 +150,7 @@ public class SwingWindow extends JFrame {
 
 			}
 		});
-		StaticVars.windowZoom$.subscribe((newZoomValue) -> {
+		StaticVars.windowZoom.subscribe((newZoomValue) -> {
 			mult = (int) newZoomValue.floatValue();
 			onResize.submit(new Integer[]{getWWidth(), getWHeight()});
 			WarpPI.getPlatform().getConsoleUtils().out().println(3, "Engine", "CPU", "Zoom changed");
@@ -159,7 +159,7 @@ public class SwingWindow extends JFrame {
 
 	private void setupButtonsPanel() throws IOException, URISyntaxException {
 		BTN_SIZE = 32;
-		if (StaticVars.debugWindow2x)
+		if (StaticVars.startupArguments.isZoomed())
 			BTN_SIZE *= 2;
 
 		buttons = new SwingAdvancedButton[8][8];
