@@ -7,10 +7,17 @@
 		<format>jar</format>
 	</formats>
 	<includeBaseDirectory>false</includeBaseDirectory>
+	<fileSets>
+		<!-- Keep hardware overrides ahead of unpacked third-party dependencies. -->
+		<fileSet>
+			<directory>${project.build.outputDirectory}</directory>
+			<outputDirectory>/</outputDirectory>
+		</fileSet>
+	</fileSets>
 	<dependencySets>
 		<dependencySet>
 			<outputDirectory>/</outputDirectory>
-			<useProjectArtifact>true</useProjectArtifact>
+			<useProjectArtifact>false</useProjectArtifact>
 			<unpack>true</unpack>
 			<scope>runtime</scope>
 			<unpackOptions>
@@ -45,6 +52,8 @@
 					<exclude>jogamp/opengl/assets/**</exclude>
 					<exclude>com/jogamp/common/util/bin/exe-windows-*.defl</exclude>
 					<exclude>**/JOGLFontAtlasGenerator.class</exclude>
+					<!-- Replaced by the hardware-only no-X11 BCM compatibility class. -->
+					<exclude>jogamp/newt/driver/x11/X11UnderlayTracker.class</exclude>
 
 					<!-- Defense in depth if an all-platform JOGL dependency is reintroduced later. -->
 					<exclude>**/*.dll</exclude>
