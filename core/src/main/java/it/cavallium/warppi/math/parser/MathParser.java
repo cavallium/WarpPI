@@ -1,6 +1,7 @@
 package it.cavallium.warppi.math.parser;
 
 import it.cavallium.warppi.WarpPI;
+import it.cavallium.warppi.Platform;
 import it.cavallium.warppi.Platform.ConsoleUtils;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.containers.InputContainer;
@@ -11,6 +12,7 @@ import it.cavallium.warppi.math.functions.Expression;
 import it.cavallium.warppi.math.functions.Variable.V_TYPE;
 import it.cavallium.warppi.math.parser.features.FeatureChar;
 import it.cavallium.warppi.math.parser.features.FeatureDivision;
+import it.cavallium.warppi.math.parser.features.FeatureEquation;
 import it.cavallium.warppi.math.parser.features.FeatureMultiplication;
 import it.cavallium.warppi.math.parser.features.FeatureNumber;
 import it.cavallium.warppi.math.parser.features.FeaturePower;
@@ -21,6 +23,7 @@ import it.cavallium.warppi.math.parser.features.FeatureSumSubtraction;
 import it.cavallium.warppi.math.parser.features.FeatureVariable;
 import it.cavallium.warppi.math.parser.features.interfaces.Feature;
 import it.cavallium.warppi.math.parser.steps.AddImplicitMultiplications;
+import it.cavallium.warppi.math.parser.steps.FixEquations;
 import it.cavallium.warppi.math.parser.steps.FixMultiplicationsAndDivisions;
 import it.cavallium.warppi.math.parser.steps.FixSingleFunctionArgs;
 import it.cavallium.warppi.math.parser.steps.FixSumsAndSubtractions;
@@ -32,6 +35,12 @@ import it.cavallium.warppi.util.IntWrapper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class MathParser {
+	private static boolean isDebugEnabled() {
+		final Platform platform = WarpPI.getPlatform();
+		final Platform.Settings settings = platform == null ? null : platform.getSettings();
+		return settings != null && settings.isDebugEnabled();
+	}
+
 	public static Expression parseInput(final MathContext context, final InputContainer c) throws Error {
 		Expression result;
 
@@ -79,11 +88,11 @@ public class MathParser {
 
 	private static ObjectArrayList<Function> fixStack(final MathContext context,
 			final ObjectArrayList<Function> functionsList) throws Error {
-		final MathParserStep[] steps = new MathParserStep[] { new JoinNumberAndVariables(context), new FixSingleFunctionArgs(), new RemoveParentheses(context), new FixMultiplicationsAndDivisions(), new FixSumsAndSubtractions(), new AddImplicitMultiplications(context), };
+		final MathParserStep[] steps = new MathParserStep[] { new JoinNumberAndVariables(context), new FixSingleFunctionArgs(), new RemoveParentheses(context), new FixMultiplicationsAndDivisions(), new FixSumsAndSubtractions(), new AddImplicitMultiplications(context), new FixEquations() };
 		boolean lastLoopDidSomething;
 		Function lastElement;
 
-		if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
+		if (isDebugEnabled()) {
 			WarpPI.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "\tStatus: ");
 			for (final Function f : functionsList) {
 				WarpPI.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, f.toString());
@@ -92,7 +101,7 @@ public class MathParser {
 		}
 
 		for (final MathParserStep step : steps) {
-			if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
+			if (isDebugEnabled()) {
 				WarpPI.getPlatform().getConsoleUtils().out().println(2, "Stack fixing step \"" + step.getStepName() + "\"");
 			}
 			final int stepQty = step.requiresReversedIteration() ? -1 : 1,
@@ -114,7 +123,7 @@ public class MathParser {
 				}
 			} while (lastLoopDidSomething);
 
-			if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
+			if (isDebugEnabled()) {
 				WarpPI.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, "\tStatus: ");
 				for (final Function f : functionsList) {
 					WarpPI.getPlatform().getConsoleUtils().out().print(ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE, f.toString());
@@ -165,6 +174,10 @@ public class MathParser {
 		final ObjectArrayList<Feature> process = new ObjectArrayList<>();
 
 		for (final Feature f : features) {
+			if (f instanceof FeatureVariable) {
+				process.add(f);
+				continue;
+			}
 			if (f instanceof FeatureChar) {
 				final char featureChar = ((FeatureChar) f).ch;
 				Feature result = null;
@@ -183,6 +196,9 @@ public class MathParser {
 						break;
 					case MathematicalSymbols.DIVISION:
 						result = new FeatureDivision(null, null);
+						break;
+					case MathematicalSymbols.EQUATION:
+						result = new FeatureEquation(null, null);
 						break;
 				}
 
@@ -219,6 +235,10 @@ public class MathParser {
 
 		FeatureNumber numberBuffer = null;
 		for (final Feature f : features) {
+			if (f instanceof FeatureVariable) {
+				process.add(f);
+				continue;
+			}
 			if (f instanceof FeatureChar) {
 				final FeatureChar bcf = (FeatureChar) f;
 				final char[] numbers = MathematicalSymbols.numbers;

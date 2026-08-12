@@ -3,6 +3,7 @@ package it.cavallium.warppi.math.parser.steps;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.functions.Multiplication;
+import it.cavallium.warppi.math.functions.equations.Equation;
 import it.cavallium.warppi.math.parser.MathParserStep;
 import it.cavallium.warppi.util.IntWrapper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -18,20 +19,13 @@ public class AddImplicitMultiplications implements MathParserStep {
 	@Override
 	public boolean eval(final IntWrapper curIndex, final Function lastFunction, final Function currentFunction,
 			final ObjectArrayList<Function> functionsList) {
-		if (currentFunction instanceof Function) {
-			if (lastFunction instanceof Function) {
-				functionsList.set(curIndex.i, new Multiplication(context, currentFunction, lastFunction));
-				functionsList.remove(curIndex.i + 1);
-				return true;
-			}
-		} else if (currentFunction instanceof Function) {
-			if (lastFunction instanceof Function) {
-				functionsList.set(curIndex.i, new Multiplication(context, currentFunction, lastFunction));
-				functionsList.remove(curIndex.i + 1);
-				return true;
-			}
+		if (currentFunction == null || lastFunction == null
+				|| currentFunction instanceof Equation || lastFunction instanceof Equation) {
+			return false;
 		}
-		return false;
+		functionsList.set(curIndex.i, new Multiplication(context, currentFunction, lastFunction));
+		functionsList.remove(curIndex.i + 1);
+		return true;
 	}
 
 	@Override

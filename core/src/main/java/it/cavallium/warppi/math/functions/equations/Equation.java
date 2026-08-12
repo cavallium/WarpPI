@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Set;
 
 import it.cavallium.warppi.gui.expression.blocks.Block;
+import it.cavallium.warppi.gui.expression.blocks.BlockChar;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionOperator;
 import it.cavallium.warppi.math.MathContext;
+import it.cavallium.warppi.math.MathematicalSymbols;
 import it.cavallium.warppi.math.solver.SolveMethod;
 import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -67,8 +69,15 @@ public class Equation extends FunctionOperator {
 
 	@Override
 	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
-		// TODO Auto-generated method stub
-		return null;
+		final ObjectArrayList<Block> result = new ObjectArrayList<>();
+		if (parameter1 != null) {
+			result.addAll(parameter1.toBlock(context));
+		}
+		result.add(new BlockChar(MathematicalSymbols.EQUATION));
+		if (parameter2 != null) {
+			result.addAll(parameter2.toBlock(context));
+		}
+		return result;
 	}
 
 	@Override
