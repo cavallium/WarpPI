@@ -230,7 +230,9 @@ public class DesktopPlatform implements Platform {
 
 	private void chooseDevices() {
 		List<DisplayOutputDevice> availableDevices = new ArrayList<>();
-		List<DisplayOutputDevice> guiDevices = List.of(new SwingDisplayOutputDevice(), new JOGLDisplayOutputDevice());
+		final float desktopScale = DesktopDisplayScale.detect();
+		List<DisplayOutputDevice> guiDevices = List.of(
+				new SwingDisplayOutputDevice(desktopScale), new JOGLDisplayOutputDevice(desktopScale));
 		List<DisplayOutputDevice> consoleDevices = List.of();
 
 		if (args.isMSDOSModeEnabled() || args.isNoGUIEngineForced()) {

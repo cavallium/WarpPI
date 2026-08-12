@@ -8,7 +8,11 @@ public class SwingDisplayOutputDevice implements DisplayOutputDevice {
 	private final SwingEngine engine;
 	
 	public SwingDisplayOutputDevice() {
-		this.engine = new SwingEngine(480, 320);
+		this(1f);
+	}
+
+	public SwingDisplayOutputDevice(final float desktopScale) {
+		this.engine = new SwingEngine(480, 320, desktopScale);
 	}
 
 	@Override

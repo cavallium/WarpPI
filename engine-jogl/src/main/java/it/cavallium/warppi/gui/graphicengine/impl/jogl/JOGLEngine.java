@@ -26,6 +26,7 @@ import it.cavallium.warppi.util.EventSubscriber;
 public class JOGLEngine implements GraphicEngine {
 	private static final String RASPBERRY_PRODUCTION_PROPERTY = "warppi.production.raspberry";
 
+	private final float desktopScale;
 	private volatile boolean initialized;
 	private volatile boolean created;
 	private boolean raspberryProductionMode;
@@ -42,7 +43,18 @@ public class JOGLEngine implements GraphicEngine {
 	protected LinkedList<Texture> unregisteredTextures;
 
 	public JOGLEngine(int defaultWidth, int defaultHeight) {
+		this(defaultWidth, defaultHeight, 1f);
+	}
+
+	public JOGLEngine(final int defaultWidth, final int defaultHeight, final float desktopScale) {
+		if (!Float.isFinite(desktopScale) || desktopScale <= 0)
+			throw new IllegalArgumentException("Invalid desktop scale: " + desktopScale);
+		this.desktopScale = desktopScale;
 		this.size = new int[]{defaultWidth, defaultHeight};
+	}
+
+	float getDesktopScale() {
+		return desktopScale;
 	}
 
 	@Override

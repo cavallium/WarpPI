@@ -18,14 +18,20 @@ public class SwingEngine implements GraphicEngine {
 
 	private final int defaultWidth;
 	private final int defaultHeight;
+	private final float desktopScale;
 	private SwingWindow INSTANCE;
 	public SwingRenderer r;
 	public volatile BufferedImage g;
 	public volatile boolean initialized;
 
 	public SwingEngine(int defaultWidth, int defaultHeight) {
+		this(defaultWidth, defaultHeight, 1f);
+	}
+
+	public SwingEngine(final int defaultWidth, final int defaultHeight, final float desktopScale) {
 		this.defaultWidth = defaultWidth;
 		this.defaultHeight = defaultHeight;
+		this.desktopScale = desktopScale;
 	}
 
 	@Override

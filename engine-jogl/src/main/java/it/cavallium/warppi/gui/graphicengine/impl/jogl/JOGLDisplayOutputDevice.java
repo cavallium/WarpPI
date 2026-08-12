@@ -6,7 +6,11 @@ public class JOGLDisplayOutputDevice implements DisplayOutputDevice {
     private JOGLEngine engine;
 
     public JOGLDisplayOutputDevice() {
-        this.engine = new JOGLEngine(480, 320);
+		this(1f);
+	}
+
+	public JOGLDisplayOutputDevice(final float desktopScale) {
+		this.engine = new JOGLEngine(480, 320, desktopScale);
     }
 
     @Override
