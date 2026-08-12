@@ -2,6 +2,7 @@ package it.cavallium.warppi.device.input;
 
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform.ConsoleUtils;
+import it.cavallium.warppi.Platform.Gpio;
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.device.chip.ParallelToSerial;
 import it.cavallium.warppi.device.chip.SerialToParallel;
@@ -16,6 +17,10 @@ import it.cavallium.warppi.gui.screens.KeyboardDebugScreen;
 import it.cavallium.warppi.gui.screens.Screen;
 
 public class Keyboard {
+	private static final int MATRIX_SIZE = Byte.SIZE;
+	private static final int MATRIX_DEBOUNCE_SAMPLES = 3;
+	private static final long MATRIX_SCAN_PAUSE_MILLIS = 5;
+
 	public static volatile boolean alpha = false;
 	public static volatile boolean shift = false;
 
@@ -29,79 +34,111 @@ public class Keyboard {
 	private static final int QH_pin = 40;
 	private static final int CLK_INH_pin = 33;
 
-	private static volatile boolean[][] precedentStates = new boolean[8][8];
+	private static final Key[][] pressedRawKeys = new Key[MATRIX_SIZE][MATRIX_SIZE];
 	public static volatile boolean[][] debugKeysDown = new boolean[8][8];
 	public static volatile int debugKeyCode = -1;
 	public static volatile int debugKeyCodeRelease = -1;
 
 	private static volatile boolean refreshRequest = false;
+	private static volatile Thread keyboardThread;
 
 	private static KeyboardEventListener additionalListener;
 
-	public synchronized void startKeyboard() {
-		final Thread kt = new Thread(() -> {
-			if (WarpPI.getPlatform().isRunningOnRaspberry() == false) {
-				try {
-					while (true) {
-						if (Keyboard.debugKeyCode != -1) {
-							Keyboard.debugKey(Keyboard.debugKeyCode, false);
-							Keyboard.debugKeyCode = -1;
-						}
-						if (Keyboard.debugKeyCodeRelease != -1) {
-							Keyboard.debugKey(Keyboard.debugKeyCodeRelease, true);
-							Keyboard.debugKeyCodeRelease = -1;
-						}
-						Thread.sleep(50);
-					}
-				} catch (final InterruptedException e) {}
-			} else {
-				WarpPI.getPlatform().getGpio().pinMode(Keyboard.CLK_INH_pin, WarpPI.getPlatform().getGpio().valueOutput());
-				WarpPI.getPlatform().getGpio().pinMode(Keyboard.RCK_pin, WarpPI.getPlatform().getGpio().valueOutput());
-				WarpPI.getPlatform().getGpio().pinMode(Keyboard.SER_pin, WarpPI.getPlatform().getGpio().valueOutput());
-				WarpPI.getPlatform().getGpio().pinMode(Keyboard.SH_LD_pin, WarpPI.getPlatform().getGpio().valueOutput());
-				WarpPI.getPlatform().getGpio().pinMode(Keyboard.SCK_and_CLK_pin, WarpPI.getPlatform().getGpio().valueOutput());
-				WarpPI.getPlatform().getGpio().pinMode(Keyboard.QH_pin, WarpPI.getPlatform().getGpio().valueInput());
+	public void startKeyboard() {
+		synchronized (Keyboard.class) {
+			if (keyboardThread != null && keyboardThread.isAlive())
+				return;
 
-				WarpPI.getPlatform().getGpio().digitalWrite(Keyboard.CLK_INH_pin, false);
-				WarpPI.getPlatform().getGpio().digitalWrite(Keyboard.RCK_pin, false);
-				WarpPI.getPlatform().getGpio().digitalWrite(Keyboard.SER_pin, false);
-				WarpPI.getPlatform().getGpio().digitalWrite(Keyboard.SH_LD_pin, false);
-				WarpPI.getPlatform().getGpio().digitalWrite(Keyboard.SCK_and_CLK_pin, false);
-				WarpPI.getPlatform().getGpio().digitalWrite(Keyboard.QH_pin, false);
-				final SerialToParallel chip1 = new SerialToParallel(Keyboard.RCK_pin, Keyboard.SCK_and_CLK_pin /*SCK*/, Keyboard.SER_pin);
-				final ParallelToSerial chip2 = new ParallelToSerial(Keyboard.SH_LD_pin, Keyboard.CLK_INH_pin, Keyboard.QH_pin, Keyboard.SCK_and_CLK_pin/*CLK*/);
+			final Thread thread = new Thread(Keyboard::runKeyboard);
+			keyboardThread = thread;
+			WarpPI.getPlatform().setThreadName(thread, "Keyboard thread");
+			thread.setPriority(Thread.NORM_PRIORITY);
+			WarpPI.getPlatform().setThreadDaemon(thread);
+			thread.start();
+		}
+	}
 
-				KeyboardDebugScreen.log("Started keyboard system");
-
-				while (true) {
-					boolean[] data;
-					for (int col = 0; col < 8; col++) {
-						data = new boolean[8];
-						data[col] = true;
-						chip1.write(data);
-
-						data = chip2.read();
-//						KeyboardDebugScreen.ks[col] = data;
-
-						for (int row = 0; row < 8; row++) {
-							if (data[row] == true && Keyboard.precedentStates[row][col] == false) {
-								//								System.out.println("Pressed button at " + (row + 1) + ", " + (col + 1));
-//								KeyboardDebugScreen.log("Pressed button at " + (row + 1) + ", " + (col + 1));
-								Keyboard.keyRaw(row, col, false);
-							} else if (data[row] == false && Keyboard.precedentStates[row][col] == true) {
-								Keyboard.keyRaw(row, col, true);
-							}
-//								KeyboardDebugScreen.log("Released button at " + (row + 1) + ", " + (col + 1));
-							Keyboard.precedentStates[row][col] = data[row];
-						}
-					}
-				}
+	private static void runKeyboard() {
+		try {
+			if (WarpPI.getPlatform().isRunningOnRaspberry())
+				runRaspberryKeyboard();
+			else
+				runDebugKeyboard();
+		} catch (final InterruptedException e) {
+			Thread.currentThread().interrupt();
+		} finally {
+			synchronized (Keyboard.class) {
+				if (keyboardThread == Thread.currentThread())
+					keyboardThread = null;
 			}
-		});
-		WarpPI.getPlatform().setThreadName(kt, "Keyboard thread");
-		kt.setPriority(Thread.NORM_PRIORITY + 1);
-		WarpPI.getPlatform().setThreadDaemon(kt);
-		kt.start();
+		}
+	}
+
+	private static void runDebugKeyboard() throws InterruptedException {
+		while (!Thread.currentThread().isInterrupted()) {
+			if (debugKeyCode != -1) {
+				debugKey(debugKeyCode, false);
+				debugKeyCode = -1;
+			}
+			if (debugKeyCodeRelease != -1) {
+				debugKey(debugKeyCodeRelease, true);
+				debugKeyCodeRelease = -1;
+			}
+			Thread.sleep(50);
+		}
+	}
+
+	private static void runRaspberryKeyboard() throws InterruptedException {
+		final Gpio gpio = WarpPI.getPlatform().getGpio();
+		configureKeyboardPins(gpio);
+		final SerialToParallel columns = new SerialToParallel(gpio, RCK_pin, SCK_and_CLK_pin, SER_pin);
+		final ParallelToSerial rows = new ParallelToSerial(gpio, SH_LD_pin, CLK_INH_pin, QH_pin,
+				SCK_and_CLK_pin);
+		final KeyboardMatrixScanner scanner = new KeyboardMatrixScanner(columns, rows, Keyboard::onMatrixTransition,
+				MATRIX_DEBOUNCE_SAMPLES);
+
+		KeyboardDebugScreen.log("Started keyboard system");
+		try {
+			while (!Thread.currentThread().isInterrupted()) {
+				scanner.scanOnce();
+				Thread.sleep(MATRIX_SCAN_PAUSE_MILLIS);
+			}
+		} finally {
+			try {
+				scanner.releaseAll();
+			} finally {
+				setKeyboardPinsIdle(gpio, columns);
+			}
+		}
+	}
+
+	private static void configureKeyboardPins(final Gpio gpio) {
+		gpio.pinMode(CLK_INH_pin, gpio.valueOutput());
+		gpio.pinMode(RCK_pin, gpio.valueOutput());
+		gpio.pinMode(SER_pin, gpio.valueOutput());
+		gpio.pinMode(SH_LD_pin, gpio.valueOutput());
+		gpio.pinMode(SCK_and_CLK_pin, gpio.valueOutput());
+		gpio.pinMode(QH_pin, gpio.valueInput());
+
+		gpio.digitalWrite(CLK_INH_pin, gpio.valueHigh());
+		gpio.digitalWrite(RCK_pin, gpio.valueLow());
+		gpio.digitalWrite(SER_pin, gpio.valueLow());
+		gpio.digitalWrite(SH_LD_pin, gpio.valueHigh());
+		gpio.digitalWrite(SCK_and_CLK_pin, gpio.valueLow());
+	}
+
+	private static void setKeyboardPinsIdle(final Gpio gpio, final SerialToParallel columns) {
+		gpio.digitalWrite(CLK_INH_pin, gpio.valueHigh());
+		gpio.digitalWrite(SH_LD_pin, gpio.valueHigh());
+		columns.writeByte(0);
+		gpio.digitalWrite(SER_pin, gpio.valueLow());
+		gpio.digitalWrite(RCK_pin, gpio.valueLow());
+		gpio.digitalWrite(SCK_and_CLK_pin, gpio.valueLow());
+	}
+
+	private static void onMatrixTransition(final int row, final int column, final boolean pressed) {
+		debugKeysDown[row][column] = pressed;
+		keyRaw(row, column, !pressed);
 	}
 
 	/**
@@ -680,11 +717,7 @@ public class Keyboard {
 	 */
 	@Deprecated
 	public static boolean isKeyDown(final int row, final int col) {
-		if (WarpPI.getPlatform().isRunningOnRaspberry()) {
-			return Keyboard.precedentStates[row - 1][col - 1];
-		} else {
-			return Keyboard.debugKeysDown[row - 1][col - 1];
-		}
+		return Keyboard.debugKeysDown[row - 1][col - 1];
 	}
 
 	static final String[][][] KeyLabelsMap = /* [ROW, COLUMN, (0:normal 1:shift 2:alpha)] */
@@ -873,32 +906,54 @@ public class Keyboard {
 	 * @param released true: released, false: pressed
 	 */
 	public static synchronized void keyRaw(final int row, final int col, final boolean released) {
-//		KeyboardDebugScreen.keyX = row;
-//		KeyboardDebugScreen.keyY = col;
-		final Key k = Keyboard.keyMap[row][col][Keyboard.shift ? 1 : Keyboard.alpha ? 2 : 0];
-		if (k != null) {
-			if (released) {
-				Keyboard.keyReleased(k);
-			} else {
-				Keyboard.keyPressed(k);
-			}
-		} else {
-			if (released) {
-				Keyboard.keyReleased(Key.NONE);
-			} else {
-				Keyboard.keyPressed(Key.NONE);
-			}
+		final Key key = updateRawKeyState(row, col, released, shift, alpha);
+		if (key == null)
+			return;
+		if (released)
+			keyReleased(key);
+		else
+			keyPressed(key);
+	}
+
+	static synchronized Key updateRawKeyState(final int row, final int column, final boolean released,
+			final boolean shiftActive, final boolean alphaActive) {
+		if (row < 0 || row >= MATRIX_SIZE || column < 0 || column >= MATRIX_SIZE)
+			throw new IllegalArgumentException("Keyboard coordinates must be between 0 and 7");
+
+		if (released) {
+			final Key pressedKey = pressedRawKeys[row][column];
+			pressedRawKeys[row][column] = null;
+			return pressedKey;
 		}
+
+		if (pressedRawKeys[row][column] != null)
+			return null;
+		final Key mappedKey = keyMap[row][column][shiftActive ? 1 : alphaActive ? 2 : 0];
+		pressedRawKeys[row][column] = mappedKey != null ? mappedKey : Key.NONE;
+		return pressedRawKeys[row][column];
+	}
+
+	static synchronized void resetRawKeyState() {
+		for (int row = 0; row < MATRIX_SIZE; row++)
+			for (int column = 0; column < MATRIX_SIZE; column++)
+				pressedRawKeys[row][column] = null;
 	}
 
 	public static void stopKeyboard() {
-		if (WarpPI.getPlatform().isRunningOnRaspberry()) {
-			WarpPI.getPlatform().getGpio().digitalWrite(33, false);
-			WarpPI.getPlatform().getGpio().digitalWrite(35, false);
-			WarpPI.getPlatform().getGpio().digitalWrite(36, false);
-			WarpPI.getPlatform().getGpio().digitalWrite(37, false);
-			WarpPI.getPlatform().getGpio().digitalWrite(38, false);
-			WarpPI.getPlatform().getGpio().digitalWrite(40, false);
+		final Thread thread;
+		synchronized (Keyboard.class) {
+			thread = keyboardThread;
+		}
+		if (thread == null)
+			return;
+
+		thread.interrupt();
+		if (thread == Thread.currentThread())
+			return;
+		try {
+			thread.join(500);
+		} catch (final InterruptedException e) {
+			Thread.currentThread().interrupt();
 		}
 	}
 
