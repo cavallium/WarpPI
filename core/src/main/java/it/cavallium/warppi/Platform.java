@@ -37,8 +37,6 @@ public interface Platform {
 
 	void exit(int value);
 
-	void gc();
-
 	boolean isJavascript();
 
 	void setRunningOnRaspberry(boolean b);

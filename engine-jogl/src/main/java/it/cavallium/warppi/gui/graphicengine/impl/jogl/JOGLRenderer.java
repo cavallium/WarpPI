@@ -271,8 +271,6 @@ public class JOGLRenderer implements Renderer {
 			f = new File(file);
 		final int imgW = img.getWidth();
 		final int imgH = img.getHeight();
-		img = null;
-		WarpPI.getPlatform().gc();
 		return new OpenedTextureData(imgW, imgH, f, isResource);
 	}
 

@@ -92,11 +92,6 @@ public class TeaVMPlatform implements Platform {
 	}
 
 	@Override
-	public void gc() {
-
-	}
-
-	@Override
 	public boolean isJavascript() {
 		return true;
 	}

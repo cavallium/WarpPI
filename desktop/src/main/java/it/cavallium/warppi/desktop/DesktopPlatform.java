@@ -101,11 +101,6 @@ public class DesktopPlatform implements Platform {
 	}
 
 	@Override
-	public void gc() {
-		System.gc();
-	}
-
-	@Override
 	public boolean isJavascript() {
 		return false;
 	}

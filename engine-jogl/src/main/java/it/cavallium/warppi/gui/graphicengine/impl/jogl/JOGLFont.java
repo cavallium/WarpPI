@@ -12,7 +12,6 @@ import ar.com.hjg.pngj.ImageInfo;
 import ar.com.hjg.pngj.ImageLineHelper;
 import ar.com.hjg.pngj.ImageLineInt;
 import ar.com.hjg.pngj.PngWriter;
-import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.impl.common.RFTFont;
@@ -61,11 +60,7 @@ public class JOGLFont implements BinaryFont {
 		intervals = font.intervals;
 		intervalsTotalSize = font.intervalsTotalSize;
 		boolean[][] rawchars = font.rawchars;
-		font = null;
-		WarpPI.getPlatform().gc();
 		pregenTexture(rawchars);
-		rawchars = null;
-		WarpPI.getPlatform().gc();
 	}
 
 	public int[] getCharIndexes(final String txt) {
@@ -151,9 +146,7 @@ public class JOGLFont implements BinaryFont {
 				System.out.println(y + "/" + png.imgInfo.rows);
 			png.writeRow(iline);
 		}
-		chars = null;
 		png.end();
-		WarpPI.getPlatform().gc();
 
 		try {
 			memoryWidth = w;
@@ -163,7 +156,6 @@ public class JOGLFont implements BinaryFont {
 			textureH = h;
 			outputStream.flush();
 			outputStream.close();
-			WarpPI.getPlatform().gc();
 			tmpFont = f;
 		} catch (GLException | IOException e) {
 			e.printStackTrace();

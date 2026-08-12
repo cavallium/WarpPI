@@ -2,7 +2,6 @@ package it.cavallium.warppi.device.display;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -62,12 +61,6 @@ public class RAWFont {
 			}
 		}
 
-		Object obj = new Object();
-		final WeakReference<Object> ref = new WeakReference<>(obj);
-		obj = null;
-		while (ref.get() != null) {
-			System.gc();
-		}
 	}
 
 	private void loadFont(final String string) throws IOException {

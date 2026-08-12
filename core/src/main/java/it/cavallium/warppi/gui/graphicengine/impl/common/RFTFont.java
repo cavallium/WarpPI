@@ -89,8 +89,6 @@ public abstract class RFTFont implements BinaryFont {
 				}
 			}
 		}
-
-		WarpPI.getPlatform().gc();
 	}
 
 	private void loadFont(String string) throws IOException {
