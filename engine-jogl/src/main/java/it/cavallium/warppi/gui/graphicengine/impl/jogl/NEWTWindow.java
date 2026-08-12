@@ -117,6 +117,10 @@ class NEWTWindow implements GLEventListener {
 		System.out.println("Loaded OpenGL");
 		// We may at this point tweak the caps and request a translucent drawable
 		caps.setHardwareAccelerated(true);
+		caps.setRedBits(5);
+		caps.setGreenBits(6);
+		caps.setBlueBits(5);
+		caps.setAlphaBits(0);
 		caps.setBackgroundOpaque(true); //transparency window
 //		caps.setSampleBuffers(true);
 //		caps.setNumSamples(4);
