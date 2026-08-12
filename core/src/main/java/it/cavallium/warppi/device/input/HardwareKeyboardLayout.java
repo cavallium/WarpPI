@@ -81,6 +81,16 @@ public final class HardwareKeyboardLayout {
 				occupiedSlots[key.slot()] = true;
 			}
 		}
+
+		/** Returns the key in a visual slot, or {@code null} for an intentional gap. */
+		public PhysicalKey keyAtSlot(final int slot) {
+			if (slot < 0 || slot >= slotCount)
+				throw new IllegalArgumentException("Slot is outside its physical row: " + slot);
+			for (final PhysicalKey key : keys)
+				if (key.slot() == slot)
+					return key;
+			return null;
+		}
 	}
 
 	private static final List<PhysicalRow> ROWS = validate(List.of(

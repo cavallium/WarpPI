@@ -2,6 +2,7 @@ package it.cavallium.warppi.device.input;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -43,6 +44,16 @@ class HardwareKeyboardLayoutTest {
 		assertFalse(positions.contains("0:2"));
 		assertFalse(positions.contains("2:2"));
 		assertFalse(positions.contains("5:7"));
+	}
+
+	@Test
+	void exposesIntentionalPhysicalGapsBySlot() {
+		final PhysicalRow topRow = HardwareKeyboardLayout.rows().getFirst();
+		assertEquals(find(0, 0), topRow.keyAtSlot(0));
+		assertNull(topRow.keyAtSlot(2));
+		assertNull(topRow.keyAtSlot(4));
+		assertThrows(IllegalArgumentException.class, () -> topRow.keyAtSlot(-1));
+		assertThrows(IllegalArgumentException.class, () -> topRow.keyAtSlot(topRow.slotCount()));
 	}
 
 	@Test

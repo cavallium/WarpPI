@@ -202,19 +202,12 @@ public class SwingWindow extends JFrame {
 		buttonsPanel.add(rowPanel);
 
 		for (int slot = 0; slot < physicalRow.slotCount(); slot++) {
-			final PhysicalKey key = keyAtSlot(physicalRow, slot);
+			final PhysicalKey key = physicalRow.keyAtSlot(slot);
 			if (key == null)
 				createBlankBox(rowPanel);
 			else
 				createBtn(rowPanel, key, buttonImage);
 		}
-	}
-
-	private static PhysicalKey keyAtSlot(final PhysicalRow row, final int slot) {
-		for (final PhysicalKey key : row.keys())
-			if (key.slot() == slot)
-				return key;
-		return null;
 	}
 
 	private void createBlankBox(final JPanel rowPanel) {
