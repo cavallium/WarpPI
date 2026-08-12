@@ -63,26 +63,16 @@ public final class DisplayManager implements RenderingLoop {
 		errorMessages = new ObjectArrayList<>();
 	}
 
-	public void initialize() {
-		try {
-			hud.d = this;
-			hud.create();
-			if (!hud.initialized) {
-				hud.initialize();
-			}
-		} catch (final Exception e) {
-			e.printStackTrace();
-			WarpPI.getPlatform().exit(0);
-		}
+	public void initialize() throws InterruptedException {
+		hud.d = this;
+		hud.create();
+		if (!hud.initialized)
+			hud.initialize();
 
-		try {
-			graphicEngine.create();
-			renderer = graphicEngine.getRenderer();
-			graphicEngine.setTitle(initialTitle);
-			loop();
-		} catch (final Exception ex) {
-			ex.printStackTrace();
-		}
+		graphicEngine.create();
+		renderer = graphicEngine.getRenderer();
+		graphicEngine.setTitle(initialTitle);
+		loop();
 	}
 
 	/*

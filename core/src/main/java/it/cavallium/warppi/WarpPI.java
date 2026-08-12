@@ -62,6 +62,7 @@ public class WarpPI {
 		currentThread.setPriority(Thread.MAX_PRIORITY);
 		WarpPI.getPlatform().setThreadName(currentThread, "Main thread");
 
+		int exitStatus = 0;
 		try {
 			final DisplayOutputDevice display = platform.getDisplayOutputDevice();
 			final BacklightOutputDevice backlight = platform.getBacklightOutputDevice();
@@ -74,18 +75,19 @@ public class WarpPI {
 			device.setup();
 			onLoading.run();
 			this.loadingCompleted();
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			this.loadingFailed(ex);
+			exitStatus = 1;
 		}
-		this.onShutdown();
+		this.onShutdown(exitStatus);
 	}
 
-	private void onShutdown() {
+	private void onShutdown(final int exitStatus) {
 		WarpPI.platform.getConsoleUtils().out().println(1, "Shutdown...");
 		beforeShutdown();
 		WarpPI.platform.getConsoleUtils().out().println(1, "");
 		WarpPI.platform.getConsoleUtils().out().println(1, "Closed.");
-		WarpPI.getPlatform().exit(0);
+		WarpPI.getPlatform().exit(exitStatus);
 	}
 
 	private void initializeEnvironment(final StartupArguments args) throws IOException {

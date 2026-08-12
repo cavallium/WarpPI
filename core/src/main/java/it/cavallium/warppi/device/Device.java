@@ -27,7 +27,7 @@ public class Device {
 		return deviceState;
 	}
 
-	public void setup() {
+	public void setup() throws InterruptedException {
 		displayManager.initialize();
 		inputManager.initialize();
 		deviceState.initialize();
