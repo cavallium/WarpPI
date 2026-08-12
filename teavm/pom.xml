@@ -22,36 +22,14 @@
 		<dependency>
 			<groupId>org.teavm</groupId>
 			<artifactId>teavm-classlib</artifactId>
-			<version>0.7.0-dev-859</version>
-			<scope>provided</scope>
+			<version>${teavm.version}</version>
 		</dependency>
 	</dependencies>
-	<repositories>
-		<repository>
-			<id>teavm-dev</id>
-			<url>https://dl.bintray.com/konsoletyper/teavm</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<layout>default</layout>
-		</repository>
-	</repositories>
-	<pluginRepositories>
-		<pluginRepository>
-			<id>1_teavm-dev</id>
-			<url>https://dl.bintray.com/konsoletyper/teavm</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<layout>default</layout>
-		</pluginRepository>
-	</pluginRepositories>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>versions-maven-plugin</artifactId>
-				<version>2.5</version>
 				<configuration>
 					<includes>
 						<include>org.teavm:*</include>
@@ -81,13 +59,13 @@
 			<plugin>
 				<groupId>org.teavm</groupId>
 				<artifactId>teavm-maven-plugin</artifactId>
-				<version>0.7.0-dev-859</version>
+				<version>${teavm.version}</version>
 				<executions>
 					<execution>
 						<goals>
 							<goal>compile</goal>
 						</goals>
-						<phase>install</phase>
+						<phase>process-classes</phase>
 						<configuration>
 							<mainClass>it.cavallium.warppi.teavm.TeaVMBoot</mainClass>
 							<debugInformationGenerated>false</debugInformationGenerated>
