@@ -14,7 +14,6 @@ import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.event.KeyboardEventListener;
 import it.cavallium.warppi.extra.mario.MarioScreen;
 import it.cavallium.warppi.extra.tetris.TetrisScreen;
-import it.cavallium.warppi.gui.GUIErrorMessage;
 import it.cavallium.warppi.gui.screens.KeyboardDebugScreen;
 import it.cavallium.warppi.gui.screens.Screen;
 
@@ -952,22 +951,14 @@ public class Keyboard {
 	public synchronized static void keyPressed(final Key k) {
 		boolean done = false;
 		if (Keyboard.additionalListener != null) {
-			try {
-				done = Keyboard.additionalListener.onKeyPressed(new KeyPressedEvent(k));
-			} catch (final Exception ex) {
-				new GUIErrorMessage(ex);
-			}
+			done = dispatchKeyPressed(Keyboard.additionalListener, new KeyPressedEvent(k));
 		}
 		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager() != null) {
 			final Screen scr = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
 			boolean refresh = false;
 			boolean scrdone = false;
 			if (scr != null && scr.isReadyForInput()) {
-				try {
-					scrdone = scr.onKeyPressed(new KeyPressedEvent(k));
-				} catch (final Exception ex) {
-					new GUIErrorMessage(ex);
-				}
+				scrdone = dispatchKeyPressed(scr, new KeyPressedEvent(k));
 			}
 			if (scrdone) {
 				refresh = true;
@@ -1049,12 +1040,13 @@ public class Keyboard {
 	public synchronized static void keyReleased(final Key k) {
 		boolean done = false;
 		if (Keyboard.additionalListener != null) {
-			done = Keyboard.additionalListener.onKeyReleased(new KeyReleasedEvent(k));
+			done = dispatchKeyReleased(Keyboard.additionalListener, new KeyReleasedEvent(k));
 		}
 		boolean refresh = false;
 		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager() != null) {
 			final Screen scr = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
-			if (scr != null && scr.isReadyForInput() && scr.onKeyReleased(new KeyReleasedEvent(k))) {
+			if (scr != null && scr.isReadyForInput()
+					&& dispatchKeyReleased(scr, new KeyReleasedEvent(k))) {
 				refresh = true;
 			} else {
 				switch (k) {
@@ -1070,6 +1062,29 @@ public class Keyboard {
 		} else if (!done) {
 			WarpPI.getPlatform().getConsoleUtils().out().println(1, "Key " + k.toString() + " ignored.");
 		}
+	}
+
+	static boolean dispatchKeyPressed(final KeyboardEventListener listener, final KeyPressedEvent event) {
+		try {
+			return listener.onKeyPressed(event);
+		} catch (final RuntimeException exception) {
+			reportListenerFailure(exception);
+			return false;
+		}
+	}
+
+	static boolean dispatchKeyReleased(final KeyboardEventListener listener, final KeyReleasedEvent event) {
+		try {
+			return listener.onKeyReleased(event);
+		} catch (final RuntimeException exception) {
+			reportListenerFailure(exception);
+			return false;
+		}
+	}
+
+	private static void reportListenerFailure(final RuntimeException exception) {
+		System.err.println("Keyboard event listener failed; input scanning will continue");
+		exception.printStackTrace(System.err);
 	}
 
 	public void setAdditionalKeyboardListener(final KeyboardEventListener l) {
