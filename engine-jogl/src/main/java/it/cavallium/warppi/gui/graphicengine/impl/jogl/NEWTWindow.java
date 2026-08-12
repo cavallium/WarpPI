@@ -59,6 +59,7 @@ import it.cavallium.warppi.util.EventSubmitter;
 class NEWTWindow implements GLEventListener {
 	private static final String RASPBERRY_NATIVE_WINDOW_TYPE = ".bcm.vc.iv";
 	private static final String DISABLE_LINUX_KEY_TRACKER = "newt.disable.LinuxKeyEventTracker";
+	private static final String DISABLE_LINUX_MOUSE_TRACKER = "newt.disable.LinuxMouseTracker";
 
 	private final JOGLEngine engine;
 	private final JOGLRenderer renderer;
@@ -189,8 +190,10 @@ class NEWTWindow implements GLEventListener {
 		// These must be set before NativeWindowFactory or GLProfile initializes.
 		System.setProperty("java.awt.headless", "true");
 		System.setProperty("newt.disable.PointerIcon", "true");
-		// The calculator keyboard has its own GPIO scanner; avoid a redundant /dev/input thread.
+		// The appliance kernel has no Linux input subsystem. Its keyboard uses the GPIO scanner.
+		// Keep JOGL from starting pollers for /dev/input devices that cannot exist.
 		System.setProperty(DISABLE_LINUX_KEY_TRACKER, "true");
+		System.setProperty(DISABLE_LINUX_MOUSE_TRACKER, "true");
 		System.setProperty("nativewindow.ws.name", RASPBERRY_NATIVE_WINDOW_TYPE);
 
 		final String detectedType = NativeWindowFactory.getNativeWindowType(false);
