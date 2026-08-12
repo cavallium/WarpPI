@@ -20,17 +20,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.jogamp.jogl</groupId>
-			<artifactId>jogl-all-main</artifactId>
+			<artifactId>jogl-all</artifactId>
 			<version>2.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jogamp.gluegen</groupId>
-			<artifactId>gluegen-rt-main</artifactId>
+			<artifactId>gluegen-rt</artifactId>
 			<version>2.6.0</version>
-		</dependency>
-		<dependency>
-			<groupId>ar.com.hjg</groupId>
-			<artifactId>pngj</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
@@ -47,6 +43,39 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<!-- Executed during process-classes; never needed by the calculator runtime. -->
+						<exclude>**/JOGLFontAtlasGenerator.class</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.6.3</version>
+				<executions>
+					<execution>
+						<id>generate-jogl-font-atlases</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLFontAtlasGenerator</mainClass>
+							<arguments>
+								<argument>${project.build.outputDirectory}/font-atlas</argument>
+								<argument>smal</argument>
+								<argument>smallest</argument>
+								<argument>norm</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

@@ -110,7 +110,7 @@ class NEWTWindow implements GLEventListener {
 			System.err.println("Le OpenGL non sono presenti su questo computer!");
 			return;
 		}
-		if (WarpPI.getPlatform().getSettings().isDebugEnabled())
+		if (WarpPI.getPlatform().getSettings().isDebugEnabled() && !engine.isRaspberryProductionMode())
 			System.setProperty("jnlp.newt.window.icons", "res/icons/calculator-016.png res/icons/calculator-018.png res/icons/calculator-256.png");
 		final GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2ES1));
 		System.out.println("Loaded OpenGL");
@@ -187,6 +187,7 @@ class NEWTWindow implements GLEventListener {
 
 		// These must be set before NativeWindowFactory or GLProfile initializes.
 		System.setProperty("java.awt.headless", "true");
+		System.setProperty("newt.disable.PointerIcon", "true");
 		System.setProperty("nativewindow.ws.name", RASPBERRY_NATIVE_WINDOW_TYPE);
 
 		final String detectedType = NativeWindowFactory.getNativeWindowType(false);
@@ -221,12 +222,6 @@ class NEWTWindow implements GLEventListener {
 
 		//Multisampling
 		//gl.glEnable(GL.GL_MULTISAMPLE);
-
-		try {
-			renderer.currentTex = ((JOGLSkin) engine.loadSkin("/test.png")).t;
-		} catch (final Exception e) {
-			e.printStackTrace();
-		}
 
 		if (onInitialized != null) {
 			onInitialized.run();

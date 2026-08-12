@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.2.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.2.0 https://maven.apache.org/xsd/assembly-2.2.0.xsd">
+	<id>jar-with-dependencies</id>
+	<formats>
+		<format>jar</format>
+	</formats>
+	<includeBaseDirectory>false</includeBaseDirectory>
+	<dependencySets>
+		<dependencySet>
+			<outputDirectory>/</outputDirectory>
+			<useProjectArtifact>true</useProjectArtifact>
+			<unpack>true</unpack>
+			<scope>runtime</scope>
+			<unpackOptions>
+				<excludes>
+					<!-- The assembly supplies its own manifest; dependency metadata is not used at runtime. -->
+					<exclude>META-INF/MANIFEST.MF</exclude>
+					<exclude>META-INF/INDEX.LIST</exclude>
+					<exclude>META-INF/*.SF</exclude>
+					<exclude>META-INF/*.RSA</exclude>
+					<exclude>META-INF/*.DSA</exclude>
+					<exclude>META-INF/maven/**</exclude>
+					<exclude>META-INF/proguard/**</exclude>
+
+					<!-- Documentation, editor sources, abandoned native code and development assets. -->
+					<exclude>algebra variable type.gif</exclude>
+					<exclude>algebra.png</exclude>
+					<exclude>algebra_input.gif</exclude>
+					<exclude>decimal.png</exclude>
+					<exclude>draft.png</exclude>
+					<exclude>draft2.png</exclude>
+					<exclude>keypad-preview.jpg</exclude>
+					<exclude>font_gputest*.rft</exclude>
+					<exclude>font_gputest*.png</exclude>
+					<exclude>old_font_*.rft</exclude>
+					<exclude>font_square.rft</exclude>
+					<exclude>libpicalc.so</exclude>
+					<exclude>picalculatornative.dll</exclude>
+					<exclude>test.png</exclude>
+					<exclude>**/*.xcf</exclude>
+					<exclude>icons/**</exclude>
+					<exclude>jogamp/newt/assets/**</exclude>
+					<exclude>jogamp/opengl/assets/**</exclude>
+					<exclude>com/jogamp/common/util/bin/exe-windows-*.defl</exclude>
+					<exclude>**/JOGLFontAtlasGenerator.class</exclude>
+
+					<!-- Defense in depth if an all-platform JOGL dependency is reintroduced later. -->
+					<exclude>**/*.dll</exclude>
+					<exclude>**/*.dylib</exclude>
+					<exclude>natives/android-*/**</exclude>
+					<exclude>natives/freebsd-*/**</exclude>
+					<exclude>natives/linux-aarch64/**</exclude>
+					<exclude>natives/linux-amd64/**</exclude>
+					<exclude>natives/macosx-*/**</exclude>
+					<exclude>natives/windows-*/**</exclude>
+					<exclude>jogamp/nativetag/**/android/**</exclude>
+					<exclude>jogamp/nativetag/**/freebsd/**</exclude>
+					<exclude>jogamp/nativetag/**/linux/aarch64/**</exclude>
+					<exclude>jogamp/nativetag/**/linux/amd64/**</exclude>
+					<exclude>jogamp/nativetag/**/macosx/**</exclude>
+					<exclude>jogamp/nativetag/**/windows/**</exclude>
+
+					<!-- BCM/DispmanX uses EGL/GLES and NEWT head; desktop GL, AWT, X11 and DRM are unused. -->
+					<exclude>natives/linux-armv6hf/libjogl_desktop.so</exclude>
+					<exclude>natives/linux-armv6hf/libnativewindow_awt.so</exclude>
+					<exclude>natives/linux-armv6hf/libnativewindow_drm.so</exclude>
+					<exclude>natives/linux-armv6hf/libnativewindow_x11.so</exclude>
+					<exclude>natives/linux-armv6hf/libnewt_drm.so</exclude>
+				</excludes>
+			</unpackOptions>
+		</dependencySet>
+	</dependencySets>
+</assembly>
