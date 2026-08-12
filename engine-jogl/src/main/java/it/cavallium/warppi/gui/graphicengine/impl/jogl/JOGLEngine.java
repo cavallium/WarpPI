@@ -155,6 +155,10 @@ public class JOGLEngine implements GraphicEngine {
 		}
 	}
 
+	public void waitForExit() throws InterruptedException {
+		exitSemaphore.acquire();
+	}
+
 	@Override
 	public void repaint() {
 		if (d != null & r != null && JOGLRenderer.gl != null)

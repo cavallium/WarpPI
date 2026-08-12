@@ -308,7 +308,6 @@ class NEWTWindow implements GLEventListener {
 	public void dispose(final GLAutoDrawable drawable) {
 		System.out.println("cleanup");
 //		final GL2ES1 gl = drawable.getGL().getGL2ES1();
-		System.exit(0);
 	}
 
 }
