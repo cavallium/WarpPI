@@ -59,7 +59,7 @@ public class JOGLEngine implements GraphicEngine {
 			wnd.window.setPosition(0, 0);
 		wnd.window.setResizable(r);
 		wnd.window.setUndecorated(!r);
-		wnd.window.setPointerVisible(r);
+		wnd.window.setPointerVisible(false);
 	}
 
 	@Override
@@ -127,6 +127,7 @@ public class JOGLEngine implements GraphicEngine {
 	public void start(final RenderingLoop d) {
 		this.d = d;
 		wnd.window.setVisible(true);
+		wnd.window.setPointerVisible(false);
 	}
 
 	@Override
