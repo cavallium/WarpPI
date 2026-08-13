@@ -98,7 +98,7 @@ public final class AppsMenuScreen extends Screen {
 		renderer.glFillColor(0, 0, ctx.getWidth(), HEADER_HEIGHT);
 
 		drawHeroCard(renderer, apps.get(0), selectedIndex == 0,
-				ctx.getWidth() - PAGE_PADDING * 2);
+				ctx.getWidth() - PAGE_PADDING * 2, 1);
 		final int gridItemCount = apps.size() - 1;
 		final int rowCount = (gridItemCount + 1) / 2;
 		final int availableGridHeight = ctx.getHeight() - GRID_TOP - FOOTER_HEIGHT;
@@ -112,7 +112,7 @@ public final class AppsMenuScreen extends Screen {
 			final int x = PAGE_PADDING + column * (cardWidth + GRID_GAP);
 			final int y = GRID_TOP + row * (cardHeight + GRID_ROW_GAP);
 			drawGridCard(renderer, apps.get(index), index == selectedIndex,
-					x, y, cardWidth, cardHeight);
+					x, y, cardWidth, cardHeight, index + 1);
 		}
 
 		d.fonts[0].use(d.display);
@@ -121,14 +121,15 @@ public final class AppsMenuScreen extends Screen {
 		d.fonts[1].use(d.display);
 		renderer.glColor(0xFFD9E3EF);
 		renderer.glDrawStringRight(ctx.getWidth() - 8, 9,
-				apps.size() + (debugEnabled ? " APPS  DEBUG" : " APPS"));
+				apps.size() + " APPS  1-" + apps.size() + " OPEN"
+						+ (debugEnabled ? "  DEBUG" : ""));
 		renderer.glColor(0xFF555555);
 		renderer.glDrawStringCenter(ctx.getWidth() / 2f, ctx.getHeight() - 10,
-				"ARROWS MOVE   OK OPEN   BACK CLOSE");
+				"1-" + apps.size() + " QUICK OPEN   ARROWS MOVE   BACK CLOSE");
 	}
 
 	private void drawHeroCard(final Renderer renderer, final App app,
-			final boolean selected, final int width) {
+			final boolean selected, final int width, final int shortcutNumber) {
 		final int x = PAGE_PADDING;
 		final int textColor = selected ? 0xFFFFFFFF : TEXT_COLOR;
 		renderer.glColor(selected ? app.accentColor() : CARD_COLOR);
@@ -149,11 +150,13 @@ public final class AppsMenuScreen extends Screen {
 		d.fonts[1].use(d.display);
 		renderer.glColor(selected ? 0xFFE8F3FF : MUTED_TEXT_COLOR);
 		renderer.glDrawStringLeft(x + 52, HERO_TOP + 25, app.subtitle());
+		drawShortcutTag(renderer, app, selected,
+				x + width - 20, HERO_TOP + 6, shortcutNumber);
 	}
 
 	private void drawGridCard(final Renderer renderer, final App app,
 			final boolean selected, final int x, final int y,
-			final int width, final int height) {
+			final int width, final int height, final int shortcutNumber) {
 		renderer.glColor(selected ? app.accentColor() : CARD_COLOR);
 		renderer.glFillColor(x, y, width, height);
 		renderer.glColor(app.accentColor());
@@ -174,6 +177,18 @@ public final class AppsMenuScreen extends Screen {
 		d.fonts[1].use(d.display);
 		renderer.glColor(selected ? 0xFFF4F7FB : MUTED_TEXT_COLOR);
 		renderer.glDrawStringLeft(x + 38, y + height / 2f + 5, app.subtitle());
+		drawShortcutTag(renderer, app, selected,
+				x + width - 19, y + 5, shortcutNumber);
+	}
+
+	private void drawShortcutTag(final Renderer renderer, final App app,
+			final boolean selected, final int x, final int y,
+			final int shortcutNumber) {
+		renderer.glColor(selected ? 0xFFFFFFFF : 0xFFE8EDF3);
+		renderer.glFillColor(x, y, 14, 14);
+		d.fonts[1].use(d.display);
+		renderer.glColor(selected ? app.accentColor() : TEXT_COLOR);
+		renderer.glDrawStringCenter(x + 7, y + 4, Integer.toString(shortcutNumber));
 	}
 
 	@Override
@@ -203,6 +218,19 @@ public final class AppsMenuScreen extends Screen {
 			case STEP:
 			case SIMPLIFY:
 				launchSelectedApp();
+				return true;
+			case NUM1:
+			case NUM2:
+			case NUM3:
+			case NUM4:
+			case NUM5:
+			case NUM6:
+			case NUM7:
+				final int shortcutIndex = shortcutIndex(event.getKey());
+				if (shortcutIndex < apps.size()) {
+					selectedIndex = shortcutIndex;
+					launchSelectedApp();
+				}
 				return true;
 			case SETTINGS:
 			case BACK:
@@ -267,6 +295,19 @@ public final class AppsMenuScreen extends Screen {
 						&& selectedIndex + 1 < appCount
 					? selectedIndex + 1 : selectedIndex;
 			default -> selectedIndex;
+		};
+	}
+
+	static int shortcutIndex(final Key key) {
+		return switch (key) {
+			case NUM1 -> 0;
+			case NUM2 -> 1;
+			case NUM3 -> 2;
+			case NUM4 -> 3;
+			case NUM5 -> 4;
+			case NUM6 -> 5;
+			case NUM7 -> 6;
+			default -> -1;
 		};
 	}
 

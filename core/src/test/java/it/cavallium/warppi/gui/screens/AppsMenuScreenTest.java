@@ -54,6 +54,19 @@ class AppsMenuScreenTest {
 	}
 
 	@Test
+	void mapsNumberKeysToTheVisibleAppOrder() {
+		assertEquals(0, AppsMenuScreen.shortcutIndex(Key.NUM1));
+		assertEquals(1, AppsMenuScreen.shortcutIndex(Key.NUM2));
+		assertEquals(2, AppsMenuScreen.shortcutIndex(Key.NUM3));
+		assertEquals(3, AppsMenuScreen.shortcutIndex(Key.NUM4));
+		assertEquals(4, AppsMenuScreen.shortcutIndex(Key.NUM5));
+		assertEquals(5, AppsMenuScreen.shortcutIndex(Key.NUM6));
+		assertEquals(6, AppsMenuScreen.shortcutIndex(Key.NUM7));
+		assertEquals(-1, AppsMenuScreen.shortcutIndex(Key.NUM0));
+		assertEquals(-1, AppsMenuScreen.shortcutIndex(Key.OK));
+	}
+
+	@Test
 	void createsTheRequestedApplicationScreen() {
 		assertInstanceOf(HardwareKeyboardGuideScreen.class,
 				AppsMenuScreen.createScreen(App.KEYBOARD_GUIDE));
