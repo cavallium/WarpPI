@@ -29,7 +29,11 @@ public final class HardwareKeyboardGuideScreen extends Screen {
 
 	@Override
 	public void graphicInitialized(final ScreenContext ctx) throws InterruptedException {
-		ctx.getGraphicEngine().getRenderer().glClearColor(BACKGROUND_COLOR);
+	}
+
+	@Override
+	public int getBackgroundColor() {
+		return BACKGROUND_COLOR;
 	}
 
 	@Override
@@ -132,7 +136,6 @@ public final class HardwareKeyboardGuideScreen extends Screen {
 
 	@Override
 	public void beforeRender(final ScreenContext ctx, final float dt) {
-		ctx.getGraphicEngine().getRenderer().glClearColor(BACKGROUND_COLOR);
 		final Layer newActiveLayer = HardwareKeyboardLayout.activeLayer();
 		if (activeLayer != newActiveLayer) {
 			activeLayer = newActiveLayer;

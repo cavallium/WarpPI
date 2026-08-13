@@ -48,6 +48,11 @@ public final class DisplayManager implements RenderingLoop {
 	public boolean forceRefresh;
 
 	public DisplayManager(final DisplayOutputDevice display, final BacklightOutputDevice backlight, final HUD hud, final Screen screen, final String title) {
+		this(display, backlight, hud, screen, title, WarpPI.getPlatform().newSemaphore());
+	}
+
+	DisplayManager(final DisplayOutputDevice display, final BacklightOutputDevice backlight, final HUD hud,
+			final Screen screen, final String title, final Semaphore screenChange) {
 		this.display = display;
 		this.graphicEngine = display.getGraphicEngine();
 		this.backlight = backlight;
@@ -55,7 +60,7 @@ public final class DisplayManager implements RenderingLoop {
 		initialTitle = title;
 		initialScreen = screen;
 
-		screenChange = WarpPI.getPlatform().newSemaphore();
+		this.screenChange = screenChange;
 		supportsPauses = graphicEngine.doesRefreshPauses();
 
 		glyphsHeight = new int[]{9, 6, 12, 9};
@@ -303,7 +308,7 @@ public final class DisplayManager implements RenderingLoop {
 		// fonts[5] = engine.loadFont("square");
 	}
 
-	private void draw_init() {
+	private void draw_init(final Screen frameScreen) {
 		if (graphicEngine.supportsFontRegistering()) {
 			final List<BinaryFont> fontsIterator = graphicEngine.getRegisteredFonts();
 			for (final BinaryFont f : fontsIterator) {
@@ -312,21 +317,22 @@ public final class DisplayManager implements RenderingLoop {
 				}
 			}
 		}
-		if (!screen.graphicInitialized) {
+		if (!frameScreen.graphicInitialized) {
 			try {
 				var displaySize = display.getDisplaySize();
 				var scrWidth = displaySize[0] - hud.getMarginLeft() - hud.getMarginRight();
 				var scrHeight = displaySize[1] - hud.getMarginTop() - hud.getMarginBottom();
 				var scrCtx = new ScreenContext(graphicEngine, scrWidth, scrHeight);
-				screen.initializeGraphic(scrCtx);
+				frameScreen.initializeGraphic(scrCtx);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
+		renderer.glClearColor(frameScreen.getBackgroundColor());
 		renderer.glClear(graphicEngine.getWidth(), graphicEngine.getHeight());
 	}
 
-	private void draw_world() {
+	private void draw_world(final Screen frameScreen) {
 		var displaySize = display.getDisplaySize();
 		var scrWidth = displaySize[0] - hud.getMarginLeft() - hud.getMarginRight();
 		var scrHeight = displaySize[1] - hud.getMarginTop() - hud.getMarginBottom();
@@ -363,20 +369,23 @@ public final class DisplayManager implements RenderingLoop {
 			}
 			if (hud.visible)
 				hud.renderBackground();
-			screen.render(scrCtx);
+			frameScreen.render(scrCtx);
 			if (hud.visible) {
 				hud.render(fullCtx);
 				hud.renderTopmostBackground();
 			}
-			screen.renderTopmost(fullCtx);
+			frameScreen.renderTopmost(fullCtx);
 			if (hud.visible)
 				hud.renderTopmost(fullCtx);
 		}
 	}
 
 	private void draw() {
-		draw_init();
-		draw_world();
+		final Screen frameScreen = screen;
+		if (frameScreen == null)
+			return;
+		draw_init(frameScreen);
+		draw_world(frameScreen);
 	}
 
 	private long precTime = -1;

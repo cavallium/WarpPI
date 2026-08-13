@@ -5,6 +5,8 @@ import it.cavallium.warppi.event.TouchEventListener;
 import it.cavallium.warppi.gui.*;
 
 public abstract class Screen implements KeyboardEventListener, TouchEventListener, GraphicalInterface {
+	public static final int DEFAULT_BACKGROUND_COLOR = 0xFFC5C2AF;
+
 	public DisplayManager d;
 	public volatile boolean created = false;
 	public volatile boolean initialized = false;
@@ -80,6 +82,13 @@ public abstract class Screen implements KeyboardEventListener, TouchEventListene
 
 	@Override
 	public abstract void beforeRender(ScreenContext ctx, float dt);
+
+	/**
+	 * Returns the color used to clear the frame immediately before this screen is rendered.
+	 */
+	public int getBackgroundColor() {
+		return DEFAULT_BACKGROUND_COLOR;
+	}
 
 	@Override
 	public abstract boolean mustBeRefreshed();

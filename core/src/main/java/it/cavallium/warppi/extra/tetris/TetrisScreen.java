@@ -17,6 +17,7 @@ import it.cavallium.warppi.gui.graphicengine.Skin;
 import it.cavallium.warppi.gui.screens.Screen;
 
 public class TetrisScreen extends Screen {
+	private static final int BACKGROUND_COLOR = 0xFF000000;
 
 	private TetrisGame g;
 
@@ -67,8 +68,12 @@ public class TetrisScreen extends Screen {
 
 	@Override
 	public void beforeRender(ScreenContext ctx, final float dt) {
-		d.renderer.glClearColor(0xff000000);
-			g.update(dt, leftPressed, rightPressed, downPressed, upPressed, okPressed, backPressed);
+		g.update(dt, leftPressed, rightPressed, downPressed, upPressed, okPressed, backPressed);
+	}
+
+	@Override
+	public int getBackgroundColor() {
+		return BACKGROUND_COLOR;
 	}
 
 	@Override

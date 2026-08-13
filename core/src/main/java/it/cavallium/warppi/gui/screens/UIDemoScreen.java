@@ -19,6 +19,7 @@ import it.cavallium.warppi.gui.graphicengine.Skin;
  */
 public final class UIDemoScreen extends Screen {
 
+	private static final int BACKGROUND_COLOR = 0xFF18202A;
 	private static final String[] TEST_GLYPHS = {
 			"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
 			"N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z",
@@ -54,6 +55,11 @@ public final class UIDemoScreen extends Screen {
 
 	@Override
 	public void initialized() {}
+
+	@Override
+	public int getBackgroundColor() {
+		return BACKGROUND_COLOR;
+	}
 
 	@Override
 	public void graphicInitialized(final ScreenContext ctx) {
@@ -121,7 +127,6 @@ public final class UIDemoScreen extends Screen {
 			glyphIndex = (glyphIndex + 1) % TEST_GLYPHS.length;
 			glyphElapsed -= GLYPH_SECONDS;
 		}
-		d.renderer.glClearColor(0xFF18202A);
 	}
 
 	@Override

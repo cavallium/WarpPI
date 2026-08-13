@@ -43,6 +43,8 @@ import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class MathInputScreen extends Screen {
+	private static final int BACKGROUND_COLOR = 0xFFC5C2AF;
+	private static final int ERROR_BACKGROUND_COLOR = 0xFFDC3C32;
 
 	private static final BinaryFont fontBig = Utils.getFont(false);
 	private final boolean isCloned;
@@ -119,11 +121,6 @@ public class MathInputScreen extends Screen {
 
 	@Override
 	public void beforeRender(final ScreenContext ctx, final float dt) {
-		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error == null) {
-			ctx.getGraphicEngine().getRenderer().glClearColor(0xFFc5c2af);
-		} else {
-			ctx.getGraphicEngine().getRenderer().glClearColor(0xFFDC3C32);
-		}
 		if (userInput != null)
 			if (userInput.beforeRender(dt)) {
 				mustRefresh = true;
@@ -145,6 +142,11 @@ public class MathInputScreen extends Screen {
 			computingAnimationIndex = 0;
 			computingBreakTipVisible = false;
 		}
+	}
+
+	@Override
+	public int getBackgroundColor() {
+		return d != null && d.error != null ? ERROR_BACKGROUND_COLOR : BACKGROUND_COLOR;
 	}
 
 	@Override

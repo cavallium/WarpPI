@@ -40,7 +40,11 @@ public final class SettingsMenuScreen extends Screen {
 
 	@Override
 	public void graphicInitialized(final ScreenContext ctx) {
-		ctx.getGraphicEngine().getRenderer().glClearColor(BACKGROUND_COLOR);
+	}
+
+	@Override
+	public int getBackgroundColor() {
+		return BACKGROUND_COLOR;
 	}
 
 	@Override
@@ -78,7 +82,6 @@ public final class SettingsMenuScreen extends Screen {
 
 	@Override
 	public void beforeRender(final ScreenContext ctx, final float dt) {
-		ctx.getGraphicEngine().getRenderer().glClearColor(BACKGROUND_COLOR);
 	}
 
 	@Override

@@ -17,6 +17,7 @@ import it.cavallium.warppi.gui.graphicengine.Skin;
 import it.cavallium.warppi.gui.screens.Screen;
 
 public class MarioScreen extends Screen {
+	private static final int BACKGROUND_COLOR = 0xFF000000;
 
 	private MarioGame g;
 
@@ -198,8 +199,12 @@ public class MarioScreen extends Screen {
 				gpuCharTestt1Elapsed -= 1.5;
 			}
 
-			d.renderer.glClearColor(0xff000000);
 		}
+	}
+
+	@Override
+	public int getBackgroundColor() {
+		return BACKGROUND_COLOR;
 	}
 
 	@Override
