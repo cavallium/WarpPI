@@ -99,6 +99,8 @@ public class JOGLEngine implements GraphicEngine {
 		final int initialDisplayHeight = size[1];
 		raspberryProductionMode = Boolean.getBoolean(RASPBERRY_PRODUCTION_PROPERTY)
 				|| WarpPI.getPlatform().isRunningOnRaspberry();
+		if (raspberryProductionMode)
+			NEWTWindow.configureRaspberrySystemProperties(System.getProperties());
 		keyboardLayer = HardwareKeyboardLayout.activeLayer();
 		size = new int[] { initialDisplayWidth, initialDisplayHeight };
 		created = true;
@@ -180,6 +182,7 @@ public class JOGLEngine implements GraphicEngine {
 			}
 			System.out.println("NEWT Raspberry production fullscreen: " + screenWidth + "x" + screenHeight);
 		}
+		wnd.startAnimator();
 	}
 
 	public void waitForExit() throws InterruptedException {

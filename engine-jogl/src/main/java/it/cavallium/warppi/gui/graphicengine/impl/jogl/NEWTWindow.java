@@ -28,6 +28,8 @@
 
 package it.cavallium.warppi.gui.graphicengine.impl.jogl;
 
+import java.util.Properties;
+
 import com.jogamp.nativewindow.NativeWindowFactory;
 import com.jogamp.nativewindow.ScalableSurface;
 import com.jogamp.newt.event.MouseAdapter;
@@ -61,8 +63,10 @@ import it.cavallium.warppi.util.EventSubmitter;
 
 class NEWTWindow implements GLEventListener {
 	private static final String RASPBERRY_NATIVE_WINDOW_TYPE = ".bcm.vc.iv";
+	private static final String DISABLE_OPENGL_DESKTOP = "jogl.disable.opengldesktop";
 	private static final String DISABLE_LINUX_KEY_TRACKER = "newt.disable.LinuxKeyEventTracker";
 	private static final String DISABLE_LINUX_MOUSE_TRACKER = "newt.disable.LinuxMouseTracker";
+	private static final String OPENGL_DIAGNOSTICS = "warppi.jogl.diagnostics";
 	private static final float SCALE_EPSILON = 0.001f;
 
 	private final JOGLEngine engine;
@@ -76,6 +80,7 @@ class NEWTWindow implements GLEventListener {
 	private volatile int windowLogicalWidth;
 	private volatile int windowLogicalHeight;
 	private volatile SurfaceLayout surfaceLayout;
+	private Animator animator;
 	public Runnable onInitialized;
 	public volatile boolean refreshViewport;
 
@@ -226,11 +231,8 @@ class NEWTWindow implements GLEventListener {
 	public void create() {
 		configureNativeWindowing();
 		System.out.println("Loading OpenGL...");
-		System.out.println(GLProfile.glAvailabilityToString());
-		if (!GLProfile.isAvailable(GLProfile.GL2ES1)) {
-			System.err.println("Le OpenGL non sono presenti su questo computer!");
-			return;
-		}
+		if (openGLDiagnosticsEnabled())
+			System.out.println(GLProfile.glAvailabilityToString());
 		if (WarpPI.getPlatform().getSettings().isDebugEnabled() && !engine.isRaspberryProductionMode())
 			System.setProperty("jnlp.newt.window.icons", "res/icons/calculator-016.png res/icons/calculator-018.png res/icons/calculator-256.png");
 		final GLCapabilities caps = new GLCapabilities(GLProfile.get(GLProfile.GL2ES1));
@@ -250,7 +252,8 @@ class NEWTWindow implements GLEventListener {
 		glWindow.setSurfaceScale(new float[] {
 				ScalableSurface.AUTOMAX_PIXELSCALE, ScalableSurface.AUTOMAX_PIXELSCALE });
 		refreshSurfaceScale();
-		final NEWTKeyboardInput keyboardInput = new NEWTKeyboardInput();
+		final NEWTKeyboardInput keyboardInput = engine.isRaspberryProductionMode()
+				? null : new NEWTKeyboardInput();
 
 		glWindow.setTitle("WarpPI Calculator by Andrea Cavalli (@Cavallium)");
 
@@ -277,7 +280,8 @@ class NEWTWindow implements GLEventListener {
 
 			@Override
 			public void windowLostFocus(final WindowEvent e) {
-				keyboardInput.releaseAll();
+				if (keyboardInput != null)
+					keyboardInput.releaseAll();
 				releaseKeyboardPanel();
 			}
 
@@ -299,7 +303,8 @@ class NEWTWindow implements GLEventListener {
 			}
 
 		});
-		glWindow.addKeyListener(keyboardInput);
+		if (keyboardInput != null)
+			glWindow.addKeyListener(keyboardInput);
 		if (keyboardPanel != null) {
 			glWindow.addMouseListener(new MouseAdapter() {
 				@Override
@@ -322,9 +327,16 @@ class NEWTWindow implements GLEventListener {
 		}
 
 		glWindow.addGLEventListener(this /* GLEventListener */);
-		final Animator animator = new Animator();
+		animator = new Animator();
 		animator.add(glWindow);
-		animator.start();
+	}
+
+	void startAnimator() {
+		final Animator currentAnimator = animator;
+		if (currentAnimator == null)
+			throw new IllegalStateException("The NEWT window has not been created");
+		if (!currentAnimator.isStarted() && !currentAnimator.start())
+			throw new IllegalStateException("The NEWT animator did not start");
 	}
 
 	private void pressKeyboardPanel(final MouseEvent event) {
@@ -357,15 +369,6 @@ class NEWTWindow implements GLEventListener {
 		if (!engine.isRaspberryProductionMode())
 			return;
 
-		// These must be set before NativeWindowFactory or GLProfile initializes.
-		System.setProperty("java.awt.headless", "true");
-		System.setProperty("newt.disable.PointerIcon", "true");
-		// The appliance kernel has no Linux input subsystem. Its keyboard uses the GPIO scanner.
-		// Keep JOGL from starting pollers for /dev/input devices that cannot exist.
-		System.setProperty(DISABLE_LINUX_KEY_TRACKER, "true");
-		System.setProperty(DISABLE_LINUX_MOUSE_TRACKER, "true");
-		System.setProperty("nativewindow.ws.name", RASPBERRY_NATIVE_WINDOW_TYPE);
-
 		final String detectedType = NativeWindowFactory.getNativeWindowType(false);
 		final String selectedType = NativeWindowFactory.getNativeWindowType(true);
 		if (!RASPBERRY_NATIVE_WINDOW_TYPE.equals(detectedType)
@@ -374,6 +377,29 @@ class NEWTWindow implements GLEventListener {
 					+ detectedType + ", selected=" + selectedType);
 		}
 		System.out.println("NEWT native backend: " + selectedType);
+	}
+
+	static void configureRaspberrySystemProperties(final Properties properties) {
+		// These must be set before NativeWindowFactory or GLProfile initializes.
+		properties.setProperty("java.awt.headless", "true");
+		properties.setProperty("newt.disable.PointerIcon", "true");
+		// The appliance kernel has no Linux input subsystem. Its keyboard uses the GPIO scanner.
+		// Keep JOGL from starting pollers for /dev/input devices that cannot exist.
+		properties.setProperty(DISABLE_LINUX_KEY_TRACKER, "true");
+		properties.setProperty(DISABLE_LINUX_MOUSE_TRACKER, "true");
+		properties.setProperty("nativewindow.ws.name", RASPBERRY_NATIVE_WINDOW_TYPE);
+		// The appliance uses Broadcom EGL/OpenGL ES 1; probing desktop GL only wastes startup time.
+		properties.setProperty(DISABLE_OPENGL_DESKTOP, "true");
+	}
+
+	private boolean openGLDiagnosticsEnabled() {
+		return openGLDiagnosticsEnabled(engine.isRaspberryProductionMode(), System.getProperties());
+	}
+
+	static boolean openGLDiagnosticsEnabled(final boolean raspberryProductionMode,
+			final Properties properties) {
+		return !raspberryProductionMode
+				|| Boolean.parseBoolean(properties.getProperty(OPENGL_DIAGNOSTICS));
 	}
 
 	@Override
@@ -404,11 +430,13 @@ class NEWTWindow implements GLEventListener {
 			onInitialized = null;
 		}
 
-		System.err.println("Chosen GLCapabilities: " + drawable.getChosenGLCapabilities());
-		System.err.println("INIT GL IS: " + gl.getClass().getName());
-		System.err.println("GL_VENDOR: " + gl.glGetString(GL.GL_VENDOR));
-		System.err.println("GL_RENDERER: " + gl.glGetString(GL.GL_RENDERER));
-		System.err.println("GL_VERSION: " + gl.glGetString(GL.GL_VERSION));
+		if (openGLDiagnosticsEnabled()) {
+			System.err.println("Chosen GLCapabilities: " + drawable.getChosenGLCapabilities());
+			System.err.println("INIT GL IS: " + gl.getClass().getName());
+			System.err.println("GL_VENDOR: " + gl.glGetString(GL.GL_VENDOR));
+			System.err.println("GL_RENDERER: " + gl.glGetString(GL.GL_RENDERER));
+			System.err.println("GL_VERSION: " + gl.glGetString(GL.GL_VERSION));
+		}
 	}
 
 	@Override
