@@ -75,6 +75,9 @@ public class CalculatorHUD extends HUD {
 		} else {
 			r.glFillRect(2 + 18 * 1, 2, 16, 16, 16 * 1, 16 * 0, 16, 16);
 		}
+		if (WarpPI.INSTANCE.isLoading()) {
+			renderLoadingIndicator(r, 41, 4);
+		}
 
 		int padding = 2;
 		if (d.supportsBrightnessControl()) {
@@ -155,6 +158,16 @@ public class CalculatorHUD extends HUD {
 			r.glColor(0xFF000000);
 			r.glDrawStringLeft(5, ctx.getHeight() - ((currentDebugLine+1) * (r.getCurrentFont().getCharacterHeight()+1)), "DEBUG ENABLED");
 		}
+	}
+
+	static void renderLoadingIndicator(final Renderer renderer, final int x, final int y) {
+		renderer.glColor3i(0, 0, 0);
+		renderer.glFillColor(x, y, 10, 2);
+		renderer.glFillColor(x + 1, y + 2, 8, 2);
+		renderer.glFillColor(x + 4, y + 4, 2, 4);
+		renderer.glFillColor(x + 1, y + 8, 8, 2);
+		renderer.glFillColor(x, y + 10, 10, 2);
+		renderer.glColor3i(255, 255, 255);
 	}
 
 	@Override

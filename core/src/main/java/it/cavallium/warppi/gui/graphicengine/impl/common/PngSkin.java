@@ -1,6 +1,5 @@
 package it.cavallium.warppi.gui.graphicengine.impl.common;
 
-import java.io.File;
 import java.io.IOException;
 
 import it.cavallium.warppi.WarpPI;
@@ -12,11 +11,10 @@ public abstract class PngSkin implements Skin {
 
 	public int[] skinData;
 	public int[] skinSize;
-	@SuppressWarnings("unused")
-	private final boolean isResource;
+	private String texturePath;
+	private boolean initialized;
 
 	public PngSkin(final String file) throws IOException {
-		isResource = !new File(file).exists();
 		load(file);
 	}
 
@@ -25,6 +23,7 @@ public abstract class PngSkin implements Skin {
 		if (!file.startsWith("/")) {
 			file = "/" + file;
 		}
+		texturePath = file;
 		final ImageReader r = WarpPI.getPlatform().getImageUtils().load(WarpPI.getPlatform().getStorageUtils().getResourceStream(file));
 		if (r == null) {
 			skinData = new int[0];
@@ -34,27 +33,41 @@ public abstract class PngSkin implements Skin {
 			skinData = r.getImageMatrix();
 			skinSize = r.getSize();
 		}
+		initialized = true;
 	}
 
 	@Override
 	public void initialize(final DisplayOutputDevice d) {
-		// TODO Auto-generated method stub
+		if (initialized)
+			return;
+		try {
+			load(texturePath);
+		} catch (final IOException exception) {
+			throw new IllegalStateException("Failed to reload texture '" + texturePath + "'", exception);
+		}
 
 	}
 
 	@Override
 	public boolean isInitialized() {
-		return true;
+		return initialized;
+	}
+
+	@Override
+	public void unload(final DisplayOutputDevice d) {
+		skinData = null;
+		skinSize = null;
+		initialized = false;
 	}
 
 	@Override
 	public int getSkinWidth() {
-		return skinSize[0];
+		return skinSize == null ? 0 : skinSize[0];
 	}
 
 	@Override
 	public int getSkinHeight() {
-		return skinSize[1];
+		return skinSize == null ? 0 : skinSize[1];
 	}
 
 }

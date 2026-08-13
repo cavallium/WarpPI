@@ -31,17 +31,14 @@ class MarioScreenTest {
 	}
 
 	@Test
-	void runtimeAtlasContainsOnlyTheCompactGameplayAndBackgroundSurface() throws IOException {
+	void runtimeAtlasIsTheSmallestPowerOfTwoGameplaySurface() throws IOException {
 		final BufferedImage atlas = loadAtlas();
 		assertEquals(MarioScreen.ATLAS_SIZE, atlas.getWidth());
 		assertEquals(MarioScreen.ATLAS_SIZE, atlas.getHeight());
 		assertTrue(atlas.getColorModel() instanceof IndexColorModel);
 		assertTrue(((IndexColorModel) atlas.getColorModel()).getMapSize() <= 256);
-		assertEquals(0, atlas.getRGB(511, 511) >>> 24);
-
-		assertOpaqueRegion(atlas, 0, 0, 256, 216, "mountain background");
-		assertOpaqueRegion(atlas, 256, 0, 256, 216, "forest background");
-		assertOpaqueRegion(atlas, 0, 216, 256, 216, "hill background");
+		assertFullyTransparent(atlas, 0, 208, MarioScreen.ATLAS_SIZE, 48,
+				"unused power-of-two padding");
 		assertOpaqueRegion(atlas, MarioScreen.QUESTION_X, MarioScreen.BLOCK_ROW_Y, 16, 16,
 				"question block");
 		assertOpaqueRegion(atlas, MarioScreen.BRICK_X, MarioScreen.BLOCK_ROW_Y, 16, 16,
@@ -50,6 +47,30 @@ class MarioScreenTest {
 				"mushroom");
 		assertOpaqueRegion(atlas, MarioScreen.GOAL_POST_X, MarioScreen.GOAL_POST_Y, 16, 144,
 				"goal post");
+	}
+
+	@Test
+	void eachBackgroundHasItsOwnPowerOfTwoAtlas() throws IOException {
+		final Set<Integer> hashes = new HashSet<>();
+		for (int background = 0; background < 3; background++) {
+			final BufferedImage atlas = loadImage("/mario-background-" + background + ".png");
+			assertEquals(MarioScreen.BACKGROUND_ATLAS_SIZE, atlas.getWidth());
+			assertEquals(MarioScreen.BACKGROUND_ATLAS_SIZE, atlas.getHeight());
+			assertTrue(atlas.getColorModel() instanceof IndexColorModel);
+			assertOpaqueRegion(atlas, 0, 0, MarioScreen.BACKGROUND_WIDTH,
+					MarioScreen.BACKGROUND_HEIGHT, "background " + background);
+			assertFullyTransparent(atlas, 0, MarioScreen.BACKGROUND_HEIGHT,
+					MarioScreen.BACKGROUND_WIDTH,
+					MarioScreen.BACKGROUND_ATLAS_SIZE - MarioScreen.BACKGROUND_HEIGHT,
+					"background padding " + background);
+			hashes.add(regionHash(atlas, 0, 0, MarioScreen.BACKGROUND_WIDTH,
+					MarioScreen.BACKGROUND_HEIGHT));
+		}
+		assertEquals(3, hashes.size());
+		assertEquals(512 * 512 / 2,
+				MarioScreen.ATLAS_SIZE * MarioScreen.ATLAS_SIZE
+						+ MarioScreen.BACKGROUND_ATLAS_SIZE * MarioScreen.BACKGROUND_ATLAS_SIZE,
+				"gameplay plus one active background must use half the old texture surface");
 	}
 
 	@Test
@@ -89,22 +110,23 @@ class MarioScreenTest {
 				MarioScreen.BLOCK_ROW_Y + 15), "brick bottom border must not be cropped");
 		for (int row = 0; row < 2; row++)
 			for (int column = 0; column < 2; column++)
-				assertTrue(countPixels(atlas, MarioScreen.PIPE_X + column * 16,
-						row == 0 ? MarioScreen.PIPE_TOP_Y : MarioScreen.PIPE_BODY_Y,
+				assertTrue(countPixels(atlas,
+						(row == 0 ? MarioScreen.PIPE_TOP_X : MarioScreen.PIPE_BODY_X)
+								+ column * 16, MarioScreen.PIPE_Y,
 						16, 16, green) > 75, "green pipe cell " + column + "," + row);
-		assertTrue((atlas.getRGB(MarioScreen.PIPE_X + 16,
-				MarioScreen.PIPE_TOP_Y + 2) >>> 24) > 0,
+		assertTrue((atlas.getRGB(MarioScreen.PIPE_TOP_X + 16,
+				MarioScreen.PIPE_Y + 2) >>> 24) > 0,
 				"pipe seam must skip the source-sheet gutter");
-		assertTrue((atlas.getRGB(MarioScreen.PIPE_X + 8,
-				MarioScreen.PIPE_BODY_Y) >>> 24) > 0,
+		assertTrue((atlas.getRGB(MarioScreen.PIPE_BODY_X + 8,
+				MarioScreen.PIPE_Y) >>> 24) > 0,
 				"pipe body must start after the horizontal source-sheet gutter");
-		assertEquals(0, atlas.getRGB(MarioScreen.PIPE_X + 31,
-				MarioScreen.PIPE_BODY_Y + 8) >>> 24,
+		assertEquals(0, atlas.getRGB(MarioScreen.PIPE_BODY_X + 31,
+				MarioScreen.PIPE_Y + 8) >>> 24,
 				"pipe right silhouette must retain its outside transparent column");
 	}
 
 	@Test
-	void effectsAndGoalTapeHaveTransparentBackgroundsAndNoMonochromeFourthStar()
+	void effectsAndGoalTapeHaveTransparentBackgrounds()
 			throws IOException {
 		final BufferedImage atlas = loadAtlas();
 		for (int frame = 0; frame < 3; frame++) {
@@ -113,8 +135,6 @@ class MarioScreenTest {
 			assertOpaqueRegion(atlas, MarioScreen.SPARKLE_X + frame * 8,
 					MarioScreen.SPARKLE_Y, 8, 8, "sparkle " + frame);
 		}
-		assertFullyTransparent(atlas, MarioScreen.SPARKLE_X + 24,
-				MarioScreen.SPARKLE_Y, 8, 8, "removed monochrome sparkle");
 		assertEquals(0, atlas.getRGB(MarioScreen.GOAL_TAPE_X,
 				MarioScreen.GOAL_TAPE_Y) >>> 24);
 		assertOpaqueRegion(atlas, MarioScreen.GOAL_TAPE_X, MarioScreen.GOAL_TAPE_Y,
@@ -126,16 +146,16 @@ class MarioScreenTest {
 		final BufferedImage atlas = loadAtlas();
 		for (int frame = 0; frame < MarioScreen.MARIO_FRAME_COUNT; frame++) {
 			assertMirrored(atlas,
-					MarioScreen.SMALL_MARIO_X + frame * MarioScreen.SMALL_MARIO_SIZE,
-					MarioScreen.SMALL_MARIO_RIGHT_Y,
-					MarioScreen.SMALL_MARIO_X + frame * MarioScreen.SMALL_MARIO_SIZE,
-					MarioScreen.SMALL_MARIO_LEFT_Y,
+					MarioScreen.marioAtlasX(false, frame),
+					MarioScreen.marioAtlasY(false, false, frame),
+					MarioScreen.marioAtlasX(false, frame),
+					MarioScreen.marioAtlasY(false, true, frame),
 					MarioScreen.SMALL_MARIO_SIZE, MarioScreen.SMALL_MARIO_SIZE);
 			assertMirrored(atlas,
-					MarioScreen.SUPER_MARIO_X + frame * MarioScreen.SUPER_MARIO_SIZE,
-					MarioScreen.SUPER_MARIO_RIGHT_Y,
-					MarioScreen.SUPER_MARIO_X + frame * MarioScreen.SUPER_MARIO_SIZE,
-					MarioScreen.SUPER_MARIO_LEFT_Y,
+					MarioScreen.marioAtlasX(true, frame),
+					MarioScreen.marioAtlasY(true, false, frame),
+					MarioScreen.marioAtlasX(true, frame),
+					MarioScreen.marioAtlasY(true, true, frame),
 					MarioScreen.SUPER_MARIO_SIZE, MarioScreen.SUPER_MARIO_SIZE);
 		}
 		for (int frame = 0; frame < 2; frame++)
@@ -150,28 +170,28 @@ class MarioScreenTest {
 				MarioScreen.SMALL_MARIO_X + 5, MarioScreen.SMALL_MARIO_LEFT_Y + 11),
 				"the left-facing nose must be on the left");
 		assertEquals(0xFF885818, atlas.getRGB(
-				MarioScreen.SMALL_MARIO_X + 8 * MarioScreen.SMALL_MARIO_SIZE + 19,
-				MarioScreen.SMALL_MARIO_RIGHT_Y + 11),
+				MarioScreen.marioAtlasX(false, 8) + 19,
+				MarioScreen.marioAtlasY(false, false, 8) + 11),
 				"the third small running pose must still face right");
 		assertEquals(0xFF885818, atlas.getRGB(
-				MarioScreen.SMALL_MARIO_X + 8 * MarioScreen.SMALL_MARIO_SIZE + 4,
-				MarioScreen.SMALL_MARIO_LEFT_Y + 11),
+				MarioScreen.marioAtlasX(false, 8) + 4,
+				MarioScreen.marioAtlasY(false, true, 8) + 11),
 				"the mirrored third small running pose must still face left");
 		assertEquals(0xFF885818, atlas.getRGB(
-				MarioScreen.SUPER_MARIO_X + 8 * MarioScreen.SUPER_MARIO_SIZE + 22,
-				MarioScreen.SUPER_MARIO_RIGHT_Y + 12),
+				MarioScreen.marioAtlasX(true, 8) + 22,
+				MarioScreen.marioAtlasY(true, false, 8) + 12),
 				"the third super running pose must still face right");
 		assertEquals(0xFF885818, atlas.getRGB(
-				MarioScreen.SUPER_MARIO_X + 8 * MarioScreen.SUPER_MARIO_SIZE + 9,
-				MarioScreen.SUPER_MARIO_LEFT_Y + 12),
+				MarioScreen.marioAtlasX(true, 8) + 9,
+				MarioScreen.marioAtlasY(true, true, 8) + 12),
 				"the mirrored third super running pose must still face left");
 		assertNotEquals(regionHash(atlas,
-				MarioScreen.SMALL_MARIO_X + 4 * MarioScreen.SMALL_MARIO_SIZE,
-				MarioScreen.SMALL_MARIO_RIGHT_Y,
+				MarioScreen.marioAtlasX(false, 4),
+				MarioScreen.marioAtlasY(false, false, 4),
 				MarioScreen.SMALL_MARIO_SIZE, MarioScreen.SMALL_MARIO_SIZE),
 				regionHash(atlas,
-						MarioScreen.SMALL_MARIO_X + 8 * MarioScreen.SMALL_MARIO_SIZE,
-						MarioScreen.SMALL_MARIO_RIGHT_Y,
+						MarioScreen.marioAtlasX(false, 8),
+						MarioScreen.marioAtlasY(false, false, 8),
 						MarioScreen.SMALL_MARIO_SIZE, MarioScreen.SMALL_MARIO_SIZE),
 				"the third running pose must be a distinct sprite");
 	}
@@ -236,18 +256,24 @@ class MarioScreenTest {
 		final BufferedImage atlas = loadAtlas();
 		for (int frame = 0; frame < MarioScreen.MARIO_FRAME_COUNT; frame++) {
 			assertTrue(hasOpaquePixelOnRow(atlas,
-					MarioScreen.SMALL_MARIO_X + frame * MarioScreen.SMALL_MARIO_SIZE,
+					MarioScreen.marioAtlasX(false, frame),
 					MarioScreen.SMALL_MARIO_SIZE,
-					MarioScreen.SMALL_MARIO_RIGHT_Y + MarioScreen.SMALL_MARIO_SIZE - 1));
+					MarioScreen.marioAtlasY(false, false, frame)
+							+ MarioScreen.SMALL_MARIO_SIZE - 1));
 			assertTrue(hasOpaquePixelOnRow(atlas,
-					MarioScreen.SUPER_MARIO_X + frame * MarioScreen.SUPER_MARIO_SIZE,
+					MarioScreen.marioAtlasX(true, frame),
 					MarioScreen.SUPER_MARIO_SIZE,
-					MarioScreen.SUPER_MARIO_RIGHT_Y + MarioScreen.SUPER_MARIO_SIZE - 1));
+					MarioScreen.marioAtlasY(true, false, frame)
+							+ MarioScreen.SUPER_MARIO_SIZE - 1));
 		}
 	}
 
 	private static BufferedImage loadAtlas() throws IOException {
-		try (InputStream input = MarioScreen.class.getResourceAsStream("/mario-atlas.png")) {
+		return loadImage("/mario-atlas.png");
+	}
+
+	private static BufferedImage loadImage(final String resource) throws IOException {
+		try (InputStream input = MarioScreen.class.getResourceAsStream(resource)) {
 			assertNotNull(input);
 			final BufferedImage atlas = ImageIO.read(input);
 			assertNotNull(atlas);

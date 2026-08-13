@@ -12,6 +12,9 @@
 		<fileSet>
 			<directory>${project.build.outputDirectory}</directory>
 			<outputDirectory>/</outputDirectory>
+			<excludes>
+				<exclude>**/RaspberryTextureAtlasGenerator*.class</exclude>
+			</excludes>
 		</fileSet>
 	</fileSets>
 	<dependencySets>
@@ -39,13 +42,18 @@
 					<exclude>draft.png</exclude>
 					<exclude>draft2.png</exclude>
 					<exclude>keypad-preview.jpg</exclude>
-					<exclude>font_gputest*.rft</exclude>
-					<exclude>font_gputest*.png</exclude>
 					<exclude>old_font_*.rft</exclude>
 					<exclude>font_square.rft</exclude>
 					<exclude>libpicalc.so</exclude>
 					<exclude>picalculatornative.dll</exclude>
 					<exclude>test.png</exclude>
+					<!-- Replaced by generated RGB565/RGBA4 production textures. -->
+					<exclude>skin.png</exclude>
+					<exclude>tetrisskin.png</exclude>
+					<exclude>mario-atlas.png</exclude>
+					<exclude>mario-background-*.png</exclude>
+					<exclude>marioground.png</exclude>
+					<exclude>marioskin.png</exclude>
 					<exclude>**/*.xcf</exclude>
 					<exclude>icons/**</exclude>
 					<exclude>jogamp/newt/assets/**</exclude>

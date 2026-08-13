@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 class HardwareImageReaderTest {
 
 	@Test
-	void indexedMarioAtlasDecodesToItsPaletteColorsAndTransparency() throws Exception {
+	void indexedMarioGameplayAtlasDecodesToItsPaletteColorsAndTransparency() throws Exception {
 		try (InputStream expectedInput = getClass().getResourceAsStream("/mario-atlas.png");
 				InputStream decodedInput = getClass().getResourceAsStream("/mario-atlas.png")) {
 			assertNotNull(expectedInput);
@@ -24,10 +24,10 @@ class HardwareImageReaderTest {
 
 			assertEquals(expected.getWidth() * expected.getHeight(), decoded.length);
 			assertPixel(expected, decoded, 0, 0);
-			assertPixel(expected, decoded, 404, 350);
-			assertPixel(expected, decoded, 374, 336);
-			assertPixel(expected, decoded, 262, 366);
-			assertPixel(expected, decoded, 511, 511);
+			assertPixel(expected, decoded, 3, 192);
+			assertPixel(expected, decoded, 53, 192);
+			assertPixel(expected, decoded, 184, 192);
+			assertPixel(expected, decoded, 255, 255);
 		}
 	}
 

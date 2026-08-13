@@ -8,6 +8,8 @@ import it.cavallium.warppi.gui.GraphicUtils;
 import it.cavallium.warppi.gui.HistoryBehavior;
 import it.cavallium.warppi.gui.RenderContext;
 import it.cavallium.warppi.gui.ScreenContext;
+import it.cavallium.warppi.gui.graphicengine.Renderer;
+import it.cavallium.warppi.gui.graphicengine.Skin;
 
 public class LoadingScreen extends Screen {
 
@@ -17,6 +19,17 @@ public class LoadingScreen extends Screen {
 	public boolean loaded = false;
 	private float previousZoomValue = 1;
 	private volatile boolean ended = false;
+
+	private static final int TITLE_WIDTH = 99;
+	private static final int RASPBERRY_PI_WIDTH = 217;
+	private static final int WARPPI_WIDTH = 158;
+	private static final int SPINNER_WIDTH = 44;
+	private static final int SPINNER_HEIGHT = 45;
+	private static final int LOADING_RASPBERRY_PI_X = TITLE_WIDTH;
+	private static final int LOADING_WARPPI_X = TITLE_WIDTH + RASPBERRY_PI_WIDTH;
+	private static final int PROGRESS_WIDTH = 64;
+	private static final int PROGRESS_HEIGHT = 3;
+	private static final int PROGRESS_Y_OFFSET = 62;
 
 	public LoadingScreen() {
 		super();
@@ -59,6 +72,7 @@ public class LoadingScreen extends Screen {
 			if (previousZoomValue != 1.0f) {
 				StaticVars.windowZoom.submit(previousZoomValue);
 			}
+			d.requestLoadingSkinUnload();
 			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getHUD().show();
 			WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MathInputScreen());
 		}
@@ -67,15 +81,69 @@ public class LoadingScreen extends Screen {
 
 	@Override
 	public void render(RenderContext ctx) {
-		DisplayOutputDevice display = d.display;
-		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().guiSkin.use(display);
-		ctx.getRenderer().glColor3i(255, 255, 255);
-		ctx.getRenderer().glFillRect(ctx.getWidth() / 2f - 80, ctx.getHeight() / 2f - 64, 160, 48, 0, 32, 160, 48);
-		ctx.getRenderer().glFillRect(ctx.getWidth() / 2f - 24, ctx.getHeight() / 2f - loadingTextTranslation, 48, 48, 160, 32, 48, 48);
+		final DisplayOutputDevice display = d.display;
+		final Renderer renderer = ctx.getRenderer();
+		renderer.glColor3i(255, 255, 255);
+		if (d.usesOptimizedLoadingSkins()) {
+			renderOptimized(ctx, display, renderer);
+		} else {
+			renderOriginal(ctx, display, renderer);
+		}
+		renderProgressBar(ctx.getWidth(), ctx.getHeight(), renderer,
+				WarpPI.INSTANCE.getLoadingProgressPercent());
+	}
 
-		ctx.getRenderer().glFillRect(ctx.getWidth() - 224, ctx.getHeight() - 48, 224, 48, 0, 80, 224, 48);
-		ctx.getRenderer().glFillRect(ctx.getWidth() - 160 - 24 - 224, ctx.getHeight() - 48, 160, 48, 224, 80, 160, 48);
+	static void renderProgressBar(final int screenWidth, final int screenHeight,
+			final Renderer renderer, final int progressPercent) {
+		final int x = (screenWidth - PROGRESS_WIDTH) / 2;
+		final int y = screenHeight / 2 + PROGRESS_Y_OFFSET;
+		final int fillWidth = progressBarFillWidth(progressPercent);
 
+		renderer.glColor3i(154, 154, 142);
+		renderer.glFillColor(x, y, PROGRESS_WIDTH, PROGRESS_HEIGHT);
+		if (fillWidth > 0) {
+			renderer.glColor3i(0, 0, 0);
+			renderer.glFillColor(x, y, fillWidth, PROGRESS_HEIGHT);
+		}
+		renderer.glColor3i(255, 255, 255);
+	}
+
+	static int progressBarFillWidth(final int progressPercent) {
+		final int boundedPercent = Math.max(0, Math.min(100, progressPercent));
+		return PROGRESS_WIDTH * boundedPercent / 100;
+	}
+
+	private void renderOriginal(final RenderContext ctx, final DisplayOutputDevice display,
+			final Renderer renderer) {
+		d.guiSkin.use(display);
+		renderer.glFillRect(ctx.getWidth() / 2f - 80, ctx.getHeight() / 2f - 64,
+				160, 48, 0, 32, 160, 48);
+		renderer.glFillRect(ctx.getWidth() / 2f - 24,
+				ctx.getHeight() / 2f - loadingTextTranslation,
+				48, 48, 160, 32, 48, 48);
+		renderer.glFillRect(ctx.getWidth() - 224, ctx.getHeight() - 48,
+				224, 48, 0, 80, 224, 48);
+		renderer.glFillRect(ctx.getWidth() - 160 - 24 - 224, ctx.getHeight() - 48,
+				160, 48, 224, 80, 160, 48);
+	}
+
+	private void renderOptimized(final RenderContext ctx, final DisplayOutputDevice display,
+			final Renderer renderer) {
+		final Skin opaque = d.getLoadingSkin();
+		opaque.use(display);
+		renderer.glFillRect(ctx.getWidth() / 2f - 49, ctx.getHeight() / 2f - 64,
+				TITLE_WIDTH, 48, 0, 0, TITLE_WIDTH, 48);
+		renderer.glFillRect(ctx.getWidth() - 221, ctx.getHeight() - 48,
+				RASPBERRY_PI_WIDTH, 48, LOADING_RASPBERRY_PI_X, 0,
+				RASPBERRY_PI_WIDTH, 48);
+		renderer.glFillRect(ctx.getWidth() - 160 - 24 - 224, ctx.getHeight() - 48,
+				WARPPI_WIDTH, 48, LOADING_WARPPI_X, 0, WARPPI_WIDTH, 48);
+
+		final Skin spinner = d.getLoadingSpinnerSkin();
+		spinner.use(display);
+		renderer.glFillRect(ctx.getWidth() / 2f - 22,
+				ctx.getHeight() / 2f - loadingTextTranslation + 1,
+				SPINNER_WIDTH, SPINNER_HEIGHT, 0, 0, SPINNER_WIDTH, SPINNER_HEIGHT);
 	}
 
 	@Override

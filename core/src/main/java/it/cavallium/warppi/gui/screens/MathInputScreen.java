@@ -765,13 +765,23 @@ public class MathInputScreen extends Screen {
 					d.errorStackTrace = WarpPI.getPlatform().stacktraceToString(e);
 					WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error = e.id.toString();
 					System.err.println(e.id);
+				} finally {
+					computingResult = false;
+					WarpPI.INSTANCE.endLoadingOperation();
+					mustRefresh = true;
 				}
-				computingResult = false;
 			});
 			WarpPI.getPlatform().setThreadName(computingThread, "Computing Thread");
 			WarpPI.getPlatform().setThreadDaemon(computingThread);
 			computingThread.setPriority(Thread.NORM_PRIORITY + 3);
-			computingThread.start();
+			WarpPI.INSTANCE.beginLoadingOperation();
+			try {
+				computingThread.start();
+			} catch (final RuntimeException | java.lang.Error failure) {
+				computingResult = false;
+				WarpPI.INSTANCE.endLoadingOperation();
+				throw failure;
+			}
 			return true;
 		} else {
 			if (computingThread != null) {

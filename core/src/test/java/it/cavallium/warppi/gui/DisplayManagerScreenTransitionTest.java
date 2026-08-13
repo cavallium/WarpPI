@@ -2,6 +2,7 @@ package it.cavallium.warppi.gui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +15,10 @@ import it.cavallium.warppi.event.TouchStartEvent;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
+import it.cavallium.warppi.gui.graphicengine.Skin;
 import it.cavallium.warppi.gui.graphicengine.impl.common.ReboundedRenderer;
 import it.cavallium.warppi.gui.graphicengine.impl.nogui.NoGuiEngine;
+import it.cavallium.warppi.gui.screens.LoadingScreen;
 import it.cavallium.warppi.gui.screens.Screen;
 
 class DisplayManagerScreenTransitionTest {
@@ -101,6 +104,37 @@ class DisplayManagerScreenTransitionTest {
 		screen.userInputAllowed = true;
 		manager.getTouchEventListener().accept(new TouchStartEvent(List.of(), List.of()));
 		assertEquals(1, screen.touchStarts);
+	}
+
+	@Test
+	void releasesTransientLoadingSkinsOnlyAfterTheLoadingFrameIsGone() throws Exception {
+		final RecordingRenderer renderer = new RecordingRenderer();
+		final RecordingEngine engine = new RecordingEngine(renderer);
+		final TestLoadingScreen loading = new TestLoadingScreen(renderer);
+		final DisplayManager manager = manager(engine, loading);
+		manager.renderer = renderer;
+		final RecordingSkin opaque = new RecordingSkin();
+		final RecordingSkin spinner = new RecordingSkin();
+		setField(manager, "loadingSkin", opaque);
+		setField(manager, "loadingSpinnerSkin", spinner);
+
+		manager.setScreen(loading);
+		manager.requestLoadingSkinUnload();
+		manager.refresh(true);
+		assertEquals(0, opaque.unloads);
+		assertEquals(0, spinner.unloads);
+
+		manager.setScreen(new TestScreen(0xFFC5C2AF, "ready", renderer));
+		manager.refresh(true);
+		assertEquals(1, opaque.unloads);
+		assertEquals(1, spinner.unloads);
+	}
+
+	private static void setField(final Object target, final String name, final Object value)
+			throws ReflectiveOperationException {
+		final Field field = DisplayManager.class.getDeclaredField(name);
+		field.setAccessible(true);
+		field.set(target, value);
 	}
 
 	private static DisplayManager manager(final GraphicEngine engine, final Screen initialScreen) {
@@ -278,6 +312,63 @@ class DisplayManagerScreenTransitionTest {
 		@Override
 		public String getSessionTitle() {
 			return name;
+		}
+	}
+
+	private static final class TestLoadingScreen extends LoadingScreen {
+		private final RecordingRenderer renderer;
+
+		private TestLoadingScreen(final RecordingRenderer renderer) {
+			this.renderer = renderer;
+		}
+
+		@Override
+		public void created() {
+		}
+
+		@Override
+		public void initialized() {
+		}
+
+		@Override
+		public void render(final RenderContext ctx) {
+			renderer.events.add("render:loading");
+		}
+	}
+
+	private static final class RecordingSkin implements Skin {
+		private int unloads;
+
+		@Override
+		public void load(final String file) {
+		}
+
+		@Override
+		public void initialize(final DisplayOutputDevice display) {
+		}
+
+		@Override
+		public boolean isInitialized() {
+			return true;
+		}
+
+		@Override
+		public void use(final DisplayOutputDevice display) {
+		}
+
+		@Override
+		public void unload(final DisplayOutputDevice display) {
+			unloads++;
+		}
+
+		@Override
+		public int getSkinWidth() {
+			return 0;
+		}
+
+		@Override
+		public int getSkinHeight() {
+			return 0;
 		}
 	}
 

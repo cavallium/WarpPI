@@ -18,9 +18,11 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class RulesManager {
+	private static final int WARMUP_PROGRESS_BATCH_SIZE = 8;
 
 	public static ObjectArrayList<Rule>[] rules;
 
@@ -36,6 +38,7 @@ public class RulesManager {
 		}
 
 		loadBuiltinRules();
+		WarpPI.INSTANCE.reportLoadingProgress(WarpPI.STARTUP_BUILTIN_RULES_READY);
 
 		try {
 			loadDslRules();
@@ -70,9 +73,12 @@ public class RulesManager {
 
 	private static void loadDslRules() throws IOException, DslFilesException {
 		final Platform platform = WarpPI.getPlatform();
+		final List<String> ruleFilePaths = platform.getRuleFilePaths();
+		WarpPI.INSTANCE.reportLoadingProgress(WarpPI.STARTUP_DSL_RULES_START);
 
 		final DslFilesException fileErrors = new DslFilesException();
-		for (final String path : platform.getRuleFilePaths()) {
+		int completedFiles = 0;
+		for (final String path : ruleFilePaths) {
 			platform.getConsoleUtils().out().println(
 				ConsoleUtils.OUTPUTLEVEL_NODEBUG,
 				"RulesManager",
@@ -93,7 +99,12 @@ public class RulesManager {
 			} catch (DslAggregateException e) {
 				fileErrors.addFileErrors(path, source, e.getErrors());
 			}
+			completedFiles++;
+			WarpPI.INSTANCE.reportLoadingProgress(WarpPI.interpolateLoadingProgress(
+					WarpPI.STARTUP_DSL_RULES_START, WarpPI.STARTUP_DSL_RULES_READY,
+					completedFiles, ruleFilePaths.size()));
 		}
+		WarpPI.INSTANCE.reportLoadingProgress(WarpPI.STARTUP_DSL_RULES_READY);
 
 		if (fileErrors.hasErrors()) {
 			throw fileErrors;
@@ -103,8 +114,13 @@ public class RulesManager {
 	public static void warmUp() throws Error, InterruptedException {
 		ObjectArrayList<Function> uselessResult = null;
 		boolean uselessVariable = false;
-		for (final RuleType val : RuleType.values()) {
-			final ObjectArrayList<Rule> ruleList = RulesManager.rules[val.ordinal()];
+		int ruleCount = 0;
+		for (final ObjectArrayList<Rule> ruleList : RulesManager.rules) {
+			ruleCount += ruleList.size();
+		}
+		int warmedRules = 0;
+		WarpPI.INSTANCE.reportLoadingProgress(WarpPI.STARTUP_RULE_WARMUP_START);
+		for (final ObjectArrayList<Rule> ruleList : RulesManager.rules) {
 			for (final Rule rule : ruleList) {
 				String ruleName = "<null>";
 				try {
@@ -118,13 +134,22 @@ public class RulesManager {
 						e.printStackTrace();
 					}
 				}
+				warmedRules++;
+				if ((warmedRules & (WARMUP_PROGRESS_BATCH_SIZE - 1)) == 0
+						|| warmedRules == ruleCount) {
+					WarpPI.INSTANCE.reportLoadingProgress(WarpPI.interpolateLoadingProgress(
+							WarpPI.STARTUP_RULE_WARMUP_START, WarpPI.STARTUP_RULE_WARMUP_READY,
+							warmedRules, ruleCount));
+				}
 			}
 		}
+		WarpPI.INSTANCE.reportLoadingProgress(WarpPI.STARTUP_RULE_WARMUP_READY);
 		try {
 			new MathSolver(RulesManager.generateUselessExpression()).solveAllSteps();
 		} catch (InterruptedException | Error e) {
 			e.printStackTrace();
 		}
+		WarpPI.INSTANCE.reportLoadingProgress(WarpPI.STARTUP_SOLVER_WARMUP_READY);
 	}
 
 	private static Function generateUselessExpression() {

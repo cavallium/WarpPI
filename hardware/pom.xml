@@ -59,6 +59,41 @@
 		</resources>
 		<plugins>
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.6.3</version>
+				<executions>
+					<execution>
+						<id>generate-raspberry-texture-atlases</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<mainClass>it.cavallium.warppi.gui.graphicengine.impl.jogl.RaspberryTextureAtlasGenerator</mainClass>
+							<arguments>
+								<argument>${project.build.outputDirectory}/texture-atlas</argument>
+								<argument>skin.png</argument>
+								<argument>tetrisskin.png</argument>
+								<argument>mario-atlas.png</argument>
+								<argument>mario-background-0.png</argument>
+								<argument>mario-background-1.png</argument>
+								<argument>mario-background-2.png</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>**/RaspberryTextureAtlasGenerator*.class</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<configuration>

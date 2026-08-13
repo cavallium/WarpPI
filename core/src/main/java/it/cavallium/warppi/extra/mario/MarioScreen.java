@@ -14,7 +14,8 @@ import it.cavallium.warppi.gui.screens.Screen;
 
 public final class MarioScreen extends Screen {
 
-	static final int ATLAS_SIZE = 512;
+	static final int ATLAS_SIZE = 256;
+	static final int BACKGROUND_ATLAS_SIZE = 256;
 	static final int TILE_SIZE = 16;
 	static final int SMALL_MARIO_SIZE = 24;
 	static final int SUPER_MARIO_SIZE = 32;
@@ -22,47 +23,53 @@ public final class MarioScreen extends Screen {
 
 	static final int BACKGROUND_WIDTH = 256;
 	static final int BACKGROUND_HEIGHT = 216;
-	static final int SMALL_MARIO_X = 256;
-	static final int SMALL_MARIO_RIGHT_Y = 240;
-	static final int SMALL_MARIO_LEFT_Y = 216;
+	static final int SMALL_MARIO_X = 0;
+	static final int SMALL_MARIO_RIGHT_Y = 24;
+	static final int SMALL_MARIO_LEFT_Y = 0;
 	static final int SUPER_MARIO_X = 0;
-	static final int SUPER_MARIO_RIGHT_Y = 464;
-	static final int SUPER_MARIO_LEFT_Y = 432;
-	static final int GOOMBA_LEFT_X = 256;
-	static final int GOOMBA_RIGHT_X = 288;
-	static final int GOOMBA_Y = 328;
-	static final int COIN_X = 320;
-	static final int COIN_Y = 328;
-	static final int MUSHROOM_X = 368;
-	static final int MUSHROOM_Y = 328;
-	static final int SPARKLE_X = 384;
-	static final int SPARKLE_Y = 328;
-	static final int GOAL_TAPE_X = 416;
-	static final int GOAL_TAPE_Y = 328;
-	static final int TERRAIN_X = 256;
-	static final int TERRAIN_Y = 344;
-	static final int QUESTION_X = 400;
-	static final int BRICK_X = 416;
-	static final int USED_X = 432;
-	static final int BLOCK_ROW_Y = 344;
-	static final int PIPE_X = 256;
-	static final int PIPE_TOP_Y = 360;
-	static final int PIPE_BODY_Y = 376;
-	static final int REFLEX_X = 304;
-	static final int REFLEX_Y = 392;
-	static final int GOAL_POST_X = 496;
-	static final int GOAL_POST_Y = 360;
+	static final int SUPER_MARIO_RIGHT_Y = 112;
+	static final int SUPER_MARIO_LEFT_Y = 48;
+	static final int SUPER_MARIO_FRAMES_PER_ROW = 7;
+	static final int GOOMBA_LEFT_X = 144;
+	static final int GOOMBA_RIGHT_X = 176;
+	static final int GOOMBA_Y = 176;
+	static final int COIN_X = 208;
+	static final int COIN_Y = 176;
+	static final int MUSHROOM_X = 48;
+	static final int MUSHROOM_Y = 192;
+	static final int SPARKLE_X = 64;
+	static final int SPARKLE_Y = 192;
+	static final int GOAL_TAPE_X = 88;
+	static final int GOAL_TAPE_Y = 192;
+	static final int TERRAIN_X = 0;
+	static final int TERRAIN_Y = 176;
+	static final int QUESTION_X = 0;
+	static final int BRICK_X = 16;
+	static final int USED_X = 32;
+	static final int BLOCK_ROW_Y = 192;
+	static final int PIPE_TOP_X = 176;
+	static final int PIPE_BODY_X = 208;
+	static final int PIPE_Y = 192;
+	static final int REFLEX_X = 112;
+	static final int REFLEX_Y = 192;
+	static final int GOAL_POST_X = 240;
+	static final int GOAL_POST_Y = 0;
 	static final int GOAL_POST_WIDTH = 16;
 	static final int GOAL_POST_HEIGHT = 144;
 
 	private static final int ENEMY_SPRITE_SIZE = 16;
-	private static final int[] BACKGROUND_X = { 0, 256, 0 };
-	private static final int[] BACKGROUND_Y = { 0, 0, 216 };
+	private static final String[] BACKGROUND_RESOURCES = {
+			"/mario-background-0.png",
+			"/mario-background-1.png",
+			"/mario-background-2.png"
+	};
 	private static final int SKY_COLOR = 0xFFF8E0B0;
 	private static final float HELP_SECONDS = 6f;
 
 	private MarioGame game;
 	private Skin marioAtlas;
+	private Skin backgroundAtlas;
+	private int backgroundAtlasIndex = -1;
 	private boolean leftPressed;
 	private boolean rightPressed;
 	private boolean jumpPressed;
@@ -249,6 +256,7 @@ public final class MarioScreen extends Screen {
 		final Renderer renderer = ctx.getRenderer();
 		final MarioWorld world = game.getCurrentWorld();
 		drawBackground(renderer, ctx, world);
+		bindGameplayAtlas(renderer);
 
 		final int firstX = firstVisibleTile(cameraX, world.getWidth());
 		final int lastX = lastVisibleTile(cameraX, ctx.getWidth(), world.getWidth());
@@ -268,10 +276,11 @@ public final class MarioScreen extends Screen {
 			final MarioWorld world) {
 		renderer.glClearSkin();
 		final int background = world.getBackgroundIndex();
-		if (marioAtlas == null)
+		final Skin atlas = ensureBackgroundAtlas(renderer, background);
+		if (atlas == null)
 			return;
 
-		marioAtlas.use(d.display);
+		atlas.use(d.display);
 		renderer.glColor(0xFFFFFFFF);
 		final float parallax = (float) (cameraX * TILE_SIZE * 0.08d);
 		float x = -(parallax % BACKGROUND_WIDTH);
@@ -281,8 +290,27 @@ public final class MarioScreen extends Screen {
 				+ (float) (cameraY * TILE_SIZE * 0.04d);
 		for (; x < ctx.getWidth(); x += BACKGROUND_WIDTH)
 			renderer.glFillRect(x, y, BACKGROUND_WIDTH, BACKGROUND_HEIGHT,
-					BACKGROUND_X[background], BACKGROUND_Y[background],
-					BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
+					0, 0, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
+	}
+
+	private Skin ensureBackgroundAtlas(final Renderer renderer, final int background) {
+		if (backgroundAtlasIndex == background)
+			return backgroundAtlas;
+		renderer.glClearSkin();
+		if (backgroundAtlas != null)
+			backgroundAtlas.unload(d.display);
+		backgroundAtlas = initializeSkin(loadSkin(BACKGROUND_RESOURCES[background]));
+		backgroundAtlasIndex = background;
+		return backgroundAtlas;
+	}
+
+	private void bindGameplayAtlas(final Renderer renderer) {
+		if (marioAtlas == null) {
+			renderer.glClearSkin();
+			return;
+		}
+		marioAtlas.use(d.display);
+		renderer.glColor(0xFFFFFFFF);
 	}
 
 	private void drawTiles(final Renderer renderer, final RenderContext ctx, final MarioWorld world,
@@ -360,7 +388,7 @@ public final class MarioScreen extends Screen {
 		final boolean leftHalf = world.getBlockIdAt(x - 1, y) != MarioWorld.BLOCK_PIPE;
 		final boolean top = world.getBlockIdAt(x, y + 1) != MarioWorld.BLOCK_PIPE;
 		renderer.glFillRect(screenX, screenY, TILE_SIZE, TILE_SIZE,
-				PIPE_X + (leftHalf ? 0 : TILE_SIZE), top ? PIPE_TOP_Y : PIPE_BODY_Y,
+				(top ? PIPE_TOP_X : PIPE_BODY_X) + (leftHalf ? 0 : TILE_SIZE), PIPE_Y,
 				TILE_SIZE, TILE_SIZE);
 	}
 
@@ -588,18 +616,15 @@ public final class MarioScreen extends Screen {
 		if (!player.isVisibleDuringInvulnerability())
 			return;
 		final int spriteSize = player.isSuperMario() ? SUPER_MARIO_SIZE : SMALL_MARIO_SIZE;
-		final int atlasX = player.isSuperMario() ? SUPER_MARIO_X : SMALL_MARIO_X;
-		final int atlasY;
-		if (player.isSuperMario())
-			atlasY = player.isFacingLeft() ? SUPER_MARIO_LEFT_Y : SUPER_MARIO_RIGHT_Y;
-		else
-			atlasY = player.isFacingLeft() ? SMALL_MARIO_LEFT_Y : SMALL_MARIO_RIGHT_Y;
+		final int frame = player.getSpriteFrame();
+		final int atlasX = marioAtlasX(player.isSuperMario(), frame);
+		final int atlasY = marioAtlasY(player.isSuperMario(), player.isFacingLeft(), frame);
 		final float bodyWidth = (float) (player.getWidth() * TILE_SIZE);
 		final float screenX = worldToScreenX(player.getX()) - (spriteSize - bodyWidth) / 2f;
 		final float screenY = worldToScreenY(ctx, player.getY()) - spriteSize;
 		if (marioAtlas != null)
 			renderer.glFillRect(screenX, screenY, spriteSize, spriteSize,
-					atlasX + spriteSize * player.getSpriteFrame(), atlasY, spriteSize, spriteSize);
+					atlasX, atlasY, spriteSize, spriteSize);
 		else {
 			renderer.glColor(0xFFD9342B);
 			renderer.glFillColor(worldToScreenX(player.getX()),
@@ -677,6 +702,26 @@ public final class MarioScreen extends Screen {
 	static int lastVisibleTile(final double camera, final int viewportPixels, final int worldSize) {
 		return Math.max(0, Math.min(worldSize - 1,
 				(int) Math.ceil(camera + viewportPixels / (double) TILE_SIZE) - 1));
+	}
+
+	static int marioAtlasX(final boolean superMario, final int requestedFrame) {
+		final int frame = Math.floorMod(requestedFrame, MARIO_FRAME_COUNT);
+		return superMario
+				? SUPER_MARIO_X + frame % SUPER_MARIO_FRAMES_PER_ROW * SUPER_MARIO_SIZE
+				: SMALL_MARIO_X + frame * SMALL_MARIO_SIZE;
+	}
+
+	static int marioAtlasY(final boolean superMario, final boolean facingLeft,
+			final int requestedFrame) {
+		final int baseY;
+		if (superMario)
+			baseY = facingLeft ? SUPER_MARIO_LEFT_Y : SUPER_MARIO_RIGHT_Y;
+		else
+			baseY = facingLeft ? SMALL_MARIO_LEFT_Y : SMALL_MARIO_RIGHT_Y;
+		if (!superMario)
+			return baseY;
+		final int frame = Math.floorMod(requestedFrame, MARIO_FRAME_COUNT);
+		return baseY + frame / SUPER_MARIO_FRAMES_PER_ROW * SUPER_MARIO_SIZE;
 	}
 
 	MarioGame getGame() {

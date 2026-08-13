@@ -21,9 +21,23 @@ import java.io.IOException;
 
 public class WarpPI {
 	public static final WarpPI INSTANCE = new WarpPI();
+	public static final int STARTUP_DISPLAY_READY = 8;
+	public static final int STARTUP_SKIN_RESOURCES_READY = 16;
+	public static final int STARTUP_FONT_RESOURCES_READY = 24;
+	public static final int STARTUP_DEVICE_READY = 30;
+	public static final int STARTUP_BRIGHTNESS_READY = 32;
+	public static final int STARTUP_BUILTIN_RULES_READY = 42;
+	public static final int STARTUP_DSL_RULES_START = 44;
+	public static final int STARTUP_DSL_RULES_READY = 68;
+	public static final int STARTUP_RULE_WARMUP_START = 70;
+	public static final int STARTUP_RULE_WARMUP_READY = 96;
+	public static final int STARTUP_SOLVER_WARMUP_READY = 99;
+	public static final int STARTUP_COMPLETE = 100;
 	private static Platform platform;
 	private static boolean running = false;
 	private final EventSubmitter<Boolean> loaded = EventSubmitter.create(false);
+	private volatile int loadingProgressPercent;
+	private volatile int activeLoadingOperations;
 	private Device device;
 
 	private WarpPI() {
@@ -51,6 +65,7 @@ public class WarpPI {
 	private void startInstance(final Platform platform, final Screen screen,
 	                           final HUD hud, final StartupArguments args, final RunnableWithException onLoading)
 		throws IOException {
+		loadingProgressPercent = 0;
 		WarpPI.platform = platform;
 		// Set arguments on platform before everything else
 		platform.setArguments(args);
@@ -123,6 +138,52 @@ public class WarpPI {
 		return loaded;
 	}
 
+	public int getLoadingProgressPercent() {
+		return loadingProgressPercent;
+	}
+
+	/**
+	 * Reports completed startup work. Startup has a single writer; the volatile
+	 * field only provides visibility to the render thread.
+	 */
+	public void reportLoadingProgress(final int percent) {
+		final int boundedPercent = Math.max(0, Math.min(STARTUP_COMPLETE, percent));
+		if (boundedPercent > loadingProgressPercent)
+			loadingProgressPercent = boundedPercent;
+	}
+
+	public static int interpolateLoadingProgress(final int start, final int end,
+			final int completed, final int total) {
+		if (total <= 0)
+			return end;
+		final int boundedCompleted = Math.max(0, Math.min(completed, total));
+		return start + (end - start) * boundedCompleted / total;
+	}
+
+	public boolean isLoading() {
+		return activeLoadingOperations > 0;
+	}
+
+	public synchronized void beginLoadingOperation() {
+		if (activeLoadingOperations == Integer.MAX_VALUE)
+			throw new IllegalStateException("Too many active loading operations");
+		if (activeLoadingOperations++ == 0)
+			requestLoadingIndicatorRefresh();
+	}
+
+	public synchronized void endLoadingOperation() {
+		if (activeLoadingOperations <= 0)
+			throw new IllegalStateException("No active loading operation to end");
+		if (--activeLoadingOperations == 0)
+			requestLoadingIndicatorRefresh();
+	}
+
+	private void requestLoadingIndicatorRefresh() {
+		final Device currentDevice = device;
+		if (currentDevice != null)
+			currentDevice.getDisplayManager().requestRefresh();
+	}
+
 	public Device getHardwareDevice() {
 		return device;
 	}
@@ -133,6 +194,7 @@ public class WarpPI {
 
 
 	private void loadingCompleted() {
+		WarpPI.INSTANCE.reportLoadingProgress(STARTUP_COMPLETE);
 		WarpPI.INSTANCE.loaded.submit(true);
 		WarpPI.INSTANCE.device.getDeviceStateDevice().waitForExit();
 	}

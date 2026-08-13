@@ -452,6 +452,7 @@ class NEWTWindow implements GLEventListener {
 		final GL2ES1 gl = glad.getGL().getGL2ES1();
 		JOGLRenderer.gl = gl;
 		onGLContext.submit(gl);
+		engine.destroyReleasedTextures(gl);
 
 		if (refreshSurfaceScale()) {
 			if (resizeWindow(windowLogicalWidth, windowLogicalHeight)) {
@@ -475,18 +476,20 @@ class NEWTWindow implements GLEventListener {
 			configureViewport(gl, 0, 0, layout.surfaceWidth(), layout.surfaceHeight(),
 					layout.logicalWidth(), layout.logicalHeight());
 		}
-		if (viewportChanged) {
-			refreshViewport = false;
-			for (final Texture t : engine.registeredTextures) {
+		synchronized (engine) {
+			if (viewportChanged) {
+				refreshViewport = false;
+				for (final Texture t : engine.registeredTextures) {
+					t.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, linear ? GL.GL_LINEAR : GL.GL_NEAREST);
+					t.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+				}
+			}
+			while (engine.unregisteredTextures.isEmpty() == false) {
+				final Texture t = engine.unregisteredTextures.pop();
 				t.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, linear ? GL.GL_LINEAR : GL.GL_NEAREST);
 				t.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
+				engine.registeredTextures.addLast(t);
 			}
-		}
-		while (engine.unregisteredTextures.isEmpty() == false) {
-			final Texture t = engine.unregisteredTextures.pop();
-			t.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, linear ? GL.GL_LINEAR : GL.GL_NEAREST);
-			t.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-			engine.registeredTextures.addLast(t);
 		}
 
 		gl.glEnableClientState(GLPointerFunc.GL_COLOR_ARRAY);
@@ -498,6 +501,7 @@ class NEWTWindow implements GLEventListener {
 		engine.repaint();
 
 		renderer.endDrawCycle();
+		engine.destroyReleasedTextures(gl);
 		if (keyboardPanel != null && layout.keyboardSurfaceHeight() > 0) {
 			configureViewport(gl, 0, 0, layout.surfaceWidth(), layout.keyboardSurfaceHeight(),
 					layout.windowLogicalWidth(), JOGLKeyboardPanel.LOGICAL_HEIGHT);
@@ -534,6 +538,7 @@ class NEWTWindow implements GLEventListener {
 	@Override
 	public void dispose(final GLAutoDrawable drawable) {
 		releaseKeyboardPanel();
+		engine.destroyReleasedTextures(drawable.getGL());
 		System.out.println("cleanup");
 //		final GL2ES1 gl = drawable.getGL().getGL2ES1();
 	}

@@ -454,6 +454,16 @@ public class JOGLRenderer implements Renderer {
 		}
 	}
 
+	void forgetTexture(final Texture texture, final GL gl) {
+		if (currentTex != texture && precTex != texture)
+			return;
+		currentTex = null;
+		currentTexEnabled = false;
+		precTex = null;
+		precTexEnabled = false;
+		gl.glDisable(GL.GL_TEXTURE_2D);
+	}
+
 	void disableTexture() {
 		currentTexEnabled = false;
 		doDrawSegment();

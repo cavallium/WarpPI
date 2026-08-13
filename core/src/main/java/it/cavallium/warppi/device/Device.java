@@ -33,6 +33,7 @@ public class Device {
 		deviceState.initialize();
 		
 		inputManager.getTouchDevice().listenTouchEvents(displayManager.getTouchEventListener());
+		WarpPI.INSTANCE.reportLoadingProgress(WarpPI.STARTUP_DEVICE_READY);
 	}
 
 }

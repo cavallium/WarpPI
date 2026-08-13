@@ -1,17 +1,14 @@
 package it.cavallium.warppi.gui.graphicengine.html;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.events.Event;
 import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLImageElement;
 
 import it.cavallium.warppi.WarpPI;
-import it.cavallium.warppi.Platform.Semaphore;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.gui.graphicengine.Skin;
 
@@ -63,13 +60,25 @@ public class HtmlSkin implements Skin {
 	}
 
 	@Override
+	public void unload(final DisplayOutputDevice d) {
+		final HtmlRenderer renderer = ((HtmlEngine) d.getGraphicEngine()).getRenderer();
+		if (renderer.currentSkin == this)
+			renderer.currentSkin = null;
+		if (imgEl != null)
+			imgEl.removeAttribute("src");
+		imgEl = null;
+		skinSize = null;
+		initd = false;
+	}
+
+	@Override
 	public int getSkinWidth() {
-		return skinSize[0];
+		return skinSize == null ? 0 : skinSize[0];
 	}
 
 	@Override
 	public int getSkinHeight() {
-		return skinSize[1];
+		return skinSize == null ? 0 : skinSize[1];
 	}
 
 	public final String getUrl() {

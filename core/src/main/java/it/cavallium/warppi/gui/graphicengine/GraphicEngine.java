@@ -50,6 +50,14 @@ public interface GraphicEngine {
 
 	Skin loadSkin(String file) throws IOException;
 
+	/**
+	 * Whether this engine uses the production-only, preprocessed texture layout.
+	 * Other engines keep the original PNG resources and coordinates.
+	 */
+	default boolean usesProductionTextureAtlases() {
+		return false;
+	}
+
 	boolean doesRefreshPauses();
 
 	default boolean supportsFontRegistering() {

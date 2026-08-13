@@ -7,6 +7,7 @@ import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.event.*;
 import it.cavallium.warppi.gui.graphicengine.*;
+import it.cavallium.warppi.gui.screens.LoadingScreen;
 import it.cavallium.warppi.gui.screens.Screen;
 import it.cavallium.warppi.util.Timer;
 import it.cavallium.warppi.util.Utils;
@@ -29,6 +30,9 @@ public final class DisplayManager implements RenderingLoop {
 	public Renderer renderer;
 
 	public Skin guiSkin;
+	private Skin loadingSkin;
+	private Skin loadingSpinnerSkin;
+	private volatile boolean loadingSkinUnloadRequested;
 	public BinaryFont[] fonts;
 
 	public String error;
@@ -45,7 +49,7 @@ public final class DisplayManager implements RenderingLoop {
 	/**
 	 * Set to true when an event is fired
 	 */
-	public boolean forceRefresh;
+	public volatile boolean forceRefresh;
 
 	public DisplayManager(final DisplayOutputDevice display, final BacklightOutputDevice backlight, final HUD hud, final Screen screen, final String title) {
 		this(display, backlight, hud, screen, title, WarpPI.getPlatform().newSemaphore());
@@ -75,6 +79,7 @@ public final class DisplayManager implements RenderingLoop {
 			hud.initialize();
 
 		graphicEngine.create();
+		WarpPI.INSTANCE.reportLoadingProgress(WarpPI.STARTUP_DISPLAY_READY);
 		renderer = graphicEngine.getRenderer();
 		graphicEngine.setTitle(initialTitle);
 		loop();
@@ -296,6 +301,33 @@ public final class DisplayManager implements RenderingLoop {
 
 	private void load_skin() throws IOException {
 		guiSkin = graphicEngine.loadSkin("/skin.png");
+		if (graphicEngine.usesProductionTextureAtlases()) {
+			loadingSkin = graphicEngine.loadSkin("/skin-loading.png");
+			loadingSpinnerSkin = graphicEngine.loadSkin("/skin-spinner.png");
+		}
+	}
+
+	public boolean usesOptimizedLoadingSkins() {
+		return loadingSkin != null && loadingSpinnerSkin != null;
+	}
+
+	public Skin getLoadingSkin() {
+		return loadingSkin;
+	}
+
+	public Skin getLoadingSpinnerSkin() {
+		return loadingSpinnerSkin;
+	}
+
+	public void requestLoadingSkinUnload() {
+		loadingSkinUnloadRequested = true;
+	}
+
+	private void unloadLoadingSkins() {
+		if (loadingSkin != null)
+			loadingSkin.unload(display);
+		if (loadingSpinnerSkin != null)
+			loadingSpinnerSkin.unload(display);
 	}
 
 	private void load_fonts() throws IOException {
@@ -401,6 +433,10 @@ public final class DisplayManager implements RenderingLoop {
 		final Screen frameScreen = screen;
 		if (frameScreen == null)
 			return;
+		if (loadingSkinUnloadRequested && !(frameScreen instanceof LoadingScreen)) {
+			loadingSkinUnloadRequested = false;
+			unloadLoadingSkins();
+		}
 		draw_init(frameScreen);
 		draw_world(frameScreen);
 	}
@@ -416,10 +452,16 @@ public final class DisplayManager implements RenderingLoop {
 
 	}
 
+	public void requestRefresh() {
+		forceRefresh = true;
+	}
+
 	public void loop() {
 		try {
 			load_skin();
+			WarpPI.INSTANCE.reportLoadingProgress(WarpPI.STARTUP_SKIN_RESOURCES_READY);
 			load_fonts();
+			WarpPI.INSTANCE.reportLoadingProgress(WarpPI.STARTUP_FONT_RESOURCES_READY);
 
 			try {
 				if (initialScreen != null) {

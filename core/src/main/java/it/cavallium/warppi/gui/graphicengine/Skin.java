@@ -16,6 +16,13 @@ public interface Skin {
 	void use(DisplayOutputDevice d);
 
 	/**
+	 * Releases decoded and device-side texture storage. Implementations may load
+	 * the resource again if {@link #use(DisplayOutputDevice)} is called later.
+	 */
+	default void unload(final DisplayOutputDevice d) {
+	}
+
+	/**
 	 * May not be available before initialization
 	 * @return skin width
 	 */

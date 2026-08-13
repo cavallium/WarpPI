@@ -6,10 +6,12 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Semaphore;
 
 import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.texture.Texture;
 
@@ -41,6 +43,7 @@ public class JOGLEngine implements GraphicEngine {
 	private final Semaphore exitSemaphore = new Semaphore(0);
 	protected LinkedList<Texture> registeredTextures;
 	protected LinkedList<Texture> unregisteredTextures;
+	private final ConcurrentLinkedQueue<Texture> releasedTextures = new ConcurrentLinkedQueue<>();
 
 	public JOGLEngine(int defaultWidth, int defaultHeight) {
 		this(defaultWidth, defaultHeight, 1f);
@@ -106,6 +109,7 @@ public class JOGLEngine implements GraphicEngine {
 		created = true;
 		registeredTextures = new LinkedList<>();
 		unregisteredTextures = new LinkedList<>();
+		releasedTextures.clear();
 		r = new JOGLRenderer();
 		wnd = new NEWTWindow(this);
 		wnd.create();
@@ -118,6 +122,11 @@ public class JOGLEngine implements GraphicEngine {
 	}
 
 	boolean isRaspberryProductionMode() {
+		return raspberryProductionMode;
+	}
+
+	@Override
+	public boolean usesProductionTextureAtlases() {
 		return raspberryProductionMode;
 	}
 
@@ -286,7 +295,23 @@ public class JOGLEngine implements GraphicEngine {
 		return registeredFonts;
 	}
 
-	public void registerTexture(final Texture t) {
+	public synchronized void registerTexture(final Texture t) {
 		unregisteredTextures.addLast(t);
+	}
+
+	public synchronized void releaseTexture(final Texture texture) {
+		if (texture == null)
+			return;
+		registeredTextures.remove(texture);
+		unregisteredTextures.remove(texture);
+		releasedTextures.add(texture);
+	}
+
+	void destroyReleasedTextures(final GL gl) {
+		Texture texture;
+		while ((texture = releasedTextures.poll()) != null) {
+			r.forgetTexture(texture, gl);
+			texture.destroy(gl);
+		}
 	}
 }
