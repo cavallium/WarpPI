@@ -1,7 +1,6 @@
 package it.cavallium.warppi.gui.graphicengine.html;
 
 import java.io.IOException;
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import it.cavallium.warppi.util.EventSubmitter;
@@ -22,11 +21,12 @@ import it.cavallium.warppi.device.input.HardwareKeyboardLayout;
 import it.cavallium.warppi.device.input.HardwareKeyboardLayout.Layer;
 import it.cavallium.warppi.device.input.HardwareKeyboardLayout.PhysicalKey;
 import it.cavallium.warppi.device.input.HardwareKeyboardLayout.PhysicalRow;
+import it.cavallium.warppi.device.input.HostKeyboardInput;
 import it.cavallium.warppi.device.input.Keyboard;
+import it.cavallium.warppi.device.input.KeyboardAWTValues;
 import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 
 public class HtmlEngine implements GraphicEngine {
 
@@ -36,6 +36,7 @@ public class HtmlEngine implements GraphicEngine {
 	private CanvasRenderingContext2D g;
 	private RenderingLoop renderingLoop;
 	private HtmlRenderer renderer;
+	private HostKeyboardInput keyboardInput;
 	private int width, height;
 	public int mult = 1;
 	private final int frameTime = (int) (1000d / 10d);
@@ -113,16 +114,6 @@ public class HtmlEngine implements GraphicEngine {
 	}
 
 	private String previousValue = "";
-	private static final Object2IntArrayMap<String> keyNames = new Object2IntArrayMap<>();
-	
-	static {
-		keyNames.put(" ", 32);
-		keyNames.put("ArrowUp", 38);
-		keyNames.put("ArrowDown", 40);
-		keyNames.put("ArrowLeft", 37);
-		keyNames.put("ArrowRight", 39);
-	}
-
 	@JSBody(params = { "ctx", "enabled" }, script = "" + "ctx.mozImageSmoothingEnabled = enabled;" + "ctx.oImageSmoothingEnabled = enabled;" + "ctx.webkitImageSmoothingEnabled = enabled;" + "ctx.msImageSmoothingEnabled = enabled;" + "ctx.imageSmoothingEnabled = enabled;")
 	public static native void setImageSmoothingEnabled(CanvasRenderingContext2D ctx, boolean enabled);
 
@@ -132,6 +123,7 @@ public class HtmlEngine implements GraphicEngine {
 		height = -1;
 		canvas = (HTMLCanvasElement) HtmlEngine.document.createElement("canvas");
 		g = (CanvasRenderingContext2D) canvas.getContext("2d");
+		keyboardInput = Keyboard.createHostKeyboardInput();
 		final HTMLInputElement keyInput = (HTMLInputElement) HtmlEngine.document.createElement("input");
 		StaticVars.windowZoom.subscribe((zoom) -> {
 			onZoom.submit(zoom);
@@ -161,13 +153,16 @@ public class HtmlEngine implements GraphicEngine {
 		keyInput.setTabIndex(0);
 		keyInput.setValue("");
 		HtmlEngine.document.addEventListener("keydown", (final KeyboardEvent evt) -> {
-			evt.preventDefault();
-			Keyboard.debugKey(keyNames.getOrDefault(evt.getKey(), evt.getKeyCode()), false);
+			final String key = evt.getKey();
+			if (keyboardInput.press(normalizeWebKeyCode(key, evt.getKeyCode()),
+					webKeyChar(key), evt.isCtrlKey()))
+				evt.preventDefault();
 		});
 		HtmlEngine.document.addEventListener("keyup", (final KeyboardEvent evt) -> {
-			evt.preventDefault();
-			Keyboard.debugKey(keyNames.getOrDefault(evt.getKey(), evt.getKeyCode()), true);
+			if (keyboardInput.release(normalizeWebKeyCode(evt.getKey(), evt.getKeyCode())))
+				evt.preventDefault();
 		});
+		Window.current().addEventListener("blur", (final Event evt) -> keyboardInput.releaseAll());
 		keyInput.addEventListener("input", (final Event evt) -> {
 			evt.preventDefault();
 			final String previousValue = this.previousValue;
@@ -177,15 +172,17 @@ public class HtmlEngine implements GraphicEngine {
 			this.previousValue = newValue;
 
 			if (newLen > prevLen) {
-				final String uppercaseValue = newValue.toUpperCase(Locale.ROOT);
 				for (int i = prevLen; i < newLen; i++) {
-					Keyboard.debugKey(uppercaseValue.charAt(i), false);
-					Keyboard.debugKey(uppercaseValue.charAt(i), true);
+					final char keyChar = newValue.charAt(i);
+					final int keyCode = normalizeWebKeyCode(String.valueOf(keyChar), keyChar);
+					keyboardInput.press(keyCode, keyChar, false);
+					keyboardInput.release(keyCode);
 				}
 			} else if (newLen < prevLen) {
 				for (int i = 0; i < prevLen - newLen; i++) {
-					Keyboard.debugKey(8, false);
-					Keyboard.debugKey(8, true);
+					keyboardInput.press(KeyboardAWTValues.VK_BACK_SPACE,
+							KeyboardAWTValues.CHAR_UNDEFINED, false);
+					keyboardInput.release(KeyboardAWTValues.VK_BACK_SPACE);
 				}
 			}
 		});
@@ -200,6 +197,37 @@ public class HtmlEngine implements GraphicEngine {
 		initialized = true;
 		if (onInitialized != null)
 			onInitialized.run();
+	}
+
+	private static int normalizeWebKeyCode(final String key, final int legacyKeyCode) {
+		if (key == null)
+			return legacyKeyCode;
+		return switch (key) {
+			case "Enter", "NumpadEnter" -> KeyboardAWTValues.VK_ENTER;
+			case "Backspace" -> KeyboardAWTValues.VK_BACK_SPACE;
+			case "Delete", "Del" -> KeyboardAWTValues.VK_DELETE;
+			case "Escape", "Esc" -> KeyboardAWTValues.VK_ESCAPE;
+			case "Shift" -> KeyboardAWTValues.VK_SHIFT;
+			case "Control" -> KeyboardAWTValues.VK_CONTROL;
+			case "Alt" -> KeyboardAWTValues.VK_ALT;
+			case "AltGraph" -> KeyboardAWTValues.VK_ALT_GRAPH;
+			case "ArrowLeft", "Left" -> KeyboardAWTValues.VK_LEFT;
+			case "ArrowRight", "Right" -> KeyboardAWTValues.VK_RIGHT;
+			case "ArrowUp", "Up" -> KeyboardAWTValues.VK_UP;
+			case "ArrowDown", "Down" -> KeyboardAWTValues.VK_DOWN;
+			case "F1" -> KeyboardAWTValues.VK_F1;
+			case "F2" -> KeyboardAWTValues.VK_F2;
+			case "F3" -> KeyboardAWTValues.VK_F3;
+			case "F4" -> KeyboardAWTValues.VK_F4;
+			case "F5" -> KeyboardAWTValues.VK_F5;
+			// Unlike event.key, this remains stable if Shift is released first.
+			default -> legacyKeyCode;
+		};
+	}
+
+	private static char webKeyChar(final String key) {
+		return key != null && key.length() == 1
+				? key.charAt(0) : KeyboardAWTValues.CHAR_UNDEFINED;
 	}
 
 	private void createHardwareKeyboard() {
@@ -340,6 +368,8 @@ public class HtmlEngine implements GraphicEngine {
 	}
 
 	private void destroyEngine() {
+		if (keyboardInput != null)
+			keyboardInput.releaseAll();
 		HtmlEngine.document.getBody().removeChild(canvas);
 		initialized = false;
 		exitRequested.set(true);

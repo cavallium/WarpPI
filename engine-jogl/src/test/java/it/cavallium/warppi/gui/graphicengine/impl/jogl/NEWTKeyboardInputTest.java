@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.jogamp.newt.event.KeyEvent;
@@ -29,6 +30,16 @@ class NEWTKeyboardInputTest {
 	@Test
 	void mapsControlPlusToZoom() {
 		assertEquals(Key.ZOOM_MODE, NEWTKeyboardInput.mapKey(KeyEvent.VK_PLUS, '+', true, false, false));
+	}
+
+	@Test
+	void mapsAltRatherThanControlToCalculatorAlpha() {
+		assertEquals(Key.ALPHA, NEWTKeyboardInput.mapKey(
+				KeyEvent.VK_ALT, KeyEvent.NULL_CHAR, false, false, false));
+		assertEquals(Key.ALPHA, NEWTKeyboardInput.mapKey(
+				KeyEvent.VK_ALT_GRAPH, KeyEvent.NULL_CHAR, false, false, false));
+		assertNull(NEWTKeyboardInput.mapKey(
+				KeyEvent.VK_CONTROL, KeyEvent.NULL_CHAR, true, false, false));
 	}
 
 	@Test

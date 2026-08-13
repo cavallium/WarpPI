@@ -6,6 +6,7 @@ import it.cavallium.warppi.device.input.HardwareKeyboardLayout;
 import it.cavallium.warppi.device.input.HardwareKeyboardLayout.Layer;
 import it.cavallium.warppi.device.input.HardwareKeyboardLayout.PhysicalKey;
 import it.cavallium.warppi.device.input.HardwareKeyboardLayout.PhysicalRow;
+import it.cavallium.warppi.device.input.HostKeyboardInput;
 import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
@@ -41,6 +42,8 @@ public class SwingWindow extends JFrame {
 	private JPanel buttonsPanelContainer;
 	private SwingAdvancedButton[][] buttons;
 	private int buttonSize;
+	private final HostKeyboardInput keyboardInput;
+	private final KeyEventDispatcher keyboardEventDispatcher;
 	private volatile boolean windowShown;
 	private volatile boolean forceRepaint;
 
@@ -57,6 +60,8 @@ public class SwingWindow extends JFrame {
 		this.defaultWidth = defaultWidth;
 		this.defaultHeight = defaultHeight;
 		this.desktopScale = desktopScale;
+		keyboardInput = Keyboard.createHostKeyboardInput();
+		keyboardEventDispatcher = this::dispatchHostKeyboardEvent;
 		calculatorZoom = SwingScaling.normalizeCalculatorZoom(StaticVars.windowZoom.getLastValue());
 		toolkitScale = SwingScaling.toolkitScale(getGraphicsConfiguration());
 		toolkitCompensation = SwingScaling.toolkitCompensation(desktopScale, toolkitScale);
@@ -153,28 +158,45 @@ public class SwingWindow extends JFrame {
 				SwingWindow.this.windowShown = true;
 				if (WarpPI.getPlatform().getSettings().isDebugEnabled())
 					SwingWindow.this.centerWindow();
+				SwingUtilities.invokeLater(c::requestFocusInWindow);
+			}
+		});
+		addWindowFocusListener(new WindowAdapter() {
+			@Override
+			public void windowGainedFocus(final WindowEvent event) {
+				c.requestFocusInWindow();
+			}
+
+			@Override
+			public void windowLostFocus(final WindowEvent event) {
+				keyboardInput.releaseAll();
 			}
 		});
 		c.setFocusable(true);
-		c.grabFocus();
-		c.addKeyListener(new KeyListener() {
-			@Override
-			public void keyPressed(final KeyEvent arg0) {
-				Keyboard.debugKeyCode = arg0.getKeyCode();
-			}
-
-			@Override
-			public void keyReleased(final KeyEvent arg0) {
-				Keyboard.debugKeyCodeRelease = arg0.getKeyCode();
-			}
-
-			@Override
-			public void keyTyped(final KeyEvent arg0) {
-				// TODO Auto-generated method stub
-
-			}
-		});
+		KeyboardFocusManager.getCurrentKeyboardFocusManager()
+				.addKeyEventDispatcher(keyboardEventDispatcher);
 		StaticVars.windowZoom.subscribe(this::setCalculatorZoom);
+	}
+
+	private boolean dispatchHostKeyboardEvent(final KeyEvent event) {
+		if (event.isConsumed() || !belongsToThisWindow(event.getSource()))
+			return false;
+
+		final boolean handled = switch (event.getID()) {
+			case KeyEvent.KEY_PRESSED -> keyboardInput.press(
+					event.getKeyCode(), event.getKeyChar(), event.isControlDown());
+			case KeyEvent.KEY_RELEASED -> keyboardInput.release(event.getKeyCode());
+			default -> false;
+		};
+		if (handled)
+			event.consume();
+		return handled;
+	}
+
+	private boolean belongsToThisWindow(final Object source) {
+		if (!(source instanceof Component component))
+			return false;
+		return component == this || SwingUtilities.getWindowAncestor(component) == this;
 	}
 
 	private void setupButtonsPanel() throws IOException, URISyntaxException {
@@ -245,18 +267,18 @@ public class SwingWindow extends JFrame {
 		f = f.deriveFont(Font.BOLD, buttonSize / 3f);
 		b.setFont(f);
 		b.setBackground(new Color(200, 200, 200));
-		b.setFocusable(true);
+		b.setFocusable(false);
 		b.addMouseListener(new MouseListener() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				Keyboard.keyRaw(row, col, true);
-				c.grabFocus();
+				c.requestFocusInWindow();
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
 				Keyboard.keyRaw(row, col, false);
-				c.grabFocus();
+				c.requestFocusInWindow();
 			}
 
 			@Override
@@ -439,6 +461,14 @@ public class SwingWindow extends JFrame {
 		destroyEngine.run();
 		this.setVisible(false);
 		this.dispose();
+	}
+
+	@Override
+	public void dispose() {
+		keyboardInput.releaseAll();
+		KeyboardFocusManager.getCurrentKeyboardFocusManager()
+				.removeKeyEventDispatcher(keyboardEventDispatcher);
+		super.dispose();
 	}
 
 //	private static ObjectArrayList<Double> mediaValori = new ObjectArrayList<Double>();
