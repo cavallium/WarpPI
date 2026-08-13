@@ -77,15 +77,13 @@ public class CalculatorHUD extends HUD {
 		}
 
 		int padding = 2;
-
-		final int brightness = (int) Math.ceil(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getBrightness() * 9);
-		if (brightness <= 10) {
-			r.glFillRect(ctx.getWidth() - (padding + 16), 2, 16, 16, 16 * brightness, 16 * 1, 16, 16);
-		} else {
-			WarpPI.getPlatform().getConsoleUtils().out().println(1, "Brightness error");
+		if (d.supportsBrightnessControl()) {
+			final int brightness = Math.max(0, Math.min(9,
+					(int) Math.ceil(d.getBrightness() * 9)));
+			r.glFillRect(ctx.getWidth() - (padding + 16), 2, 16, 16,
+					16 * brightness, 16, 16, 16);
+			padding += 18 + 6;
 		}
-
-		padding += 18 + 6;
 
 		final boolean canGoBack = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().canGoBack();
 		final boolean canGoForward = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().canGoForward();

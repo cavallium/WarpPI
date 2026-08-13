@@ -14,6 +14,8 @@ public final class PersistentSettings implements Settings {
 	private final SettingsStore store;
 	private boolean debug;
 	private double brightness;
+	private boolean debugDirty;
+	private boolean brightnessDirty;
 
 	public PersistentSettings(final SettingsStore store, final boolean defaultDebug) {
 		this.store = Objects.requireNonNull(store);
@@ -28,8 +30,10 @@ public final class PersistentSettings implements Settings {
 
 	@Override
 	public synchronized void setDebugEnabled(final boolean debug) {
+		if (this.debug == debug && !debugDirty)
+			return;
 		this.debug = debug;
-		write(DEBUG_KEY, Boolean.toString(debug));
+		debugDirty = !write(DEBUG_KEY, Boolean.toString(debug));
 	}
 
 	@Override
@@ -41,8 +45,12 @@ public final class PersistentSettings implements Settings {
 	public synchronized void setBrightness(final double brightness) {
 		if (!Double.isFinite(brightness) || brightness < 0d || brightness > 1d)
 			throw new IllegalArgumentException("Brightness must be between 0 and 1");
-		this.brightness = brightness;
-		write(BRIGHTNESS_KEY, Double.toString(brightness));
+		final double normalizedBrightness = brightness == 0d ? 0d : brightness;
+		if (Double.compare(this.brightness, normalizedBrightness) == 0
+				&& !brightnessDirty)
+			return;
+		this.brightness = normalizedBrightness;
+		brightnessDirty = !write(BRIGHTNESS_KEY, Double.toString(normalizedBrightness));
 	}
 
 	private boolean readBoolean(final String key, final boolean fallback) {
@@ -73,11 +81,13 @@ public final class PersistentSettings implements Settings {
 		}
 	}
 
-	private void write(final String key, final String value) {
+	private boolean write(final String key, final String value) {
 		try {
 			store.put(key, value);
+			return true;
 		} catch (final IOException | RuntimeException exception) {
 			System.err.println("Unable to persist setting " + key + ": " + exception.getMessage());
+			return false;
 		}
 	}
 }

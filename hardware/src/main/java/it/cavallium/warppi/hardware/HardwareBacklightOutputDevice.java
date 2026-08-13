@@ -65,6 +65,11 @@ final class HardwareBacklightOutputDevice implements BacklightOutputDevice, Auto
 	}
 
 	@Override
+	public boolean supportsBrightnessControl() {
+		return true;
+	}
+
+	@Override
 	public synchronized void setBrightness(final double value) {
 		if (!Double.isFinite(value) || value < 0d || value > 1d)
 			throw new IllegalArgumentException("Brightness must be between 0 and 1");

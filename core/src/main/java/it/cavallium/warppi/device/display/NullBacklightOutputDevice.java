@@ -2,17 +2,19 @@ package it.cavallium.warppi.device.display;
 
 public class NullBacklightOutputDevice implements BacklightOutputDevice {
 
-	private double brightness;
-	private boolean power;
+	@Override
+	public boolean supportsBrightnessControl() {
+		return false;
+	}
 
 	@Override
 	public void setBrightness(double value) {
-		this.brightness = value;
+		// No physical backlight is available on this platform.
 	}
 
 	@Override
 	public void setPower(boolean value) {
-		this.power = value;
+		// No physical backlight is available on this platform.
 	}
 
 }

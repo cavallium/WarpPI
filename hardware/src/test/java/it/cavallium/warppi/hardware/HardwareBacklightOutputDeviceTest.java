@@ -17,6 +17,7 @@ class HardwareBacklightOutputDeviceTest {
 		final HardwareGpio gpio = initializedGpio(gpioRegisters);
 		final HardwareBacklightOutputDevice backlight = backlight(
 				gpio, pwmRegisters, clockRegisters);
+		assertTrue(backlight.supportsBrightnessControl());
 
 		backlight.setBrightness(0.5d);
 

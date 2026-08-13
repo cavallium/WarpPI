@@ -469,6 +469,8 @@ public final class DisplayManager implements RenderingLoop {
 	}
 
 	public void setBrightness(final float newval) {
+		if (!supportsBrightnessControl())
+			return;
 		if (newval >= 0 && newval <= 1) {
 			brightness = newval;
 			backlight.setBrightness(brightness);
@@ -477,6 +479,8 @@ public final class DisplayManager implements RenderingLoop {
 	}
 
 	public void cycleBrightness(final boolean reverse) {
+		if (!supportsBrightnessControl())
+			return;
 		final float step = reverse ? -0.1f : 0.1f;
 		if (brightness + step > 1f) {
 			setBrightness(0f);
@@ -489,6 +493,10 @@ public final class DisplayManager implements RenderingLoop {
 
 	public float getBrightness() {
 		return brightness;
+	}
+
+	public boolean supportsBrightnessControl() {
+		return backlight.supportsBrightnessControl();
 	}
 
 	public int currentSession = 0;
