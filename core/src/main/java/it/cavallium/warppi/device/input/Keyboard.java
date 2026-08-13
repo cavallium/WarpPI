@@ -15,6 +15,7 @@ import it.cavallium.warppi.event.KeyboardEventListener;
 import it.cavallium.warppi.gui.screens.AppsMenuScreen;
 import it.cavallium.warppi.gui.screens.KeyboardDebugScreen;
 import it.cavallium.warppi.gui.screens.Screen;
+import it.cavallium.warppi.gui.screens.UIDemoScreen;
 
 public class Keyboard {
 	private static final int MATRIX_SIZE = Byte.SIZE;
@@ -750,8 +751,7 @@ public class Keyboard {
 
 	static synchronized Key updateRawKeyState(final int row, final int column, final boolean released,
 			final boolean shiftActive, final boolean alphaActive) {
-		if (row < 0 || row >= MATRIX_SIZE || column < 0 || column >= MATRIX_SIZE)
-			throw new IllegalArgumentException("Keyboard coordinates must be between 0 and 7");
+		validateMatrixPosition(row, column);
 
 		if (released) {
 			final Key pressedKey = pressedRawKeys[row][column];
@@ -764,6 +764,17 @@ public class Keyboard {
 		pressedRawKeys[row][column] = HardwareKeyboardLayout.mappingAt(
 				row, column, shiftActive, alphaActive);
 		return pressedRawKeys[row][column];
+	}
+
+	/** Returns whether the debounced physical switch at this matrix position is held. */
+	public static synchronized boolean isPhysicalKeyPressed(final int row, final int column) {
+		validateMatrixPosition(row, column);
+		return pressedRawKeys[row][column] != null;
+	}
+
+	private static void validateMatrixPosition(final int row, final int column) {
+		if (row < 0 || row >= MATRIX_SIZE || column < 0 || column >= MATRIX_SIZE)
+			throw new IllegalArgumentException("Keyboard coordinates must be between 0 and 7");
 	}
 
 	static synchronized void resetRawKeyState() {
@@ -817,6 +828,12 @@ public class Keyboard {
 						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager()
 								.setScreen(screenOpenedByGlobalKey(k));
 						refresh = true;
+						break;
+					case debug5:
+						if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
+							WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new UIDemoScreen());
+							refresh = true;
+						}
 						break;
 					case NONE:
 						break;

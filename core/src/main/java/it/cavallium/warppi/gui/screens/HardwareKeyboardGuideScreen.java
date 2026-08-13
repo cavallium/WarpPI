@@ -4,6 +4,7 @@ import it.cavallium.warppi.device.input.HardwareKeyboardLayout;
 import it.cavallium.warppi.device.input.HardwareKeyboardLayout.Layer;
 import it.cavallium.warppi.device.input.HardwareKeyboardLayout.PhysicalKey;
 import it.cavallium.warppi.device.input.HardwareKeyboardLayout.PhysicalRow;
+import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
@@ -14,6 +15,8 @@ import it.cavallium.warppi.gui.graphicengine.Renderer;
 /** Displays the active meaning of every key in the calculator's physical layout. */
 public final class HardwareKeyboardGuideScreen extends Screen {
 	private static final int BACKGROUND_COLOR = 0xFFF1EFE5;
+	private static final int PRESSED_BACKGROUND_COLOR = 0xFFFFC857;
+	private static final int PRESSED_FOREGROUND_COLOR = 0xFF4A2A00;
 	private static final int HEADER_HEIGHT = 23;
 	private static final int ROW_HEIGHT = 28;
 	private static final int KEY_HEIGHT = 25;
@@ -55,6 +58,10 @@ public final class HardwareKeyboardGuideScreen extends Screen {
 		renderer.glColor3i(35, 35, 32);
 		renderer.glDrawStringLeft(3, 2, "KEYBOARD GUIDE");
 		renderer.glDrawStringRight(width - 3, 2, "GUIDE/BACK: CLOSE");
+		renderer.glColor(PRESSED_BACKGROUND_COLOR);
+		renderer.glFillColor(width / 2 - 31, 0, 62, 10);
+		renderer.glColor(PRESSED_FOREGROUND_COLOR);
+		renderer.glDrawStringCenter(width / 2, 2, "PRESSED");
 
 		drawLegend(renderer, width / 4, Layer.NORMAL, "N NORMAL");
 		drawLegend(renderer, width / 2, Layer.SHIFT, "S SHIFT");
@@ -84,7 +91,10 @@ public final class HardwareKeyboardGuideScreen extends Screen {
 
 	private void drawKey(final Renderer renderer, final int x, final int y, final int width, final PhysicalKey key) {
 		final boolean activeModifier = key.isActiveModifier(activeLayer);
-		if (key.mapping(Layer.NORMAL) == Key.NONE
+		final boolean pressed = Keyboard.isPhysicalKeyPressed(key.matrixRow(), key.matrixColumn());
+		if (pressed) {
+			renderer.glColor(PRESSED_BACKGROUND_COLOR);
+		} else if (key.mapping(Layer.NORMAL) == Key.NONE
 				&& key.mapping(Layer.SHIFT) == Key.NONE
 				&& key.mapping(Layer.ALT_ALPHA) == Key.NONE) {
 			renderer.glColor3i(218, 216, 207);
@@ -95,7 +105,9 @@ public final class HardwareKeyboardGuideScreen extends Screen {
 		}
 		renderer.glFillColor(x + 1, y + 1, width - 2, KEY_HEIGHT - 2);
 
-		if (activeModifier)
+		if (pressed)
+			renderer.glColor(PRESSED_FOREGROUND_COLOR);
+		else if (activeModifier)
 			setLayerTextColor(renderer, activeLayer, true);
 		else
 			renderer.glColor3i(65, 65, 60);
@@ -104,9 +116,15 @@ public final class HardwareKeyboardGuideScreen extends Screen {
 		renderer.glDrawLine(x + width, y + KEY_HEIGHT, x, y + KEY_HEIGHT);
 		renderer.glDrawLine(x, y + KEY_HEIGHT, x, y);
 
-		renderer.glColor3i(95, 95, 88);
+		if (pressed)
+			renderer.glColor(PRESSED_FOREGROUND_COLOR);
+		else
+			renderer.glColor3i(95, 95, 88);
 		renderer.glDrawStringLeft(x + 3, y + 2, key.switchLabel());
-		setLayerTextColor(renderer, activeLayer, true);
+		if (pressed)
+			renderer.glColor(PRESSED_FOREGROUND_COLOR);
+		else
+			setLayerTextColor(renderer, activeLayer, true);
 		renderer.glDrawStringCenter(x + width / 2, y + 14, key.compactLabel(activeLayer));
 	}
 
@@ -161,7 +179,8 @@ public final class HardwareKeyboardGuideScreen extends Screen {
 
 	@Override
 	public boolean onKeyReleased(final KeyReleasedEvent event) {
-		return false;
+		mustRefresh = true;
+		return true;
 	}
 
 	@Override

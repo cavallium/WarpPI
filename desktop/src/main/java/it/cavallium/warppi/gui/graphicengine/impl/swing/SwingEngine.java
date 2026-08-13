@@ -3,6 +3,7 @@ package it.cavallium.warppi.gui.graphicengine.impl.swing;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.io.IOException;
 
 import it.cavallium.warppi.WarpPI;
@@ -48,9 +49,13 @@ public class SwingEngine implements GraphicEngine {
 	public void setDisplayMode(final int ww, final int wh) {
 		INSTANCE.setSize(ww, wh);
 		final Dimension viewportSize = INSTANCE.calculatorViewportSize(ww, wh);
-		r.size = new int[] { viewportSize.width, viewportSize.height };
-		SwingRenderer.canvas2d = new int[viewportSize.width * viewportSize.height];
-		g = new BufferedImage(viewportSize.width, viewportSize.height, BufferedImage.TYPE_INT_RGB);
+		initializeFramebuffer(viewportSize.width, viewportSize.height);
+	}
+
+	void initializeFramebuffer(final int width, final int height) {
+		r.size = new int[] { width, height };
+		g = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		SwingRenderer.canvas2d = ((DataBufferInt) g.getRaster().getDataBuffer()).getData();
 	}
 
 	@Override
@@ -61,7 +66,7 @@ public class SwingEngine implements GraphicEngine {
 	@Override
 	public void create(final Runnable onInitialized) {
 		r = new SwingRenderer();
-		g = new BufferedImage(r.size[0], r.size[1], BufferedImage.TYPE_INT_RGB);
+		initializeFramebuffer(defaultWidth, defaultHeight);
 		initialized = false;
 		INSTANCE = new SwingWindow(r, g, this::destroyEngine, defaultWidth, defaultHeight, desktopScale);
 		setResizable(WarpPI.getPlatform().getSettings().isDebugEnabled());

@@ -114,9 +114,9 @@ public class SwingWindow extends JFrame {
 			var oldSize = renderer.size;
 			renderer.size = new int[]{newSize[0], newSize[1]};
 
-			SwingRenderer.canvas2d = new int[renderer.size[0] * renderer.size[1]];
 			var oldG = graphics;
 			this.graphics = new BufferedImage(renderer.size[0], renderer.size[1], BufferedImage.TYPE_INT_RGB);
+			SwingRenderer.canvas2d = ((DataBufferInt) this.graphics.getRaster().getDataBuffer()).getData();
 			Graphics2D g = (Graphics2D) graphics.getGraphics();
 			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 			g.setColor(Color.BLACK);

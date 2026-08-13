@@ -2,6 +2,7 @@ package it.cavallium.warppi.gui.graphicengine.impl.jogl;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -71,6 +72,16 @@ class JOGLRendererTest {
 				0, 1, 1, 0, 1, 1
 		}, written(renderer.fbTextures));
 		assertArrayEquals(renderer.currentColor, written(renderer.fbColors));
+	}
+
+	@Test
+	void clearingASkinAlsoDisablesTexturing() {
+		final JOGLRenderer renderer = new JOGLRenderer();
+		renderer.currentTexEnabled = true;
+
+		renderer.glClearSkin();
+
+		assertFalse(renderer.currentTexEnabled);
 	}
 
 	private static float[] written(final FloatBuffer buffer) {

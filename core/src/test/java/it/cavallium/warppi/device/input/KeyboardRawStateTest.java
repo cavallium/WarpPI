@@ -1,8 +1,10 @@
 package it.cavallium.warppi.device.input;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,8 +36,20 @@ class KeyboardRawStateTest {
 	}
 
 	@Test
+	void exposesHeldPhysicalSwitchesEvenWhenTheyHaveNoLogicalMapping() {
+		assertFalse(Keyboard.isPhysicalKeyPressed(2, 7));
+		assertEquals(Key.NONE, Keyboard.updateRawKeyState(2, 7, false, false, false));
+		assertTrue(Keyboard.isPhysicalKeyPressed(2, 7));
+
+		assertEquals(Key.NONE, Keyboard.updateRawKeyState(2, 7, true, false, false));
+		assertFalse(Keyboard.isPhysicalKeyPressed(2, 7));
+	}
+
+	@Test
 	void rejectsInvalidCoordinates() {
 		assertThrows(IllegalArgumentException.class,
 				() -> Keyboard.updateRawKeyState(8, 0, false, false, false));
+		assertThrows(IllegalArgumentException.class,
+				() -> Keyboard.isPhysicalKeyPressed(0, -1));
 	}
 }

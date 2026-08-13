@@ -1,18 +1,29 @@
 package it.cavallium.warppi.extra.mario;
 
-public class PlayerEntity extends MarioEntity {
+public final class PlayerEntity extends MarioEntity {
 
-	@SuppressWarnings("unused")
+	private static final int[] WALK_FRAMES = { 1, 2, 3 };
+	private static final int[] RUN_FRAMES = { 4, 5, 8 };
+	private static final int JUMP_FRAME = 6;
+	private static final int SMALL_RUN_JUMP_FRAME = 7;
+	private static final int SUPER_DUCK_FRAME = 7;
+	private static final double WIDTH = 0.72d;
+	private static final double SMALL_HEIGHT = 1d;
+	private static final double SUPER_HEIGHT = 1.8d;
+
 	private final int life;
-	public float walkAnimation = 0;
-	public float jumptime = 0;
-	public boolean walking = false;
-	public boolean running = false;
-	public boolean jumping = false;
-	public boolean flipped = false;
-	public int[] marioSkinPos = new int[] { 0, 0 };
-	private double controllerDX;
-	private double controllerDY;
+	private double animationElapsed;
+	private double jumpBufferTime;
+	private double coyoteTime;
+	private double invulnerabilityTime;
+	private boolean jumpHeld;
+	private boolean walking;
+	private boolean running;
+	private boolean jumping;
+	private boolean facingLeft;
+	private boolean superMario;
+	private boolean ducking;
+	private int spriteFrame;
 
 	public PlayerEntity(final double x, final double y, final int life) {
 		super(x, y, 0, 0, true, true);
@@ -20,119 +31,164 @@ public class PlayerEntity extends MarioEntity {
 	}
 
 	@Override
-	public void gameTick(final double dt) {
-		walkAnimation += dt;
-		x += computeFutureDX(dt);
-		y += computeFutureDY(dt);
-		forceX += computeFutureForceDX(dt);
-		forceY += computeFutureForceDY(dt);
-		if (controllerDX == 0) {
-			walking = false;
-			walkAnimation = 0;
-		} else {
-			if (controllerDX > 0) { //RIGHT
-				walking = true;
-				flipped = false;
-			}
-			if (controllerDX < 0) { //LEFT
-				walking = true;
-				flipped = true;
-			}
+	public double getWidth() {
+		return WIDTH;
+	}
+
+	@Override
+	public double getHeight() {
+		return superMario && !ducking ? SUPER_HEIGHT : SMALL_HEIGHT;
+	}
+
+	double getStandingHeight() {
+		return superMario ? SUPER_HEIGHT : SMALL_HEIGHT;
+	}
+
+	public int getLife() {
+		return life;
+	}
+
+	void reset(final double spawnX, final double spawnY) {
+		setPosition(spawnX, spawnY, true);
+		stop();
+		collisionUp = false;
+		collisionLeft = false;
+		collisionRight = false;
+		jumpBufferTime = 0;
+		coyoteTime = MarioGame.COYOTE_SECONDS;
+		invulnerabilityTime = 0;
+		jumpHeld = false;
+		walking = false;
+		running = false;
+		jumping = false;
+		facingLeft = false;
+		superMario = false;
+		ducking = false;
+		spriteFrame = 0;
+		animationElapsed = 0;
+	}
+
+	void queueJump() {
+		jumpBufferTime = MarioGame.JUMP_BUFFER_SECONDS;
+	}
+
+	void setJumpHeld(final boolean jumpHeld) {
+		this.jumpHeld = jumpHeld;
+	}
+
+	boolean isJumpHeld() {
+		return jumpHeld;
+	}
+
+	void tickAssistanceTimers(final double dt) {
+		jumpBufferTime = Math.max(0d, jumpBufferTime - dt);
+		invulnerabilityTime = Math.max(0d, invulnerabilityTime - dt);
+		if (collisionDown)
+			coyoteTime = MarioGame.COYOTE_SECONDS;
+		else
+			coyoteTime = Math.max(0d, coyoteTime - dt);
+	}
+
+	boolean canUseBufferedJump() {
+		return jumpBufferTime > 0d && coyoteTime > 0d && !ducking;
+	}
+
+	void consumeBufferedJump() {
+		jumpBufferTime = 0d;
+		coyoteTime = 0d;
+	}
+
+	void setDucking(final boolean requested, final boolean canStand) {
+		if (!superMario) {
+			ducking = false;
+			return;
 		}
-		if (controllerDY > 0) { //JUMP
-			if (collisionUp) {
-				jumptime = Float.MAX_VALUE;
-				jumping = false;
-			}
-			jumptime += dt;
-			if (jumptime <= 0.5f && !jumping && collisionDown) {
-				jumping = true;
-				collisionDown = false;
-			} else if (jumptime <= 0.5f) {} else {
-				jumping = false;
-			}
-		} else {
-			jumping = false;
-			if (collisionDown) {
-				jumptime = 0;
-			} else {
-				jumptime = Float.MAX_VALUE;
-			}
+		ducking = requested || !canStand;
+	}
+
+	void powerUp() {
+		superMario = true;
+		ducking = true;
+	}
+
+	boolean takeDamage() {
+		if (invulnerabilityTime > 0d)
+			return false;
+		if (superMario) {
+			superMario = false;
+			ducking = false;
+			invulnerabilityTime = 1.4d;
+			return false;
 		}
-		if (!walking & !running & !jumping) {
-			marioSkinPos[0] = 0;
-			marioSkinPos[1] = 0;
-		} else if (collisionDown & walking & !running & !jumping && walkAnimation >= 0.08) {
-			while (walkAnimation > 0.08) {
-				walkAnimation -= 0.08;
-				if (marioSkinPos[0] == 1 & marioSkinPos[1] == 0) {
-					marioSkinPos[0] += 2;
-				} else if (marioSkinPos[0] == 3 & marioSkinPos[1] == 0) {
-					marioSkinPos[0] -= 1;
-				} else if (marioSkinPos[0] == 2 & marioSkinPos[1] == 0) {
-					marioSkinPos[0] -= 1;
-				} else {
-					marioSkinPos[0] = 1;
-					marioSkinPos[1] = 0;
-				}
-			}
+		return true;
+	}
+
+	void updateAnimation(final double dt, final int horizontalInput, final boolean runInput) {
+		if (horizontalInput > 0)
+			facingLeft = false;
+		else if (horizontalInput < 0)
+			facingLeft = true;
+
+		walking = collisionDown && !ducking && Math.abs(forceX) > 0.15d;
+		running = walking && runInput
+				&& Math.abs(forceX) > MarioGame.WALK_SPEED + 0.25d;
+		jumping = !collisionDown;
+		if (ducking) {
+			spriteFrame = SUPER_DUCK_FRAME;
+			animationElapsed = 0;
 		} else if (jumping) {
-			marioSkinPos[0] = 5;
-			marioSkinPos[1] = 1;
+			spriteFrame = !superMario && runInput && Math.abs(forceX) > 4.8d
+					? SMALL_RUN_JUMP_FRAME : JUMP_FRAME;
+			animationElapsed = 0;
+		} else if (walking) {
+			animationElapsed += dt;
+			final int[] frames = running ? RUN_FRAMES : WALK_FRAMES;
+			final double frameSeconds = running ? 0.085d : 0.14d;
+			spriteFrame = frames[(int) (animationElapsed / frameSeconds) % frames.length];
+		} else {
+			spriteFrame = 0;
+			animationElapsed = 0;
 		}
 	}
 
-	@Override
-	public double computeFutureDX(final double dt) {
-		return super.computeFutureDX(dt);
+	public boolean isWalking() {
+		return walking;
 	}
 
-	public double computeFuturedDY(final double dt) {
-		return super.computeFutureDY(dt);
+	public boolean isRunning() {
+		return running;
 	}
 
-	@Override
-	public double computeFutureForceDX(final double dt) {
-		double forceX = this.forceX;
-		if (controllerDX == 0) {} else {
-			if (controllerDX > 0) {
-				if (forceX < 500f / 16f) {
-					forceX += dt * 500f / 16f;
-				}
-			}
-			if (controllerDX < 0) {
-				if (forceX > -500f / 16f) {
-					forceX -= dt * 500f / 16f;
-				}
-			}
-		}
-
-		return forceX + super.computeFutureForceDX(dt) - this.forceX;
+	public boolean isJumping() {
+		return jumping;
 	}
 
-	@Override
-	public double computeFutureForceDY(final double dt) {
-		float jumptime = this.jumptime;
-		double forceY = this.forceY;
-		if (controllerDY > 0) { //JUMP
-			if (collisionUp) {
-				jumptime = Float.MAX_VALUE;
-			}
-			jumptime += dt;
-			if (jumptime <= 0.5f && !jumping && collisionDown) {
-				forceY = dt * (4 * 1569.6f) / 16f;
-			} else if (jumptime <= 0.5f) {
-				forceY = dt * (4 * 1569.6f) / 16f;
-			}
-		}
-		return forceY + super.computeFutureForceDY(dt) - this.forceY;
+	public boolean isFacingLeft() {
+		return facingLeft;
 	}
 
-	public void move(final float dt, final double dX, final double dY) {
-		walkAnimation += dt;
-
-		controllerDX = dX;
-		controllerDY = dY;
+	/** Compatibility alias retained for older callers. */
+	public boolean isFlipped() {
+		return facingLeft;
 	}
 
+	public boolean isSuperMario() {
+		return superMario;
+	}
+
+	public boolean isDucking() {
+		return ducking;
+	}
+
+	public boolean isInvulnerable() {
+		return invulnerabilityTime > 0d;
+	}
+
+	public boolean isVisibleDuringInvulnerability() {
+		return !isInvulnerable() || ((int) (invulnerabilityTime * 20d) & 1) == 0;
+	}
+
+	public int getSpriteFrame() {
+		return spriteFrame;
+	}
 }

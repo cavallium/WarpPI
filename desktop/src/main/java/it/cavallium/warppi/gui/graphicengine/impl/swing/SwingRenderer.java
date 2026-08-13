@@ -59,122 +59,112 @@ public class SwingRenderer implements Renderer {
 			}
 	}
 
-	private void glDrawSkin(int x0, int y0, final int x1, final int y1, int s0, int t0, int s1, int t1,
+	private void glDrawSkin(final int x0, final int y0, final int x1, final int y1,
+			final int s0, final int t0, final int s1, final int t1,
 			final boolean transparent) {
-		final double incrementX = Math.abs((double) (x1 - x0) / (double) (s1 - s0));
-		final double incrementY = Math.abs((double) (y1 - y0) / (double) (t1 - t0));
-		final boolean flippedX = (x1 - x0) / (s1 - s0) < 0;
-		final boolean flippedY = (y1 - y0) / (t1 - t0) < 0;
+		drawSkinPixels(currentSkin.skinData, currentSkin.skinSize[0], currentSkin.skinSize[1],
+				x0, y0, x1, y1, s0, t0, s1, t1, transparent);
+	}
+
+	void drawSkinPixels(final int[] skinData, final int skinWidth, final int skinHeight,
+			final int x0, final int y0, final int x1, final int y1,
+			final int s0, final int t0, final int s1, final int t1,
+			final boolean transparent) {
+		final int destinationWidth = x1 - x0;
+		final int destinationHeight = y1 - y0;
+		final int sourceWidth = s1 - s0;
+		final int sourceHeight = t1 - t0;
+		if (destinationWidth <= 0 || destinationHeight <= 0
+				|| sourceWidth == 0 || sourceHeight == 0)
+			return;
+
+		final int clippedX0 = Math.max(0, x0);
+		final int clippedY0 = Math.max(0, y0);
+		final int clippedX1 = Math.min(size[0], x1);
+		final int clippedY1 = Math.min(size[1], y1);
+		if (clippedX0 >= clippedX1 || clippedY0 >= clippedY1)
+			return;
+
+		final double incrementX = Math.abs((double) destinationWidth / sourceWidth);
+		final double incrementY = Math.abs((double) destinationHeight / sourceHeight);
+		final boolean flippedX = sourceWidth < 0;
+		final boolean flippedY = sourceHeight < 0;
+		final int sourceMinX = Math.min(s0, s1);
+		final int sourceMaxX = Math.max(s0, s1);
+		final int sourceMinY = Math.min(t0, t1);
+		final int sourceMaxY = Math.max(t0, t1);
+		final int expX = incrementX < 1d ? (int) Math.round(1d / incrementX / 2d) : 0;
+		final int expY = incrementY < 1d ? (int) Math.round(1d / incrementY / 2d) : 0;
 		int oldColor;
 		int newColor;
-		final int onex = s0 <= s1 ? 1 : -1;
-		final int oney = t0 <= t1 ? 1 : -1;
-		int width = 0;
-		int height = 0;
-		if (onex == -1) {
-			final int s00 = s0;
-			s0 = s1;
-			s1 = s00;
-			width = s1 - s0;
-		}
-		if (oney == -1) {
-			final int t00 = t0;
-			t0 = t1;
-			t1 = t00;
-			height = t1 - t0;
-		}
-		if (x0 >= size[0] || y0 >= size[0])
-			return;
-		if (x0 + width >= size[0])
-			s1 = size[0] - x0 + s0;
-		if (y0 + height >= size[1])
-			t1 = size[1] - y0 + t0;
-		if (x0 < 0) {
-			if (onex == -1) {
-				width += x0;
-				s1 += x0 + 1;
-			} else
-				s0 -= x0;
-			x0 = 0;
-		}
-		if (y0 < 0) {
-			if (oney == -1) {
-				height += y0;
-				t1 += y0 + 1;
-			} else
-				t0 -= y0;
-			y0 = 0;
-		}
-		for (double pixelX = 0; pixelX < x1 - x0; pixelX++)
-			for (double pixelY = 0; pixelY < y1 - y0; pixelY++) {
-				final int index = (int) (x0 + pixelX + (y0 + pixelY) * size[0]);
-				if (index >= 0 && index < SwingRenderer.canvas2d.length && pixelX < size[0]) {
-					final int texx = (int) (pixelX / incrementX);
-					final int texy = (int) (pixelY / incrementY);
-					int expX = 0;
-					int expY = 0;
-					if (incrementX < 1)
-						expX = (int) Math.round(1d / incrementX / 2d);
-					if (incrementY < 1)
-						expY = (int) Math.round(1d / incrementY / 2d);
-					final int[] newColors = new int[(1 + expX * 2) * (1 + expY * 2)];
-					for (int expXi = -expX; expXi <= expX; expXi++)
-						for (int expYi = -expY; expYi <= expY; expYi++) {
-							final int skinIndex = (int) (s0 + (texx * (flippedX ? -1d : 1d) + (flippedX ? -(s0 - s1) - 1 : 0) + expXi) + (t0 + (texy * (flippedY ? -1d : 1d) + (flippedY ? -(t0 - t1) - 1 : 0) + expYi)) * currentSkin.skinSize[0]);
-							final int idx = expXi + expX + (expYi + expY) * (1 + expY * 2);
-							if (idx >= 0 && idx < newColors.length)
-								newColors[idx] = getSkinColorAt(currentSkin.skinData, skinIndex);
-						}
-					newColor = joinColors(newColors);
-					if (index >= 0 && index < SwingRenderer.canvas2d.length) {
-						if (transparent) {
-								oldColor = SwingRenderer.canvas2d[index];
-								final float a2 = (newColor >> 24 & 0xFF) / 255f;
-								final float a1 = 1f - a2;
-								final int r = (int) ((oldColor >> 16 & 0xFF) * a1 + (newColor >> 16 & 0xFF) * a2);
-								final int g = (int) ((oldColor >> 8 & 0xFF) * a1 + (newColor >> 8 & 0xFF) * a2);
-								final int b = (int) ((oldColor & 0xFF) * a1 + (newColor & 0xFF) * a2);
-								newColor = 0xFF000000 | r << 16 | g << 8 | b;
-						}
-	
-						SwingRenderer.canvas2d[index] = stackColors(SwingRenderer.canvas2d[index], newColor);
+		for (int destinationY = clippedY0; destinationY < clippedY1; destinationY++) {
+			final int textureY = (int) ((destinationY - y0) / incrementY);
+			final int skinY = flippedY ? sourceMaxY - 1 - textureY : sourceMinY + textureY;
+			for (int destinationX = clippedX0; destinationX < clippedX1; destinationX++) {
+				final int index = destinationX + destinationY * size[0];
+				if (index >= 0 && index < SwingRenderer.canvas2d.length) {
+					final int textureX = (int) ((destinationX - x0) / incrementX);
+					final int skinX = flippedX ? sourceMaxX - 1 - textureX : sourceMinX + textureX;
+					if (expX == 0 && expY == 0) {
+						newColor = getSkinColorAt(skinData, skinWidth, skinHeight,
+								skinX, skinY);
+					} else {
+						int samples = 0;
+						int alpha = 0;
+						int red = 0;
+						int green = 0;
+						int blue = 0;
+						for (int expXi = -expX; expXi <= expX; expXi++)
+							for (int expYi = -expY; expYi <= expY; expYi++) {
+								final int sample = getSkinColorAt(skinData, skinWidth,
+										skinHeight, skinX + expXi, skinY + expYi);
+								alpha += sample >>> 24;
+								red += sample >> 16 & 0xFF;
+								green += sample >> 8 & 0xFF;
+								blue += sample & 0xFF;
+								samples++;
+							}
+						newColor = alpha / samples << 24 | red / samples << 16
+								| green / samples << 8 | blue / samples;
 					}
+					if (transparent) {
+						oldColor = SwingRenderer.canvas2d[index];
+						final float a2 = (newColor >> 24 & 0xFF) / 255f;
+						final float a1 = 1f - a2;
+						final int r = (int) ((oldColor >> 16 & 0xFF) * a1 + (newColor >> 16 & 0xFF) * a2);
+						final int g = (int) ((oldColor >> 8 & 0xFF) * a1 + (newColor >> 8 & 0xFF) * a2);
+						final int b = (int) ((oldColor & 0xFF) * a1 + (newColor & 0xFF) * a2);
+						newColor = 0xFF000000 | r << 16 | g << 8 | b;
+					}
+
+					SwingRenderer.canvas2d[index] = stackColors(SwingRenderer.canvas2d[index], newColor);
 				}
 			}
-	}
-
-	private int joinColors(final int[] newColors) {
-		int a = 0;
-		int r = 0;
-		int g = 0;
-		int b = 0;
-		for (final int newColor : newColors) {
-			a += newColor >> 24 & 0xFF;
-			r += newColor >> 16 & 0xFF;
-			g += newColor >> 8 & 0xFF;
-			b += newColor & 0xFF;
 		}
-		return a / newColors.length << 24 | r / newColors.length << 16 | g / newColors.length << 8 | b / newColors.length;
 	}
 
-	private int stackColors(final int... color) {
-		double a = 0;
-		double r = 0;
-		double g = 0;
-		double b = 0;
-		for (final int newColor : color) {
-			final double alpha = (newColor >> 24 & 0xFF) / 255d;
-			a = a * (1d - alpha) + (newColor >> 24 & 0xFF) * alpha;
-			r = r * (1d - alpha) + (newColor >> 16 & 0xFF) * alpha;
-			g = g * (1d - alpha) + (newColor >> 8 & 0xFF) * alpha;
-			b = b * (1d - alpha) + (newColor & 0xFF) * alpha;
-		}
-		return (int) a << 24 | (int) r << 16 | (int) g << 8 | (int) b;
+	private int stackColors(final int oldColor, final int newColor) {
+		final int alpha = newColor >>> 24;
+		if (alpha == 0)
+			return oldColor;
+		if (alpha == 0xFF)
+			return newColor;
+		final int inverseAlpha = 0xFF - alpha;
+		final int a = ((oldColor >>> 24) * inverseAlpha + alpha * alpha) / 0xFF;
+		final int r = ((oldColor >> 16 & 0xFF) * inverseAlpha
+				+ (newColor >> 16 & 0xFF) * alpha) / 0xFF;
+		final int g = ((oldColor >> 8 & 0xFF) * inverseAlpha
+				+ (newColor >> 8 & 0xFF) * alpha) / 0xFF;
+		final int b = ((oldColor & 0xFF) * inverseAlpha
+				+ (newColor & 0xFF) * alpha) / 0xFF;
+		return a << 24 | r << 16 | g << 8 | b;
 	}
 
-	private int getSkinColorAt(final int[] skinData, final int skinIndex) {
+	private int getSkinColorAt(final int[] skinData, final int skinWidth,
+			final int skinHeight, final int skinX, final int skinY) {
 		int newColor = 0;
-		if (skinIndex >= 0 && skinIndex < skinData.length) {
+		if (skinX >= 0 && skinX < skinWidth && skinY >= 0 && skinY < skinHeight) {
+			final int skinIndex = skinX + skinY * skinWidth;
 			newColor = skinData[skinIndex];
 			final int a = (int) ((newColor >> 24 & 0xFF) * ((double) (color >> 24 & 0xFF) / (double) 0xFF));
 			final int r = (int) ((newColor >> 16 & 0xFF) * ((double) (color >> 16 & 0xFF) / (double) 0xFF));

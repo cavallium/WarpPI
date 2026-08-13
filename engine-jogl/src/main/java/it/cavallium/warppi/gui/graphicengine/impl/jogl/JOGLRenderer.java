@@ -447,8 +447,9 @@ public class JOGLRenderer implements Renderer {
 
 	@Override
 	public void glClearSkin() {
-		if (currentTex != null) {
+		if (currentTex != null || currentTexEnabled) {
 			currentTex = null;
+			currentTexEnabled = false;
 			doDrawSegment();
 		}
 	}

@@ -28,6 +28,11 @@ public class MarioBlock {
 	}
 
 	public static boolean isSolid(final byte id) {
-		return id != 0b0;
+		return switch (id) {
+			case MarioWorld.BLOCK_GROUND, MarioWorld.BLOCK_BRICK,
+					MarioWorld.BLOCK_QUESTION_COIN, MarioWorld.BLOCK_QUESTION_MUSHROOM,
+					MarioWorld.BLOCK_USED, MarioWorld.BLOCK_PIPE -> true;
+			default -> false;
+		};
 	}
 }
