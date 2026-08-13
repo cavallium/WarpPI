@@ -22,9 +22,11 @@ class MarioScreenTest {
 	@Test
 	void renderingBoundsCullTheLevelToTheViewport() {
 		assertEquals(0, MarioScreen.firstVisibleTile(0d, 120));
-		assertEquals(31, MarioScreen.lastVisibleTile(0d, 480, 120));
-		assertEquals(49, MarioScreen.firstVisibleTile(50d, 120));
-		assertEquals(81, MarioScreen.lastVisibleTile(50d, 480, 120));
+		assertEquals(29, MarioScreen.lastVisibleTile(0d, 480, 120));
+		assertEquals(50, MarioScreen.firstVisibleTile(50d, 120));
+		assertEquals(79, MarioScreen.lastVisibleTile(50d, 480, 120));
+		assertEquals(50, MarioScreen.firstVisibleTile(50.25d, 120));
+		assertEquals(80, MarioScreen.lastVisibleTile(50.25d, 480, 120));
 		assertEquals(119, MarioScreen.lastVisibleTile(110d, 480, 120));
 	}
 
@@ -147,6 +149,22 @@ class MarioScreenTest {
 		assertEquals(0xFF885818, atlas.getRGB(
 				MarioScreen.SMALL_MARIO_X + 5, MarioScreen.SMALL_MARIO_LEFT_Y + 11),
 				"the left-facing nose must be on the left");
+		assertEquals(0xFF885818, atlas.getRGB(
+				MarioScreen.SMALL_MARIO_X + 8 * MarioScreen.SMALL_MARIO_SIZE + 19,
+				MarioScreen.SMALL_MARIO_RIGHT_Y + 11),
+				"the third small running pose must still face right");
+		assertEquals(0xFF885818, atlas.getRGB(
+				MarioScreen.SMALL_MARIO_X + 8 * MarioScreen.SMALL_MARIO_SIZE + 4,
+				MarioScreen.SMALL_MARIO_LEFT_Y + 11),
+				"the mirrored third small running pose must still face left");
+		assertEquals(0xFF885818, atlas.getRGB(
+				MarioScreen.SUPER_MARIO_X + 8 * MarioScreen.SUPER_MARIO_SIZE + 22,
+				MarioScreen.SUPER_MARIO_RIGHT_Y + 12),
+				"the third super running pose must still face right");
+		assertEquals(0xFF885818, atlas.getRGB(
+				MarioScreen.SUPER_MARIO_X + 8 * MarioScreen.SUPER_MARIO_SIZE + 9,
+				MarioScreen.SUPER_MARIO_LEFT_Y + 12),
+				"the mirrored third super running pose must still face left");
 		assertNotEquals(regionHash(atlas,
 				MarioScreen.SMALL_MARIO_X + 4 * MarioScreen.SMALL_MARIO_SIZE,
 				MarioScreen.SMALL_MARIO_RIGHT_Y,

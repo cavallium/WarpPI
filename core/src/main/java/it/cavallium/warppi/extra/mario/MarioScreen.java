@@ -58,7 +58,6 @@ public final class MarioScreen extends Screen {
 	private static final int ENEMY_SPRITE_SIZE = 16;
 	private static final int[] BACKGROUND_X = { 0, 256, 0 };
 	private static final int[] BACKGROUND_Y = { 0, 0, 216 };
-	private static final int[] BACKGROUND_COLOR = { 0xFFF8E0B0, 0xFFF8E0B0, 0xFFF8E0B0 };
 	private static final int SKY_COLOR = 0xFFF8E0B0;
 	private static final float HELP_SECONDS = 6f;
 
@@ -269,8 +268,6 @@ public final class MarioScreen extends Screen {
 			final MarioWorld world) {
 		renderer.glClearSkin();
 		final int background = world.getBackgroundIndex();
-		renderer.glColor(BACKGROUND_COLOR[background]);
-		renderer.glFillColor(0, 0, ctx.getWidth(), ctx.getHeight());
 		if (marioAtlas == null)
 			return;
 
@@ -310,8 +307,9 @@ public final class MarioScreen extends Screen {
 				}
 				switch (block) {
 					case MarioWorld.BLOCK_GROUND -> {
-						final int variant = terrainVariant(world, x, y);
-						drawTerrainTile(renderer, screenX, screenY, world, x, y, variant);
+						final int terrainVisual = terrainVisual(world, x, y);
+						drawTerrainTile(renderer, screenX, screenY,
+								terrainVisual & 0xF, terrainVisual >>> 4);
 					}
 					case MarioWorld.BLOCK_BRICK -> renderer.glFillRect(screenX, screenY,
 							TILE_SIZE, TILE_SIZE, BRICK_X, BLOCK_ROW_Y, TILE_SIZE, TILE_SIZE);
@@ -367,9 +365,7 @@ public final class MarioScreen extends Screen {
 	}
 
 	private static void drawTerrainTile(final Renderer renderer, final float screenX,
-			final float screenY, final MarioWorld world, final int x, final int y,
-			final int variant) {
-		final int reflexMask = terrainReflexMask(world, x, y);
+			final float screenY, final int variant, final int reflexMask) {
 		if (reflexMask == 0) {
 			renderer.glFillRect(screenX, screenY, TILE_SIZE, TILE_SIZE,
 					TERRAIN_X + variant * TILE_SIZE, TERRAIN_Y, TILE_SIZE, TILE_SIZE);
@@ -398,20 +394,21 @@ public final class MarioScreen extends Screen {
 	}
 
 	static int terrainVariant(final MarioWorld world, final int x, final int y) {
-		final boolean left = world.getBlockIdAt(x - 1, y) == MarioWorld.BLOCK_GROUND;
-		final boolean right = world.getBlockIdAt(x + 1, y) == MarioWorld.BLOCK_GROUND;
-		final boolean above = world.getBlockIdAt(x, y + 1) == MarioWorld.BLOCK_GROUND;
-		final boolean below = world.getBlockIdAt(x, y - 1) == MarioWorld.BLOCK_GROUND;
-		final int column = !left ? 0 : !right ? 2 : 1;
-		final int row = !above ? 0 : !below ? 2 : 1;
-		return row * 3 + column;
+		return terrainVisual(world, x, y) & 0xF;
 	}
 
 	static int terrainReflexMask(final MarioWorld world, final int x, final int y) {
+		return terrainVisual(world, x, y) >>> 4;
+	}
+
+	private static int terrainVisual(final MarioWorld world, final int x, final int y) {
 		final boolean left = isGround(world, x - 1, y);
 		final boolean right = isGround(world, x + 1, y);
 		final boolean above = isGround(world, x, y + 1);
 		final boolean below = isGround(world, x, y - 1);
+		final int column = !left ? 0 : !right ? 2 : 1;
+		final int row = !above ? 0 : !below ? 2 : 1;
+		final int variant = row * 3 + column;
 		int mask = 0;
 		if (above && left && !isGround(world, x - 1, y + 1))
 			mask |= 1;
@@ -421,7 +418,7 @@ public final class MarioScreen extends Screen {
 			mask |= 4;
 		if (below && right && !isGround(world, x + 1, y - 1))
 			mask |= 8;
-		return mask;
+		return variant | (mask << 4);
 	}
 
 	private static boolean isGround(final MarioWorld world, final int x, final int y) {
@@ -674,12 +671,12 @@ public final class MarioScreen extends Screen {
 	}
 
 	static int firstVisibleTile(final double camera, final int worldSize) {
-		return Math.max(0, Math.min(worldSize - 1, (int) Math.floor(camera) - 1));
+		return Math.max(0, Math.min(worldSize - 1, (int) Math.floor(camera)));
 	}
 
 	static int lastVisibleTile(final double camera, final int viewportPixels, final int worldSize) {
 		return Math.max(0, Math.min(worldSize - 1,
-				(int) Math.ceil(camera + viewportPixels / (double) TILE_SIZE) + 1));
+				(int) Math.ceil(camera + viewportPixels / (double) TILE_SIZE) - 1));
 	}
 
 	MarioGame getGame() {

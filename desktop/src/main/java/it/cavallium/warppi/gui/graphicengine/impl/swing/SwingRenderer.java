@@ -1,6 +1,7 @@
 package it.cavallium.warppi.gui.graphicengine.impl.swing;
 
 import java.awt.FontMetrics;
+import java.util.Arrays;
 
 import it.cavallium.warppi.StaticVars;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
@@ -51,12 +52,14 @@ public class SwingRenderer implements Renderer {
 
 	@Override
 	public void glClear(final int screenWidth, final int screenHeight) {
-		for (int x = 0; x < screenWidth; x++)
-			for (int y = 0; y < screenHeight; y++) {
-				final int index = x + y * size[0];
-				if (index >= 0 && index < SwingRenderer.canvas2d.length)
-					SwingRenderer.canvas2d[index] = clearcolor;
-			}
+		final int width = Math.max(0, Math.min(screenWidth, size[0]));
+		final int height = Math.max(0, Math.min(screenHeight, size[1]));
+		for (int y = 0; y < height; y++) {
+			final int start = y * size[0];
+			final int end = Math.min(start + width, SwingRenderer.canvas2d.length);
+			if (start >= 0 && start < end)
+				Arrays.fill(SwingRenderer.canvas2d, start, end, clearcolor);
+		}
 	}
 
 	private void glDrawSkin(final int x0, final int y0, final int x1, final int y1,
@@ -87,6 +90,8 @@ public class SwingRenderer implements Renderer {
 
 		final double incrementX = Math.abs((double) destinationWidth / sourceWidth);
 		final double incrementY = Math.abs((double) destinationHeight / sourceHeight);
+		final boolean unitX = destinationWidth == Math.abs(sourceWidth);
+		final boolean unitY = destinationHeight == Math.abs(sourceHeight);
 		final boolean flippedX = sourceWidth < 0;
 		final boolean flippedY = sourceHeight < 0;
 		final int sourceMinX = Math.min(s0, s1);
@@ -98,12 +103,14 @@ public class SwingRenderer implements Renderer {
 		int oldColor;
 		int newColor;
 		for (int destinationY = clippedY0; destinationY < clippedY1; destinationY++) {
-			final int textureY = (int) ((destinationY - y0) / incrementY);
+			final int textureY = unitY
+					? destinationY - y0 : (int) ((destinationY - y0) / incrementY);
 			final int skinY = flippedY ? sourceMaxY - 1 - textureY : sourceMinY + textureY;
 			for (int destinationX = clippedX0; destinationX < clippedX1; destinationX++) {
 				final int index = destinationX + destinationY * size[0];
 				if (index >= 0 && index < SwingRenderer.canvas2d.length) {
-					final int textureX = (int) ((destinationX - x0) / incrementX);
+					final int textureX = unitX
+							? destinationX - x0 : (int) ((destinationX - x0) / incrementX);
 					final int skinX = flippedX ? sourceMaxX - 1 - textureX : sourceMinX + textureX;
 					if (expX == 0 && expY == 0) {
 						newColor = getSkinColorAt(skinData, skinWidth, skinHeight,
@@ -129,15 +136,27 @@ public class SwingRenderer implements Renderer {
 					}
 					if (transparent) {
 						oldColor = SwingRenderer.canvas2d[index];
-						final float a2 = (newColor >> 24 & 0xFF) / 255f;
-						final float a1 = 1f - a2;
-						final int r = (int) ((oldColor >> 16 & 0xFF) * a1 + (newColor >> 16 & 0xFF) * a2);
-						final int g = (int) ((oldColor >> 8 & 0xFF) * a1 + (newColor >> 8 & 0xFF) * a2);
-						final int b = (int) ((oldColor & 0xFF) * a1 + (newColor & 0xFF) * a2);
-						newColor = 0xFF000000 | r << 16 | g << 8 | b;
+						final int alpha = newColor >>> 24;
+						if (alpha == 0)
+							newColor = 0xFF000000 | (oldColor & 0x00FFFFFF);
+						else if (alpha == 0xFF)
+							newColor |= 0xFF000000;
+						else {
+							final float a2 = alpha / 255f;
+							final float a1 = 1f - a2;
+							final int r = (int) ((oldColor >> 16 & 0xFF) * a1
+									+ (newColor >> 16 & 0xFF) * a2);
+							final int g = (int) ((oldColor >> 8 & 0xFF) * a1
+									+ (newColor >> 8 & 0xFF) * a2);
+							final int b = (int) ((oldColor & 0xFF) * a1
+									+ (newColor & 0xFF) * a2);
+							newColor = 0xFF000000 | r << 16 | g << 8 | b;
+						}
+						SwingRenderer.canvas2d[index] = newColor;
+					} else {
+						SwingRenderer.canvas2d[index] = stackColors(
+								SwingRenderer.canvas2d[index], newColor);
 					}
-
-					SwingRenderer.canvas2d[index] = stackColors(SwingRenderer.canvas2d[index], newColor);
 				}
 			}
 		}
@@ -166,11 +185,13 @@ public class SwingRenderer implements Renderer {
 		if (skinX >= 0 && skinX < skinWidth && skinY >= 0 && skinY < skinHeight) {
 			final int skinIndex = skinX + skinY * skinWidth;
 			newColor = skinData[skinIndex];
-			final int a = (int) ((newColor >> 24 & 0xFF) * ((double) (color >> 24 & 0xFF) / (double) 0xFF));
-			final int r = (int) ((newColor >> 16 & 0xFF) * ((double) (color >> 16 & 0xFF) / (double) 0xFF));
-			final int g = (int) ((newColor >> 8 & 0xFF) * ((double) (color >> 8 & 0xFF) / (double) 0xFF));
-			final int b = (int) ((newColor & 0xFF) * ((double) (color & 0xFF) / (double) 0xFF));
-			newColor = a << 24 | r << 16 | g << 8 | b;
+			if (color != 0xFFFFFFFF) {
+				final int a = (newColor >>> 24) * (color >>> 24) / 0xFF;
+				final int r = (newColor >> 16 & 0xFF) * (color >> 16 & 0xFF) / 0xFF;
+				final int g = (newColor >> 8 & 0xFF) * (color >> 8 & 0xFF) / 0xFF;
+				final int b = (newColor & 0xFF) * (color & 0xFF) / 0xFF;
+				newColor = a << 24 | r << 16 | g << 8 | b;
+			}
 		}
 		return newColor;
 	}
@@ -217,27 +238,26 @@ public class SwingRenderer implements Renderer {
 		final int iw = (int) width;
 		final int ih = (int) height;
 
-		int x0 = ix;
-		int y0 = iy;
-		int x1 = ix + iw;
-		int y1 = iy + ih;
-		if (ix >= size[0] || iy >= size[0])
+		final int x0 = Math.max(0, ix);
+		final int y0 = Math.max(0, iy);
+		final int x1 = Math.min(size[0], ix + iw);
+		final int y1 = Math.min(size[1], iy + ih);
+		if (x0 >= x1 || y0 >= y1 || (color >>> 24) == 0)
 			return;
-		if (x0 < 0)
-			x0 = 0;
-		if (x1 >= size[0])
-			x1 = size[0];
-		if (y0 < 0)
-			y0 = 0;
-		if (y1 >= size[1])
-			y1 = size[1];
 		final int sizeW = size[0];
-		for (int px = x0; px < x1; px++)
-			for (int py = y0; py < y1; py++) {
-				final int idx = px + py * sizeW;
-				if (px < sizeW && idx >= 0 && idx < SwingRenderer.canvas2d.length)
-					SwingRenderer.canvas2d[idx] = stackColors(SwingRenderer.canvas2d[idx], color);
-			}
+		final boolean opaque = (color >>> 24) == 0xFF;
+		for (int py = y0; py < y1; py++) {
+			final int start = x0 + py * sizeW;
+			final int end = Math.min(x1 + py * sizeW, SwingRenderer.canvas2d.length);
+			if (start < 0 || start >= end)
+				continue;
+			if (opaque)
+				Arrays.fill(SwingRenderer.canvas2d, start, end, color);
+			else
+				for (int index = start; index < end; index++)
+					SwingRenderer.canvas2d[index] = stackColors(
+							SwingRenderer.canvas2d[index], color);
+		}
 	}
 
 	@Override
