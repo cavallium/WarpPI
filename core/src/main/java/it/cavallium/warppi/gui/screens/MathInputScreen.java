@@ -45,6 +45,14 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 public class MathInputScreen extends Screen {
 	private static final int BACKGROUND_COLOR = 0xFFC5C2AF;
 	private static final int ERROR_BACKGROUND_COLOR = 0xFFDC3C32;
+	private static final int VIEWPORT_INDICATOR_COLOR = 0xFF5D5B51;
+	private static final int VIEWPORT_ACTIVE_COLOR = 0xFFB3261E;
+	private static final int VIEWPORT_TRACK_COLOR = 0x405D5B51;
+	private static final int PADDING = 4;
+	private static final int INPUT_VIEWPORT_MAX_HEIGHT = 112;
+	private static final int VIEWPORT_GAP = 6;
+	private static final int RESULT_HEADER_HEIGHT = 13;
+	private static final int PAN_STEP = 32;
 
 	private static final BinaryFont fontBig = Utils.getFont(false);
 	private final boolean isCloned;
@@ -60,6 +68,15 @@ public class MathInputScreen extends Screen {
 	private double computingAnimationElapsedTime = 0;
 	private double computingElapsedTime = 0;
 	private boolean computingBreakTipVisible = false;
+	private int inputScrollX;
+	private int inputScrollY;
+	private int resultScrollX;
+	private int resultScrollY;
+	private int inputViewportWidth;
+	private int inputViewportHeight;
+	private int resultViewportWidth;
+	private int resultViewportHeight;
+	private boolean resultNavigationActive;
 	boolean mustRefresh = true;
 	@SuppressWarnings("unused")
 	private int currentStep = 0;
@@ -85,6 +102,11 @@ public class MathInputScreen extends Screen {
 		this.mustRefresh = old.mustRefresh;
 		this.result = new NormalOutputContainer(old.result);
 		this.userInput = new NormalInputContainer(old.userInput, this.ic);
+		this.inputScrollX = old.inputScrollX;
+		this.inputScrollY = old.inputScrollY;
+		this.resultScrollX = old.resultScrollX;
+		this.resultScrollY = old.resultScrollY;
+		this.resultNavigationActive = old.resultNavigationActive;
 		this.isCloned = true;
 	}
 
@@ -154,10 +176,9 @@ public class MathInputScreen extends Screen {
 		final Renderer renderer = ctx.getRenderer();
 		MathInputScreen.fontBig.use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
 		final int textColor = 0xFF000000;
-		final int padding = 4;
 		renderer.glColor(textColor);
 
-		userInput.draw(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display, renderer, padding, padding);
+		drawInputViewport(ctx);
 
 		if (computingResult) {
 			renderer.glColor3f(1, 1, 1);
@@ -173,8 +194,118 @@ public class MathInputScreen extends Screen {
 				renderer.glDrawStringRight(ctx.getWidth() - 4 - size - 4, ctx.getHeight() - size / 2 - renderer.getCurrentFont().getCharacterHeight() / 2 - 4, "Press (=) to stop");
 			}
 		} else if (!result.isContentEmpty()) {
-			result.draw(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display, renderer, ctx.getWidth() - result.getWidth() - 2, ctx.getHeight() - result.getHeight() - 2);
+			drawResultViewport(ctx);
 		}
+	}
+
+	private void drawInputViewport(final RenderContext ctx) {
+		inputViewportWidth = Math.max(1, ctx.getWidth() - PADDING * 2);
+		final int availableHeight = Math.max(1, ctx.getHeight() - PADDING * 2);
+		final int reservedResultHeight = !result.isContentEmpty() && !computingResult
+				? Math.min(80, Math.max(32, availableHeight / 3)) : 0;
+		final int inputHeightLimit = Math.max(1,
+				Math.min(INPUT_VIEWPORT_MAX_HEIGHT, availableHeight - reservedResultHeight - VIEWPORT_GAP));
+		inputViewportHeight = Math.min(inputHeightLimit, Math.max(userInput.getHeight(), 1));
+		followInputCaret(inputViewportWidth, inputViewportHeight);
+		final Renderer viewport = ctx.getRenderer().getClippedInstance(
+				PADDING, PADDING, inputViewportWidth, inputViewportHeight);
+		userInput.draw(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display,
+				viewport, -inputScrollX, -inputScrollY);
+		drawScrollIndicators(ctx.getRenderer(), PADDING, PADDING,
+				inputViewportWidth, inputViewportHeight, userInput.getWidth(), userInput.getHeight(),
+				inputScrollX, inputScrollY, false);
+	}
+
+	private void drawResultViewport(final RenderContext ctx) {
+		final int top = Math.min(ctx.getHeight() - 1, PADDING + inputViewportHeight + VIEWPORT_GAP);
+		resultViewportWidth = Math.max(1, ctx.getWidth() - PADDING * 2);
+		final int availableResultHeight = Math.max(1, ctx.getHeight() - top - PADDING);
+		final boolean needsHeader = result.getWidth() > resultViewportWidth
+				|| result.getHeight() > availableResultHeight;
+		final int contentTop = top + (needsHeader ? RESULT_HEADER_HEIGHT : 0);
+		resultViewportHeight = Math.max(1,
+				availableResultHeight - (needsHeader ? RESULT_HEADER_HEIGHT : 0));
+		clampResultScroll();
+		final Renderer viewport = ctx.getRenderer().getClippedInstance(
+				PADDING, contentTop, resultViewportWidth, resultViewportHeight);
+		result.draw(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display,
+				viewport, -resultScrollX, -resultScrollY);
+		final boolean oversized = isResultOversized();
+		drawScrollIndicators(ctx.getRenderer(), PADDING, contentTop,
+				resultViewportWidth, resultViewportHeight, result.getWidth(), result.getHeight(),
+				resultScrollX, resultScrollY, resultNavigationActive && oversized);
+		if (needsHeader) {
+			final BinaryFont font = Utils.getFont(true, false);
+			font.use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
+			ctx.getRenderer().glColor(VIEWPORT_INDICATOR_COLOR);
+			ctx.getRenderer().glDrawStringLeft(PADDING + 2, top + 2,
+					resultNavigationActive ? "RESULT: ARROWS PAN  OK EDITS" : "UP/DOWN: VIEW FULL RESULT");
+		}
+	}
+
+	private void followInputCaret(final int viewportWidth, final int viewportHeight) {
+		final InputContainer.CaretBounds bounds = userInput.measureCaret(
+				WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
+		inputScrollX = reveal(bounds.x(), bounds.x() + bounds.width(), inputScrollX,
+				viewportWidth, userInput.getWidth());
+		inputScrollY = reveal(bounds.y(), bounds.y() + bounds.height(), inputScrollY,
+				viewportHeight, userInput.getHeight());
+	}
+
+	private static int reveal(final int start, final int end, final int currentOffset,
+			final int viewportSize, final int contentSize) {
+		final int margin = Math.min(12, Math.max(2, viewportSize / 8));
+		int offset = currentOffset;
+		if (start - margin < offset) {
+			offset = start - margin;
+		} else if (end + margin > offset + viewportSize) {
+			offset = end + margin - viewportSize;
+		}
+		return clamp(offset, 0, Math.max(0, contentSize - viewportSize));
+	}
+
+	private void drawScrollIndicators(final Renderer renderer, final int x, final int y,
+			final int viewportWidth, final int viewportHeight, final int contentWidth,
+			final int contentHeight, final int scrollX, final int scrollY, final boolean active) {
+		final int color = active ? VIEWPORT_ACTIVE_COLOR : VIEWPORT_INDICATOR_COLOR;
+		if (contentWidth > viewportWidth) {
+			final int trackWidth = Math.max(1, viewportWidth - 4);
+			final int thumbWidth = Math.min(trackWidth,
+					Math.max(10, (int) ((long) trackWidth * viewportWidth / contentWidth)));
+			final int travel = Math.max(0, trackWidth - thumbWidth);
+			final int thumbX = x + 2 + (int) ((long) travel * scrollX
+					/ Math.max(1, contentWidth - viewportWidth));
+			renderer.glColor(VIEWPORT_TRACK_COLOR);
+			renderer.glFillColor(x + 2, y + viewportHeight - 2, trackWidth, 2);
+			renderer.glColor(color);
+			renderer.glFillColor(thumbX, y + viewportHeight - 2, thumbWidth, 2);
+		}
+		if (contentHeight > viewportHeight) {
+			final int trackHeight = Math.max(1, viewportHeight - 4);
+			final int thumbHeight = Math.min(trackHeight,
+					Math.max(10, (int) ((long) trackHeight * viewportHeight / contentHeight)));
+			final int travel = Math.max(0, trackHeight - thumbHeight);
+			final int thumbY = y + 2 + (int) ((long) travel * scrollY
+					/ Math.max(1, contentHeight - viewportHeight));
+			renderer.glColor(VIEWPORT_TRACK_COLOR);
+			renderer.glFillColor(x + viewportWidth - 2, y + 2, 2, trackHeight);
+			renderer.glColor(color);
+			renderer.glFillColor(x + viewportWidth - 2, thumbY, 2, thumbHeight);
+		}
+	}
+
+	private boolean isResultOversized() {
+		return !result.isContentEmpty() && resultViewportWidth > 0 && resultViewportHeight > 0
+				&& (result.getWidth() > resultViewportWidth || result.getHeight() > resultViewportHeight);
+	}
+
+	private void clampResultScroll() {
+		resultScrollX = clamp(resultScrollX, 0, Math.max(0, result.getWidth() - resultViewportWidth));
+		resultScrollY = clamp(resultScrollY, 0, Math.max(0, result.getHeight() - resultViewportHeight));
+	}
+
+	private static int clamp(final int value, final int minimum, final int maximum) {
+		return Math.max(minimum, Math.min(value, maximum));
 	}
 
 	@Override
@@ -207,6 +338,19 @@ public class MathInputScreen extends Screen {
 	public boolean onKeyPressed(final KeyPressedEvent k) {
 		WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "MathInputScreen", "Pressed key " + k.getKey().toString());
 		try {
+			if (!resultNavigationActive && isResultOversized()
+					&& (k.getKey() == Key.UP || k.getKey() == Key.DOWN)) {
+				resultNavigationActive = true;
+				if (k.getKey() == Key.DOWN && resultScrollY == 0) {
+					resultScrollY = PAN_STEP;
+				}
+				clampResultScroll();
+				mustRefresh = true;
+				return true;
+			}
+			if (resultNavigationActive && handleResultNavigation(k.getKey())) {
+				return true;
+			}
 			switch (k.getKey()) {
 				case OK:
 					userInput.toggleExtra();
@@ -356,6 +500,7 @@ public class MathInputScreen extends Screen {
 							case RESET:
 								userInput.clear();
 								result.clear();
+								resetViewports();
 								currentStep = 0;
 								if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error != null) {
 									WarpPI.getPlatform().getConsoleUtils().out().println(1, "Resetting after error...");
@@ -433,6 +578,35 @@ public class MathInputScreen extends Screen {
 			ex.printStackTrace();
 			return true;
 		}
+	}
+
+	private boolean handleResultNavigation(final Key key) {
+		switch (key) {
+			case LEFT -> resultScrollX -= PAN_STEP;
+			case RIGHT -> resultScrollX += PAN_STEP;
+			case UP -> resultScrollY -= PAN_STEP;
+			case DOWN -> resultScrollY += PAN_STEP;
+			case OK, BACK -> {
+				resultNavigationActive = false;
+				mustRefresh = true;
+				return true;
+			}
+			default -> {
+				resultNavigationActive = false;
+				return false;
+			}
+		}
+		clampResultScroll();
+		mustRefresh = true;
+		return true;
+	}
+
+	private void resetViewports() {
+		inputScrollX = 0;
+		inputScrollY = 0;
+		resultScrollX = 0;
+		resultScrollY = 0;
+		resultNavigationActive = false;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -568,6 +742,9 @@ public class MathInputScreen extends Screen {
 							}
 							final ObjectArrayList<ObjectArrayList<Block>> resultBlocks = MathParser.parseOutput(calc, resultExpressions);
 							result.setContentAsMultipleGroups(resultBlocks);
+							resultScrollX = 0;
+							resultScrollY = 0;
+							resultNavigationActive = false;
 							//									showVariablesDialog(() -> {
 							//										currentExpression = newExpression;
 							//										simplify();
@@ -622,6 +799,7 @@ public class MathInputScreen extends Screen {
 	}
 
 	public void typeChar(final char chr) {
+		resultNavigationActive = false;
 		userInput.typeChar(chr);
 		mustRefresh = true;
 	}

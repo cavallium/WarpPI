@@ -1,5 +1,6 @@
 package it.cavallium.warppi.gui.graphicengine;
 
+import it.cavallium.warppi.gui.graphicengine.impl.common.ClippedRenderer;
 import it.cavallium.warppi.gui.graphicengine.impl.common.ReboundedRenderer;
 
 public interface Renderer {
@@ -47,5 +48,9 @@ public interface Renderer {
 
 	default Renderer getBoundedInstance(int dx, int dy, int width, int height) {
 		return new ReboundedRenderer(this, dx, dy, width, height);
+	}
+
+	default Renderer getClippedInstance(int dx, int dy, int width, int height) {
+		return new ClippedRenderer(this, dx, dy, width, height);
 	}
 }

@@ -127,4 +127,9 @@ renderer.glDrawCharCenter(this.dx + x, this.dy + y, ch);
 	public Renderer getBoundedInstance(int dx, int dy, int width, int height) {
 		return renderer.getBoundedInstance(this.dx + dx, this.dy + dy, width, height);
 	}
+
+	@Override
+	public Renderer getClippedInstance(int dx, int dy, int width, int height) {
+		return new ClippedRenderer(this, dx, dy, width, height);
+	}
 }
