@@ -446,6 +446,7 @@ public final class DisplayManager implements RenderingLoop {
 		if (newval >= 0 && newval <= 1) {
 			brightness = newval;
 			backlight.setBrightness(brightness);
+			WarpPI.getPlatform().getSettings().setBrightness(brightness);
 		}
 	}
 

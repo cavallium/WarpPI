@@ -72,6 +72,8 @@ public class SwingWindow extends JFrame {
 		setLayout(new BorderLayout());
 		setBackground(Color.BLACK);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		if (!WarpPI.getPlatform().getSettings().isDebugEnabled())
+			setUndecorated(true);
 		c = new CustomCanvas();
 		c.setMinimumSize(new Dimension(0, 0));
 		final Dimension initialCanvasSize = SwingScaling.toUserSize(

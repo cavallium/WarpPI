@@ -21,7 +21,8 @@ public class Boot {
 	} 
  
 	private static void loadCalculator() throws Exception { 
-		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setBrightness(0.2f); 
+		WarpPI.INSTANCE.getHardwareDevice().getDisplayManager()
+				.setBrightness((float) WarpPI.getPlatform().getSettings().getBrightness());
 		//TODO: plugins system: PluginsManager.initialize(); 
 		RulesManager.initialize(); 
 		RulesManager.warmUp(); 

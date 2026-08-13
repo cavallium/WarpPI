@@ -200,6 +200,13 @@ public interface Platform {
 
 		void setDebugEnabled(boolean debugOn);
 
+		default double getBrightness() {
+			return 0.2d;
+		}
+
+		default void setBrightness(final double brightness) {
+		}
+
 		default String getCalculatorName() {
 			return "WarpPI";
 		}

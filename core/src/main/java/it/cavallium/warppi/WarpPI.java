@@ -97,6 +97,9 @@ public class WarpPI {
 		if (args.isVerboseLoggingEnabled() || args.isDebugEnabled()) {
 			StaticVars.outputLevel = ConsoleUtils.OUTPUTLEVEL_DEBUG_VERBOSE;
 		}
+		if (args.isDebugEnabled()) {
+			WarpPI.getPlatform().getSettings().setDebugEnabled(true);
+		}
 		WarpPI.platform.getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, args);
 		checkDeviceType();
 		if (args.isRaspberryModeAllowed() == false) {
@@ -104,10 +107,6 @@ public class WarpPI {
 		}
 		if (WarpPI.getPlatform().isRunningOnRaspberry()) {
 			WarpPI.getPlatform().getGpio().initialize();
-		} else {
-			if (WarpPI.getPlatform().isJavascript() == false) {
-				WarpPI.getPlatform().getSettings().setDebugEnabled(true);
-			}
 		}
 	}
 

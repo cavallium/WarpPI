@@ -42,8 +42,6 @@ public class SwingEngine implements GraphicEngine {
 	@Override
 	public void setResizable(final boolean r) {
 		INSTANCE.setResizable(r);
-		if (!r)
-			INSTANCE.setUndecorated(true);
 	}
 
 	@Override

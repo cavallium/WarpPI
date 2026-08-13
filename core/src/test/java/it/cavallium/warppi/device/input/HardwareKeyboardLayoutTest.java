@@ -82,13 +82,13 @@ class HardwareKeyboardLayoutTest {
 	}
 
 	@Test
-	void guideKeyRemainsAvailableInEveryLayer() {
-		final PhysicalKey guide = find(0, 5);
+	void appsKeyRemainsAvailableInEveryLayer() {
+		final PhysicalKey apps = find(0, 5);
 		for (final Layer layer : Layer.values())
-			assertEquals("GUIDE", guide.label(layer));
-		assertEquals("GUIDE", Keyboard.getKeyName(0, 5, false, false));
-		assertEquals("GUIDE", Keyboard.getKeyName(0, 5, true, false));
-		assertEquals("GUIDE", Keyboard.getKeyName(0, 5, false, true));
+			assertEquals("APPS", apps.label(layer));
+		assertEquals("APPS", Keyboard.getKeyName(0, 5, false, false));
+		assertEquals("APPS", Keyboard.getKeyName(0, 5, true, false));
+		assertEquals("APPS", Keyboard.getKeyName(0, 5, false, true));
 	}
 
 	@Test

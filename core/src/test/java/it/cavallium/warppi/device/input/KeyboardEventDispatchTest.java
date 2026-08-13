@@ -1,6 +1,8 @@
 package it.cavallium.warppi.device.input;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
@@ -15,8 +17,16 @@ import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.event.KeyboardEventListener;
+import it.cavallium.warppi.gui.screens.AppsMenuScreen;
 
 class KeyboardEventDispatchTest {
+
+	@Test
+	void opensTheAppsLauncherOnlyFromTheAppsKey() {
+		assertInstanceOf(AppsMenuScreen.class, Keyboard.screenOpenedByGlobalKey(Key.SETTINGS));
+		assertNull(Keyboard.screenOpenedByGlobalKey(Key.BRIGHTNESS_CYCLE));
+		assertNull(Keyboard.screenOpenedByGlobalKey(Key.BRIGHTNESS_CYCLE_REVERSE));
+	}
 
 	@Test
 	void preservesListenerHandledResults() {

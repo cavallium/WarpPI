@@ -243,7 +243,7 @@ public final class HardwareKeyboardLayout {
 			case POWER_OF_2 -> "^2";
 			case POWER_OF_x -> "^x";
 			case PI -> "π";
-			case SETTINGS -> "GUIDE";
+			case SETTINGS -> "APPS";
 			case F1 -> "F1";
 			case F2 -> "F2";
 			case F3 -> "F3";
@@ -285,7 +285,7 @@ public final class HardwareKeyboardLayout {
 			case POWER_OF_2 -> "x^2";
 			case POWER_OF_x -> "x^y";
 			case PI -> "PI";
-			case SETTINGS -> "GUIDE";
+			case SETTINGS -> "APPS";
 			case BACK -> "BACK";
 			case ZOOM_MODE -> "ZOOM";
 			case LETTER_X -> "X";

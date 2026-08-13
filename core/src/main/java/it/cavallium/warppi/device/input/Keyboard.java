@@ -12,9 +12,7 @@ import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.event.KeyboardEventListener;
-import it.cavallium.warppi.extra.mario.MarioScreen;
-import it.cavallium.warppi.extra.tetris.TetrisScreen;
-import it.cavallium.warppi.gui.screens.HardwareKeyboardGuideScreen;
+import it.cavallium.warppi.gui.screens.AppsMenuScreen;
 import it.cavallium.warppi.gui.screens.KeyboardDebugScreen;
 import it.cavallium.warppi.gui.screens.Screen;
 
@@ -792,6 +790,10 @@ public class Keyboard {
 		}
 	}
 
+	static Screen screenOpenedByGlobalKey(final Key key) {
+		return key == Key.SETTINGS ? new AppsMenuScreen() : null;
+	}
+
 	public synchronized static void keyPressed(final Key k) {
 		boolean done = false;
 		if (Keyboard.additionalListener != null) {
@@ -813,18 +815,16 @@ public class Keyboard {
 						break;
 					case SETTINGS:
 						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager()
-								.setScreen(new HardwareKeyboardGuideScreen());
+								.setScreen(screenOpenedByGlobalKey(k));
 						refresh = true;
 						break;
 					case NONE:
 						break;
 					case BRIGHTNESS_CYCLE:
-						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new TetrisScreen()); //TODO: rimuovere: prova
 						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().cycleBrightness(false);
 						refresh = true;
 						break;
 					case BRIGHTNESS_CYCLE_REVERSE:
-						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().setScreen(new MarioScreen()); //TODO: rimuovere: prova
 						WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().cycleBrightness(true);
 						refresh = true;
 						break;
