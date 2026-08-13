@@ -25,6 +25,7 @@ public class SwingWindow extends JFrame {
 	private static final long serialVersionUID = 2945898937634075491L;
 	private static final int BASE_BUTTON_SIZE = 32;
 	private static final int BASE_PANEL_GAP = 5;
+	private static final int RESIZE_REDRAW_DELAY_MILLIS = 120;
 	private final int defaultWidth;
 	private final int defaultHeight;
 	private final SwingRenderer renderer;
@@ -44,6 +45,7 @@ public class SwingWindow extends JFrame {
 	private int buttonSize;
 	private final HostKeyboardInput keyboardInput;
 	private final KeyEventDispatcher keyboardEventDispatcher;
+	private final Timer resizeRedrawTimer;
 	private volatile boolean windowShown;
 	private volatile boolean forceRepaint;
 
@@ -62,6 +64,8 @@ public class SwingWindow extends JFrame {
 		this.desktopScale = desktopScale;
 		keyboardInput = Keyboard.createHostKeyboardInput();
 		keyboardEventDispatcher = this::dispatchHostKeyboardEvent;
+		resizeRedrawTimer = new Timer(RESIZE_REDRAW_DELAY_MILLIS, event -> repaintAfterResizeSettles());
+		resizeRedrawTimer.setRepeats(false);
 		calculatorZoom = SwingScaling.normalizeCalculatorZoom(StaticVars.windowZoom.getLastValue());
 		toolkitScale = SwingScaling.toolkitScale(getGraphicsConfiguration());
 		toolkitCompensation = SwingScaling.toolkitCompensation(desktopScale, toolkitScale);
@@ -150,6 +154,7 @@ public class SwingWindow extends JFrame {
 					onResize.submit(new Integer[] {
 							SwingScaling.toLogicalUnits(c.getWidth(), calculatorZoom, toolkitCompensation),
 							SwingScaling.toLogicalUnits(c.getHeight(), calculatorZoom, toolkitCompensation) });
+					resizeRedrawTimer.restart();
 				}
 			}
 
@@ -197,6 +202,14 @@ public class SwingWindow extends JFrame {
 		if (!(source instanceof Component component))
 			return false;
 		return component == this || SwingUtilities.getWindowAncestor(component) == this;
+	}
+
+	private void repaintAfterResizeSettles() {
+		forceRepaint = true;
+		if (c.isShowing())
+			c.paintImmediately(0, 0, c.getWidth(), c.getHeight());
+		else
+			c.repaint();
 	}
 
 	private void setupButtonsPanel() throws IOException, URISyntaxException {
@@ -465,6 +478,7 @@ public class SwingWindow extends JFrame {
 
 	@Override
 	public void dispose() {
+		resizeRedrawTimer.stop();
 		keyboardInput.releaseAll();
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
 				.removeKeyEventDispatcher(keyboardEventDispatcher);
