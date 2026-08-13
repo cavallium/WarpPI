@@ -44,6 +44,15 @@ public class Keyboard {
 
 	private static KeyboardEventListener additionalListener;
 
+	public static HostKeyboardInput createHostKeyboardInput() {
+		return new HostKeyboardInput(
+				Keyboard::keyPressed,
+				Keyboard::keyReleased,
+				() -> Keyboard.shift,
+				() -> Keyboard.alpha,
+				pressed -> Keyboard.debugKeysDown[1][0] = pressed);
+	}
+
 	public void startKeyboard() {
 		synchronized (Keyboard.class) {
 			if (keyboardThread != null && keyboardThread.isAlive())
@@ -634,7 +643,8 @@ public class Keyboard {
 			case KeyboardAWTValues.VK_SHIFT:
 				debugKey(Key.SHIFT, released);
 				break;
-			case KeyboardAWTValues.VK_CONTROL:
+			case KeyboardAWTValues.VK_ALT:
+			case KeyboardAWTValues.VK_ALT_GRAPH:
 				debugKey(Key.ALPHA, released);
 				break;
 			case KeyboardJogampValues.VK_NUMPAD1:
