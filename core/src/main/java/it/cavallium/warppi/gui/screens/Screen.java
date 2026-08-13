@@ -49,6 +49,15 @@ public abstract class Screen implements KeyboardEventListener, TouchEventListene
 	}
 
 	/**
+	 * Returns whether user-generated keyboard and touch events may be handled while
+	 * this screen is active. Screens that represent an indivisible operation can
+	 * override this to suppress both screen-local and global input actions.
+	 */
+	public boolean allowsUserInput() {
+		return true;
+	}
+
+	/**
 	 * Called when creating the screen
 	 * Called before initialized()
 	 * Called before graphicInitialized()

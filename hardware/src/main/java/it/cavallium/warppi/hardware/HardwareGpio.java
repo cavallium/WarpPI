@@ -35,6 +35,7 @@ public final class HardwareGpio implements Gpio {
 	private final DigitalOutput[] outputLines = new DigitalOutput[GPIO_LINE_COUNT];
 	private volatile GpioRegisters registers;
 	private long outputMask;
+	private long alternateFunctionMask;
 
 	public HardwareGpio() {
 		this(LinuxMemoryMappedRegisters::openGpio);
@@ -56,6 +57,8 @@ public final class HardwareGpio implements Gpio {
 		final GpioRegisters currentRegisters = requireRegisters();
 		if (outputLines[bcmPin] != null)
 			throw new IllegalStateException("BCM GPIO " + bcmPin + " is already configured as output");
+		if (isAlternateFunctionClaimed(bcmPin))
+			throw new IllegalStateException("BCM GPIO " + bcmPin + " is already configured for an alternate function");
 		if (inputLines[bcmPin] == null) {
 			configureFunction(currentRegisters, bcmPin, GPIO_FUNCTION_INPUT);
 			final int register = bankRegister(GPLEV0, bcmPin);
@@ -71,6 +74,8 @@ public final class HardwareGpio implements Gpio {
 		final GpioRegisters currentRegisters = requireRegisters();
 		if (inputLines[bcmPin] != null)
 			throw new IllegalStateException("BCM GPIO " + bcmPin + " is already configured as input");
+		if (isAlternateFunctionClaimed(bcmPin))
+			throw new IllegalStateException("BCM GPIO " + bcmPin + " is already configured for an alternate function");
 		if (outputLines[bcmPin] == null) {
 			final int setRegister = bankRegister(GPSET0, bcmPin);
 			final int clearRegister = bankRegister(GPCLR0, bcmPin);
@@ -84,6 +89,28 @@ public final class HardwareGpio implements Gpio {
 			outputLines[bcmPin].set(initialHigh);
 		}
 		return outputLines[bcmPin];
+	}
+
+	synchronized void claimAlternateFunction(final int bcmPin, final int function) {
+		validateBcmPin(bcmPin);
+		validateAlternateFunction(function);
+		final GpioRegisters currentRegisters = requireRegisters();
+		if (inputLines[bcmPin] != null)
+			throw new IllegalStateException("BCM GPIO " + bcmPin + " is already configured as input");
+		if (outputLines[bcmPin] != null)
+			throw new IllegalStateException("BCM GPIO " + bcmPin + " is already configured as output");
+		if (isAlternateFunctionClaimed(bcmPin))
+			throw new IllegalStateException("BCM GPIO " + bcmPin + " already has an alternate-function owner");
+		configureFunction(currentRegisters, bcmPin, function);
+		alternateFunctionMask |= lineMask(bcmPin);
+	}
+
+	synchronized void releaseAlternateFunction(final int bcmPin) {
+		validateBcmPin(bcmPin);
+		if (!isAlternateFunctionClaimed(bcmPin))
+			return;
+		configureFunction(requireRegisters(), bcmPin, GPIO_FUNCTION_INPUT);
+		alternateFunctionMask &= ~lineMask(bcmPin);
 	}
 
 	@Override
@@ -109,11 +136,12 @@ public final class HardwareGpio implements Gpio {
 		try {
 			clearConfiguredOutputs(currentRegisters);
 			for (int bcmPin = 0; bcmPin < GPIO_LINE_COUNT; bcmPin++)
-				if ((outputMask & lineMask(bcmPin)) != 0)
+				if (((outputMask | alternateFunctionMask) & lineMask(bcmPin)) != 0)
 					configureFunction(currentRegisters, bcmPin, GPIO_FUNCTION_INPUT);
 		} finally {
 			registers = null;
 			outputMask = 0;
+			alternateFunctionMask = 0;
 			Arrays.fill(inputLines, null);
 			Arrays.fill(outputLines, null);
 			currentRegisters.close();
@@ -161,6 +189,15 @@ public final class HardwareGpio implements Gpio {
 
 	private static long lineMask(final int bcmPin) {
 		return 1L << bcmPin;
+	}
+
+	private boolean isAlternateFunctionClaimed(final int bcmPin) {
+		return (alternateFunctionMask & lineMask(bcmPin)) != 0;
+	}
+
+	private static void validateAlternateFunction(final int function) {
+		if (function < 2 || function > 7)
+			throw new IllegalArgumentException("Alternate GPIO function code must be between 2 and 7");
 	}
 
 	private static void validateBcmPin(final int bcmPin) {

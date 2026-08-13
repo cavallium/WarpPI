@@ -75,6 +75,38 @@ class HardwareGpioTest {
 	}
 
 	@Test
+	void ownsAndReleasesAlternateFunctionLines() throws IOException {
+		final FakeRegisters registers = new FakeRegisters();
+		try (HardwareGpio gpio = gpio(registers)) {
+			gpio.claimAlternateFunction(18, 2);
+
+			assertEquals(2, function(registers, 18));
+			assertThrows(IllegalStateException.class, () -> gpio.input(18));
+			assertThrows(IllegalStateException.class, () -> gpio.output(18, false));
+			assertThrows(IllegalStateException.class, () -> gpio.claimAlternateFunction(18, 2));
+
+			gpio.releaseAlternateFunction(18);
+			assertEquals(0, function(registers, 18));
+			gpio.releaseAlternateFunction(18);
+			gpio.output(18, false);
+			assertThrows(IllegalStateException.class, () -> gpio.claimAlternateFunction(18, 2));
+			assertThrows(IllegalArgumentException.class, () -> gpio.claimAlternateFunction(17, 1));
+		}
+	}
+
+	@Test
+	void returnsAlternateFunctionLinesToInputModeOnClose() throws IOException {
+		final FakeRegisters registers = new FakeRegisters();
+		final HardwareGpio gpio = gpio(registers);
+		gpio.claimAlternateFunction(18, 2);
+
+		gpio.close();
+
+		assertEquals(0, function(registers, 18));
+		assertTrue(registers.closed);
+	}
+
+	@Test
 	void closesOutputsLowAndReturnsThemToInputMode() throws IOException {
 		final FakeRegisters registers = new FakeRegisters();
 		final HardwareGpio gpio = gpio(registers);

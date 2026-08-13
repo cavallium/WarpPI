@@ -512,7 +512,8 @@ public final class DisplayManager implements RenderingLoop {
 		return (TouchEvent t) -> {
 			boolean refresh = false;
 			final Screen currentScreen = screen;
-			if (currentScreen != null && currentScreen.isReadyForInput()
+			if (currentScreen != null && currentScreen.allowsUserInput()
+					&& currentScreen.isReadyForInput()
 					&& executeTouchEventOnScreen(t, currentScreen)) {
 				refresh = true;
 			} else {

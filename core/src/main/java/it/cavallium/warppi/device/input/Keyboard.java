@@ -6,12 +6,14 @@ import it.cavallium.warppi.Platform.Gpio;
 import it.cavallium.warppi.Platform.Gpio.DigitalInput;
 import it.cavallium.warppi.Platform.Gpio.DigitalOutput;
 import it.cavallium.warppi.StaticVars;
+import it.cavallium.warppi.device.Device;
 import it.cavallium.warppi.device.chip.ParallelToSerial;
 import it.cavallium.warppi.device.chip.SerialToParallel;
 import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.event.KeyboardEventListener;
+import it.cavallium.warppi.gui.DisplayManager;
 import it.cavallium.warppi.gui.screens.AppsMenuScreen;
 import it.cavallium.warppi.gui.screens.KeyboardDebugScreen;
 import it.cavallium.warppi.gui.screens.Screen;
@@ -806,12 +808,17 @@ public class Keyboard {
 	}
 
 	public synchronized static void keyPressed(final Key k) {
+		final DisplayManager displayManager = currentDisplayManager();
+		final Screen screen = displayManager == null ? null : displayManager.getScreen();
+		if (isUserInputBlocked(screen))
+			return;
+
 		boolean done = false;
 		if (Keyboard.additionalListener != null) {
 			done = dispatchKeyPressed(Keyboard.additionalListener, new KeyPressedEvent(k));
 		}
-		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager() != null) {
-			final Screen scr = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
+		if (displayManager != null) {
+			final Screen scr = screen;
 			boolean refresh = false;
 			boolean scrdone = false;
 			if (scr != null && scr.isReadyForInput()) {
@@ -904,13 +911,18 @@ public class Keyboard {
 	}
 
 	public synchronized static void keyReleased(final Key k) {
+		final DisplayManager displayManager = currentDisplayManager();
+		final Screen screen = displayManager == null ? null : displayManager.getScreen();
+		if (isUserInputBlocked(screen))
+			return;
+
 		boolean done = false;
 		if (Keyboard.additionalListener != null) {
 			done = dispatchKeyReleased(Keyboard.additionalListener, new KeyReleasedEvent(k));
 		}
 		boolean refresh = false;
-		if (WarpPI.INSTANCE.getHardwareDevice().getDisplayManager() != null) {
-			final Screen scr = WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().getScreen();
+		if (displayManager != null) {
+			final Screen scr = screen;
 			if (scr != null && scr.isReadyForInput()
 					&& dispatchKeyReleased(scr, new KeyReleasedEvent(k))) {
 				refresh = true;
@@ -937,6 +949,15 @@ public class Keyboard {
 			reportListenerFailure(exception);
 			return false;
 		}
+	}
+
+	static boolean isUserInputBlocked(final Screen screen) {
+		return screen != null && (!screen.allowsUserInput() || !screen.isReadyForInput());
+	}
+
+	private static DisplayManager currentDisplayManager() {
+		final Device device = WarpPI.INSTANCE.getHardwareDevice();
+		return device == null ? null : device.getDisplayManager();
 	}
 
 	static boolean dispatchKeyReleased(final KeyboardEventListener listener, final KeyReleasedEvent event) {

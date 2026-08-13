@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import it.cavallium.warppi.Platform.Semaphore;
 import it.cavallium.warppi.device.display.BacklightOutputDevice;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
+import it.cavallium.warppi.event.TouchStartEvent;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
@@ -81,6 +82,25 @@ class DisplayManagerScreenTransitionTest {
 				"hud:render",
 				"hud:top-background",
 				"hud:top"), renderer.events);
+	}
+
+	@Test
+	void suppressesTouchEventsWhenTheActiveScreenBlocksUserInput() {
+		final RecordingRenderer renderer = new RecordingRenderer();
+		final RecordingEngine engine = new RecordingEngine(renderer);
+		final TestScreen screen = new TestScreen(0xFF102030, "blocked", renderer);
+		screen.userInputAllowed = false;
+		final DisplayManager manager = manager(engine, screen);
+		manager.renderer = renderer;
+		manager.setScreen(screen);
+		manager.refresh(true);
+
+		manager.getTouchEventListener().accept(new TouchStartEvent(List.of(), List.of()));
+		assertEquals(0, screen.touchStarts);
+
+		screen.userInputAllowed = true;
+		manager.getTouchEventListener().accept(new TouchStartEvent(List.of(), List.of()));
+		assertEquals(1, screen.touchStarts);
 	}
 
 	private static DisplayManager manager(final GraphicEngine engine, final Screen initialScreen) {
@@ -202,6 +222,8 @@ class DisplayManagerScreenTransitionTest {
 		private final String name;
 		private final RecordingRenderer renderer;
 		private Runnable onGraphicInitialization = () -> {};
+		private boolean userInputAllowed = true;
+		private int touchStarts;
 
 		private TestScreen(final int backgroundColor, final String name,
 				final RecordingRenderer renderer) {
@@ -221,6 +243,17 @@ class DisplayManagerScreenTransitionTest {
 		@Override
 		public void graphicInitialized(final ScreenContext ctx) {
 			onGraphicInitialization.run();
+		}
+
+		@Override
+		public boolean allowsUserInput() {
+			return userInputAllowed;
+		}
+
+		@Override
+		public boolean onTouchStart(final TouchStartEvent event) {
+			touchStarts++;
+			return true;
 		}
 
 		@Override

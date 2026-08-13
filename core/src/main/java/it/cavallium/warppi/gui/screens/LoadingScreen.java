@@ -45,6 +45,11 @@ public class LoadingScreen extends Screen {
 	public void graphicInitialized(ScreenContext ctx) throws InterruptedException {}
 
 	@Override
+	public boolean allowsUserInput() {
+		return false;
+	}
+
+	@Override
 	public void beforeRender(ScreenContext ctx, final float dt) {
 		loadingTextTranslation = GraphicUtils.sinDeg(endLoading * 90f) * 10f;
 

@@ -22,6 +22,7 @@ import java.util.Map;
 final class LinuxMemoryMappedRegisters implements GpioRegisters {
 	private static final Path GPIO_DEVICE = Path.of("/dev/gpiomem");
 	private static final long GPIO_MAP_SIZE = 4_096;
+	private static final long PAGE_SIZE = 4_096;
 	private static final VarHandle NATIVE_INT = ValueLayout.JAVA_INT
 			.withOrder(ByteOrder.nativeOrder())
 			.varHandle();
@@ -39,14 +40,21 @@ final class LinuxMemoryMappedRegisters implements GpioRegisters {
 	}
 
 	static LinuxMemoryMappedRegisters map(final Path path, final long byteSize) throws IOException {
+		return map(path, byteSize, 0);
+	}
+
+	static LinuxMemoryMappedRegisters map(final Path path, final long byteSize,
+			final long fileOffset) throws IOException {
 		if (byteSize <= 0)
 			throw new IllegalArgumentException("byteSize must be positive");
+		if (fileOffset < 0 || fileOffset % PAGE_SIZE != 0)
+			throw new IllegalArgumentException("fileOffset must be a non-negative page boundary");
 
 		final Arena arena = Arena.ofShared();
 		MemorySegment address = null;
 		boolean managed = false;
 		try (NativeFile file = NativeFile.open(path)) {
-			address = Native.mmap(file.descriptor(), byteSize);
+			address = Native.mmap(file.descriptor(), byteSize, fileOffset, path.toString());
 			final MemorySegment mapped = address.reinterpret(byteSize, arena,
 					segment -> Native.munmapUnchecked(segment, byteSize));
 			managed = true;
@@ -165,7 +173,8 @@ final class LinuxMemoryMappedRegisters implements GpioRegisters {
 			}
 		}
 
-		static MemorySegment mmap(final int descriptor, final long byteSize) throws IOException {
+		static MemorySegment mmap(final int descriptor, final long byteSize,
+				final long fileOffset, final String target) throws IOException {
 			try (Arena callArena = Arena.ofConfined()) {
 				final MemorySegment capturedState = callArena.allocate(CAPTURE_STATE_LAYOUT);
 				final MemorySegment address = (MemorySegment) MMAP.invokeWithArguments(
@@ -175,14 +184,14 @@ final class LinuxMemoryMappedRegisters implements GpioRegisters {
 						PROT_READ | PROT_WRITE,
 						MAP_SHARED,
 						descriptor,
-						canonicalInteger(C_LONG, 0));
+						canonicalInteger(C_LONG, fileOffset));
 				if (isMapFailed(address))
-					throw failure("mmap", "shared GPIO register page", capturedState);
+					throw failure("mmap", target + " at offset " + fileOffset, capturedState);
 				return address;
 			} catch (final IOException failure) {
 				throw failure;
 			} catch (final Throwable failure) {
-				throw invocationFailure("mmap", "shared GPIO register page", failure);
+				throw invocationFailure("mmap", target + " at offset " + fileOffset, failure);
 			}
 		}
 

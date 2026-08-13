@@ -1,5 +1,6 @@
 package it.cavallium.warppi.hardware;
 
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
@@ -14,7 +15,7 @@ class HardwarePlatformTest {
 		platform.setArguments(Boot.parseStartupArguments(new String[0]));
 
 		assertNotNull(platform.getDisplayOutputDevice());
-		assertNotNull(platform.getBacklightOutputDevice());
+		assertInstanceOf(HardwareBacklightOutputDevice.class, platform.getBacklightOutputDevice());
 		assertNotNull(platform.getKeyboardInputDevice());
 		assertNotNull(platform.getTouchInputDevice());
 		assertNotNull(platform.getDeviceStateDevice());

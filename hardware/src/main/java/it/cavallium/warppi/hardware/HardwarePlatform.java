@@ -14,7 +14,6 @@ import it.cavallium.warppi.device.DeviceStateDevice;
 import it.cavallium.warppi.device.display.BacklightOutputDevice;
 import it.cavallium.warppi.device.display.DisplayOutputDevice;
 import it.cavallium.warppi.device.display.NoDisplaysAvailableException;
-import it.cavallium.warppi.device.display.NullBacklightOutputDevice;
 import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.device.input.KeyboardInputDevice;
 import it.cavallium.warppi.device.input.PIHardwareTouchDevice;
@@ -30,7 +29,8 @@ public final class HardwarePlatform implements Platform {
 	private final ImageUtils imageUtils = new HardwareImageUtils();
 	private final String osName = System.getProperty("os.name").toLowerCase();
 	private final HardwareSettings settings = new HardwareSettings();
-	private final BacklightOutputDevice backlightOutputDevice = new NullBacklightOutputDevice();
+	private final HardwareBacklightOutputDevice backlightOutputDevice =
+			new HardwareBacklightOutputDevice(gpio);
 	private Boolean runningOnRaspberryOverride;
 	private StartupArguments arguments;
 	private DisplayOutputDevice displayOutputDevice;
@@ -81,9 +81,13 @@ public final class HardwarePlatform implements Platform {
 	@Override
 	public void exit(final int value) {
 		try {
-			gpio.close();
+			backlightOutputDevice.close();
 		} finally {
-			System.exit(value);
+			try {
+				gpio.close();
+			} finally {
+				System.exit(value);
+			}
 		}
 	}
 

@@ -18,6 +18,7 @@ import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.event.KeyboardEventListener;
 import it.cavallium.warppi.gui.screens.AppsMenuScreen;
+import it.cavallium.warppi.gui.screens.LoadingScreen;
 
 class KeyboardEventDispatchTest {
 
@@ -26,6 +27,17 @@ class KeyboardEventDispatchTest {
 		assertInstanceOf(AppsMenuScreen.class, Keyboard.screenOpenedByGlobalKey(Key.SETTINGS));
 		assertNull(Keyboard.screenOpenedByGlobalKey(Key.BRIGHTNESS_CYCLE));
 		assertNull(Keyboard.screenOpenedByGlobalKey(Key.BRIGHTNESS_CYCLE_REVERSE));
+	}
+
+	@Test
+	void blocksEveryInputFallbackWhileLoading() {
+		assertTrue(Keyboard.isUserInputBlocked(new LoadingScreen()));
+		final AppsMenuScreen readyScreen = new AppsMenuScreen();
+		assertTrue(Keyboard.isUserInputBlocked(readyScreen));
+		readyScreen.initialized = true;
+		readyScreen.graphicInitialized = true;
+		assertFalse(Keyboard.isUserInputBlocked(readyScreen));
+		assertFalse(Keyboard.isUserInputBlocked(null));
 	}
 
 	@Test
