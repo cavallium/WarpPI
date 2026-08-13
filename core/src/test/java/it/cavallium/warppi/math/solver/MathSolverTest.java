@@ -2,6 +2,8 @@ package it.cavallium.warppi.math.solver;
 
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
+import it.cavallium.warppi.math.functions.Division;
+import it.cavallium.warppi.math.functions.Expression;
 import it.cavallium.warppi.math.functions.Multiplication;
 import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.functions.Power;
@@ -11,6 +13,9 @@ import it.cavallium.warppi.math.functions.Variable;
 import it.cavallium.warppi.math.functions.Variable.V_TYPE;
 import it.cavallium.warppi.math.rules.Rule;
 import it.cavallium.warppi.math.rules.RuleType;
+import it.cavallium.warppi.math.rules.functions.DivisionRule;
+import it.cavallium.warppi.math.rules.functions.ExpressionRule;
+import it.cavallium.warppi.math.rules.functions.SumRule;
 import it.cavallium.warppi.math.rules.dsl.Pattern;
 import it.cavallium.warppi.math.rules.dsl.PatternRule;
 import it.cavallium.warppi.math.rules.dsl.patterns.MultiplicationPattern;
@@ -31,6 +36,23 @@ import static org.junit.jupiter.api.Assertions.assertTimeoutPreemptively;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class MathSolverTest {
+	@Test
+	void addsAnIntegerAndFractionExactlyInAlgebraMode() throws InterruptedException, Error {
+		final TestMathContext context = new TestMathContext();
+		context.exactMode = true;
+		context.add(new DivisionRule());
+		context.add(new ExpressionRule());
+		context.add(new SumRule());
+		final Function input = new Expression(context, new Sum(context,
+				new Number(context, 12),
+				new Division(context, new Number(context, 3), new Number(context, 2))));
+		final Function expected = new Division(context, new Number(context, 27), new Number(context, 2));
+
+		final ObjectArrayList<ObjectArrayList<Function>> steps = new MathSolver(input).solveAllSteps();
+
+		assertEquals(expected, steps.get(steps.size() - 1).get(0));
+	}
+
 	@Test
 	void omitsTheInitialExpressionWhenNothingChanges() throws InterruptedException, Error {
 		final TestMathContext context = new TestMathContext();
