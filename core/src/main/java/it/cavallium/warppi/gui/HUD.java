@@ -48,6 +48,11 @@ public abstract class HUD implements GraphicalInterface {
 
 	public abstract void renderTopmostBackground();
 
+	/** Color that owns the framebuffer outside the screen viewport. */
+	public int getBackgroundColor() {
+		return Screen.DEFAULT_BACKGROUND_COLOR;
+	}
+
 	@Override
 	public abstract void renderTopmost(RenderContext ctx);
 

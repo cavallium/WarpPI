@@ -57,7 +57,38 @@ class DisplayManagerScreenTransitionTest {
 		assertEquals(List.of("clear:fff1efe5", "render:replacement"), renderer.events);
 	}
 
+	@Test
+	void keepsTheStatusBarBackgroundWhilePaintingTheNewScreenViewportImmediately() {
+		final RecordingRenderer renderer = new RecordingRenderer();
+		final RecordingEngine engine = new RecordingEngine(renderer);
+		final TestScreen oldScreen = new TestScreen(0xFF102030, "old", renderer);
+		final TestScreen newScreen = new TestScreen(0xFFF1EFE5, "new", renderer);
+		final DisplayManager manager = manager(engine, oldScreen, true);
+		manager.renderer = renderer;
+
+		manager.setScreen(oldScreen);
+		manager.refresh(true);
+		renderer.events.clear();
+
+		manager.setScreen(newScreen);
+		manager.refresh(true);
+
+		assertEquals(List.of(
+				"clear:ffabcdef",
+				"fill:fff1efe5:0,20,320,220",
+				"hud:background",
+				"render:new",
+				"hud:render",
+				"hud:top-background",
+				"hud:top"), renderer.events);
+	}
+
 	private static DisplayManager manager(final GraphicEngine engine, final Screen initialScreen) {
+		return manager(engine, initialScreen, false);
+	}
+
+	private static DisplayManager manager(final GraphicEngine engine, final Screen initialScreen,
+			final boolean hudVisible) {
 		final DisplayOutputDevice display = new DisplayOutputDevice() {
 			private final int[] size = {320, 240};
 
@@ -89,12 +120,81 @@ class DisplayManagerScreenTransitionTest {
 			public void acquire() {
 			}
 		};
-		final CalculatorHUD hud = new CalculatorHUD();
-		hud.visible = false;
+		final RecordingHud hud = new RecordingHud(((RecordingEngine) engine).renderer.events);
+		hud.visible = hudVisible;
 		final DisplayManager manager = new DisplayManager(display, backlight, hud,
 				initialScreen, "test", semaphore);
 		manager.fonts = new BinaryFont[1];
 		return manager;
+	}
+
+	private static final class RecordingHud extends HUD {
+		private final List<String> events;
+
+		private RecordingHud(final List<String> events) {
+			this.events = events;
+		}
+
+		@Override
+		public void created() {
+		}
+
+		@Override
+		public void graphicInitialized() {
+		}
+
+		@Override
+		public void initialized() {
+		}
+
+		@Override
+		public void renderBackground() {
+			events.add("hud:background");
+		}
+
+		@Override
+		public void render(final RenderContext ctx) {
+			events.add("hud:render");
+		}
+
+		@Override
+		public void renderTopmostBackground() {
+			events.add("hud:top-background");
+		}
+
+		@Override
+		public int getBackgroundColor() {
+			return 0xFFABCDEF;
+		}
+
+		@Override
+		public void renderTopmost(final RenderContext ctx) {
+			events.add("hud:top");
+		}
+
+		@Override
+		public void beforeRender(final ScreenContext ctx, final float dt) {
+		}
+
+		@Override
+		public int getMarginLeft() {
+			return 0;
+		}
+
+		@Override
+		public int getMarginTop() {
+			return 20;
+		}
+
+		@Override
+		public int getMarginRight() {
+			return 0;
+		}
+
+		@Override
+		public int getMarginBottom() {
+			return 0;
+		}
 	}
 
 	private static final class TestScreen extends Screen {
@@ -174,6 +274,7 @@ class DisplayManagerScreenTransitionTest {
 	private static final class RecordingRenderer extends ReboundedRenderer {
 		private final List<String> events = new ArrayList<>();
 		private int clearColor;
+		private int color;
 
 		private RecordingRenderer() {
 			super(new NoGuiEngine().getRenderer(), 0, 0, 320, 240);
@@ -187,6 +288,19 @@ class DisplayManagerScreenTransitionTest {
 		@Override
 		public void glClear(final int width, final int height) {
 			events.add("clear:" + Integer.toHexString(clearColor));
+		}
+
+		@Override
+		public void glColor(final int color) {
+			this.color = color;
+		}
+
+		@Override
+		public void glFillColor(final float x, final float y,
+				final float width, final float height) {
+			events.add("fill:" + Integer.toHexString(color) + ":"
+					+ Math.round(x) + "," + Math.round(y) + ","
+					+ Math.round(width) + "," + Math.round(height));
 		}
 
 		@Override

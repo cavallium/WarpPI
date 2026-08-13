@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.extra.mario.MarioScreen;
 import it.cavallium.warppi.extra.tetris.TetrisScreen;
 import it.cavallium.warppi.gui.screens.AppsMenuScreen.App;
@@ -14,21 +15,42 @@ import it.cavallium.warppi.gui.screens.AppsMenuScreen.App;
 class AppsMenuScreenTest {
 
 	@Test
-	void alwaysOffersTheGuideGamesAndSettings() {
-		assertEquals(List.of(App.KEYBOARD_GUIDE, App.TETRIS, App.MARIO, App.SETTINGS),
+	void alwaysOffersTheCalculatorGamesGuideAndSettings() {
+		assertEquals(List.of(App.CALCULATOR, App.TETRIS, App.MARIO,
+				App.KEYBOARD_GUIDE, App.SETTINGS),
 				AppsMenuScreen.availableApps(false));
 	}
 
 	@Test
 	void addsDiagnosticUisOnlyWhenDebugIsEnabled() {
-		assertEquals(List.of(App.KEYBOARD_GUIDE, App.TETRIS, App.MARIO, App.SETTINGS,
+		assertEquals(List.of(App.CALCULATOR, App.TETRIS, App.MARIO,
+				App.KEYBOARD_GUIDE, App.SETTINGS,
 				App.KEYBOARD_DEBUG, App.UI_DEMO), AppsMenuScreen.availableApps(true));
 	}
 
 	@Test
 	void usesGlyphsSupportedByTheCalculatorMenuFont() {
-		for (final App app : App.values())
+		for (final App app : App.values()) {
 			assertEquals(app.label().toUpperCase(), app.label());
+			assertEquals(app.subtitle().toUpperCase(), app.subtitle());
+			assertEquals(app.badge().toUpperCase(), app.badge());
+		}
+	}
+
+	@Test
+	void navigatesTheHeroAndTwoColumnGridSpatially() {
+		final int normalAppCount = AppsMenuScreen.availableApps(false).size();
+		assertEquals(1, AppsMenuScreen.nextSelection(0, normalAppCount, Key.DOWN));
+		assertEquals(2, AppsMenuScreen.nextSelection(1, normalAppCount, Key.RIGHT));
+		assertEquals(3, AppsMenuScreen.nextSelection(1, normalAppCount, Key.DOWN));
+		assertEquals(4, AppsMenuScreen.nextSelection(3, normalAppCount, Key.RIGHT));
+		assertEquals(0, AppsMenuScreen.nextSelection(4, normalAppCount, Key.DOWN));
+		assertEquals(4, AppsMenuScreen.nextSelection(0, normalAppCount, Key.UP));
+		assertEquals(0, AppsMenuScreen.nextSelection(2, normalAppCount, Key.UP));
+
+		final int debugAppCount = AppsMenuScreen.availableApps(true).size();
+		assertEquals(5, AppsMenuScreen.nextSelection(3, debugAppCount, Key.DOWN));
+		assertEquals(6, AppsMenuScreen.nextSelection(5, debugAppCount, Key.RIGHT));
 	}
 
 	@Test

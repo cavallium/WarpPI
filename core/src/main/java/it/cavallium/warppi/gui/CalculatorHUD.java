@@ -12,6 +12,7 @@ import it.cavallium.warppi.util.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class CalculatorHUD extends HUD {
+	private static final int BACKGROUND_COLOR = 0xFFC5C2AF;
 
 	@Override
 	public void created() throws InterruptedException {
@@ -43,8 +44,13 @@ public class CalculatorHUD extends HUD {
 		final DisplayOutputDevice display = d.display;
 		final GraphicEngine engine = display.getGraphicEngine();
 
-		r.glColor(0xFFc5c2af);
+		r.glColor(BACKGROUND_COLOR);
 		r.glFillColor(0, 0, engine.getWidth(), 20);
+	}
+
+	@Override
+	public int getBackgroundColor() {
+		return BACKGROUND_COLOR;
 	}
 
 	@Override

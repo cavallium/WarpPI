@@ -328,8 +328,25 @@ public final class DisplayManager implements RenderingLoop {
 				e.printStackTrace();
 			}
 		}
-		renderer.glClearColor(frameScreen.getBackgroundColor());
-		renderer.glClear(graphicEngine.getWidth(), graphicEngine.getHeight());
+		final int screenBackgroundColor = frameScreen.getBackgroundColor();
+		if (hud.visible) {
+			/*
+			 * A screen owns only the viewport inside the HUD margins. Keeping the HUD
+			 * background in the outer framebuffer prevents an app transition from
+			 * temporarily replacing (or visually erasing) the status bar.
+			 */
+			renderer.glClearColor(hud.getBackgroundColor());
+			renderer.glClear(graphicEngine.getWidth(), graphicEngine.getHeight());
+			final int[] displaySize = display.getDisplaySize();
+			final int screenWidth = displaySize[0] - hud.getMarginLeft() - hud.getMarginRight();
+			final int screenHeight = displaySize[1] - hud.getMarginTop() - hud.getMarginBottom();
+			renderer.glColor(screenBackgroundColor);
+			renderer.glFillColor(hud.getMarginLeft(), hud.getMarginTop(),
+					screenWidth, screenHeight);
+		} else {
+			renderer.glClearColor(screenBackgroundColor);
+			renderer.glClear(graphicEngine.getWidth(), graphicEngine.getHeight());
+		}
 	}
 
 	private void draw_world(final Screen frameScreen) {
