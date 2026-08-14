@@ -1,6 +1,7 @@
 package it.cavallium.warppi.gui.expression.containers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Proxy;
@@ -50,5 +51,38 @@ class InputContainerCaretMeasurementTest {
 		final InputContainer.CaretBounds previous = input.measureCaret(null);
 		assertEquals(caretPosition - 1, input.getCaretPosition());
 		assertTrue(previous.x() < bounds.x());
+	}
+
+	@Test
+	void movesVerticallyBetweenFractionRowsAndKeepsTheHorizontalColumn() {
+		final NormalInputContainer input = new NormalInputContainer(new InputContext());
+		input.typeChar('1');
+		input.typeChar(MathematicalSymbols.DIVISION);
+		for (int digit = 0; digit < 80; digit++) {
+			input.typeChar((char) ('0' + digit % 10));
+		}
+
+		final int denominatorPosition = input.getCaretPosition();
+		final InputContainer.CaretBounds denominatorCaret = input.measureCaret(null);
+		assertTrue(input.moveUp(null));
+		final InputContainer.CaretBounds numeratorCaret = input.measureCaret(null);
+		assertTrue(numeratorCaret.y() < denominatorCaret.y());
+
+		assertTrue(input.moveDown(null));
+		assertEquals(denominatorPosition, input.getCaretPosition());
+		assertEquals(denominatorCaret, input.measureCaret(null));
+	}
+
+	@Test
+	void leavesVerticalKeysAtTheCurrentPositionWhenThereIsNoOtherRow() {
+		final NormalInputContainer input = new NormalInputContainer(new InputContext());
+		input.typeChar('1');
+		input.typeChar('+');
+		input.typeChar('2');
+		final int position = input.getCaretPosition();
+
+		assertFalse(input.moveUp(null));
+		assertFalse(input.moveDown(null));
+		assertEquals(position, input.getCaretPosition());
 	}
 }

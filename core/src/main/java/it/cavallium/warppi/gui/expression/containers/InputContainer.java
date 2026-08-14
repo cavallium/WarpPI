@@ -30,6 +30,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 	private int cachedCaretPosition = -1;
 	private int cachedCaretWidth = -1;
 	private int cachedCaretHeight = -1;
+	private Integer verticalCaretAnchorX;
 	protected InputContext inputContext;
 
 	public synchronized InputContext getInputContext() {
@@ -71,6 +72,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 		this.inputContext = ic;
 		this.root = old.root == null ? null : old.root.clone(null, ic);
 		this.parsed = old.parsed;
+		this.verticalCaretAnchorX = old.verticalCaretAnchorX;
 	}
 
 	public void typeChar(final char c) {
@@ -80,6 +82,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 
 	public void typeBlock(final Block b) {
 		invalidateCaretMeasurement();
+		resetVerticalCaretAnchor();
 		if (b != null) {
 			caret.resetRemaining();
 			if (root.insertBlock(caret, b)) {
@@ -99,6 +102,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 
 	public void del() {
 		invalidateCaretMeasurement();
+		resetVerticalCaretAnchor();
 		caret.resetRemaining();
 		if (root.deleteBlock(caret)) {
 			root.recomputeDimensions();
@@ -125,6 +129,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 
 	public void moveLeft() {
 		invalidateCaretMeasurement();
+		resetVerticalCaretAnchor();
 		final int curPos = caret.getPosition();
 		if (curPos > 0) {
 			caret.setPosition(curPos - 1);
@@ -138,6 +143,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 
 	public void moveRight(final int delta) {
 		invalidateCaretMeasurement();
+		resetVerticalCaretAnchor();
 
 		final int curPos = caret.getPosition();
 		if (curPos + delta < maxPosition) {
@@ -152,6 +158,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 
 	public void moveTo(final int position) {
 		invalidateCaretMeasurement();
+		resetVerticalCaretAnchor();
 		if (position < maxPosition) {
 			caret.setPosition(position);
 		} else {
@@ -232,6 +239,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 	public void clear() {
 		caret = new Caret(CaretState.VISIBLE_ON, 0);
 		invalidateCaretMeasurement();
+		resetVerticalCaretAnchor();
 		root.clear();
 		maxPosition = root.computeCaretMaxBound();
 		recomputeDimensions();
@@ -247,6 +255,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 
 	public void setCaretPosition(final int pos) {
 		invalidateCaretMeasurement();
+		resetVerticalCaretAnchor();
 		if (pos > 0 && pos < maxPosition) {
 			caret.setPosition(pos);
 		}
@@ -290,11 +299,96 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 		return cachedCaretBounds;
 	}
 
+	public boolean moveUp(final DisplayOutputDevice display) {
+		return moveVertically(display, -1);
+	}
+
+	public boolean moveDown(final DisplayOutputDevice display) {
+		return moveVertically(display, 1);
+	}
+
+	private boolean moveVertically(final DisplayOutputDevice display, final int direction) {
+		final CaretBounds[] layout = measureCaretLayout(display);
+		final int position = caret.getPosition();
+		if (position < 0 || position >= layout.length || layout[position] == null) {
+			return false;
+		}
+		final CaretBounds current = layout[position];
+		final int anchorX = verticalCaretAnchorX != null
+				? verticalCaretAnchorX : current.x() + current.width() / 2;
+		int target = findVerticalTarget(layout, position, current, anchorX, direction, true);
+		if (target < 0) {
+			target = findVerticalTarget(layout, position, current, anchorX, direction, false);
+		}
+		if (target < 0) {
+			return false;
+		}
+		verticalCaretAnchorX = anchorX;
+		caret.setPosition(target);
+		caret.turnOn();
+		caretTime = 0;
+		closeExtra();
+		invalidateCaretMeasurement();
+		return true;
+	}
+
+	private CaretBounds[] measureCaretLayout(final DisplayOutputDevice display) {
+		final CaretBounds[] bounds = new CaretBounds[Math.max(0, maxPosition)];
+		final CaretLayoutCollector collector = new CaretLayoutCollector(bounds);
+		root.draw(display, CARET_MEASURING_RENDERER, 0, 0, collector);
+		return bounds;
+	}
+
+	private static int findVerticalTarget(final CaretBounds[] layout, final int currentPosition,
+			final CaretBounds current, final int anchorX, final int direction,
+			final boolean requireSeparateRow) {
+		final int currentCenterY = current.y() + current.height() / 2;
+		int bestPosition = -1;
+		int bestVerticalDistance = Integer.MAX_VALUE;
+		int bestHorizontalDistance = Integer.MAX_VALUE;
+		for (int position = 0; position < layout.length; position++) {
+			if (position == currentPosition || layout[position] == null) {
+				continue;
+			}
+			final CaretBounds candidate = layout[position];
+			final int candidateCenterY = candidate.y() + candidate.height() / 2;
+			final boolean inDirection = direction < 0
+					? candidateCenterY < currentCenterY : candidateCenterY > currentCenterY;
+			if (!inDirection) {
+				continue;
+			}
+			if (requireSeparateRow) {
+				final boolean separate = direction < 0
+						? candidate.y() + candidate.height() <= current.y()
+						: candidate.y() >= current.y() + current.height();
+				if (!separate) {
+					continue;
+				}
+			}
+			final int candidateCenterX = candidate.x() + candidate.width() / 2;
+			final int horizontalDistance = Math.abs(candidateCenterX - anchorX);
+			final int verticalDistance = Math.abs(candidateCenterY - currentCenterY);
+			if (verticalDistance < bestVerticalDistance
+					|| verticalDistance == bestVerticalDistance
+					&& (horizontalDistance < bestHorizontalDistance
+							|| horizontalDistance == bestHorizontalDistance && position < bestPosition)) {
+				bestVerticalDistance = verticalDistance;
+				bestHorizontalDistance = horizontalDistance;
+				bestPosition = position;
+			}
+		}
+		return bestPosition;
+	}
+
 	private void invalidateCaretMeasurement() {
 		cachedCaretBounds = null;
 		cachedCaretPosition = -1;
 		cachedCaretWidth = -1;
 		cachedCaretHeight = -1;
+	}
+
+	private void resetVerticalCaretAnchor() {
+		verticalCaretAnchorX = null;
 	}
 
 	public record CaretBounds(int x, int y, int width, int height) {}
@@ -324,6 +418,41 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 		@Override public void glDrawStringRight(final float x, final float y, final String text) {}
 		@Override public void glClearSkin() {}
 		@Override public BinaryFont getCurrentFont() { return null; }
+	}
+
+	private static final class CaretLayoutCollector extends Caret {
+		private final CaretBounds[] bounds;
+		private int position;
+		private int x;
+		private int y;
+
+		private CaretLayoutCollector(final CaretBounds[] bounds) {
+			super(CaretState.VISIBLE_ON, 0);
+			this.bounds = bounds;
+		}
+
+		@Override
+		public int getRemaining() {
+			return 0;
+		}
+
+		@Override
+		public void skip(final int amount) {
+			position += amount;
+		}
+
+		@Override
+		public void setLastLocation(final int x, final int y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		@Override
+		public void setLastSize(final int width, final int height) {
+			if (position >= 0 && position < bounds.length) {
+				bounds[position] = new CaretBounds(x, y, width, height);
+			}
+		}
 	}
 
 	/**

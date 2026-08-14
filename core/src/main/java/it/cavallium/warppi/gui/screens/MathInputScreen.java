@@ -51,8 +51,8 @@ public class MathInputScreen extends Screen {
 	private static final int PADDING = 4;
 	private static final int INPUT_VIEWPORT_MAX_HEIGHT = 112;
 	private static final int VIEWPORT_GAP = 6;
-	private static final int RESULT_HEADER_HEIGHT = 13;
 	private static final int PAN_STEP = 32;
+	private static final int VIEWPORT_EDGE_GUTTER = 3;
 
 	private static final BinaryFont fontBig = Utils.getFont(false);
 	private final boolean isCloned;
@@ -74,6 +74,8 @@ public class MathInputScreen extends Screen {
 	private int resultScrollY;
 	private int inputViewportWidth;
 	private int inputViewportHeight;
+	private int inputContentWidth;
+	private int inputContentHeight;
 	private int resultViewportWidth;
 	private int resultViewportHeight;
 	private boolean resultNavigationActive;
@@ -106,6 +108,8 @@ public class MathInputScreen extends Screen {
 		this.inputScrollY = old.inputScrollY;
 		this.resultScrollX = old.resultScrollX;
 		this.resultScrollY = old.resultScrollY;
+		this.inputContentWidth = old.inputContentWidth;
+		this.inputContentHeight = old.inputContentHeight;
 		this.resultNavigationActive = old.resultNavigationActive;
 		this.isCloned = true;
 	}
@@ -199,7 +203,7 @@ public class MathInputScreen extends Screen {
 	}
 
 	private void drawInputViewport(final RenderContext ctx) {
-		inputViewportWidth = Math.max(1, ctx.getWidth() - PADDING * 2);
+		inputViewportWidth = Math.max(1, ctx.getWidth() - PADDING * 2 - 2);
 		final int availableHeight = Math.max(1, ctx.getHeight() - PADDING * 2);
 		final int reservedResultHeight = !result.isContentEmpty() && !computingResult
 				? Math.min(80, Math.max(32, availableHeight / 3)) : 0;
@@ -212,44 +216,38 @@ public class MathInputScreen extends Screen {
 		userInput.draw(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display,
 				viewport, -inputScrollX, -inputScrollY);
 		drawScrollIndicators(ctx.getRenderer(), PADDING, PADDING,
-				inputViewportWidth, inputViewportHeight, userInput.getWidth(), userInput.getHeight(),
+				inputViewportWidth, inputViewportHeight, inputContentWidth, inputContentHeight,
 				inputScrollX, inputScrollY, false);
 	}
 
 	private void drawResultViewport(final RenderContext ctx) {
-		final int top = Math.min(ctx.getHeight() - 1, PADDING + inputViewportHeight + VIEWPORT_GAP);
-		resultViewportWidth = Math.max(1, ctx.getWidth() - PADDING * 2);
-		final int availableResultHeight = Math.max(1, ctx.getHeight() - top - PADDING);
-		final boolean needsHeader = result.getWidth() > resultViewportWidth
-				|| result.getHeight() > availableResultHeight;
-		final int contentTop = top + (needsHeader ? RESULT_HEADER_HEIGHT : 0);
-		resultViewportHeight = Math.max(1,
-				availableResultHeight - (needsHeader ? RESULT_HEADER_HEIGHT : 0));
+		final int top = Math.min(ctx.getHeight() - 1,
+				PADDING + inputViewportHeight + VIEWPORT_GAP);
+		resultViewportWidth = Math.max(1, ctx.getWidth() - PADDING * 2 - 2);
+		resultViewportHeight = Math.max(1, ctx.getHeight() - top - PADDING - 2);
 		clampResultScroll();
 		final Renderer viewport = ctx.getRenderer().getClippedInstance(
-				PADDING, contentTop, resultViewportWidth, resultViewportHeight);
+				PADDING, top, resultViewportWidth, resultViewportHeight);
 		result.draw(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display,
 				viewport, -resultScrollX, -resultScrollY);
 		final boolean oversized = isResultOversized();
-		drawScrollIndicators(ctx.getRenderer(), PADDING, contentTop,
-				resultViewportWidth, resultViewportHeight, result.getWidth(), result.getHeight(),
+		drawScrollIndicators(ctx.getRenderer(), PADDING, top,
+				resultViewportWidth, resultViewportHeight,
+				resultScrollableWidth(), resultScrollableHeight(),
 				resultScrollX, resultScrollY, resultNavigationActive && oversized);
-		if (needsHeader) {
-			final BinaryFont font = Utils.getFont(true, false);
-			font.use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
-			ctx.getRenderer().glColor(VIEWPORT_INDICATOR_COLOR);
-			ctx.getRenderer().glDrawStringLeft(PADDING + 2, top + 2,
-					resultNavigationActive ? "RESULT: ARROWS PAN  OK EDITS" : "UP/DOWN: VIEW FULL RESULT");
-		}
 	}
 
 	private void followInputCaret(final int viewportWidth, final int viewportHeight) {
 		final InputContainer.CaretBounds bounds = userInput.measureCaret(
 				WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
+		inputContentWidth = Math.max(userInput.getWidth() + VIEWPORT_EDGE_GUTTER,
+				bounds.x() + bounds.width() + VIEWPORT_EDGE_GUTTER);
+		inputContentHeight = Math.max(userInput.getHeight(),
+				bounds.y() + bounds.height());
 		inputScrollX = reveal(bounds.x(), bounds.x() + bounds.width(), inputScrollX,
-				viewportWidth, userInput.getWidth());
+				viewportWidth, inputContentWidth);
 		inputScrollY = reveal(bounds.y(), bounds.y() + bounds.height(), inputScrollY,
-				viewportHeight, userInput.getHeight());
+				viewportHeight, inputContentHeight);
 	}
 
 	private static int reveal(final int start, final int end, final int currentOffset,
@@ -276,9 +274,9 @@ public class MathInputScreen extends Screen {
 			final int thumbX = x + 2 + (int) ((long) travel * scrollX
 					/ Math.max(1, contentWidth - viewportWidth));
 			renderer.glColor(VIEWPORT_TRACK_COLOR);
-			renderer.glFillColor(x + 2, y + viewportHeight - 2, trackWidth, 2);
+			renderer.glFillColor(x + 2, y + viewportHeight, trackWidth, 2);
 			renderer.glColor(color);
-			renderer.glFillColor(thumbX, y + viewportHeight - 2, thumbWidth, 2);
+			renderer.glFillColor(thumbX, y + viewportHeight, thumbWidth, 2);
 		}
 		if (contentHeight > viewportHeight) {
 			final int trackHeight = Math.max(1, viewportHeight - 4);
@@ -288,20 +286,31 @@ public class MathInputScreen extends Screen {
 			final int thumbY = y + 2 + (int) ((long) travel * scrollY
 					/ Math.max(1, contentHeight - viewportHeight));
 			renderer.glColor(VIEWPORT_TRACK_COLOR);
-			renderer.glFillColor(x + viewportWidth - 2, y + 2, 2, trackHeight);
+			renderer.glFillColor(x + viewportWidth, y + 2, 2, trackHeight);
 			renderer.glColor(color);
-			renderer.glFillColor(x + viewportWidth - 2, thumbY, 2, thumbHeight);
+			renderer.glFillColor(x + viewportWidth, thumbY, 2, thumbHeight);
 		}
 	}
 
 	private boolean isResultOversized() {
 		return !result.isContentEmpty() && resultViewportWidth > 0 && resultViewportHeight > 0
-				&& (result.getWidth() > resultViewportWidth || result.getHeight() > resultViewportHeight);
+				&& (resultScrollableWidth() > resultViewportWidth
+						|| resultScrollableHeight() > resultViewportHeight);
 	}
 
 	private void clampResultScroll() {
-		resultScrollX = clamp(resultScrollX, 0, Math.max(0, result.getWidth() - resultViewportWidth));
-		resultScrollY = clamp(resultScrollY, 0, Math.max(0, result.getHeight() - resultViewportHeight));
+		resultScrollX = clamp(resultScrollX, 0,
+				Math.max(0, resultScrollableWidth() - resultViewportWidth));
+		resultScrollY = clamp(resultScrollY, 0,
+				Math.max(0, resultScrollableHeight() - resultViewportHeight));
+	}
+
+	private int resultScrollableWidth() {
+		return result.isContentEmpty() ? 0 : result.getWidth() + VIEWPORT_EDGE_GUTTER;
+	}
+
+	private int resultScrollableHeight() {
+		return result.getHeight();
 	}
 
 	private static int clamp(final int value, final int minimum, final int maximum) {
@@ -338,16 +347,6 @@ public class MathInputScreen extends Screen {
 	public boolean onKeyPressed(final KeyPressedEvent k) {
 		WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "MathInputScreen", "Pressed key " + k.getKey().toString());
 		try {
-			if (!resultNavigationActive && isResultOversized()
-					&& (k.getKey() == Key.UP || k.getKey() == Key.DOWN)) {
-				resultNavigationActive = true;
-				if (k.getKey() == Key.DOWN && resultScrollY == 0) {
-					resultScrollY = PAN_STEP;
-				}
-				clampResultScroll();
-				mustRefresh = true;
-				return true;
-			}
 			if (resultNavigationActive && handleResultNavigation(k.getKey())) {
 				return true;
 			}
@@ -495,6 +494,19 @@ public class MathInputScreen extends Screen {
 								return true;
 							case RIGHT:
 								userInput.moveRight();
+								mustRefresh = true;
+								return true;
+							case UP:
+								userInput.moveUp(WarpPI.INSTANCE.getHardwareDevice()
+										.getDisplayManager().display);
+								mustRefresh = true;
+								return true;
+							case DOWN:
+								if (!userInput.moveDown(WarpPI.INSTANCE.getHardwareDevice()
+										.getDisplayManager().display) && isResultOversized()) {
+									resultNavigationActive = true;
+									clampResultScroll();
+								}
 								mustRefresh = true;
 								return true;
 							case RESET:
