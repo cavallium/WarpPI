@@ -91,12 +91,13 @@ public abstract class RFTFont implements BinaryFont {
 		}
 	}
 
-	private void loadFont(String string) throws IOException {
-		if (!string.startsWith("/")) {
-			string = "/" + string;
+	private void loadFont(final String path) throws IOException {
+		final int[] file;
+		/* Preserve relative filesystem paths; StorageUtils normalizes class-path
+		 * lookups itself and falls back to the original path when no resource exists. */
+		try (InputStream resource = WarpPI.getPlatform().getStorageUtils().getResourceStream(path)) {
+			file = Utils.realBytes(Utils.convertStreamToByteArray(resource));
 		}
-		final InputStream resource = WarpPI.getPlatform().getStorageUtils().getResourceStream(string);
-		final int[] file = Utils.realBytes(Utils.convertStreamToByteArray(resource));
 		final int filelength = file.length;
 		if (filelength >= 16) {
 			if (file[0x0] == 114 && file[0x1] == 97 && file[0x2] == 119 && file[0x3] == 0xFF && file[0x8] == 0xFF && file[0xD] == 0xFF) {
@@ -133,7 +134,7 @@ public abstract class RFTFont implements BinaryFont {
 						index += 2 + charbytescount;
 					} catch (final Exception ex) {
 						ex.printStackTrace();
-						System.out.println(string);
+						System.out.println(path);
 						WarpPI.getPlatform().exit(-1);
 					}
 				}

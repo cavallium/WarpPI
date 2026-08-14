@@ -1,6 +1,8 @@
 package it.cavallium.warppi.gui.graphicengine.impl.common;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
 
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform.ImageUtils.ImageReader;
@@ -19,19 +21,24 @@ public abstract class PngSkin implements Skin {
 	}
 
 	@Override
-	public void load(String file) throws IOException {
-		if (!file.startsWith("/")) {
-			file = "/" + file;
-		}
-		texturePath = file;
-		final ImageReader r = WarpPI.getPlatform().getImageUtils().load(WarpPI.getPlatform().getStorageUtils().getResourceStream(file));
-		if (r == null) {
-			skinData = new int[0];
-			skinSize = new int[] { 0, 0 };
-			System.err.println("ERROR WHILE LOADING SKIN " + file);
-		} else {
-			skinData = r.getImageMatrix();
-			skinSize = r.getSize();
+	public void load(final String file) throws IOException {
+		texturePath = Objects.requireNonNull(file, "file");
+		/*
+		 * StorageUtils already resolves both class-path resources and filesystem
+		 * fallbacks. Preserve a relative path here so CPU skins can load the same
+		 * external diagnostic assets as JOGL instead of rewriting them to /... .
+		 */
+		try (InputStream input = WarpPI.getPlatform().getStorageUtils()
+				.getResourceStream(texturePath)) {
+			final ImageReader reader = WarpPI.getPlatform().getImageUtils().load(input);
+			if (reader == null) {
+				skinData = new int[0];
+				skinSize = new int[] { 0, 0 };
+				System.err.println("ERROR WHILE LOADING SKIN " + texturePath);
+			} else {
+				skinData = reader.getImageMatrix();
+				skinSize = reader.getSize();
+			}
 		}
 		initialized = true;
 	}
