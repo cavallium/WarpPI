@@ -1,6 +1,8 @@
 package it.cavallium.warppi.math.functions.trigonometry;
 
 import it.cavallium.warppi.gui.expression.blocks.Block;
+import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
+import it.cavallium.warppi.gui.expression.blocks.BlockTrigonometric;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionSingle;
 import it.cavallium.warppi.math.MathContext;
@@ -23,21 +25,24 @@ public class Tangent extends FunctionSingle {
 	}
 
 	@Override
-	public FunctionSingle clone() {
-		// TODO Auto-generated method stub
-		return null;
+	public Tangent clone() {
+		return new Tangent(mathContext, parameter == null ? null : parameter.clone());
 	}
 
 	@Override
-	public FunctionSingle clone(MathContext c) {
-		// TODO Auto-generated method stub
-		return null;
+	public Tangent clone(MathContext c) {
+		return new Tangent(c, parameter == null ? null : parameter.clone(c));
 	}
 
 	@Override
 	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
-		// TODO Auto-generated method stub
-		return null;
+		final BlockTrigonometric block = new BlockTrigonometric(BlockTrigonometric.Kind.TANGENT);
+		final BlockContainer container = block.getNumberContainer();
+		for (final Block child : getParameter().toBlock(context))
+			container.appendBlockUnsafe(child);
+		container.recomputeDimensions();
+		block.recomputeDimensions();
+		return new ObjectArrayList<>(new Block[] { block });
 	}
 
 	@Override

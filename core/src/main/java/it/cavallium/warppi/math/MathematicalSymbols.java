@@ -15,6 +15,10 @@ public class MathematicalSymbols {
 	public static final char PARENTHESIS_CLOSE = ')';
 	public static final char POWER = 'Ⓑ';
 	public static final char EQUATION = '=';
+	public static final char LESS_THAN = '<';
+	public static final char LESS_OR_EQUAL = '≤';
+	public static final char GREATER_THAN = '>';
+	public static final char GREATER_OR_EQUAL = '≥';
 	public static final char SYSTEM = '{';
 	public static final char SINE = 'Ⓒ';
 	public static final char COSINE = 'Ⓓ';
@@ -35,12 +39,17 @@ public class MathematicalSymbols {
 	public static final char[] functionsSN = new char[] { MathematicalSymbols.SQUARE_ROOT, MathematicalSymbols.POWER_OF_TWO, MathematicalSymbols.MINUS, MathematicalSymbols.SINE, MathematicalSymbols.COSINE, MathematicalSymbols.TANGENT, MathematicalSymbols.ARC_SINE, MathematicalSymbols.ARC_COSINE, MathematicalSymbols.ARC_TANGENT, MathematicalSymbols.LOGARITHM };
 
 	public static final char[] functions = Utils.concat(MathematicalSymbols.functionsNSN, MathematicalSymbols.functionsSN);
+	public static final char[] comparisons = new char[] { MathematicalSymbols.LESS_THAN,
+			MathematicalSymbols.LESS_OR_EQUAL, MathematicalSymbols.GREATER_THAN,
+			MathematicalSymbols.GREATER_OR_EQUAL };
 
 	private static final char[] signumsWithoutMultiplication = new char[] { MathematicalSymbols.SUM, MathematicalSymbols.SUM_SUBTRACTION, MathematicalSymbols.SUBTRACTION, MathematicalSymbols.DIVISION };
 	private static final char[] signumsWithMultiplication = Utils.add(MathematicalSymbols.signumsWithoutMultiplication, MathematicalSymbols.MULTIPLICATION);
 
 	public static final char[] functionsNSNAndSignums = Utils.concat(MathematicalSymbols.functionsNSN, MathematicalSymbols.signumsWithMultiplication);
-	public static final char[] functionsAndSignums = Utils.concat(MathematicalSymbols.functions, MathematicalSymbols.signumsWithMultiplication);
+	public static final char[] functionsAndSignums = Utils.concat(
+			Utils.concat(MathematicalSymbols.functions, MathematicalSymbols.signumsWithMultiplication),
+			MathematicalSymbols.comparisons);
 
 	public static final char[] signums(final boolean withMultiplication) {
 		if (withMultiplication) {

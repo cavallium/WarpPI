@@ -1,5 +1,5 @@
 package it.cavallium.warppi.gui.expression;
 
 public enum CaretState {
-	VISIBLE_ON, VISIBLE_OFF, HIDDEN
+	VISIBLE_ON, VISIBLE_OFF, ERROR, HIDDEN
 }

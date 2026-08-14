@@ -59,8 +59,14 @@ public class Caret {
 	}
 
 	public void turnOn() {
-		if (state == CaretState.VISIBLE_OFF) {
+		if (state != CaretState.HIDDEN) {
 			state = CaretState.VISIBLE_ON;
+		}
+	}
+
+	public void turnError() {
+		if (state != CaretState.HIDDEN) {
+			state = CaretState.ERROR;
 		}
 	}
 

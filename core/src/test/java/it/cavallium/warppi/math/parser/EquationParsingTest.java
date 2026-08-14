@@ -70,6 +70,14 @@ class EquationParsingTest {
 	}
 
 	@Test
+	void rejectsEmptyNestedExpressionAsMissingArguments() {
+		final Error error = assertThrows(Error.class,
+				() -> MathParser.joinFeatures(context, new ObjectArrayList<>()));
+
+		assertEquals(Errors.MISSING_ARGUMENTS, error.id);
+	}
+
+	@Test
 	void rendersEquationSymbolBetweenOperands() throws Error {
 		initializeBlockFonts();
 		final Equation equation = new Equation(context, new Number(context, 1), new Number(context, 2));

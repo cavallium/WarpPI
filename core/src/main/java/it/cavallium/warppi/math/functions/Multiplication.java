@@ -94,7 +94,7 @@ public class Multiplication extends FunctionOperator {
 		if (parameter1.equals(new Number(getMathContext(), -1))) {
 			return parameter2;
 		} else if (parameter2.equals(new Number(getMathContext(), -1))) {
-			return parameter2;
+			return parameter1;
 		} else {
 			return null;
 		}

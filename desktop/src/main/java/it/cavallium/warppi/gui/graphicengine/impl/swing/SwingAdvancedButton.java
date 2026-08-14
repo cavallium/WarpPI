@@ -11,6 +11,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -79,12 +80,34 @@ public class SwingAdvancedButton extends JButton {
 			if (state == 2) {
 				y += 4;
 			}
-			g2d.drawString(getText(), super.getWidth() / 2 - g.getFontMetrics().stringWidth(getText()) / 2, y);
+			drawCenteredLabel(g2d, getText(), y);
 			g2d.dispose();
 		}
 		if (drawDefaultComponent)
 			super.paintComponent(g);
 		super.setBorderPainted(drawDefaultComponent);
+	}
+
+	private void drawCenteredLabel(final Graphics2D graphics, final String label,
+			final int singleLineBaseline) {
+		final String[] lines = label == null ? new String[] { "" } : label.split("\\n", -1);
+		final FontMetrics metrics = graphics.getFontMetrics();
+		if (lines.length == 1) {
+			graphics.drawString(lines[0], (getWidth() - metrics.stringWidth(lines[0])) / 2,
+					singleLineBaseline);
+			return;
+		}
+
+		final int lineHeight = Math.max(1, metrics.getHeight() * 3 / 4);
+		final int totalHeight = metrics.getAscent() + metrics.getDescent()
+				+ lineHeight * (lines.length - 1);
+		int baseline = (getHeight() - totalHeight) / 2 + metrics.getAscent();
+		if (state == 2)
+			baseline += 4;
+		for (final String line : lines) {
+			graphics.drawString(line, (getWidth() - metrics.stringWidth(line)) / 2, baseline);
+			baseline += lineHeight;
+		}
 	}
 
 	@Override

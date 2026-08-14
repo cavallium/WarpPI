@@ -57,6 +57,15 @@ public class HtmlEngine implements GraphicEngine {
 			  padding: 0; position: relative; overflow: hidden; touch-action: none;
 			  font: bold 3.5vh/4.5vh sans-serif; text-align: center;
 			}
+			#keyboard button.fraction-template {
+			  white-space: pre; font-size: 1.3vh !important; line-height: 1.1vh;
+			}
+			body.alpha:not(.shift) #keyboard button.fraction-template {
+			  white-space: normal; font-size: 3.5vh !important; line-height: 4.5vh;
+			}
+			body.shift:not(.alpha) #keyboard button.fraction-template .shift {
+			  white-space: pre; font-size: 1.3vh; line-height: 1.1vh;
+			}
 			#keyboard .alpha, #keyboard .shift {
 			  position: absolute; top: 0; padding: .25vh; font-size: 50%;
 			  line-height: 50%; pointer-events: none;
@@ -257,6 +266,8 @@ public class HtmlEngine implements GraphicEngine {
 		button.setInnerText(key.label(Layer.NORMAL));
 		button.setAttribute("data-matrix-row", Integer.toString(key.matrixRow()));
 		button.setAttribute("data-matrix-column", Integer.toString(key.matrixColumn()));
+		if (key.normal() == Key.FRACTION)
+			button.setClassName("fraction-template");
 		final String title = keyTitle(key);
 		button.setTitle(title);
 		button.setAttribute("aria-label", title);

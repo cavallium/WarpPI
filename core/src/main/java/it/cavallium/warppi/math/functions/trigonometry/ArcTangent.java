@@ -1,11 +1,12 @@
 package it.cavallium.warppi.math.functions.trigonometry;
 
 import it.cavallium.warppi.gui.expression.blocks.Block;
+import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
+import it.cavallium.warppi.gui.expression.blocks.BlockTrigonometric;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionSingle;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.util.Error;
-import it.cavallium.warppi.util.Errors;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class ArcTangent extends FunctionSingle {
@@ -24,21 +25,24 @@ public class ArcTangent extends FunctionSingle {
 	}
 
 	@Override
-	public FunctionSingle clone() {
-		// TODO Auto-generated method stub
-		return null;
+	public ArcTangent clone() {
+		return new ArcTangent(mathContext, parameter == null ? null : parameter.clone());
 	}
 
 	@Override
-	public FunctionSingle clone(MathContext c) {
-		// TODO Auto-generated method stub
-		return null;
+	public ArcTangent clone(MathContext c) {
+		return new ArcTangent(c, parameter == null ? null : parameter.clone(c));
 	}
 
 	@Override
 	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
-		// TODO Auto-generated method stub
-		throw new Error(Errors.NOT_IMPLEMENTED, "Unknown function " + getClass().getSimpleName());
+		final BlockTrigonometric block = new BlockTrigonometric(BlockTrigonometric.Kind.ARC_TANGENT);
+		final BlockContainer container = block.getNumberContainer();
+		for (final Block child : getParameter().toBlock(context))
+			container.appendBlockUnsafe(child);
+		container.recomputeDimensions();
+		block.recomputeDimensions();
+		return new ObjectArrayList<>(new Block[] { block });
 	}
 
 	@Override

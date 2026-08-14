@@ -122,6 +122,14 @@ class HostKeyboardInputTest {
 		assertEquals(List.of(Key.SHIFT), pressed);
 	}
 
+	@Test
+	void mapsDirectScientificPunctuation() {
+		assertEquals(Key.LESS_THAN, HostKeyboardInput.mapKey(0, '<', false, false, false));
+		assertEquals(Key.GREATER_THAN, HostKeyboardInput.mapKey(0, '>', false, false, false));
+		assertEquals(Key.PERCENT, HostKeyboardInput.mapKey(0, '%', false, false, false));
+		assertEquals(Key.FACTORIAL, HostKeyboardInput.mapKey(0, '!', false, false, false));
+	}
+
 	private static void pressAndRelease(final HostKeyboardInput input,
 			final int keyCode, final char keyChar) {
 		assertTrue(input.press(keyCode, keyChar, false));

@@ -165,8 +165,28 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 	}
 
 	public void clear() {
+		for (final Block block : content)
+			block.setParent(null);
 		content.clear();
 		recomputeDimensions();
+	}
+
+	/**
+	 * Moves the blocks before {@code endExclusive} out of this container without
+	 * cloning them. The returned blocks preserve their order and can be adopted by
+	 * another structural block such as a fraction numerator or unary negative.
+	 */
+	public ObjectArrayList<Block> detachPrefix(final int endExclusive) {
+		if (endExclusive < 0 || endExclusive > content.size())
+			throw new IndexOutOfBoundsException(endExclusive);
+		final ObjectArrayList<Block> detached = new ObjectArrayList<>(endExclusive);
+		for (int index = 0; index < endExclusive; index++) {
+			final Block block = content.remove(0);
+			block.setParent(null);
+			detached.add(block);
+		}
+		recomputeDimensions();
+		return detached;
 	}
 
 	/**
@@ -382,6 +402,7 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 	private static final BinaryFont[] defFonts = new BinaryFont[2];
 	private static final int[] defFontSizes = new int[4];
 	private static final int defColor = 0xFF000000;
+	private static final int errorColor = 0xFFD32F2F;
 
 	public static void initializeFonts(final BinaryFont big, final BinaryFont small) {
 		BlockContainer.defFonts[0] = big;
@@ -418,8 +439,8 @@ public class BlockContainer implements TreeContainer, GraphicalElement {
 
 	public static void drawCaret(final DisplayOutputDevice ge, final Renderer r, final Caret caret, final boolean small,
 			final int x, final int y, final int height) {
-		if (caret.getState() == CaretState.VISIBLE_ON) {
-			r.glColor(BlockContainer.getDefaultColor());
+		if (caret.getState() == CaretState.VISIBLE_ON || caret.getState() == CaretState.ERROR) {
+			r.glColor(caret.getState() == CaretState.ERROR ? errorColor : BlockContainer.getDefaultColor());
 			r.glFillColor(x, y, small ? 2 : 3, height);
 			caret.setLastLocation(x, y);
 			caret.setLastSize(small ? 2 : 3, height);

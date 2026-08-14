@@ -11,6 +11,9 @@ public class MathContext {
 
 	public AngleMode angleMode = AngleMode.DEG;
 	public boolean exactMode = false;
+	public boolean mixedFractionMode = false;
+	/** Render functions as lossless, parseable input rather than formatted output. */
+	public boolean losslessInputMode = false;
 	public ObjectArrayList<Function> f;
 	public ObjectArrayList<Function> f2;
 	public ObjectArrayList<VariableValue> variablesValues;
@@ -40,6 +43,8 @@ public class MathContext {
 		}
 		this.resultsCount = calc.resultsCount;
 		this.exactMode = calc.exactMode;
+		this.mixedFractionMode = calc.mixedFractionMode;
+		this.losslessInputMode = calc.losslessInputMode;
 		this.angleMode = calc.angleMode;
 	}
 

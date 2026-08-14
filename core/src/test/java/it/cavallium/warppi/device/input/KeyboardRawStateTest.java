@@ -36,12 +36,14 @@ class KeyboardRawStateTest {
 	}
 
 	@Test
-	void exposesHeldPhysicalSwitchesEvenWhenTheyHaveNoLogicalMapping() {
+	void exposesHeldPhysicalSwitchesForNewScientificKeys() {
 		assertFalse(Keyboard.isPhysicalKeyPressed(2, 7));
-		assertEquals(Key.NONE, Keyboard.updateRawKeyState(2, 7, false, false, false));
+		assertEquals(Key.EXPONENTIAL_NOTATION,
+				Keyboard.updateRawKeyState(2, 7, false, false, false));
 		assertTrue(Keyboard.isPhysicalKeyPressed(2, 7));
 
-		assertEquals(Key.NONE, Keyboard.updateRawKeyState(2, 7, true, false, false));
+		assertEquals(Key.EXPONENTIAL_NOTATION,
+				Keyboard.updateRawKeyState(2, 7, true, false, false));
 		assertFalse(Keyboard.isPhysicalKeyPressed(2, 7));
 	}
 

@@ -53,6 +53,10 @@ public class VariableRule implements Rule {
 					//a = n
 					result.add(new Number(mathContext, BigDecimalMath.pi(new java.math.MathContext(Utils.scale, Utils.scaleMode2))));
 					return result;
+				} else if (variable.equals(MathematicalSymbols.EULER_NUMBER)) {
+					result.add(new Number(mathContext,
+							BigDecimalMath.exp(new java.math.MathContext(Utils.scale, Utils.scaleMode2))));
+					return result;
 				}
 		}
 		return null;

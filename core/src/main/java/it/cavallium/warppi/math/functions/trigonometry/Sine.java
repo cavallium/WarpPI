@@ -2,7 +2,7 @@ package it.cavallium.warppi.math.functions.trigonometry;
 
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
-import it.cavallium.warppi.gui.expression.blocks.BlockSine;
+import it.cavallium.warppi.gui.expression.blocks.BlockTrigonometric;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionSingle;
 import it.cavallium.warppi.math.MathContext;
@@ -38,7 +38,7 @@ public class Sine extends FunctionSingle {
 	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
 		final ObjectArrayList<Block> result = new ObjectArrayList<>();
 		final ObjectArrayList<Block> sub = getParameter(0).toBlock(context);
-		final BlockSine bs = new BlockSine();
+		final BlockTrigonometric bs = new BlockTrigonometric(BlockTrigonometric.Kind.SINE);
 		final BlockContainer bpc = bs.getNumberContainer();
 		for (final Block b : sub) {
 			bpc.appendBlockUnsafe(b);

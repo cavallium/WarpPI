@@ -34,7 +34,6 @@ public class BlockDivision extends Block {
 		paddingLeftLower = old.paddingLeftLower;
 		paddingLeftUpper = old.paddingLeftUpper;
 		h1 = old.h1;
-		System.out.println(String.join(",", ""+h1, ""+old.h1, ""+line, ""+old.line));
 	}
 
 	@Override

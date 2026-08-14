@@ -120,6 +120,7 @@ public interface Function {
 		Result visit(ArcSine arcSine, Argument argument);
 		Result visit(ArcTangent arcTangent, Argument argument);
 		Result visit(Cosine cosine, Argument argument);
+		Result visit(Comparison comparison, Argument argument);
 		Result visit(Division division, Argument argument);
 		Result visit(Equation equation, Argument argument);
 		Result visit(EquationsSystem equationsSystem, Argument argument);
@@ -131,8 +132,12 @@ public interface Function {
 		Result visit(Negative negative, Argument argument);
 		Result visit(Number number, Argument argument);
 		Result visit(Power power, Argument argument);
+		Result visit(PrimeFactorization primeFactorization, Argument argument);
+		Result visit(RandomInteger randomInteger, Argument argument);
 		Result visit(Root root, Argument argument);
 		Result visit(RootSquare rootSquare, Argument argument);
+		Result visit(ScientificFunction scientificFunction, Argument argument);
+		Result visit(Sexagesimal sexagesimal, Argument argument);
 		Result visit(Sine sine, Argument argument);
 		Result visit(Subtraction subtraction, Argument argument);
 		Result visit(SumSubtraction sumSubtraction, Argument argument);

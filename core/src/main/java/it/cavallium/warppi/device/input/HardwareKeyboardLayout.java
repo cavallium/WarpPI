@@ -120,31 +120,31 @@ public final class HardwareKeyboardLayout {
 					key(2, 1, 2, Key.LEFT),
 					key(3, 1, 3, Key.OK),
 					key(4, 1, 4, Key.RIGHT),
-					key(5, 1, 5, Key.HISTORY_BACK),
-					key(6, 1, 6, Key.HISTORY_FORWARD)),
+					key(5, 1, 5, Key.HISTORY_BACK, Key.LESS_THAN, Key.LESS_OR_EQUAL),
+					key(6, 1, 6, Key.HISTORY_FORWARD, Key.GREATER_THAN, Key.GREATER_OR_EQUAL)),
 			row(7,
 					persistentKey(0, 2, 0, Key.F3),
 					key(1, 2, 1, Key.SQRT, Key.ROOT, Key.NONE),
 					key(3, 2, 3, Key.DOWN),
 					key(4, 2, 4, Key.BACK),
-					key(5, 2, 5, Key.NONE),
-					key(6, 2, 6, Key.NONE)),
+					key(5, 2, 5, Key.LOGARITHM, Key.POWER_OF_10, Key.NONE),
+					key(6, 2, 6, Key.COMMON_LOGARITHM, Key.POWER_OF_E, Key.NATURAL_LOGARITHM)),
 			row(7,
 					persistentKey(0, 3, 0, Key.F2),
-					key(1, 3, 1, Key.NONE),
-					key(2, 3, 2, Key.POWER_OF_x),
-					key(3, 3, 3, Key.POWER_OF_2),
-					key(4, 3, 4, Key.NONE),
-					key(5, 3, 5, Key.NONE),
-					key(6, 3, 6, Key.NONE)),
+					key(1, 3, 1, Key.FRACTION, Key.MIXED_FRACTION, Key.LETTER_A),
+					key(2, 3, 2, Key.POWER_OF_x, Key.RECIPROCAL, Key.LETTER_B),
+					key(3, 3, 3, Key.POWER_OF_2, Key.POWER_OF_3, Key.LETTER_C),
+					key(4, 3, 4, Key.SINE, Key.ARCSINE, Key.LETTER_D),
+					key(5, 3, 5, Key.COSINE, Key.ARCCOSINE, Key.LETTER_E),
+					key(6, 3, 6, Key.TANGENT, Key.ARCTANGENT, Key.LETTER_F)),
 			row(7,
 					persistentKey(0, 4, 0, Key.F1),
-					key(1, 4, 1, Key.NONE),
+					key(1, 4, 1, Key.NEGATIVE, Key.NONE, Key.LETTER_Z),
 					key(2, 4, 2, Key.PARENTHESIS_OPEN),
 					key(3, 4, 3, Key.PARENTHESIS_CLOSE),
-					key(4, 4, 4, Key.NONE),
+					key(4, 4, 4, Key.DEGREE_MINUTE_SECOND),
 					key(5, 4, 5, Key.SURD_MODE),
-					key(6, 4, 6, Key.NONE)),
+					key(6, 4, 6, Key.ABSOLUTE_VALUE, Key.FACTORIAL, Key.FACTORIZE)),
 			row(5,
 					key(0, 5, 0, Key.NUM7),
 					key(1, 5, 1, Key.NUM8),
@@ -164,11 +164,11 @@ public final class HardwareKeyboardLayout {
 					key(3, 7, 3, Key.PLUS, Key.PLUS_MINUS, Key.NONE),
 					key(4, 7, 4, Key.MINUS)),
 			row(5,
-					key(0, 4, 7, Key.NUM0, Key.NONE, Key.LETTER_X),
-					key(1, 3, 7, Key.DOT, Key.NONE, Key.LETTER_Y),
-					key(2, 2, 7, Key.NONE, Key.NONE, Key.LETTER_Z),
-					key(3, 1, 7, Key.NONE, Key.PI, Key.DRG_CYCLE),
-					key(4, 0, 7, Key.SIMPLIFY, Key.STEP, Key.NONE))));
+					key(0, 4, 7, Key.NUM0, Key.ROUND, Key.LETTER_X),
+					key(1, 3, 7, Key.DOT, Key.RANDOM_INTEGER, Key.LETTER_Y),
+					key(2, 2, 7, Key.EXPONENTIAL_NOTATION, Key.PI, Key.EULER_NUMBER),
+					key(3, 1, 7, Key.ANSWER, Key.PERCENT, Key.DRG_CYCLE),
+					key(4, 0, 7, Key.SIMPLIFY, Key.STEP, Key.EQUAL))));
 
 	private static final Key[][][] MATRIX_MAPPINGS = createMatrixMappings(ROWS);
 
@@ -208,6 +208,10 @@ public final class HardwareKeyboardLayout {
 			case ALPHA -> "A";
 			case HISTORY_BACK -> "≪";
 			case HISTORY_FORWARD -> "≫";
+			case LESS_THAN -> "<";
+			case LESS_OR_EQUAL -> "≤";
+			case GREATER_THAN -> ">";
+			case GREATER_OR_EQUAL -> "≥";
 			case SURD_MODE -> "S⇔D";
 			case DRG_CYCLE -> "D/R/G";
 			case STEP -> "STEP";
@@ -231,6 +235,16 @@ public final class HardwareKeyboardLayout {
 			case PLUS_MINUS -> "±";
 			case MULTIPLY -> "*";
 			case DIVIDE -> "/";
+			case FRACTION -> "□\n─\n□";
+			case MIXED_FRACTION -> "a □\n  ─\n  □";
+			case NEGATIVE -> "(-)";
+			case RECIPROCAL -> "x⁻¹";
+			case POWER_OF_3 -> "x³";
+			case POWER_OF_10 -> "10ˣ";
+			case POWER_OF_E -> "eˣ";
+			case EXPONENTIAL_NOTATION -> "×10ˣ";
+			case PERCENT -> "%";
+			case ANSWER -> "Ans";
 			case DELETE -> "⌫";
 			case RESET -> "RESET";
 			case LEFT -> "⇦";
@@ -242,7 +256,24 @@ public final class HardwareKeyboardLayout {
 			case ROOT -> "ⁿ√";
 			case POWER_OF_2 -> "^2";
 			case POWER_OF_x -> "^x";
+			case SINE -> "sin";
+			case COSINE -> "cos";
+			case TANGENT -> "tan";
+			case ARCSINE -> "sin⁻¹";
+			case ARCCOSINE -> "cos⁻¹";
+			case ARCTANGENT -> "tan⁻¹";
+			case LOGARITHM -> "logₙx";
+			case COMMON_LOGARITHM -> "log";
+			case NATURAL_LOGARITHM -> "ln";
+			case ABSOLUTE_VALUE -> "Abs";
+			case FACTORIAL -> "x!";
+			case FACTORIZE -> "FACT";
+			case ROUND -> "Rnd";
+			case RANDOM_INTEGER -> "RanInt";
+			case DEGREE_MINUTE_SECOND -> "°′″";
 			case PI -> "π";
+			case EULER_NUMBER -> "e";
+			case EQUAL -> "=";
 			case SETTINGS -> "APPS";
 			case F1 -> "F1";
 			case F2 -> "F2";
@@ -265,6 +296,10 @@ public final class HardwareKeyboardLayout {
 			case ALPHA -> "ALT";
 			case HISTORY_BACK -> "<HIST";
 			case HISTORY_FORWARD -> "HIST>";
+			case LESS_THAN -> "<";
+			case LESS_OR_EQUAL -> "<=";
+			case GREATER_THAN -> ">";
+			case GREATER_OR_EQUAL -> ">=";
 			case SURD_MODE -> "S<->D";
 			case DRG_CYCLE -> "D/R/G";
 			case STEP -> "STEP";
@@ -274,6 +309,16 @@ public final class HardwareKeyboardLayout {
 			case PARENTHESIS_OPEN -> "(";
 			case PARENTHESIS_CLOSE -> ")";
 			case PLUS_MINUS -> "+/-";
+			case FRACTION -> "a/b";
+			case MIXED_FRACTION -> "a b/c";
+			case NEGATIVE -> "(-)";
+			case RECIPROCAL -> "x^-1";
+			case POWER_OF_3 -> "x^3";
+			case POWER_OF_10 -> "10^x";
+			case POWER_OF_E -> "e^x";
+			case EXPONENTIAL_NOTATION -> "x10^x";
+			case PERCENT -> "%";
+			case ANSWER -> "ANS";
 			case DELETE -> "DEL";
 			case RESET -> "CLEAR";
 			case LEFT -> "LEFT";
@@ -284,7 +329,23 @@ public final class HardwareKeyboardLayout {
 			case ROOT -> "ROOT";
 			case POWER_OF_2 -> "x^2";
 			case POWER_OF_x -> "x^y";
+			case SINE -> "SIN";
+			case COSINE -> "COS";
+			case TANGENT -> "TAN";
+			case ARCSINE -> "SIN^-1";
+			case ARCCOSINE -> "COS^-1";
+			case ARCTANGENT -> "TAN^-1";
+			case LOGARITHM -> "LOGNX";
+			case COMMON_LOGARITHM -> "LOG";
+			case NATURAL_LOGARITHM -> "LN";
+			case ABSOLUTE_VALUE -> "ABS";
+			case FACTORIAL -> "x!";
+			case FACTORIZE -> "FACT";
+			case ROUND -> "RND";
+			case RANDOM_INTEGER -> "RANINT";
+			case DEGREE_MINUTE_SECOND -> "DMS";
 			case PI -> "PI";
+			case EULER_NUMBER -> "E";
 			case SETTINGS -> "APPS";
 			case BACK -> "BACK";
 			case ZOOM_MODE -> "ZOOM";

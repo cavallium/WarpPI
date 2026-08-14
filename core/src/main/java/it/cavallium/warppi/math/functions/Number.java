@@ -109,10 +109,21 @@ public class Number implements Function {
 			s = s + "…";
 		}
 
-		if (root.exactMode == false) {
-			final String cuttedNumber = s.split("\\.")[0];
-			if (cuttedNumber.length() > 8) {
-				return cuttedNumber.substring(0, 1) + "," + cuttedNumber.substring(1, 8) + "ℯ℮" + (cuttedNumber.length() - 1);
+		if (!root.exactMode) {
+			final BigDecimal rounded = getTerm().setScale(Utils.displayScale, Utils.scaleMode2)
+					.stripTrailingZeros();
+			final BigDecimal absolute = rounded.abs();
+			final int integerDigits = absolute.signum() == 0 ? 1
+					: absolute.precision() - absolute.scale();
+			if (integerDigits > 8) {
+				int exponent = integerDigits - 1;
+				BigDecimal mantissa = absolute.movePointLeft(exponent)
+						.setScale(7, Utils.scaleMode2).stripTrailingZeros();
+				if (mantissa.compareTo(BigDecimal.TEN) >= 0) {
+					mantissa = mantissa.movePointLeft(1).stripTrailingZeros();
+					exponent++;
+				}
+				return (rounded.signum() < 0 ? "-" : "") + plain(mantissa) + "ℯ℮" + exponent;
 			}
 		}
 		return s;
@@ -143,7 +154,7 @@ public class Number implements Function {
 
 	@Override
 	public int hashCode() {
-		return toString().hashCode();
+		return term.stripTrailingZeros().hashCode();
 	}
 
 	@Override
@@ -246,27 +257,39 @@ public class Number implements Function {
 	@Override
 	public ObjectArrayList<Block> toBlock(final MathContext context) {
 		final ObjectArrayList<Block> result = new ObjectArrayList<>();
+		if (context.losslessInputMode) {
+			for (final char character : editableNumberString().toCharArray())
+				result.add(new BlockNumericChar(character));
+			return result;
+		}
+
 		final String numberString = toString();
 		if (numberString.contains("ℯ℮")) {
 			final String[] numberParts = numberString.split("ℯ℮", 2);
-			final BlockPower bp = new BlockExponentialNotation();
-			final BlockContainer bpec = bp.getExponentContainer();
-			for (final char c : numberParts[0].toCharArray()) {
-				result.add(new BlockNumericChar(c));
-			}
-			for (final char c : numberParts[1].toCharArray()) {
-				bpec.appendBlockUnsafe(new BlockNumericChar(c));
-			} ;
-			bpec.recomputeDimensions();
-			bp.recomputeDimensions();
-			result.add(bp);
+			final BlockPower power = new BlockExponentialNotation();
+			final BlockContainer exponent = power.getExponentContainer();
+			for (final char character : numberParts[0].toCharArray())
+				result.add(new BlockNumericChar(character));
+			for (final char character : numberParts[1].toCharArray())
+				exponent.appendBlockUnsafe(new BlockNumericChar(character));
+			exponent.recomputeDimensions();
+			power.recomputeDimensions();
+			result.add(power);
 			return result;
-		} else {
-			for (final char c : numberString.toCharArray()) {
-				result.add(new BlockNumericChar(c));
-			}
 		}
+		for (final char character : numberString.toCharArray())
+			result.add(new BlockNumericChar(character));
 		return result;
+	}
+
+	/** A lossless, locale-independent decimal representation suitable for input. */
+	private String editableNumberString() {
+		return plain(term);
+	}
+
+	private static String plain(final BigDecimal value) {
+		final BigDecimal stripped = value.stripTrailingZeros();
+		return stripped.scale() < 0 ? stripped.setScale(0).toPlainString() : stripped.toPlainString();
 	}
 
 	@Override

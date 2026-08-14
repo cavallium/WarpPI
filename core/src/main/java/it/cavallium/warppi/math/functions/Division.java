@@ -3,6 +3,8 @@ package it.cavallium.warppi.math.functions;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
 import it.cavallium.warppi.gui.expression.blocks.BlockDivision;
+import it.cavallium.warppi.gui.expression.blocks.BlockChar;
+import it.cavallium.warppi.gui.expression.blocks.BlockNumericChar;
 import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.FunctionOperator;
 import it.cavallium.warppi.math.MathContext;
@@ -41,6 +43,26 @@ public class Division extends FunctionOperator {
 
 	@Override
 	public ObjectArrayList<Block> toBlock(final MathContext context) throws Error {
+		if (!context.losslessInputMode && context.mixedFractionMode && parameter1 instanceof Number numerator
+				&& parameter2 instanceof Number denominator && numerator.isInteger()
+				&& denominator.isInteger() && denominator.getTerm().signum() != 0) {
+			final java.math.BigInteger[] parts = numerator.getTerm().toBigIntegerExact()
+					.divideAndRemainder(denominator.getTerm().toBigIntegerExact());
+			if (parts[0].signum() != 0 && parts[1].signum() != 0) {
+				final ObjectArrayList<Block> mixed = new ObjectArrayList<>();
+				for (final char character : parts[0].toString().toCharArray())
+					mixed.add(new BlockNumericChar(character));
+				mixed.add(new BlockChar(' '));
+				mixed.addAll(new Division(context, new Number(context, parts[1].abs()),
+						new Number(context, denominator.getTerm().toBigIntegerExact().abs()))
+						.toBlockWithoutMixed(context));
+				return mixed;
+			}
+		}
+		return toBlockWithoutMixed(context);
+	}
+
+	private ObjectArrayList<Block> toBlockWithoutMixed(final MathContext context) throws Error {
 		final ObjectArrayList<Block> result = new ObjectArrayList<>();
 		final ObjectArrayList<Block> sub1 = getParameter1().toBlock(context);
 		final ObjectArrayList<Block> sub2 = getParameter2().toBlock(context);

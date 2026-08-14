@@ -19,6 +19,8 @@ import it.cavallium.warppi.util.Error;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public abstract class InputContainer implements GraphicalElement, InputLayout {
+	private static final int ERROR_COLOR = 0xFFD32F2F;
+
 	protected BlockContainer root;
 	protected Caret caret;
 	private static final float CARET_DURATION = 0.5f;
@@ -26,6 +28,8 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 	private int maxPosition = 0;
 	private boolean parsed = false;
 	private ExtraMenu<?> extra;
+	private ExpressionInputDiagnostic.HighlightTarget errorHighlightTarget =
+			ExpressionInputDiagnostic.HighlightTarget.INSERTION_POINT;
 	private CaretBounds cachedCaretBounds;
 	private int cachedCaretPosition = -1;
 	private int cachedCaretWidth = -1;
@@ -58,7 +62,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 		caret = new Caret(CaretState.VISIBLE_ON, 0);
 		root = new BlockContainer(null, small, false);
 	}
-	
+
 	/**
 	 * Copy
 	 * @param old
@@ -72,15 +76,18 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 		this.inputContext = ic;
 		this.root = old.root == null ? null : old.root.clone(null, ic);
 		this.parsed = old.parsed;
+		this.errorHighlightTarget = old.errorHighlightTarget;
 		this.verticalCaretAnchorX = old.verticalCaretAnchorX;
 	}
 
 	public void typeChar(final char c) {
+		clearErrorHighlight();
 		final Block b = parseChar(c);
 		typeBlock(b);
 	}
 
 	public void typeBlock(final Block b) {
+		clearErrorHighlight();
 		invalidateCaretMeasurement();
 		resetVerticalCaretAnchor();
 		if (b != null) {
@@ -96,11 +103,65 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 		caret.turnOn();
 	}
 
+	/**
+	 * Inserts a structural block at the caret and moves the complete expression
+	 * immediately to its left into {@code destination}. This deliberately captures
+	 * operators as well as simple number/variable runs, matching natural textbook
+	 * entry for fractions and calculator-style unary negative.
+	 */
+	public boolean wrapExpressionToLeft(final Block wrapper, final BlockContainer destination,
+			final int caretOffsetAfterDestination) {
+		if (wrapper == null || destination == null)
+			throw new NullPointerException();
+		clearErrorHighlight();
+		invalidateCaretMeasurement();
+		resetVerticalCaretAnchor();
+		caret.resetRemaining();
+		if (caret.getPosition() == 0)
+			return false;
+
+		final BlockReference<?> selected = root.getBlock(caret);
+		if (selected == null)
+			return false;
+		final BlockContainer source = selected.getContainer();
+		final int oldCaretPosition = caret.getPosition();
+		final int insertionIndex = selected.getIndex() + 1;
+		final ObjectArrayList<Block> captured = source.detachPrefix(insertionIndex);
+		for (final Block block : captured)
+			destination.appendBlockUnsafe(block);
+		destination.recomputeDimensions();
+		wrapper.recomputeDimensions();
+		source.addBlock(0, wrapper);
+		recomputeAncestors(source);
+		maxPosition = root.computeCaretMaxBound();
+		final int caretPosition = oldCaretPosition + 1 + caretOffsetAfterDestination;
+		caret.setPosition(Math.max(0, Math.min(caretPosition, maxPosition - 1)));
+		caret.resetRemaining();
+		caret.turnOn();
+		caretTime = 0;
+		closeExtra();
+		return true;
+	}
+
+	private void recomputeAncestors(final BlockContainer source) {
+		BlockContainer container = source;
+		while (container != null) {
+			container.recomputeDimensions();
+			if (!(container.getParentBlock() instanceof Block parentBlock))
+				break;
+			parentBlock.recomputeDimensions();
+			container = parentBlock.getParentContainer() instanceof BlockContainer parentContainer
+					? parentContainer : null;
+		}
+		root.recomputeDimensions();
+	}
+
 	public void typeChar(final String c) {
 		typeChar(c.charAt(0));
 	}
 
 	public void del() {
+		clearErrorHighlight();
 		invalidateCaretMeasurement();
 		resetVerticalCaretAnchor();
 		caret.resetRemaining();
@@ -128,6 +189,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 	}
 
 	public void moveLeft() {
+		clearErrorHighlight();
 		invalidateCaretMeasurement();
 		resetVerticalCaretAnchor();
 		final int curPos = caret.getPosition();
@@ -142,6 +204,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 	}
 
 	public void moveRight(final int delta) {
+		clearErrorHighlight();
 		invalidateCaretMeasurement();
 		resetVerticalCaretAnchor();
 
@@ -157,6 +220,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 	}
 
 	public void moveTo(final int position) {
+		clearErrorHighlight();
 		invalidateCaretMeasurement();
 		resetVerticalCaretAnchor();
 		if (position < maxPosition) {
@@ -234,12 +298,14 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 		if (extra != null) {
 			extra.draw(ge, r, caret);
 		}
+		drawErrorUnderline(r);
 	}
 
 	public void clear() {
 		caret = new Caret(CaretState.VISIBLE_ON, 0);
 		invalidateCaretMeasurement();
 		resetVerticalCaretAnchor();
+		errorHighlightTarget = ExpressionInputDiagnostic.HighlightTarget.INSERTION_POINT;
 		root.clear();
 		maxPosition = root.computeCaretMaxBound();
 		recomputeDimensions();
@@ -254,6 +320,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 	}
 
 	public void setCaretPosition(final int pos) {
+		clearErrorHighlight();
 		invalidateCaretMeasurement();
 		resetVerticalCaretAnchor();
 		if (pos > 0 && pos < maxPosition) {
@@ -272,6 +339,36 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 		return parsed;
 	}
 
+	public ExpressionInputDiagnostic diagnoseSyntaxError() {
+		return ExpressionInputDiagnostics.diagnose(root);
+	}
+
+	public void showError(final ExpressionInputDiagnostic diagnostic) {
+		if (diagnostic == null) {
+			return;
+		}
+		final int lastPosition = Math.max(0, maxPosition - 1);
+		invalidateCaretMeasurement();
+		resetVerticalCaretAnchor();
+		caret.setPosition(Math.min(diagnostic.caretPosition(), lastPosition));
+		caret.turnError();
+		caretTime = 0;
+		errorHighlightTarget = diagnostic.highlightTarget();
+		closeExtra();
+	}
+
+	public void clearErrorHighlight() {
+		if (caret.getState() == CaretState.ERROR) {
+			caret.turnOn();
+			caretTime = 0;
+		}
+		errorHighlightTarget = ExpressionInputDiagnostic.HighlightTarget.INSERTION_POINT;
+	}
+
+	public boolean isErrorHighlighted() {
+		return caret.getState() == CaretState.ERROR;
+	}
+
 	public int getCaretPosition() {
 		return caret.getPosition();
 	}
@@ -288,7 +385,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 				&& cachedCaretWidth == width && cachedCaretHeight == height) {
 			return cachedCaretBounds;
 		}
-		final Caret measuringCaret = new Caret(CaretState.VISIBLE_ON, position);
+		final Caret measuringCaret = new Caret(CaretState.VISIBLE_ON, caret.getPosition());
 		root.draw(display, CARET_MEASURING_RENDERER, 0, 0, measuringCaret);
 		final int[] location = measuringCaret.getLastLocation();
 		final int[] size = measuringCaret.getLastSize();
@@ -323,6 +420,7 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 		if (target < 0) {
 			return false;
 		}
+		clearErrorHighlight();
 		verticalCaretAnchorX = anchorX;
 		caret.setPosition(target);
 		caret.turnOn();
@@ -452,6 +550,36 @@ public abstract class InputContainer implements GraphicalElement, InputLayout {
 			if (position >= 0 && position < bounds.length) {
 				bounds[position] = new CaretBounds(x, y, width, height);
 			}
+		}
+	}
+
+	private void drawErrorUnderline(final Renderer renderer) {
+		if (caret.getState() != CaretState.ERROR) {
+			return;
+		}
+		final int[] location = caret.getLastLocation();
+		final int[] size = caret.getLastSize();
+		int left = location[0] - 1;
+		int right = location[0] + Math.max(5, size[0] * 2);
+		final BlockReference<?> highlightedBlock = switch (errorHighlightTarget) {
+			case PREVIOUS_BLOCK -> getBlockAtCaretPosition(caret.getPosition());
+			case NEXT_BLOCK -> getBlockAtCaretPosition(caret.getPosition() + 1);
+			case INSERTION_POINT -> null;
+		};
+		if (highlightedBlock != null) {
+			if (errorHighlightTarget == ExpressionInputDiagnostic.HighlightTarget.PREVIOUS_BLOCK) {
+				left = location[0] - highlightedBlock.get().getWidth() - 1;
+				right = location[0] - 1;
+			} else {
+				left = location[0] + 1;
+				right = left + highlightedBlock.get().getWidth() - 1;
+			}
+		}
+		final int underlineY = location[1] + size[1] - 1;
+		renderer.glColor(ERROR_COLOR);
+		renderer.glDrawLine(left, underlineY, right, underlineY);
+		if (underlineY > location[1]) {
+			renderer.glDrawLine(left, underlineY - 1, right, underlineY - 1);
 		}
 	}
 

@@ -40,6 +40,11 @@ public abstract class VisitorPattern implements Pattern, Function.Visitor<Map<St
 	}
 
 	@Override
+	public Boolean visit(final Comparison comparison, final Map<String, Function> subFunctions) {
+		return false;
+	}
+
+	@Override
 	public Boolean visit(final Division division, final Map<String, Function> subFunctions) {
 		return false;
 	}
@@ -95,12 +100,34 @@ public abstract class VisitorPattern implements Pattern, Function.Visitor<Map<St
 	}
 
 	@Override
+	public Boolean visit(final PrimeFactorization primeFactorization,
+			final Map<String, Function> subFunctions) {
+		return false;
+	}
+
+	@Override
+	public Boolean visit(final RandomInteger randomInteger, final Map<String, Function> subFunctions) {
+		return false;
+	}
+
+	@Override
 	public Boolean visit(final Root root, final Map<String, Function> subFunctions) {
 		return false;
 	}
 
 	@Override
 	public Boolean visit(final RootSquare rootSquare, final Map<String, Function> subFunctions) {
+		return false;
+	}
+
+	@Override
+	public Boolean visit(final ScientificFunction scientificFunction,
+			final Map<String, Function> subFunctions) {
+		return false;
+	}
+
+	@Override
+	public Boolean visit(final Sexagesimal sexagesimal, final Map<String, Function> subFunctions) {
 		return false;
 	}
 

@@ -58,15 +58,19 @@ public class RulesManager {
 			new EmptyNumberRule(),
 			new ExpressionRule(),
 			new JokeRule(),
+			new LogarithmRule(),
 			new MultiplicationRule(),
 			new NegativeRule(),
 			new NumberRule(),
 			new PowerRule(),
+			new RandomIntegerRule(),
 			new RootRule(),
 			new RootSquareRule(),
+			new ScientificFunctionRule(),
 			new SubtractionRule(),
 			new SumRule(),
 			new SumSubtractionRule(),
+			new TrigonometryRule(),
 			new VariableRule()
 		).forEach(RulesManager::addRule);
 	}

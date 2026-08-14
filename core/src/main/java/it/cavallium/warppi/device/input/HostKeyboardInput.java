@@ -223,6 +223,14 @@ public final class HostKeyboardInput {
 				return Key.PARENTHESIS_CLOSE;
 			case '=':
 				return Key.SIMPLIFY;
+			case '<':
+				return Key.LESS_THAN;
+			case '>':
+				return Key.GREATER_THAN;
+			case '%':
+				return Key.PERCENT;
+			case '!':
+				return Key.FACTORIAL;
 			default:
 				break;
 		}
@@ -246,6 +254,7 @@ public final class HostKeyboardInput {
 				case 'T' -> Key.ARCTANGENT;
 				case 'B' -> Key.BRIGHTNESS_CYCLE_REVERSE;
 				case 'Z' -> Key.ZOOM_MODE;
+				case 'L' -> Key.NATURAL_LOGARITHM;
 				default -> null;
 			};
 		}

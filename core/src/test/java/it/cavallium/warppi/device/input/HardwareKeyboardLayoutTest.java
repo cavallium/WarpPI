@@ -65,9 +65,9 @@ class HardwareKeyboardLayoutTest {
 
 		final PhysicalKey bottomZero = find(4, 7);
 		assertEquals("0", bottomZero.label(Layer.NORMAL));
-		assertEquals("", bottomZero.label(Layer.SHIFT));
+		assertEquals("Rnd", bottomZero.label(Layer.SHIFT));
 		assertEquals("x", bottomZero.label(Layer.ALT_ALPHA));
-		assertEquals(Key.NONE, bottomZero.mapping(Layer.SHIFT));
+		assertEquals(Key.ROUND, bottomZero.mapping(Layer.SHIFT));
 	}
 
 	@Test
@@ -75,10 +75,34 @@ class HardwareKeyboardLayoutTest {
 		assertEquals(Key.PLUS, HardwareKeyboardLayout.mappingAt(7, 3, false, false));
 		assertEquals(Key.PLUS_MINUS, HardwareKeyboardLayout.mappingAt(7, 3, true, false));
 		assertEquals(Key.NONE, HardwareKeyboardLayout.mappingAt(7, 3, false, true));
-		assertEquals(Key.LETTER_Z, HardwareKeyboardLayout.mappingAt(2, 7, false, true));
+		assertEquals(Key.EULER_NUMBER, HardwareKeyboardLayout.mappingAt(2, 7, false, true));
 		assertEquals(Key.NONE, HardwareKeyboardLayout.mappingAt(0, 2, false, false));
 		assertThrows(IllegalArgumentException.class,
 				() -> HardwareKeyboardLayout.mappingAt(8, 0, false, false));
+	}
+
+	@Test
+	void exposesCasioInspiredScientificLayers() {
+		assertMappings(find(1, 5), Key.HISTORY_BACK, Key.LESS_THAN, Key.LESS_OR_EQUAL);
+		assertMappings(find(1, 6), Key.HISTORY_FORWARD, Key.GREATER_THAN, Key.GREATER_OR_EQUAL);
+		assertMappings(find(2, 5), Key.LOGARITHM, Key.POWER_OF_10, Key.NONE);
+		assertMappings(find(2, 6), Key.COMMON_LOGARITHM, Key.POWER_OF_E, Key.NATURAL_LOGARITHM);
+		assertMappings(find(3, 1), Key.FRACTION, Key.MIXED_FRACTION, Key.LETTER_A);
+		assertEquals("□\n─\n□", find(3, 1).label(Layer.NORMAL));
+		assertEquals("a □\n  ─\n  □", find(3, 1).label(Layer.SHIFT));
+		assertMappings(find(3, 2), Key.POWER_OF_x, Key.RECIPROCAL, Key.LETTER_B);
+		assertMappings(find(3, 3), Key.POWER_OF_2, Key.POWER_OF_3, Key.LETTER_C);
+		assertMappings(find(3, 4), Key.SINE, Key.ARCSINE, Key.LETTER_D);
+		assertMappings(find(3, 5), Key.COSINE, Key.ARCCOSINE, Key.LETTER_E);
+		assertMappings(find(3, 6), Key.TANGENT, Key.ARCTANGENT, Key.LETTER_F);
+		assertMappings(find(4, 1), Key.NEGATIVE, Key.NONE, Key.LETTER_Z);
+		assertMappings(find(4, 4), Key.DEGREE_MINUTE_SECOND, Key.NONE, Key.NONE);
+		assertMappings(find(4, 6), Key.ABSOLUTE_VALUE, Key.FACTORIAL, Key.FACTORIZE);
+		assertMappings(find(4, 7), Key.NUM0, Key.ROUND, Key.LETTER_X);
+		assertMappings(find(3, 7), Key.DOT, Key.RANDOM_INTEGER, Key.LETTER_Y);
+		assertMappings(find(2, 7), Key.EXPONENTIAL_NOTATION, Key.PI, Key.EULER_NUMBER);
+		assertMappings(find(1, 7), Key.ANSWER, Key.PERCENT, Key.DRG_CYCLE);
+		assertMappings(find(0, 7), Key.SIMPLIFY, Key.STEP, Key.EQUAL);
 	}
 
 	@Test
@@ -124,6 +148,13 @@ class HardwareKeyboardLayoutTest {
 				.filter(key -> key.matrixRow() == matrixRow && key.matrixColumn() == matrixColumn)
 				.findFirst()
 				.orElseThrow();
+	}
+
+	private static void assertMappings(final PhysicalKey key, final Key normal,
+			final Key shift, final Key altAlpha) {
+		assertEquals(normal, key.mapping(Layer.NORMAL));
+		assertEquals(shift, key.mapping(Layer.SHIFT));
+		assertEquals(altAlpha, key.mapping(Layer.ALT_ALPHA));
 	}
 
 	private static List<String> positions(final PhysicalRow row) {

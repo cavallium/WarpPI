@@ -8,6 +8,7 @@ import it.cavallium.warppi.gui.expression.blocks.BlockChar;
 import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
 import it.cavallium.warppi.gui.expression.blocks.BlockDivision;
 import it.cavallium.warppi.gui.expression.blocks.BlockLogarithm;
+import it.cavallium.warppi.gui.expression.blocks.BlockMixedFraction;
 import it.cavallium.warppi.gui.expression.blocks.BlockNumericChar;
 import it.cavallium.warppi.gui.expression.blocks.BlockParenthesis;
 import it.cavallium.warppi.gui.expression.blocks.BlockPower;
@@ -15,6 +16,7 @@ import it.cavallium.warppi.gui.expression.blocks.BlockPower2;
 import it.cavallium.warppi.gui.expression.blocks.BlockReference;
 import it.cavallium.warppi.gui.expression.blocks.BlockSine;
 import it.cavallium.warppi.gui.expression.blocks.BlockSquareRoot;
+import it.cavallium.warppi.gui.expression.blocks.BlockTrigonometric;
 import it.cavallium.warppi.gui.expression.blocks.BlockVariable;
 import it.cavallium.warppi.gui.expression.blocks.IParenthesis;
 import it.cavallium.warppi.math.MathematicalSymbols;
@@ -84,6 +86,16 @@ public class NormalInputContainer extends InputContainer {
 				return new BlockNumericChar(c);
 			case MathematicalSymbols.SINE:
 				return new BlockSine();
+			case MathematicalSymbols.COSINE:
+				return new BlockTrigonometric(BlockTrigonometric.Kind.COSINE);
+			case MathematicalSymbols.TANGENT:
+				return new BlockTrigonometric(BlockTrigonometric.Kind.TANGENT);
+			case MathematicalSymbols.ARC_SINE:
+				return new BlockTrigonometric(BlockTrigonometric.Kind.ARC_SINE);
+			case MathematicalSymbols.ARC_COSINE:
+				return new BlockTrigonometric(BlockTrigonometric.Kind.ARC_COSINE);
+			case MathematicalSymbols.ARC_TANGENT:
+				return new BlockTrigonometric(BlockTrigonometric.Kind.ARC_TANGENT);
 			case MathematicalSymbols.LOGARITHM:
 				return new BlockLogarithm();
 			case MathematicalSymbols.PI:
@@ -102,6 +114,12 @@ public class NormalInputContainer extends InputContainer {
 
 	@Override
 	public void typeChar(final char c) {
+		if (c == MathematicalSymbols.DIVISION) {
+			final BlockDivision division = new BlockDivision();
+			if (!wrapExpressionToLeft(division, division.getUpperContainer(), 1))
+				typeBlock(division);
+			return;
+		}
 		super.typeChar(c);
 		switch (c) {
 			case MathematicalSymbols.PARENTHESIS_CLOSE: {
@@ -130,46 +148,13 @@ public class NormalInputContainer extends InputContainer {
 				}
 				break;
 			}
-			case MathematicalSymbols.DIVISION: {
-				@SuppressWarnings("unchecked")
-				final BlockReference<BlockDivision> ref = (BlockReference<BlockDivision>) getSelectedBlock();
-				@SuppressWarnings("unused")
-				final BlockContainer parentContainer = ref.getContainer();
-				BlockReference<?> currentBlock = ref;
-				boolean groupedBefore = false;
-				int before = 0;
-				while (true) {
-					currentBlock = currentBlock.getPreviousBlock();
-					if (currentBlock == null) {
-						break;
-					}
-					final Block b = currentBlock.get();
-					if (b instanceof BlockNumericChar || b instanceof BlockVariable) {
-						if (!groupedBefore) {
-							groupedBefore = true;
-						}
-						before++;
-					} else {
-						break;
-					}
-				}
-				if (groupedBefore) {
-					moveLeft();
-					for (int i = 0; i < before; i++) {
-						final BlockReference<?> b = getSelectedBlock();
-						del();
-						moveRight();
-						typeBlock(b.get());
-						moveLeft();
-						moveLeft();
-					}
-					for (int i = 0; i < before + 1; i++) {
-						moveRight();
-					}
-					moveRight();// Move to the divisor
-				}
-				break;
-			}
 		}
+	}
+
+	/** Inserts the Casio-style mixed-fraction template, capturing a left prefix as its whole part. */
+	public void typeMixedFraction() {
+		final BlockMixedFraction fraction = new BlockMixedFraction();
+		if (!wrapExpressionToLeft(fraction, fraction.getWholeContainer(), 1))
+			typeBlock(fraction);
 	}
 }

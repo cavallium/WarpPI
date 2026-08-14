@@ -34,6 +34,15 @@ public class BlockLogarithm extends Block implements IParenthesis {
 		recomputeDimensions();
 	}
 
+	/** Creates a logarithm with a fixed, pre-filled base and places the caret in its argument. */
+	public BlockLogarithm(final char... baseCharacters) {
+		this();
+		for (final char character : baseCharacters)
+			containerBase.appendBlockUnsafe(new BlockNumericChar(character));
+		containerBase.recomputeDimensions();
+		recomputeDimensions();
+	}
+
 	public BlockLogarithm(final ObjectArrayList<Block> blocks) {
 		containerBase = new BlockContainer(this, true);
 		containerNumber = new BlockContainer(this, false, blocks);
@@ -161,6 +170,11 @@ public class BlockLogarithm extends Block implements IParenthesis {
 
 	public BlockContainer getNumberContainer() {
 		return containerNumber;
+	}
+
+	@Override
+	public int getCaretDeltaPositionAfterCreation() {
+		return containerBase.getSize() == 0 ? 1 : containerBase.computeCaretMaxBound() + 1;
 	}
 
 	@Override

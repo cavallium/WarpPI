@@ -1,15 +1,12 @@
 package it.cavallium.warppi.gui.screens;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 import it.cavallium.warppi.gui.RenderContext;
 import it.cavallium.warppi.gui.ScreenContext;
-import org.apache.commons.lang3.SerializationUtils;
 
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.Platform.ConsoleUtils;
-import it.cavallium.warppi.device.input.Keyboard;
 import it.cavallium.warppi.event.Key;
 import it.cavallium.warppi.event.KeyPressedEvent;
 import it.cavallium.warppi.event.KeyReleasedEvent;
@@ -17,6 +14,16 @@ import it.cavallium.warppi.gui.HistoryBehavior;
 import it.cavallium.warppi.gui.expression.InputContext;
 import it.cavallium.warppi.gui.expression.blocks.Block;
 import it.cavallium.warppi.gui.expression.blocks.BlockContainer;
+import it.cavallium.warppi.gui.expression.blocks.BlockFixedPower;
+import it.cavallium.warppi.gui.expression.blocks.BlockLogarithm;
+import it.cavallium.warppi.gui.expression.blocks.BlockMixedFraction;
+import it.cavallium.warppi.gui.expression.blocks.BlockNegative;
+import it.cavallium.warppi.gui.expression.blocks.BlockPostfixFunction;
+import it.cavallium.warppi.gui.expression.blocks.BlockPower;
+import it.cavallium.warppi.gui.expression.blocks.BlockRandomInteger;
+import it.cavallium.warppi.gui.expression.blocks.BlockScientificFunction;
+import it.cavallium.warppi.gui.expression.blocks.BlockVariable;
+import it.cavallium.warppi.gui.expression.containers.ExpressionInputDiagnostic;
 import it.cavallium.warppi.gui.expression.containers.InputContainer;
 import it.cavallium.warppi.gui.expression.containers.NormalInputContainer;
 import it.cavallium.warppi.gui.expression.containers.NormalOutputContainer;
@@ -32,8 +39,8 @@ import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.MathematicalSymbols;
 import it.cavallium.warppi.math.functions.Expression;
 import it.cavallium.warppi.math.functions.Number;
+import it.cavallium.warppi.math.functions.ScientificFunctionKind;
 import it.cavallium.warppi.math.functions.Variable;
-import it.cavallium.warppi.math.functions.Variable.V_TYPE;
 import it.cavallium.warppi.math.functions.Variable.VariableValue;
 import it.cavallium.warppi.math.parser.MathParser;
 import it.cavallium.warppi.math.solver.MathSolver;
@@ -45,8 +52,11 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 public class MathInputScreen extends Screen {
 	private static final int BACKGROUND_COLOR = 0xFFC5C2AF;
 	private static final int ERROR_BACKGROUND_COLOR = 0xFFDC3C32;
+	private static final int INPUT_ERROR_COLOR = 0xFFB3261E;
+	private static final int INPUT_ERROR_PANEL_COLOR = 0xFFFFE9E6;
+	private static final int INPUT_ERROR_TEXT_COLOR = 0xFF4A1712;
+	private static final int INPUT_ERROR_HINT_COLOR = 0xFF7A3A34;
 	private static final int VIEWPORT_INDICATOR_COLOR = 0xFF5D5B51;
-	private static final int VIEWPORT_ACTIVE_COLOR = 0xFFB3261E;
 	private static final int VIEWPORT_TRACK_COLOR = 0x405D5B51;
 	private static final int PADDING = 4;
 	private static final int INPUT_VIEWPORT_MAX_HEIGHT = 112;
@@ -62,12 +72,14 @@ public class MathInputScreen extends Screen {
 	public InputContainer userInput;
 	public OutputContainer result;
 	public int errorLevel = 0; // 0 = nessuno, 1 = risultato, 2 = tutto
-	private boolean computingResult = false;
+	private volatile boolean computingResult = false;
 	private Thread computingThread;
 	private int computingAnimationIndex = 0;
 	private double computingAnimationElapsedTime = 0;
 	private double computingElapsedTime = 0;
 	private boolean computingBreakTipVisible = false;
+	private volatile InputFeedback inputFeedback;
+	private volatile Function answer;
 	private int inputScrollX;
 	private int inputScrollY;
 	private int resultScrollX;
@@ -79,9 +91,11 @@ public class MathInputScreen extends Screen {
 	private int resultViewportWidth;
 	private int resultViewportHeight;
 	private boolean resultNavigationActive;
-	boolean mustRefresh = true;
+	volatile boolean mustRefresh = true;
 	@SuppressWarnings("unused")
 	private int currentStep = 0;
+
+	private record InputFeedback(String title, String message, String correction) {}
 
 	public MathInputScreen() {
 		super();
@@ -104,6 +118,8 @@ public class MathInputScreen extends Screen {
 		this.mustRefresh = old.mustRefresh;
 		this.result = new NormalOutputContainer(old.result);
 		this.userInput = new NormalInputContainer(old.userInput, this.ic);
+		this.inputFeedback = old.inputFeedback;
+		this.answer = old.answer == null ? null : old.answer.clone(this.calc);
 		this.inputScrollX = old.inputScrollX;
 		this.inputScrollY = old.inputScrollY;
 		this.resultScrollX = old.resultScrollX;
@@ -178,6 +194,7 @@ public class MathInputScreen extends Screen {
 	@Override
 	public void render(RenderContext ctx) {
 		final Renderer renderer = ctx.getRenderer();
+		final InputFeedback feedback = inputFeedback;
 		MathInputScreen.fontBig.use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
 		final int textColor = 0xFF000000;
 		renderer.glColor(textColor);
@@ -197,6 +214,8 @@ public class MathInputScreen extends Screen {
 				renderer.glColor3f(0.75f, 0, 0);
 				renderer.glDrawStringRight(ctx.getWidth() - 4 - size - 4, ctx.getHeight() - size / 2 - renderer.getCurrentFont().getCharacterHeight() / 2 - 4, "Press (=) to stop");
 			}
+		} else if (feedback != null) {
+			drawInputFeedback(ctx, feedback);
 		} else if (!result.isContentEmpty()) {
 			drawResultViewport(ctx);
 		}
@@ -205,7 +224,7 @@ public class MathInputScreen extends Screen {
 	private void drawInputViewport(final RenderContext ctx) {
 		inputViewportWidth = Math.max(1, ctx.getWidth() - PADDING * 2 - 2);
 		final int availableHeight = Math.max(1, ctx.getHeight() - PADDING * 2);
-		final int reservedResultHeight = !result.isContentEmpty() && !computingResult
+		final int reservedResultHeight = !result.isContentEmpty() && inputFeedback == null && !computingResult
 				? Math.min(80, Math.max(32, availableHeight / 3)) : 0;
 		final int inputHeightLimit = Math.max(1,
 				Math.min(INPUT_VIEWPORT_MAX_HEIGHT, availableHeight - reservedResultHeight - VIEWPORT_GAP));
@@ -265,7 +284,7 @@ public class MathInputScreen extends Screen {
 	private void drawScrollIndicators(final Renderer renderer, final int x, final int y,
 			final int viewportWidth, final int viewportHeight, final int contentWidth,
 			final int contentHeight, final int scrollX, final int scrollY, final boolean active) {
-		final int color = active ? VIEWPORT_ACTIVE_COLOR : VIEWPORT_INDICATOR_COLOR;
+		final int color = active ? INPUT_ERROR_COLOR : VIEWPORT_INDICATOR_COLOR;
 		if (contentWidth > viewportWidth) {
 			final int trackWidth = Math.max(1, viewportWidth - 4);
 			final int thumbWidth = Math.min(trackWidth,
@@ -317,6 +336,46 @@ public class MathInputScreen extends Screen {
 		return Math.max(minimum, Math.min(value, maximum));
 	}
 
+	private void drawInputFeedback(final RenderContext ctx, final InputFeedback feedback) {
+		final Renderer renderer = ctx.getRenderer();
+		final BinaryFont font = Utils.getFont(true, false);
+		font.use(WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().display);
+		final int padding = 4;
+		final int panelX = 4;
+		final int panelWidth = Math.max(1, ctx.getWidth() - panelX * 2);
+		final int lineHeight = font.getCharacterHeight();
+		final int panelHeight = lineHeight * 3 + padding * 4;
+		final int desiredY = PADDING + inputViewportHeight + VIEWPORT_GAP;
+		final int panelY = Math.max(4, Math.min(desiredY, ctx.getHeight() - panelHeight - 4));
+
+		renderer.glColor(INPUT_ERROR_PANEL_COLOR);
+		renderer.glFillColor(panelX, panelY, panelWidth, panelHeight);
+		renderer.glColor(INPUT_ERROR_COLOR);
+		renderer.glFillColor(panelX, panelY, 3, panelHeight);
+		renderer.glDrawLine(panelX, panelY, panelX + panelWidth - 1, panelY);
+		renderer.glDrawLine(panelX, panelY + panelHeight - 1, panelX + panelWidth - 1, panelY + panelHeight - 1);
+		renderer.glDrawLine(panelX + panelWidth - 1, panelY, panelX + panelWidth - 1, panelY + panelHeight - 1);
+		renderer.glDrawStringLeft(panelX + 7, panelY + padding, feedback.title());
+		renderer.glColor(INPUT_ERROR_TEXT_COLOR);
+		renderer.glDrawStringLeft(panelX + 7, panelY + padding * 2 + lineHeight,
+				fitToWidth(font, feedback.message(), panelWidth - 11));
+		renderer.glColor(INPUT_ERROR_HINT_COLOR);
+		renderer.glDrawStringLeft(panelX + 7, panelY + padding * 3 + lineHeight * 2,
+				fitToWidth(font, "FIX: " + feedback.correction(), panelWidth - 11));
+	}
+
+	private static String fitToWidth(final BinaryFont font, final String text, final int maxWidth) {
+		if (font.getStringWidth(text) <= maxWidth) {
+			return text;
+		}
+		final String suffix = "...";
+		int end = text.length();
+		while (end > 0 && font.getStringWidth(text.substring(0, end) + suffix) > maxWidth) {
+			end--;
+		}
+		return end == 0 ? suffix : text.substring(0, end) + suffix;
+	}
+
 	@Override
 	public void renderTopmost(RenderContext ctx) {
 		final Renderer renderer = ctx.getRenderer();
@@ -352,6 +411,7 @@ public class MathInputScreen extends Screen {
 			}
 			switch (k.getKey()) {
 				case OK:
+					clearInputFeedback();
 					userInput.toggleExtra();
 					mustRefresh = true;
 					return true;
@@ -426,6 +486,20 @@ public class MathInputScreen extends Screen {
 							case DIVIDE:
 								typeChar('/');
 								return true;
+							case FRACTION:
+								typeChar(MathematicalSymbols.DIVISION);
+								return true;
+							case MIXED_FRACTION:
+								if (!result.isContentEmpty()) {
+									calc.mixedFractionMode = !calc.mixedFractionMode;
+									rerenderAnswer();
+								} else {
+									typeMixedFraction();
+								}
+								return true;
+							case NEGATIVE:
+								typeNegative();
+								return true;
 							case PARENTHESIS_OPEN:
 								typeChar('(');
 								return true;
@@ -450,6 +524,22 @@ public class MathInputScreen extends Screen {
 							case POWER_OF_x:
 								typeChar(MathematicalSymbols.POWER);
 								return true;
+							case POWER_OF_3:
+								typeBlock(new BlockFixedPower("3"));
+								return true;
+							case RECIPROCAL:
+								typeBlock(new BlockFixedPower("-1"));
+								return true;
+							case POWER_OF_10:
+								typePowerWithBase("10");
+								return true;
+							case POWER_OF_E:
+								typePowerWithBase(MathematicalSymbols.EULER_NUMBER);
+								return true;
+							case EXPONENTIAL_NOTATION:
+								typeChar(MathematicalSymbols.MULTIPLICATION);
+								typePowerWithBase("10");
+								return true;
 							case PI:
 								typeChar(MathematicalSymbols.PI);
 								return true;
@@ -461,6 +551,12 @@ public class MathInputScreen extends Screen {
 								return true;
 							case LETTER_Y:
 								typeChar(MathematicalSymbols.variables[24]);
+								return true;
+							case LETTER_A, LETTER_B, LETTER_C, LETTER_D, LETTER_E, LETTER_F,
+									LETTER_G, LETTER_H, LETTER_I, LETTER_J, LETTER_K, LETTER_L,
+									LETTER_M, LETTER_N, LETTER_O, LETTER_P, LETTER_Q, LETTER_R,
+									LETTER_S, LETTER_T, LETTER_U, LETTER_V, LETTER_W, LETTER_Z:
+								typeChar(letterFor(k.getKey()));
 								return true;
 							case SINE:
 								typeChar(MathematicalSymbols.SINE);
@@ -483,25 +579,71 @@ public class MathInputScreen extends Screen {
 							case LOGARITHM:
 								typeChar(MathematicalSymbols.LOGARITHM);
 								return true;
+							case COMMON_LOGARITHM:
+								typeBlock(new BlockLogarithm('1', '0'));
+								return true;
+							case NATURAL_LOGARITHM:
+								typeLogarithmWithEulerBase();
+								return true;
+							case ABSOLUTE_VALUE:
+								typeScientificFunction(ScientificFunctionKind.ABSOLUTE);
+								return true;
+							case ROUND:
+								typeScientificFunction(ScientificFunctionKind.ROUND);
+								return true;
+							case FACTORIZE:
+								typeScientificFunction(ScientificFunctionKind.FACTORIZE);
+								return true;
+							case FACTORIAL:
+								typePostfixFunction(ScientificFunctionKind.FACTORIAL);
+								return true;
+							case PERCENT:
+								typePostfixFunction(ScientificFunctionKind.PERCENT);
+								return true;
+							case DEGREE_MINUTE_SECOND:
+								typePostfixFunction(ScientificFunctionKind.DEGREE_MINUTE_SECOND);
+								return true;
+							case ANSWER:
+								return typeAnswer();
+							case LESS_THAN:
+								typeChar(MathematicalSymbols.LESS_THAN);
+								return true;
+							case LESS_OR_EQUAL:
+								typeChar(MathematicalSymbols.LESS_OR_EQUAL);
+								return true;
+							case GREATER_THAN:
+								typeChar(MathematicalSymbols.GREATER_THAN);
+								return true;
+							case GREATER_OR_EQUAL:
+								typeChar(MathematicalSymbols.GREATER_OR_EQUAL);
+								return true;
+							case RANDOM_INTEGER:
+								typeRandomIntegerTemplate();
+								return true;
 							case DELETE:
+								clearInputFeedback();
 								userInput.del();
 								currentStep = 0;
 								mustRefresh = true;
 								return true;
 							case LEFT:
+								clearInputFeedback();
 								userInput.moveLeft();
 								mustRefresh = true;
 								return true;
 							case RIGHT:
+								clearInputFeedback();
 								userInput.moveRight();
 								mustRefresh = true;
 								return true;
 							case UP:
+								clearInputFeedback();
 								userInput.moveUp(WarpPI.INSTANCE.getHardwareDevice()
 										.getDisplayManager().display);
 								mustRefresh = true;
 								return true;
 							case DOWN:
+								clearInputFeedback();
 								if (!userInput.moveDown(WarpPI.INSTANCE.getHardwareDevice()
 										.getDisplayManager().display) && isResultOversized()) {
 									resultNavigationActive = true;
@@ -510,6 +652,7 @@ public class MathInputScreen extends Screen {
 								mustRefresh = true;
 								return true;
 							case RESET:
+								clearInputFeedback();
 								userInput.clear();
 								result.clear();
 								resetViewports();
@@ -678,7 +821,7 @@ public class MathInputScreen extends Screen {
 						partialResults.clear();
 					}
 				}
-		
+
 				if (results.size() == 0) {
 					calc.resultsCount = 0;
 				} else {
@@ -722,61 +865,14 @@ public class MathInputScreen extends Screen {
 			calc.resultsCount = 0;
 			return true;
 		} else if (!computingResult) {
+			clearInputFeedback();
 			computingResult = true;
 			computingThread = new Thread(() -> {
 				try {
-					try {
-						if (!userInput.isAlreadyParsed() && !userInput.isEmpty()) {
-							final Expression expr = MathParser.parseInput(calc, userInput);
-							if (calc.f == null | calc.f2 == null) {
-								calc.f = new ObjectArrayList<>();
-								calc.f2 = new ObjectArrayList<>();
-							} else {
-								calc.f.clear();
-								calc.f2.clear();
-							}
-							calc.f.add(expr);
-							WarpPI.getPlatform().getConsoleUtils().out().println(2, "INPUT: " + expr);
-							final MathSolver ms = new MathSolver(expr);
-							final ObjectArrayList<ObjectArrayList<Function>> resultSteps = ms.solveAllSteps();
-							resultSteps.add(0, Utils.newArrayList(expr));
-							int stepNumber = 0;
-							for (ObjectArrayList<Function> resultStep : resultSteps) {
-								stepNumber++;
-								WarpPI.getPlatform().getConsoleUtils().out().println(0, "STEP " + stepNumber);
-								for (Function function : resultStep) {
-									WarpPI.getPlatform().getConsoleUtils().out().println(0, " :: " + function.toString());
-								}
-							}
-							final ObjectArrayList<Function> resultExpressions = resultSteps.get(resultSteps.size() - 1);
-							for (final Function rr : resultExpressions) {
-								WarpPI.getPlatform().getConsoleUtils().out().println(0, "RESULT: " + rr.toString());
-							}
-							final ObjectArrayList<ObjectArrayList<Block>> resultBlocks = MathParser.parseOutput(calc, resultExpressions);
-							result.setContentAsMultipleGroups(resultBlocks);
-							resultScrollX = 0;
-							resultScrollY = 0;
-							resultNavigationActive = false;
-							//									showVariablesDialog(() -> {
-							//										currentExpression = newExpression;
-							//										simplify();
-							//									});
-							if (swapScreen == true) {
-								this.swapInputScreen();
-							}
-						}
-					} catch (final InterruptedException ex) {
-						WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN, "Computing thread stopped.");
-					} catch (final Exception ex) {
-						if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
-							ex.printStackTrace();
-						}
-						throw new Error(Errors.SYNTAX_ERROR);
-					}
-				} catch (final Error e) {
-					d.errorStackTrace = WarpPI.getPlatform().stacktraceToString(e);
-					WarpPI.INSTANCE.getHardwareDevice().getDisplayManager().error = e.id.toString();
-					System.err.println(e.id);
+					computeResult(swapScreen);
+				} catch (final InterruptedException ex) {
+					WarpPI.getPlatform().getConsoleUtils().out().println(ConsoleUtils.OUTPUTLEVEL_DEBUG_MIN,
+							"Computing thread stopped.");
 				} finally {
 					computingResult = false;
 					WarpPI.INSTANCE.endLoadingOperation();
@@ -805,6 +901,135 @@ public class MathInputScreen extends Screen {
 		}
 	}
 
+	private void computeResult(final boolean swapScreen) throws InterruptedException {
+		if (userInput.isAlreadyParsed()) {
+			return;
+		}
+		if (userInput.isEmpty()) {
+			showSyntaxFeedback(null);
+			return;
+		}
+
+		final Expression expression;
+		try {
+			expression = MathParser.parseInput(calc, userInput);
+		} catch (final Error | RuntimeException failure) {
+			showSyntaxFeedback(failure);
+			logComputationFailure(failure);
+			return;
+		}
+
+		try {
+			if (calc.f == null || calc.f2 == null) {
+				calc.f = new ObjectArrayList<>();
+				calc.f2 = new ObjectArrayList<>();
+			} else {
+				calc.f.clear();
+				calc.f2.clear();
+			}
+			calc.f.add(expression);
+			WarpPI.getPlatform().getConsoleUtils().out().println(2, "INPUT: " + expression);
+			final MathSolver solver = new MathSolver(expression);
+			final ObjectArrayList<ObjectArrayList<Function>> resultSteps = solver.solveAllSteps();
+			resultSteps.add(0, Utils.newArrayList(expression));
+			int stepNumber = 0;
+			for (final ObjectArrayList<Function> resultStep : resultSteps) {
+				stepNumber++;
+				WarpPI.getPlatform().getConsoleUtils().out().println(0, "STEP " + stepNumber);
+				for (final Function function : resultStep) {
+					WarpPI.getPlatform().getConsoleUtils().out().println(0, " :: " + function);
+				}
+			}
+			final ObjectArrayList<Function> resultExpressions = resultSteps.get(resultSteps.size() - 1);
+			if (!resultExpressions.isEmpty())
+				answer = resultExpressions.getFirst().clone(calc);
+			for (final Function resultExpression : resultExpressions) {
+				WarpPI.getPlatform().getConsoleUtils().out().println(0, "RESULT: " + resultExpression);
+			}
+			final ObjectArrayList<ObjectArrayList<Block>> resultBlocks = MathParser.parseOutput(calc,
+					resultExpressions);
+			result.setContentAsMultipleGroups(resultBlocks);
+			resultScrollX = 0;
+			resultScrollY = 0;
+			resultNavigationActive = false;
+			if (swapScreen) {
+				swapInputScreen();
+			}
+		} catch (final Error failure) {
+			showCalculationFeedback(calculationMessage(failure), calculationCorrection(failure));
+			logComputationFailure(failure);
+		} catch (final RuntimeException failure) {
+			showCalculationFeedback("COULD NOT EVALUATE THIS EXPRESSION",
+					"EDIT THE EXPRESSION AND TRY AGAIN");
+			logComputationFailure(failure);
+		}
+	}
+
+	private void showSyntaxFeedback(final Exception failure) {
+		resultNavigationActive = false;
+		ExpressionInputDiagnostic diagnostic = userInput.diagnoseSyntaxError();
+		if (diagnostic == null) {
+			diagnostic = new ExpressionInputDiagnostic(userInput.getCaretPosition(),
+					ExpressionInputDiagnostic.HighlightTarget.INSERTION_POINT, "CHECK INPUT",
+					fallbackSyntaxMessage(failure), "EDIT AT THE CURSOR AND TRY AGAIN");
+		}
+		userInput.showError(diagnostic);
+		inputFeedback = new InputFeedback(diagnostic.title(), diagnostic.message(), diagnostic.correction());
+	}
+
+	private void showCalculationFeedback(final String message, final String correction) {
+		resultNavigationActive = false;
+		userInput.clearErrorHighlight();
+		inputFeedback = new InputFeedback("CALCULATION ERROR", message, correction);
+	}
+
+	private void clearInputFeedback() {
+		if (userInput != null) {
+			userInput.clearErrorHighlight();
+		}
+		inputFeedback = null;
+		mustRefresh = true;
+	}
+
+	private static String fallbackSyntaxMessage(final Exception failure) {
+		if (failure instanceof Error error && error.id == Errors.UNBALANCED_STACK) {
+			return "CHECK THE ORDER OF THE OPERATORS";
+		}
+		if (failure instanceof Error error && error.id == Errors.MISSING_ARGUMENTS) {
+			return "COMPLETE THE HIGHLIGHTED PART";
+		}
+		return "CHECK THE HIGHLIGHTED PART";
+	}
+
+	private static String calculationMessage(final Error failure) {
+		return switch (failure.id) {
+			case DIVISION_BY_ZERO -> "DIVISION BY ZERO IS NOT DEFINED";
+			case NEGATIVE_PARAMETER -> "THE VALUE IS OUTSIDE THE FUNCTION DOMAIN";
+			case NUMBER_TOO_LARGE -> "THE RESULT IS TOO LARGE";
+			case NUMBER_TOO_SMALL -> "THE RESULT IS TOO SMALL";
+			case TIMEOUT -> "THE CALCULATION TOOK TOO MANY STEPS";
+			case NOT_AN_EQUATION -> "ENTER AN EQUATION TO SOLVE";
+			default -> "COULD NOT EVALUATE THIS EXPRESSION";
+		};
+	}
+
+	private static String calculationCorrection(final Error failure) {
+		return switch (failure.id) {
+			case DIVISION_BY_ZERO -> "CHANGE THE DENOMINATOR AND TRY AGAIN";
+			case NEGATIVE_PARAMETER -> "CHANGE THE INPUT TO A VALID DOMAIN VALUE";
+			case NUMBER_TOO_LARGE, NUMBER_TOO_SMALL -> "REDUCE THE INPUT RANGE AND TRY AGAIN";
+			case TIMEOUT -> "SIMPLIFY THE EXPRESSION AND TRY AGAIN";
+			case NOT_AN_EQUATION -> "ADD = TO ENTER AN EQUATION";
+			default -> "EDIT THE EXPRESSION AND TRY AGAIN";
+		};
+	}
+
+	private static void logComputationFailure(final Exception failure) {
+		if (WarpPI.getPlatform().getSettings().isDebugEnabled()) {
+			failure.printStackTrace();
+		}
+	}
+
 	@SuppressWarnings("unused")
 	@Deprecated
 	private void changeEquationScreen() {
@@ -822,8 +1047,94 @@ public class MathInputScreen extends Screen {
 
 	public void typeChar(final char chr) {
 		resultNavigationActive = false;
+		clearInputFeedback();
 		userInput.typeChar(chr);
 		mustRefresh = true;
+	}
+
+	private void typeBlock(final Block block) {
+		resultNavigationActive = false;
+		clearInputFeedback();
+		userInput.typeBlock(block);
+		currentStep = 0;
+		mustRefresh = true;
+	}
+
+	private void typePowerWithBase(final String base) {
+		for (final char character : base.toCharArray())
+			typeChar(character);
+		typeBlock(new BlockPower());
+	}
+
+	private void typePowerWithBase(final char base) {
+		typeChar(base);
+		typeBlock(new BlockPower());
+	}
+
+	private void typeLogarithmWithEulerBase() {
+		final BlockLogarithm logarithm = new BlockLogarithm();
+		logarithm.getBaseContainer().appendBlock(new BlockVariable(
+				userInput.getInputContext(), MathematicalSymbols.EULER_NUMBER, true));
+		typeBlock(logarithm);
+	}
+
+	private void typeScientificFunction(final ScientificFunctionKind kind) {
+		typeBlock(new BlockScientificFunction(kind));
+	}
+
+	private void typePostfixFunction(final ScientificFunctionKind kind) {
+		typeBlock(new BlockPostfixFunction(kind));
+	}
+
+	private void typeRandomIntegerTemplate() {
+		typeBlock(new BlockRandomInteger());
+	}
+
+	private void typeMixedFraction() {
+		resultNavigationActive = false;
+		clearInputFeedback();
+		final BlockMixedFraction fraction = new BlockMixedFraction();
+		if (!userInput.wrapExpressionToLeft(fraction, fraction.getWholeContainer(), 1))
+			typeBlock(fraction);
+		currentStep = 0;
+		mustRefresh = true;
+	}
+
+	private void typeNegative() {
+		resultNavigationActive = false;
+		clearInputFeedback();
+		final BlockNegative negative = new BlockNegative();
+		if (!userInput.wrapExpressionToLeft(negative, negative.getNumberContainer(), 1))
+			typeBlock(negative);
+		currentStep = 0;
+		mustRefresh = true;
+	}
+
+	private boolean typeAnswer() throws Error {
+		final Function savedAnswer = answer;
+		if (savedAnswer == null)
+			return true;
+		final MathContext inputContext = new MathContext(calc);
+		inputContext.losslessInputMode = true;
+		for (final Block block : savedAnswer.clone(inputContext).toBlock(inputContext))
+			typeBlock(block);
+		return true;
+	}
+
+	private void rerenderAnswer() throws Error {
+		final Function savedAnswer = answer;
+		if (savedAnswer == null)
+			return;
+		result.setContentAsMultipleGroups(MathParser.parseOutput(calc,
+				new ObjectArrayList<>(new Function[] { savedAnswer.clone(calc) })));
+		resultScrollX = 0;
+		resultScrollY = 0;
+		resultNavigationActive = false;
+		mustRefresh = true;
+	}
+
+	private static char letterFor(final Key key) {
+		return (char) ('A' + key.ordinal() - Key.LETTER_A.ordinal());
 	}
 
 	@Override

@@ -9,14 +9,19 @@ import it.cavallium.warppi.math.Function;
 import it.cavallium.warppi.math.MathContext;
 import it.cavallium.warppi.math.MathematicalSymbols;
 import it.cavallium.warppi.math.functions.Expression;
+import it.cavallium.warppi.math.functions.Comparison.Operator;
+import it.cavallium.warppi.math.functions.Number;
 import it.cavallium.warppi.math.functions.Variable.V_TYPE;
 import it.cavallium.warppi.math.parser.features.FeatureChar;
+import it.cavallium.warppi.math.parser.features.FeatureComparison;
 import it.cavallium.warppi.math.parser.features.FeatureDivision;
 import it.cavallium.warppi.math.parser.features.FeatureEquation;
 import it.cavallium.warppi.math.parser.features.FeatureMultiplication;
 import it.cavallium.warppi.math.parser.features.FeatureNumber;
 import it.cavallium.warppi.math.parser.features.FeaturePower;
 import it.cavallium.warppi.math.parser.features.FeaturePowerChar;
+import it.cavallium.warppi.math.parser.features.FeaturePostfixFunction;
+import it.cavallium.warppi.math.parser.features.FeatureScientificFunction;
 import it.cavallium.warppi.math.parser.features.FeatureSubtraction;
 import it.cavallium.warppi.math.parser.features.FeatureSum;
 import it.cavallium.warppi.math.parser.features.FeatureSumSubtraction;
@@ -24,6 +29,7 @@ import it.cavallium.warppi.math.parser.features.FeatureVariable;
 import it.cavallium.warppi.math.parser.features.interfaces.Feature;
 import it.cavallium.warppi.math.parser.steps.AddImplicitMultiplications;
 import it.cavallium.warppi.math.parser.steps.FixEquations;
+import it.cavallium.warppi.math.parser.steps.FixComparisons;
 import it.cavallium.warppi.math.parser.steps.FixMultiplicationsAndDivisions;
 import it.cavallium.warppi.math.parser.steps.FixSingleFunctionArgs;
 import it.cavallium.warppi.math.parser.steps.FixSumsAndSubtractions;
@@ -82,13 +88,16 @@ public class MathParser {
 		if (process.size() > 1) {
 			throw new Error(Errors.UNBALANCED_STACK, "The stack is unbalanced. Not all the functions are nested correctly");
 		}
+		if (process.isEmpty()) {
+			throw new Error(Errors.MISSING_ARGUMENTS, "The expression is empty.");
+		}
 
 		return process.get(0);
 	}
 
 	private static ObjectArrayList<Function> fixStack(final MathContext context,
 			final ObjectArrayList<Function> functionsList) throws Error {
-		final MathParserStep[] steps = new MathParserStep[] { new JoinNumberAndVariables(context), new FixSingleFunctionArgs(), new RemoveParentheses(context), new FixMultiplicationsAndDivisions(), new FixSumsAndSubtractions(), new AddImplicitMultiplications(context), new FixEquations() };
+		final MathParserStep[] steps = new MathParserStep[] { new JoinNumberAndVariables(context), new FixSingleFunctionArgs(), new RemoveParentheses(context), new FixMultiplicationsAndDivisions(), new FixSumsAndSubtractions(), new AddImplicitMultiplications(context), new FixEquations(), new FixComparisons() };
 		boolean lastLoopDidSomething;
 		Function lastElement;
 
@@ -157,9 +166,96 @@ public class MathParser {
 
 		features = MathParser.makePowers(context, features);
 
+		features = MathParser.makePostfixFunctions(context, features);
+
+		features = MathParser.fixPrefixSigns(context, features);
+
 		features = MathParser.convertFunctionChars(context, features);
 
 		return features;
+	}
+
+	/**
+	 * Binds signs that occur where a value is expected. Unary {@code +} is an
+	 * identity operation, while unary {@code ±x} is represented as
+	 * {@code 0±x}, preserving the existing two-branch solver semantics.
+	 */
+	private static ObjectArrayList<Feature> fixPrefixSigns(final MathContext context,
+			final ObjectArrayList<Feature> features) throws Error {
+		final ObjectArrayList<Feature> process = new ObjectArrayList<>();
+		final ObjectArrayList<Feature> pendingPlusMinusSigns = new ObjectArrayList<>();
+		boolean expectingValue = true;
+
+		for (final Feature feature : features) {
+			if (feature instanceof FeatureChar featureChar) {
+				final char character = featureChar.ch;
+				if (expectingValue && character == MathematicalSymbols.SUM) {
+					continue;
+				}
+				if (expectingValue && character == MathematicalSymbols.SUM_SUBTRACTION) {
+					pendingPlusMinusSigns.add(feature);
+					continue;
+				}
+				if (isBinaryOperator(character)) {
+					// Keep malformed sign/operator sequences intact so the parser can
+					// report a normal missing-argument error instead of manufacturing a value.
+					process.addAll(pendingPlusMinusSigns);
+					pendingPlusMinusSigns.clear();
+					process.add(feature);
+					expectingValue = true;
+					continue;
+				}
+			}
+
+			Feature value = feature;
+			if (!pendingPlusMinusSigns.isEmpty()) {
+				final Function operand = feature.toFunction(context);
+				if (operand == null) {
+					process.addAll(pendingPlusMinusSigns);
+				} else {
+					for (int sign = 0; sign < pendingPlusMinusSigns.size(); sign++) {
+						value = new FeatureSumSubtraction(new Number(context, 0), value.toFunction(context));
+					}
+				}
+			}
+			process.add(value);
+			pendingPlusMinusSigns.clear();
+			expectingValue = false;
+		}
+
+		// A ± without an operand must remain visible to the regular error path.
+		process.addAll(pendingPlusMinusSigns);
+		return process;
+	}
+
+	private static boolean isBinaryOperator(final char character) {
+		return character == MathematicalSymbols.SUM
+				|| character == MathematicalSymbols.SUM_SUBTRACTION
+				|| character == MathematicalSymbols.SUBTRACTION
+				|| character == MathematicalSymbols.MULTIPLICATION
+				|| character == MathematicalSymbols.DIVISION
+				|| character == MathematicalSymbols.EQUATION
+				|| character == MathematicalSymbols.LESS_THAN
+				|| character == MathematicalSymbols.LESS_OR_EQUAL
+				|| character == MathematicalSymbols.GREATER_THAN
+				|| character == MathematicalSymbols.GREATER_OR_EQUAL;
+	}
+
+	private static ObjectArrayList<Feature> makePostfixFunctions(final MathContext context,
+			final ObjectArrayList<Feature> features) throws Error {
+		final ObjectArrayList<Feature> process = new ObjectArrayList<>();
+		for (final Feature feature : features) {
+			if (!(feature instanceof FeaturePostfixFunction postfix)) {
+				process.add(feature);
+				continue;
+			}
+			if (process.isEmpty())
+				throw new Error(Errors.MISSING_ARGUMENTS,
+						"A postfix function needs an argument on its left.");
+			final Feature previous = process.remove(process.size() - 1);
+			process.add(new FeatureScientificFunction(postfix.getKind(), previous.toFunction(context)));
+		}
+		return process;
 	}
 
 	/**
@@ -199,6 +295,18 @@ public class MathParser {
 						break;
 					case MathematicalSymbols.EQUATION:
 						result = new FeatureEquation(null, null);
+						break;
+					case MathematicalSymbols.LESS_THAN:
+						result = new FeatureComparison(Operator.LESS_THAN, null, null);
+						break;
+					case MathematicalSymbols.LESS_OR_EQUAL:
+						result = new FeatureComparison(Operator.LESS_OR_EQUAL, null, null);
+						break;
+					case MathematicalSymbols.GREATER_THAN:
+						result = new FeatureComparison(Operator.GREATER_THAN, null, null);
+						break;
+					case MathematicalSymbols.GREATER_OR_EQUAL:
+						result = new FeatureComparison(Operator.GREATER_OR_EQUAL, null, null);
 						break;
 				}
 
