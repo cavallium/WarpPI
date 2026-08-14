@@ -42,6 +42,7 @@
 					<exclude>draft.png</exclude>
 					<exclude>draft2.png</exclude>
 					<exclude>keypad-preview.jpg</exclude>
+					<!-- Keep every font_gputest source and its generated atlas: debug UI is available in production. -->
 					<exclude>old_font_*.rft</exclude>
 					<exclude>font_square.rft</exclude>
 					<exclude>libpicalc.so</exclude>
@@ -49,6 +50,8 @@
 					<exclude>test.png</exclude>
 					<!-- Replaced by generated RGB565/RGBA4 production textures. -->
 					<exclude>skin.png</exclude>
+					<exclude>skin-loading.png</exclude>
+					<exclude>skin-spinner.png</exclude>
 					<exclude>tetrisskin.png</exclude>
 					<exclude>mario-atlas.png</exclude>
 					<exclude>mario-background-*.png</exclude>

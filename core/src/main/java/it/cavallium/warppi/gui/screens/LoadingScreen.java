@@ -84,11 +84,7 @@ public class LoadingScreen extends Screen {
 		final DisplayOutputDevice display = d.display;
 		final Renderer renderer = ctx.getRenderer();
 		renderer.glColor3i(255, 255, 255);
-		if (d.usesOptimizedLoadingSkins()) {
-			renderOptimized(ctx, display, renderer);
-		} else {
-			renderOriginal(ctx, display, renderer);
-		}
+		renderLoadingAssets(ctx, display, renderer);
 		renderProgressBar(ctx.getWidth(), ctx.getHeight(), renderer,
 				WarpPI.INSTANCE.getLoadingProgressPercent());
 	}
@@ -113,21 +109,7 @@ public class LoadingScreen extends Screen {
 		return PROGRESS_WIDTH * boundedPercent / 100;
 	}
 
-	private void renderOriginal(final RenderContext ctx, final DisplayOutputDevice display,
-			final Renderer renderer) {
-		d.guiSkin.use(display);
-		renderer.glFillRect(ctx.getWidth() / 2f - 80, ctx.getHeight() / 2f - 64,
-				160, 48, 0, 32, 160, 48);
-		renderer.glFillRect(ctx.getWidth() / 2f - 24,
-				ctx.getHeight() / 2f - loadingTextTranslation,
-				48, 48, 160, 32, 48, 48);
-		renderer.glFillRect(ctx.getWidth() - 224, ctx.getHeight() - 48,
-				224, 48, 0, 80, 224, 48);
-		renderer.glFillRect(ctx.getWidth() - 160 - 24 - 224, ctx.getHeight() - 48,
-				160, 48, 224, 80, 160, 48);
-	}
-
-	private void renderOptimized(final RenderContext ctx, final DisplayOutputDevice display,
+	private void renderLoadingAssets(final RenderContext ctx, final DisplayOutputDevice display,
 			final Renderer renderer) {
 		final Skin opaque = d.getLoadingSkin();
 		opaque.use(display);

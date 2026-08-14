@@ -72,6 +72,18 @@ class UIDemoScreenTest {
 	}
 
 	@Test
+	void addressesBothTheOriginalSpriteStripAndTheRaspberryTiledAtlas() {
+		assertEquals(4_480, UIDemoScreen.spriteSourceX(20, 4_928));
+		assertEquals(0, UIDemoScreen.spriteSourceY(20, 4_928));
+		assertEquals(1_792, UIDemoScreen.spriteSourceX(8, 2_048));
+		assertEquals(0, UIDemoScreen.spriteSourceY(8, 2_048));
+		assertEquals(0, UIDemoScreen.spriteSourceX(9, 2_048));
+		assertEquals(128, UIDemoScreen.spriteSourceY(9, 2_048));
+		assertEquals(448, UIDemoScreen.spriteSourceX(20, 2_048));
+		assertEquals(256, UIDemoScreen.spriteSourceY(20, 2_048));
+	}
+
+	@Test
 	void disablesOptionalSkinWhenDeferredInitializationFails() {
 		final Skin missingOptionalSkin = new Skin() {
 			@Override

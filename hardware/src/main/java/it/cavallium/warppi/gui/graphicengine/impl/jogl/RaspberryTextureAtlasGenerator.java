@@ -9,7 +9,6 @@ import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +17,9 @@ import javax.imageio.ImageIO;
 
 /** Generates Raspberry-only, directly uploadable textures during Maven builds. */
 public final class RaspberryTextureAtlasGenerator {
-	private static final String UI_SKIN_RESOURCE = "/skin.png";
-	private static final int UI_BACKGROUND = 0xFFC5C2AF;
-	private static final int UI_MAIN_WIDTH = 512;
-	private static final int UI_MAIN_HEIGHT = 32;
-	private static final int UI_LOADING_WIDTH = 512;
-	private static final int UI_LOADING_HEIGHT = 64;
-	private static final int UI_SPINNER_WIDTH = 64;
-	private static final int UI_SPINNER_HEIGHT = 64;
+	private static final String GPU_TEST_SPRITES_RESOURCE = "/font_gputest3.png";
+	static final int GPU_TEST_FRAME_WIDTH = 224;
+	static final int GPU_TEST_FRAME_HEIGHT = 128;
 
 	private RaspberryTextureAtlasGenerator() {}
 
@@ -51,106 +45,53 @@ public final class RaspberryTextureAtlasGenerator {
 		if (source == null)
 			throw new IOException("Unsupported production texture: " + resource);
 
+		final BufferedImage production = prepareProductionTexture(resource, source);
 		try {
-			if (UI_SKIN_RESOURCE.equals(resource))
-				return generateUiTextures(outputDirectory, source);
-			return List.of(generateImage(outputDirectory, resource, source));
+			return List.of(generateImage(outputDirectory, resource, production));
 		} finally {
+			if (production != source)
+				production.flush();
 			source.flush();
 		}
 	}
 
-	private static List<Path> generateUiTextures(final Path outputDirectory,
+	static BufferedImage prepareProductionTexture(final String resource,
 			final BufferedImage source) throws IOException {
-		if (source.getWidth() != 512 || source.getHeight() != 128)
-			throw new IOException("Unexpected UI skin dimensions: "
+		if (!GPU_TEST_SPRITES_RESOURCE.equals(resource))
+			return source;
+		if (source.getHeight() != GPU_TEST_FRAME_HEIGHT
+				|| source.getWidth() % GPU_TEST_FRAME_WIDTH != 0)
+			throw new IOException("Unexpected GPU-test sprite dimensions: "
 					+ source.getWidth() + "x" + source.getHeight());
 
-		final List<GeneratedImage> generatedImages = List.of(
-				new GeneratedImage("/skin.png", createMainUiTexture(source)),
-				new GeneratedImage("/skin-loading.png", createLoadingUiTexture(source)),
-				new GeneratedImage("/skin-spinner.png", createSpinnerUiTexture(source)));
-		final List<Path> generatedPaths = new ArrayList<>(generatedImages.size());
-		try {
-			for (final GeneratedImage generated : generatedImages)
-				generatedPaths.add(generateImage(outputDirectory,
-						generated.resource(), generated.image()));
-		} finally {
-			for (final GeneratedImage generated : generatedImages)
-				generated.image().flush();
+		final int frames = source.getWidth() / GPU_TEST_FRAME_WIDTH;
+		final int columns = Math.min(frames,
+				JOGLPackedTexture.MAX_TEXTURE_DIMENSION / GPU_TEST_FRAME_WIDTH);
+		final int rows = (frames + columns - 1) / columns;
+		final int atlasWidth = nextPowerOfTwo(columns * GPU_TEST_FRAME_WIDTH);
+		final int atlasHeight = nextPowerOfTwo(rows * GPU_TEST_FRAME_HEIGHT);
+		if (atlasWidth > JOGLPackedTexture.MAX_TEXTURE_DIMENSION
+				|| atlasHeight > JOGLPackedTexture.MAX_TEXTURE_DIMENSION)
+			throw new IOException("GPU-test sprites do not fit the Raspberry texture limit");
+
+		final int imageType = source.getColorModel().hasAlpha()
+				? BufferedImage.TYPE_INT_ARGB : BufferedImage.TYPE_INT_RGB;
+		final BufferedImage atlas = new BufferedImage(atlasWidth, atlasHeight, imageType);
+		final int[] framePixels = new int[GPU_TEST_FRAME_WIDTH * GPU_TEST_FRAME_HEIGHT];
+		for (int frame = 0; frame < frames; frame++) {
+			source.getRGB(frame * GPU_TEST_FRAME_WIDTH, 0,
+					GPU_TEST_FRAME_WIDTH, GPU_TEST_FRAME_HEIGHT,
+					framePixels, 0, GPU_TEST_FRAME_WIDTH);
+			atlas.setRGB(frame % columns * GPU_TEST_FRAME_WIDTH,
+					frame / columns * GPU_TEST_FRAME_HEIGHT,
+					GPU_TEST_FRAME_WIDTH, GPU_TEST_FRAME_HEIGHT,
+					framePixels, 0, GPU_TEST_FRAME_WIDTH);
 		}
-		return List.copyOf(generatedPaths);
+		return atlas;
 	}
 
-	private static BufferedImage createMainUiTexture(final BufferedImage source) {
-		final BufferedImage output = opaqueImage(UI_MAIN_WIDTH, UI_MAIN_HEIGHT);
-		copyComposited(source, output, 0, 0, UI_MAIN_WIDTH, UI_MAIN_HEIGHT,
-				0, 0, UI_BACKGROUND);
-		// These two arrows are drawn inside the white variable popup.
-		copyComposited(source, output, 160, 21, 4, 7, 160, 21, 0xFFFFFFFF);
-		copyComposited(source, output, 172, 21, 4, 7, 172, 21, 0xFFFFFFFF);
-		return output;
-	}
-
-	private static BufferedImage createLoadingUiTexture(final BufferedImage source) {
-		final BufferedImage output = opaqueImage(UI_LOADING_WIDTH, UI_LOADING_HEIGHT);
-		fill(output, UI_BACKGROUND);
-		// Transparent padding is omitted and the three opaque results share one row.
-		copyComposited(source, output, 31, 32, 99, 48, 0, 0, UI_BACKGROUND);
-		copyComposited(source, output, 3, 80, 217, 48, 99, 0, UI_BACKGROUND);
-		copyComposited(source, output, 224, 80, 158, 48, 316, 0, UI_BACKGROUND);
-		return output;
-	}
-
-	private static BufferedImage createSpinnerUiTexture(final BufferedImage source) {
-		final BufferedImage output = new BufferedImage(UI_SPINNER_WIDTH,
-				UI_SPINNER_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-		copy(source, output, 162, 33, 44, 45, 0, 0);
-		return output;
-	}
-
-	private static BufferedImage opaqueImage(final int width, final int height) {
-		return new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-	}
-
-	private static void fill(final BufferedImage image, final int argb) {
-		for (int y = 0; y < image.getHeight(); y++)
-			for (int x = 0; x < image.getWidth(); x++)
-				image.setRGB(x, y, argb);
-	}
-
-	private static void copy(final BufferedImage source, final BufferedImage target,
-			final int sourceX, final int sourceY, final int width, final int height,
-			final int targetX, final int targetY) {
-		for (int y = 0; y < height; y++)
-			for (int x = 0; x < width; x++)
-				target.setRGB(targetX + x, targetY + y,
-						source.getRGB(sourceX + x, sourceY + y));
-	}
-
-	private static void copyComposited(final BufferedImage source, final BufferedImage target,
-			final int sourceX, final int sourceY, final int width, final int height,
-			final int targetX, final int targetY, final int background) {
-		for (int y = 0; y < height; y++)
-			for (int x = 0; x < width; x++)
-				target.setRGB(targetX + x, targetY + y,
-						compositeRgba4(source.getRGB(sourceX + x, sourceY + y), background));
-	}
-
-	private static int compositeRgba4(final int argb, final int background) {
-		final int rgba4 = JOGLPackedTexture.PixelFormat.RGBA4.packArgb(argb);
-		final int alpha = (rgba4 & 0xF) * 17;
-		final int red = (rgba4 >>> 12 & 0xF) * 17;
-		final int green = (rgba4 >>> 8 & 0xF) * 17;
-		final int blue = (rgba4 >>> 4 & 0xF) * 17;
-		final int outputRed = blend(red, background >>> 16 & 0xFF, alpha);
-		final int outputGreen = blend(green, background >>> 8 & 0xFF, alpha);
-		final int outputBlue = blend(blue, background & 0xFF, alpha);
-		return 0xFF000000 | outputRed << 16 | outputGreen << 8 | outputBlue;
-	}
-
-	private static int blend(final int foreground, final int background, final int alpha) {
-		return (foreground * alpha + background * (255 - alpha) + 127) / 255;
+	private static int nextPowerOfTwo(final int value) {
+		return value > 1 ? Integer.highestOneBit(value - 1) << 1 : 1;
 	}
 
 	private static Path generateImage(final Path outputDirectory, final String resource,
@@ -296,5 +237,4 @@ public final class RaspberryTextureAtlasGenerator {
 		output.writeByte(packedPixel >>> 8);
 	}
 
-	private record GeneratedImage(String resource, BufferedImage image) {}
 }

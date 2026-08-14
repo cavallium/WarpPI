@@ -79,4 +79,42 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<!-- Private GPU-test sources stay ignored, but local production builds still prebuild them. -->
+		<profile>
+			<id>private-gpu-diagnostic-fonts</id>
+			<activation>
+				<file>
+					<exists>../core/src/main/resources/font_gputest1.rft</exists>
+				</file>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>3.6.3</version>
+						<executions>
+							<execution>
+								<id>generate-private-jogl-font-atlases</id>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<mainClass>it.cavallium.warppi.gui.graphicengine.impl.jogl.JOGLFontAtlasGenerator</mainClass>
+									<arguments>
+										<argument>${project.build.outputDirectory}/font-atlas</argument>
+										<argument>gputest1</argument>
+										<argument>gputest2</argument>
+										<argument>gputest12</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

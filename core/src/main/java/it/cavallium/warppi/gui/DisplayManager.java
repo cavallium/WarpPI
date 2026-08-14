@@ -302,14 +302,8 @@ public final class DisplayManager implements RenderingLoop {
 
 	private void load_skin() throws IOException {
 		guiSkin = graphicEngine.loadSkin("/skin.png");
-		if (graphicEngine.usesProductionTextureAtlases()) {
-			loadingSkin = graphicEngine.loadSkin("/skin-loading.png");
-			loadingSpinnerSkin = graphicEngine.loadSkin("/skin-spinner.png");
-		}
-	}
-
-	public boolean usesOptimizedLoadingSkins() {
-		return loadingSkin != null && loadingSpinnerSkin != null;
+		loadingSkin = graphicEngine.loadSkin("/skin-loading.png");
+		loadingSpinnerSkin = graphicEngine.loadSkin("/skin-spinner.png");
 	}
 
 	public Skin getLoadingSkin() {

@@ -74,6 +74,8 @@
 							<arguments>
 								<argument>${project.build.outputDirectory}/texture-atlas</argument>
 								<argument>skin.png</argument>
+								<argument>skin-loading.png</argument>
+								<argument>skin-spinner.png</argument>
 								<argument>tetrisskin.png</argument>
 								<argument>mario-atlas.png</argument>
 								<argument>mario-background-0.png</argument>
@@ -143,4 +145,40 @@
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<!-- Private GPU-test sources stay ignored, but local production builds still prebuild them. -->
+		<profile>
+			<id>private-gpu-diagnostic-texture</id>
+			<activation>
+				<file>
+					<exists>../core/src/main/resources/font_gputest3.png</exists>
+				</file>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>3.6.3</version>
+						<executions>
+							<execution>
+								<id>generate-private-gpu-diagnostic-texture</id>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<mainClass>it.cavallium.warppi.gui.graphicengine.impl.jogl.RaspberryTextureAtlasGenerator</mainClass>
+									<arguments>
+										<argument>${project.build.outputDirectory}/texture-atlas</argument>
+										<argument>font_gputest3.png</argument>
+									</arguments>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>

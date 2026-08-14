@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,6 +21,18 @@ class JOGLFontAtlasTest {
 	@ParameterizedTest
 	@ValueSource(strings = { "smal", "smallest", "norm" })
 	void generatedAtlasMatchesItsRftSource(final String name) throws IOException {
+		assertGeneratedAtlasMatchesSource(name);
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = { "gputest1", "gputest2", "gputest12" })
+	void generatesIgnoredDiagnosticAtlasWhenItsPrivateSourceIsPresent(final String name) throws IOException {
+		assumeTrue(JOGLFontAtlasTest.class.getResource("/font_" + name + ".rft") != null,
+				"Private GPU-test source is not installed");
+		assertGeneratedAtlasMatchesSource(name);
+	}
+
+	private static void assertGeneratedAtlasMatchesSource(final String name) throws IOException {
 		final JOGLFontAtlas expected;
 		try (InputStream input = resource("/font_" + name + ".rft")) {
 			expected = JOGLFontAtlas.fromRft(input);

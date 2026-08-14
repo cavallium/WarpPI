@@ -3,6 +3,7 @@ package it.cavallium.warppi.gui.graphicengine.impl.jogl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
@@ -21,6 +22,8 @@ class RaspberryTextureAtlasGeneratorTest {
 
 	private static final String[] SOURCE_TEXTURES = {
 		"skin.png",
+		"skin-loading.png",
+		"skin-spinner.png",
 		"tetrisskin.png",
 		"mario-atlas.png",
 		"mario-background-0.png",
@@ -78,6 +81,48 @@ class RaspberryTextureAtlasGeneratorTest {
 		}
 	}
 
+	@Test
+	void packsIgnoredGpuSpritesWhenTheirPrivateSourceIsInstalled() throws Exception {
+		final String sourceResource = "/font_gputest3.png";
+		assumeTrue(getClass().getResource(sourceResource) != null,
+				"Private GPU-test source is not installed");
+		final String packedResource = JOGLPackedTexture.resourcePath(sourceResource);
+		try (InputStream sourceInput = getClass().getResourceAsStream(sourceResource);
+				InputStream directInput = getClass().getResourceAsStream(packedResource);
+				InputStream fallbackInput = getClass().getResourceAsStream(packedResource)) {
+			assertNotNull(sourceInput, sourceResource);
+			assertNotNull(directInput, packedResource);
+			assertNotNull(fallbackInput, packedResource);
+			final BufferedImage source = ImageIO.read(sourceInput);
+			assertNotNull(source, sourceResource);
+			try {
+				final JOGLPackedTexture.Decoded direct = JOGLPackedTexture.read(directInput, true);
+				final JOGLPackedTexture.Decoded fallback = JOGLPackedTexture.read(fallbackInput, false);
+				assertEquals(2_048, direct.width());
+				assertEquals(512, direct.height());
+				assertEquals(JOGLPackedTexture.PixelFormat.RGB565, direct.pixelFormat());
+				assertTrue(direct.compressed());
+				assertEquals(256 * Short.BYTES + direct.width() * direct.height(),
+						direct.pixels().remaining());
+				assertEquals(direct.pixelFormat(), fallback.pixelFormat());
+
+				final int frames = source.getWidth() / RaspberryTextureAtlasGenerator.GPU_TEST_FRAME_WIDTH;
+				final int columns = direct.width() / RaspberryTextureAtlasGenerator.GPU_TEST_FRAME_WIDTH;
+				for (int frame = 0; frame < frames; frame++)
+					for (final int x : new int[] { 0, 112, 223 })
+						for (final int y : new int[] { 0, 64, 127 })
+							assertTargetPrecisionPixel(source.getRGB(
+									frame * RaspberryTextureAtlasGenerator.GPU_TEST_FRAME_WIDTH + x, y),
+									fallback,
+									frame % columns * RaspberryTextureAtlasGenerator.GPU_TEST_FRAME_WIDTH + x,
+									frame / columns * RaspberryTextureAtlasGenerator.GPU_TEST_FRAME_HEIGHT + y,
+									sourceResource + " frame " + frame + " pixel " + x + "," + y);
+			} finally {
+				source.flush();
+			}
+		}
+	}
+
 	private static void assertOptimalPayload(final String texture, final BufferedImage source,
 			final JOGLPackedTexture.Decoded direct) {
 		final int pixels = source.getWidth() * source.getHeight();
@@ -100,72 +145,7 @@ class RaspberryTextureAtlasGeneratorTest {
 	}
 
 	private BufferedImage expectedTexture(final String texture) throws Exception {
-		if (!texture.startsWith("skin-") && !texture.equals("skin.png"))
-			return loadImage("/" + texture);
-
-		final BufferedImage source = loadImage("/skin.png");
-		try {
-			return switch (texture) {
-				case "skin.png" -> expectedMainSkin(source);
-				case "skin-loading.png" -> expectedLoadingSkin(source);
-				case "skin-spinner.png" -> expectedSpinnerSkin(source);
-				default -> throw new AssertionError(texture);
-			};
-		} finally {
-			source.flush();
-		}
-	}
-
-	private static BufferedImage expectedMainSkin(final BufferedImage source) {
-		final BufferedImage expected = new BufferedImage(512, 32, BufferedImage.TYPE_INT_RGB);
-		copyComposited(source, expected, 0, 0, 512, 32, 0, 0, 0xFFC5C2AF);
-		copyComposited(source, expected, 160, 21, 4, 7, 160, 21, 0xFFFFFFFF);
-		copyComposited(source, expected, 172, 21, 4, 7, 172, 21, 0xFFFFFFFF);
-		return expected;
-	}
-
-	private static BufferedImage expectedLoadingSkin(final BufferedImage source) {
-		final BufferedImage expected = new BufferedImage(512, 64, BufferedImage.TYPE_INT_RGB);
-		for (int y = 0; y < expected.getHeight(); y++)
-			for (int x = 0; x < expected.getWidth(); x++)
-				expected.setRGB(x, y, 0xFFC5C2AF);
-		copyComposited(source, expected, 31, 32, 99, 48, 0, 0, 0xFFC5C2AF);
-		copyComposited(source, expected, 3, 80, 217, 48, 99, 0, 0xFFC5C2AF);
-		copyComposited(source, expected, 224, 80, 158, 48, 316, 0, 0xFFC5C2AF);
-		return expected;
-	}
-
-	private static BufferedImage expectedSpinnerSkin(final BufferedImage source) {
-		final BufferedImage expected = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
-		for (int y = 0; y < 45; y++)
-			for (int x = 0; x < 44; x++)
-				expected.setRGB(x, y, source.getRGB(162 + x, 33 + y));
-		return expected;
-	}
-
-	private static void copyComposited(final BufferedImage source, final BufferedImage target,
-			final int sourceX, final int sourceY, final int width, final int height,
-			final int targetX, final int targetY, final int background) {
-		for (int y = 0; y < height; y++)
-			for (int x = 0; x < width; x++)
-				target.setRGB(targetX + x, targetY + y,
-						compositeRgba4(source.getRGB(sourceX + x, sourceY + y), background));
-	}
-
-	private static int compositeRgba4(final int argb, final int background) {
-		final int packed = JOGLPackedTexture.PixelFormat.RGBA4.packArgb(argb);
-		final int alpha = (packed & 0xF) * 17;
-		final int red = (packed >>> 12 & 0xF) * 17;
-		final int green = (packed >>> 8 & 0xF) * 17;
-		final int blue = (packed >>> 4 & 0xF) * 17;
-		return 0xFF000000
-				| blend(red, background >>> 16 & 0xFF, alpha) << 16
-				| blend(green, background >>> 8 & 0xFF, alpha) << 8
-				| blend(blue, background & 0xFF, alpha);
-	}
-
-	private static int blend(final int foreground, final int background, final int alpha) {
-		return (foreground * alpha + background * (255 - alpha) + 127) / 255;
+		return loadImage("/" + texture);
 	}
 
 	private BufferedImage loadImage(final String resource) throws Exception {
@@ -188,5 +168,14 @@ class RaspberryTextureAtlasGeneratorTest {
 				assertEquals(expected, pixels.getShort(offset) & 0xFFFF,
 						texture + " pixel " + x + "," + y);
 			}
+	}
+
+	private static void assertTargetPrecisionPixel(final int sourceArgb,
+			final JOGLPackedTexture.Decoded decoded, final int x, final int y,
+			final String message) {
+		final ByteBuffer pixels = decoded.pixels().duplicate().order(ByteOrder.nativeOrder());
+		final int offset = ((decoded.height() - 1 - y) * decoded.width() + x) * Short.BYTES;
+		final int expected = decoded.pixelFormat().packArgb(sourceArgb);
+		assertEquals(expected, pixels.getShort(offset) & 0xFFFF, message);
 	}
 }

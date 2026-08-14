@@ -496,7 +496,9 @@ public final class UIDemoScreen extends Screen {
 			gpuTest3Skin.use(d.display);
 			renderer.glColor4f(1f, 1f, 1f, 0.7f);
 			renderer.glFillRect(spriteX, spriteY, spriteWidth, spriteHeight,
-					spriteFrame * spriteWidth, 0, spriteWidth, spriteHeight);
+					spriteSourceX(spriteFrame, gpuTest3Skin.getSkinWidth()),
+					spriteSourceY(spriteFrame, gpuTest3Skin.getSkinWidth()),
+					spriteWidth, spriteHeight);
 
 			final int stripX = 6;
 			final int stripWidth = width - 12;
@@ -508,7 +510,9 @@ public final class UIDemoScreen extends Screen {
 				renderer.glColor4f(1f, 1f, 1f, frame == spriteFrame ? 1f : 0.45f);
 				renderer.glFillRect(stripX + frame * thumbnailWidth, stripY,
 						Math.max(1, thumbnailWidth - 1), thumbnailHeight,
-						frame * spriteWidth, 0, spriteWidth, spriteHeight);
+						spriteSourceX(frame, gpuTest3Skin.getSkinWidth()),
+						spriteSourceY(frame, gpuTest3Skin.getSkinWidth()),
+						spriteWidth, spriteHeight);
 			}
 		}
 
@@ -703,6 +707,18 @@ public final class UIDemoScreen extends Screen {
 		if (level < 0 || level >= STRESS_COLUMNS.length)
 			throw new IllegalArgumentException("Stress level must be between 0 and 3");
 		return STRESS_COLUMNS[level] * STRESS_ROWS[level];
+	}
+
+	static int spriteSourceX(final int frame, final int atlasWidth) {
+		return Math.floorMod(frame, spriteColumns(atlasWidth)) * GPUTEST3_FRAME_WIDTH;
+	}
+
+	static int spriteSourceY(final int frame, final int atlasWidth) {
+		return Math.floorDiv(frame, spriteColumns(atlasWidth)) * GPUTEST3_FRAME_HEIGHT;
+	}
+
+	private static int spriteColumns(final int atlasWidth) {
+		return Math.max(1, atlasWidth / GPUTEST3_FRAME_WIDTH);
 	}
 
 	static FrameStats computeFrameStats(final float[] samples, final int sampleCount) {
