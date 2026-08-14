@@ -34,8 +34,7 @@ public final class AppsMenuScreen extends Screen {
 		MARIO("MARIO", "GAME", "M", 0xFFD45B45),
 		KEYBOARD_GUIDE("KEYBOARD", "GUIDE", "KEY", 0xFF2D8B73),
 		SETTINGS("SETTINGS", "SYSTEM", "SET", 0xFF64748B),
-		KEYBOARD_DEBUG("KEYBOARD", "DIAGNOSTICS", "DBG", 0xFFC07824),
-		UI_DEMO("UI / GPU", "DEBUG DEMO", "GPU", 0xFF8B4E9F);
+		DEBUG_TOOLS("DEBUG TOOLS", "TESTS & DIAGNOSTICS", "DBG", 0xFF8B4E9F);
 
 		private final String title;
 		private final String subtitle;
@@ -225,7 +224,6 @@ public final class AppsMenuScreen extends Screen {
 			case NUM4:
 			case NUM5:
 			case NUM6:
-			case NUM7:
 				final int shortcutIndex = shortcutIndex(event.getKey());
 				if (shortcutIndex < apps.size()) {
 					selectedIndex = shortcutIndex;
@@ -306,7 +304,6 @@ public final class AppsMenuScreen extends Screen {
 			case NUM4 -> 3;
 			case NUM5 -> 4;
 			case NUM6 -> 5;
-			case NUM7 -> 6;
 			default -> -1;
 		};
 	}
@@ -318,8 +315,7 @@ public final class AppsMenuScreen extends Screen {
 			case TETRIS -> new TetrisScreen();
 			case MARIO -> new MarioScreen();
 			case SETTINGS -> new SettingsMenuScreen();
-			case KEYBOARD_DEBUG -> new KeyboardDebugScreen();
-			case UI_DEMO -> new UIDemoScreen();
+			case DEBUG_TOOLS -> new DebugMenuScreen();
 		};
 	}
 

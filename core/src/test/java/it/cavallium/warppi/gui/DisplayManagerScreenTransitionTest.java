@@ -1,7 +1,10 @@
 package it.cavallium.warppi.gui;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +18,7 @@ import it.cavallium.warppi.event.TouchStartEvent;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.GraphicEngine;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
+import it.cavallium.warppi.gui.graphicengine.RenderingLoop;
 import it.cavallium.warppi.gui.graphicengine.Skin;
 import it.cavallium.warppi.gui.graphicengine.impl.common.ReboundedRenderer;
 import it.cavallium.warppi.gui.graphicengine.impl.nogui.NoGuiEngine;
@@ -128,6 +132,61 @@ class DisplayManagerScreenTransitionTest {
 		manager.refresh(true);
 		assertEquals(1, opaque.unloads);
 		assertEquals(1, spinner.unloads);
+	}
+
+	@Test
+	void latchesAFatalRenderFailureAndDrawsOnlyTheEmergencyStatusMarkerAfterward() {
+		final RecordingRenderer renderer = new RecordingRenderer();
+		final RecordingEngine engine = new RecordingEngine(renderer);
+		final TestScreen screen = new TestScreen(0xFF102030, "failing", renderer);
+		final DisplayManager manager = manager(engine, screen);
+		manager.renderer = renderer;
+		screen.renderFailure = new IllegalStateException("intentional render failure");
+		manager.setScreen(screen);
+
+		manager.refresh(true);
+
+		assertTrue(manager.isCrashed());
+		assertEquals(1, screen.renders);
+		assertTrue(renderer.events.contains("fill:ffb3261e:40,2,16,16"));
+
+		renderer.events.clear();
+		manager.refresh(true);
+
+		assertEquals(1, screen.renders);
+		assertEquals("fill:ffb3261e:40,2,16,16", renderer.events.get(0));
+		assertEquals(10, renderer.events.size());
+	}
+
+	@Test
+	void requestsOnlyOneEmergencyRepaintWhenFatalFailuresRace() {
+		final RecordingRenderer renderer = new RecordingRenderer();
+		final RecordingEngine engine = new RecordingEngine(renderer);
+		final DisplayManager manager = manager(engine,
+				new TestScreen(0xFF102030, "ready", renderer));
+		manager.renderer = renderer;
+
+		assertTrue(manager.reportFatalFailure(new AssertionError("first")));
+		assertFalse(manager.reportFatalFailure(new AssertionError("second")));
+
+		assertTrue(manager.isCrashed());
+		assertEquals(1, engine.repaints);
+	}
+
+	@Test
+	void startsTheBackendInCrashModeWhenResourcesFailBeforeTheRenderLoop() {
+		final RecordingRenderer renderer = new RecordingRenderer();
+		final RecordingEngine engine = new RecordingEngine(renderer);
+		final DisplayManager manager = manager(engine,
+				new TestScreen(0xFF102030, "unused", renderer));
+		manager.renderer = renderer;
+		engine.skinFailure = new IOException("intentional skin failure");
+
+		manager.loop();
+
+		assertTrue(manager.isCrashed());
+		assertEquals(1, engine.starts);
+		assertTrue(renderer.events.contains("fill:ffb3261e:40,2,16,16"));
 	}
 
 	private static void setField(final Object target, final String name, final Object value)
@@ -258,6 +317,8 @@ class DisplayManagerScreenTransitionTest {
 		private Runnable onGraphicInitialization = () -> {};
 		private boolean userInputAllowed = true;
 		private int touchStarts;
+		private int renders;
+		private RuntimeException renderFailure;
 
 		private TestScreen(final int backgroundColor, final String name,
 				final RecordingRenderer renderer) {
@@ -297,6 +358,9 @@ class DisplayManagerScreenTransitionTest {
 
 		@Override
 		public void render(final RenderContext ctx) {
+			renders++;
+			if (renderFailure != null)
+				throw renderFailure;
 			renderer.events.add("render:" + name);
 		}
 
@@ -374,6 +438,9 @@ class DisplayManagerScreenTransitionTest {
 
 	private static final class RecordingEngine extends NoGuiEngine {
 		private final RecordingRenderer renderer;
+		private int repaints;
+		private int starts;
+		private IOException skinFailure;
 
 		private RecordingEngine(final RecordingRenderer renderer) {
 			this.renderer = renderer;
@@ -392,6 +459,24 @@ class DisplayManagerScreenTransitionTest {
 		@Override
 		public Renderer getRenderer() {
 			return renderer;
+		}
+
+		@Override
+		public Skin loadSkin(final String file) throws IOException {
+			if (skinFailure != null)
+				throw skinFailure;
+			return super.loadSkin(file);
+		}
+
+		@Override
+		public void start(final RenderingLoop renderingLoop) {
+			starts++;
+			renderingLoop.refresh(true);
+		}
+
+		@Override
+		public void repaint() {
+			repaints++;
 		}
 	}
 
@@ -417,6 +502,11 @@ class DisplayManagerScreenTransitionTest {
 		@Override
 		public void glColor(final int color) {
 			this.color = color;
+		}
+
+		@Override
+		public void glColor3i(final int red, final int green, final int blue) {
+			color = 0xFF000000 | red << 16 | green << 8 | blue;
 		}
 
 		@Override

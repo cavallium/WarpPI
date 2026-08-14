@@ -50,6 +50,7 @@ public final class DisplayManager implements RenderingLoop {
 	 * Set to true when an event is fired
 	 */
 	public volatile boolean forceRefresh;
+	private volatile boolean crashed;
 
 	public DisplayManager(final DisplayOutputDevice display, final BacklightOutputDevice backlight, final HUD hud, final Screen screen, final String title) {
 		this(display, backlight, hud, screen, title, WarpPI.getPlatform().newSemaphore());
@@ -441,13 +442,90 @@ public final class DisplayManager implements RenderingLoop {
 		draw_world(frameScreen);
 	}
 
+	public boolean isCrashed() {
+		return crashed;
+	}
+
+	/**
+	 * Latches the first fatal failure and asks the backend for one best-effort
+	 * repaint. Later frames bypass the failed screen/HUD path and draw only the
+	 * texture-free crash marker.
+	 *
+	 * @return true only for the first failure that entered crash mode
+	 */
+	public boolean reportFatalFailure(final Throwable failure) {
+		if (!latchFatalFailure(failure))
+			return false;
+		requestEmergencyRepaint();
+		return true;
+	}
+
+	private synchronized boolean latchFatalFailure(final Throwable failure) {
+		if (failure == null)
+			throw new IllegalArgumentException("Fatal failure must not be null");
+		if (crashed)
+			return false;
+		crashed = true;
+		forceRefresh = true;
+		return true;
+	}
+
+	private void handleFatalFailure(final Throwable failure, final boolean drawImmediately) {
+		if (latchFatalFailure(failure))
+			printFatalFailure(failure);
+		if (drawImmediately)
+			renderCrashedStatusIndicator();
+		else
+			requestEmergencyRepaint();
+	}
+
+	private static void printFatalFailure(final Throwable failure) {
+		try {
+			failure.printStackTrace();
+		} catch (final Throwable ignored) {
+			// The original failure may be an exhausted VM; the indicator is primary.
+		}
+	}
+
+	private void requestEmergencyRepaint() {
+		forceRefresh = true;
+		try {
+			graphicEngine.repaint();
+		} catch (final Throwable ignored) {
+			// A destroyed graphics context cannot present an emergency frame.
+		}
+	}
+
+	private void renderCrashedStatusIndicator() {
+		final Renderer frameRenderer = renderer;
+		if (frameRenderer == null)
+			return;
+		try {
+			CalculatorHUD.renderCrashedIndicator(frameRenderer,
+					CalculatorHUD.STATUS_INDICATOR_X, CalculatorHUD.STATUS_INDICATOR_Y);
+		} catch (final Throwable ignored) {
+			// Rendering itself may be irrecoverable; never recurse from crash mode.
+		}
+	}
+
 	private long precTime = -1;
 
 	@Override
 	public void refresh(boolean force) {
-		if (force || supportsPauses == false || Keyboard.popRefreshRequest() || forceRefresh || screen.mustBeRefreshed()) {
+		if (crashed) {
 			forceRefresh = false;
-			draw();
+			renderCrashedStatusIndicator();
+			return;
+		}
+		try {
+			final Screen frameScreen = screen;
+			if (frameScreen != null && (force || supportsPauses == false
+					|| Keyboard.popRefreshRequest() || forceRefresh || frameScreen.mustBeRefreshed())) {
+				forceRefresh = false;
+				draw();
+			}
+		} catch (final Throwable failure) {
+			handleFatalFailure(failure, true);
 		}
 
 	}
@@ -457,6 +535,7 @@ public final class DisplayManager implements RenderingLoop {
 	}
 
 	public void loop() {
+		boolean engineStartAttempted = false;
 		try {
 			load_skin();
 			WarpPI.INSTANCE.reportLoadingProgress(WarpPI.STARTUP_SKIN_RESOURCES_READY);
@@ -477,33 +556,54 @@ public final class DisplayManager implements RenderingLoop {
 			new Timer(DisplayManager.tickDuration, displayRefreshManager::onTick);
 			graphicEngine.onResize().subscribe(displayRefreshManager::onResize);
 
+			engineStartAttempted = true;
 			graphicEngine.start(getDrawable());
-		} catch (final Exception ex) {
-			ex.printStackTrace();
+		} catch (final Throwable failure) {
+			handleFatalFailure(failure, false);
+			if (!engineStartAttempted) {
+				try {
+					/*
+					 * The emergency frame has no resource dependencies, so it can still be
+					 * presented when skin/font/timer setup failed before backend startup.
+					 */
+					graphicEngine.start(getDrawable());
+				} catch (final Throwable backendFailure) {
+					printFatalFailure(backendFailure);
+				}
+			}
 		} finally {
 		}
 	}
 
 	private void onRefresh(Integer[] windowSize) {
-		double dt = 0;
-		final long newtime = System.nanoTime();
-		if (precTime == -1) {
-			dt = DisplayManager.tickDuration;
-		} else {
-			dt = (newtime - precTime) / 1000d / 1000d;
-		}
-		precTime = newtime;
+		if (crashed)
+			return;
+		try {
+			double dt = 0;
+			final long newtime = System.nanoTime();
+			if (precTime == -1) {
+				dt = DisplayManager.tickDuration;
+			} else {
+				dt = (newtime - precTime) / 1000d / 1000d;
+			}
+			precTime = newtime;
 
-		if (windowSize != null) {
-			display.getDisplaySize()[0] = windowSize[0];
-			display.getDisplaySize()[1] = windowSize[1];
-		}
+			if (windowSize != null) {
+				display.getDisplaySize()[0] = windowSize[0];
+				display.getDisplaySize()[1] = windowSize[1];
+			}
 
-		var displaySize = display.getDisplaySize();
-		var scrWidth = displaySize[0] - hud.getMarginLeft() - hud.getMarginRight();
-		var scrHeight = displaySize[1] - hud.getMarginTop() - hud.getMarginBottom();
-		var scrCtx = new ScreenContext(graphicEngine, scrWidth, scrHeight);
-		screen.beforeRender(scrCtx, (float) (dt / 1000d));
+			final int[] displaySize = display.getDisplaySize();
+			final int scrWidth = displaySize[0] - hud.getMarginLeft() - hud.getMarginRight();
+			final int scrHeight = displaySize[1] - hud.getMarginTop() - hud.getMarginBottom();
+			final Screen currentScreen = screen;
+			if (currentScreen != null) {
+				final ScreenContext scrCtx = new ScreenContext(graphicEngine, scrWidth, scrHeight);
+				currentScreen.beforeRender(scrCtx, (float) (dt / 1000d));
+			}
+		} catch (final Throwable failure) {
+			handleFatalFailure(failure, false);
+		}
 	}
 
 	public void changeBrightness(final float change) {

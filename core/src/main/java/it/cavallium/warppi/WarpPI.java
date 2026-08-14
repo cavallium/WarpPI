@@ -38,7 +38,7 @@ public class WarpPI {
 	private final EventSubmitter<Boolean> loaded = EventSubmitter.create(false);
 	private volatile int loadingProgressPercent;
 	private volatile int activeLoadingOperations;
-	private Device device;
+	private volatile Device device;
 
 	private WarpPI() {
 	}
@@ -67,6 +67,7 @@ public class WarpPI {
 		throws IOException {
 		loadingProgressPercent = 0;
 		WarpPI.platform = platform;
+		installFatalFailureHandler();
 		// Set arguments on platform before everything else
 		platform.setArguments(args);
 
@@ -95,6 +96,30 @@ public class WarpPI {
 			exitStatus = 1;
 		}
 		this.onShutdown(exitStatus);
+	}
+
+	private void installFatalFailureHandler() {
+		final Thread.UncaughtExceptionHandler previousHandler =
+				Thread.getDefaultUncaughtExceptionHandler();
+		try {
+			Thread.setDefaultUncaughtExceptionHandler((thread, failure) -> {
+				try {
+					final Device currentDevice = device;
+					if (currentDevice != null)
+						currentDevice.getDisplayManager().reportFatalFailure(failure);
+				} catch (final Throwable ignored) {
+					// Preserve the original uncaught failure even if reporting also fails.
+				} finally {
+					if (previousHandler != null)
+						previousHandler.uncaughtException(thread, failure);
+					else
+						failure.printStackTrace();
+				}
+			});
+		} catch (final SecurityException denied) {
+			// Rendering-boundary protection remains active on restricted runtimes.
+			denied.printStackTrace();
+		}
 	}
 
 	private void onShutdown(final int exitStatus) {

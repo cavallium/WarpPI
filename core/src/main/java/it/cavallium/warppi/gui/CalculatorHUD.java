@@ -13,6 +13,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 public class CalculatorHUD extends HUD {
 	private static final int BACKGROUND_COLOR = 0xFFC5C2AF;
+	static final int STATUS_INDICATOR_X = 40;
+	static final int STATUS_INDICATOR_Y = 2;
 
 	@Override
 	public void created() throws InterruptedException {
@@ -168,6 +170,27 @@ public class CalculatorHUD extends HUD {
 		renderer.glFillColor(x + 1, y + 8, 8, 2);
 		renderer.glFillColor(x, y + 10, 10, 2);
 		renderer.glColor3i(255, 255, 255);
+	}
+
+	/**
+	 * Draws an opaque, texture-free crash marker. Keeping this independent of the
+	 * skin lets the display manager draw it even when texture or HUD rendering is
+	 * the code path that failed.
+	 */
+	static void renderCrashedIndicator(final Renderer renderer, final int x, final int y) {
+		renderer.glColor3i(179, 38, 30);
+		renderer.glFillColor(x, y, 16, 16);
+
+		renderer.glColor3i(255, 255, 255);
+		renderer.glFillColor(x + 3, y + 3, 2, 2);
+		renderer.glFillColor(x + 11, y + 3, 2, 2);
+		renderer.glFillColor(x + 5, y + 5, 2, 2);
+		renderer.glFillColor(x + 9, y + 5, 2, 2);
+		renderer.glFillColor(x + 7, y + 7, 2, 2);
+		renderer.glFillColor(x + 5, y + 9, 2, 2);
+		renderer.glFillColor(x + 9, y + 9, 2, 2);
+		renderer.glFillColor(x + 3, y + 11, 2, 2);
+		renderer.glFillColor(x + 11, y + 11, 2, 2);
 	}
 
 	@Override

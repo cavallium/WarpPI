@@ -25,7 +25,7 @@ class AppsMenuScreenTest {
 	void addsDiagnosticUisOnlyWhenDebugIsEnabled() {
 		assertEquals(List.of(App.CALCULATOR, App.TETRIS, App.MARIO,
 				App.KEYBOARD_GUIDE, App.SETTINGS,
-				App.KEYBOARD_DEBUG, App.UI_DEMO), AppsMenuScreen.availableApps(true));
+				App.DEBUG_TOOLS), AppsMenuScreen.availableApps(true));
 	}
 
 	@Test
@@ -50,7 +50,7 @@ class AppsMenuScreenTest {
 
 		final int debugAppCount = AppsMenuScreen.availableApps(true).size();
 		assertEquals(5, AppsMenuScreen.nextSelection(3, debugAppCount, Key.DOWN));
-		assertEquals(6, AppsMenuScreen.nextSelection(5, debugAppCount, Key.RIGHT));
+		assertEquals(5, AppsMenuScreen.nextSelection(5, debugAppCount, Key.RIGHT));
 	}
 
 	@Test
@@ -61,7 +61,7 @@ class AppsMenuScreenTest {
 		assertEquals(3, AppsMenuScreen.shortcutIndex(Key.NUM4));
 		assertEquals(4, AppsMenuScreen.shortcutIndex(Key.NUM5));
 		assertEquals(5, AppsMenuScreen.shortcutIndex(Key.NUM6));
-		assertEquals(6, AppsMenuScreen.shortcutIndex(Key.NUM7));
+		assertEquals(-1, AppsMenuScreen.shortcutIndex(Key.NUM7));
 		assertEquals(-1, AppsMenuScreen.shortcutIndex(Key.NUM0));
 		assertEquals(-1, AppsMenuScreen.shortcutIndex(Key.OK));
 	}
@@ -72,8 +72,7 @@ class AppsMenuScreenTest {
 				AppsMenuScreen.createScreen(App.KEYBOARD_GUIDE));
 		assertInstanceOf(TetrisScreen.class, AppsMenuScreen.createScreen(App.TETRIS));
 		assertInstanceOf(MarioScreen.class, AppsMenuScreen.createScreen(App.MARIO));
-		assertInstanceOf(KeyboardDebugScreen.class,
-				AppsMenuScreen.createScreen(App.KEYBOARD_DEBUG));
-		assertInstanceOf(UIDemoScreen.class, AppsMenuScreen.createScreen(App.UI_DEMO));
+		assertInstanceOf(DebugMenuScreen.class,
+				AppsMenuScreen.createScreen(App.DEBUG_TOOLS));
 	}
 }
