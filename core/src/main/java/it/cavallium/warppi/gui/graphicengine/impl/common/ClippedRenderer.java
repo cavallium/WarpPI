@@ -2,6 +2,7 @@ package it.cavallium.warppi.gui.graphicengine.impl.common;
 
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
+import it.cavallium.warppi.gui.graphicengine.RendererFrameDiagnostics;
 
 /**
  * Translates local drawing coordinates and clips every primitive to a rectangular viewport.
@@ -173,6 +174,11 @@ public final class ClippedRenderer implements Renderer {
 	@Override
 	public BinaryFont getCurrentFont() {
 		return renderer.getCurrentFont();
+	}
+
+	@Override
+	public RendererFrameDiagnostics getFrameDiagnostics() {
+		return renderer.getFrameDiagnostics();
 	}
 
 	@Override

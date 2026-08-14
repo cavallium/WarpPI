@@ -21,6 +21,7 @@ import com.jogamp.opengl.util.texture.TextureIO;
 import it.cavallium.warppi.WarpPI;
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
+import it.cavallium.warppi.gui.graphicengine.RendererFrameDiagnostics;
 
 public class JOGLRenderer implements Renderer {
 
@@ -52,6 +53,20 @@ public class JOGLRenderer implements Renderer {
 	FloatBuffer fbTextures;
 	FloatBuffer fbColors;
 	int fbElements;
+	private boolean diagnosticsFrameActive;
+	private long diagnosticsFrameStartedNanos;
+	private long diagnosticsFrameNumber;
+	private int diagnosticsQuads;
+	private int diagnosticsBatches;
+	private int diagnosticsTextureSwitches;
+	private long diagnosticsUploadedBytes;
+	private volatile long publishedDiagnosticsVersion;
+	private long publishedFrameNumber;
+	private int publishedQuads;
+	private int publishedBatches;
+	private int publishedTextureSwitches;
+	private int publishedUploadedBytes;
+	private long publishedSubmissionNanos;
 
 	final float[] currentColor = new float[JOGLRenderer.colSize * JOGLRenderer.ELEMENT_VERTICES_COUNT];
 	final float[] currentClearColorARGBf = { 1f, 197f / 255f, 194f / 255f, 175f / 255f };
@@ -144,7 +159,9 @@ public class JOGLRenderer implements Renderer {
 
 	@Override
 	public void glDrawLine(final float x0, final float y0, final float x1, final float y1) {
-		glFillColor(x0, y0, x1 - x0 + 1, y1 - y0 + 1);
+		final float left = Math.min(x0, x1);
+		final float top = Math.min(y0, y1);
+		glFillColor(left, top, Math.abs(x1 - x0) + 1, Math.abs(y1 - y0) + 1);
 	}
 
 	@Override
@@ -201,6 +218,7 @@ public class JOGLRenderer implements Renderer {
 	private void putQuad(final float x0, final float y0, final float x1, final float y1,
 			final float u0, final float v0, final float u1, final float v1) {
 		fbElements++;
+		diagnosticsQuads++;
 		fbVertices
 				.put(x0).put(y1).put(0.0f)
 				.put(x1).put(y1).put(0.0f)
@@ -221,6 +239,9 @@ public class JOGLRenderer implements Renderer {
 	@Override
 	public void glDrawStringLeft(final float x, final float y, final String text) {
 		final int txtLen = text.length();
+		if (txtLen == 0)
+			return;
+		selectCurrentFontTexture();
 		for (int currentCharIndex = 0; currentCharIndex < txtLen; currentCharIndex++)
 			drawChar(x + (float) currentCharIndex * currentFont.charW, y, text.charAt(currentCharIndex));
 	}
@@ -237,7 +258,23 @@ public class JOGLRenderer implements Renderer {
 
 	@Override
 	public void glDrawCharLeft(final int x, final int y, final char ch) {
+		selectCurrentFontTexture();
 		drawChar(x, y, ch);
+	}
+
+	/**
+	 * A skin clear disables and forgets the sampled texture but intentionally keeps
+	 * the selected font. Restore that font once per text call, before the glyph hot
+	 * loop, so a later text draw cannot enable texturing with a null texture.
+	 */
+	void selectCurrentFontTexture() {
+		if (currentFont == null || currentFont.texture == null)
+			throw new IllegalStateException("No initialized font atlas is selected");
+		if (currentTex == currentFont.texture)
+			return;
+		currentTex = currentFont.texture;
+		currentTexWidth = currentFont.textureW;
+		currentTexHeight = currentFont.textureH;
 	}
 
 	private void drawChar(final float x, final float y, final char ch) {
@@ -260,6 +297,32 @@ public class JOGLRenderer implements Renderer {
 	@Override
 	public BinaryFont getCurrentFont() {
 		return currentFont;
+	}
+
+	@Override
+	public RendererFrameDiagnostics getFrameDiagnostics() {
+		long version;
+		long frameNumber;
+		int quads;
+		int batches;
+		int textureSwitches;
+		int uploadedBytes;
+		long submissionNanos;
+		while (true) {
+			version = publishedDiagnosticsVersion;
+			if ((version & 1) != 0)
+				continue;
+			frameNumber = publishedFrameNumber;
+			quads = publishedQuads;
+			batches = publishedBatches;
+			textureSwitches = publishedTextureSwitches;
+			uploadedBytes = publishedUploadedBytes;
+			submissionNanos = publishedSubmissionNanos;
+			if (version == publishedDiagnosticsVersion)
+				break;
+		}
+		return new RendererFrameDiagnostics(true, "JOGL GL2ES1", frameNumber, quads, batches,
+				textureSwitches, uploadedBytes, ELEMENTS_MAX_COUNT_PER_BUFFER, submissionNanos);
 	}
 
 	@Deprecated
@@ -339,6 +402,8 @@ public class JOGLRenderer implements Renderer {
 	}
 
 	public void initDrawCycle() {
+		if (!diagnosticsFrameActive)
+			resetFrameDiagnostics();
 		final boolean textureChange = precTexEnabled != currentTexEnabled || precTex != currentTex;
 		if (fbVertices == null) {
 			fbVertices = Buffers.newDirectFloatBuffer(JOGLRenderer.vertMax);
@@ -360,9 +425,43 @@ public class JOGLRenderer implements Renderer {
 			changeTexture();
 		} else if (fbElements > 0)
 			endDrawSegment();
+		if (!diagnosticsFrameActive)
+			publishFrameDiagnostics();
+	}
+
+	void beginFrameDiagnostics() {
+		diagnosticsFrameActive = true;
+		resetFrameDiagnostics();
+	}
+
+	void endFrameDiagnostics() {
+		publishFrameDiagnostics();
+		diagnosticsFrameActive = false;
+	}
+
+	private void resetFrameDiagnostics() {
+		diagnosticsFrameStartedNanos = System.nanoTime();
+		diagnosticsQuads = 0;
+		diagnosticsBatches = 0;
+		diagnosticsTextureSwitches = 0;
+		diagnosticsUploadedBytes = 0;
+	}
+
+	private void publishFrameDiagnostics() {
+		final long elapsed = diagnosticsFrameStartedNanos == 0 ? 0
+				: Math.max(0, System.nanoTime() - diagnosticsFrameStartedNanos);
+		publishedDiagnosticsVersion++;
+		publishedFrameNumber = ++diagnosticsFrameNumber;
+		publishedQuads = diagnosticsQuads;
+		publishedBatches = diagnosticsBatches;
+		publishedTextureSwitches = diagnosticsTextureSwitches;
+		publishedUploadedBytes = (int) Math.min(Integer.MAX_VALUE, diagnosticsUploadedBytes);
+		publishedSubmissionNanos = elapsed;
+		publishedDiagnosticsVersion++;
 	}
 
 	private void changeTexture() {
+		diagnosticsTextureSwitches++;
 		precTexEnabled = currentTexEnabled;
 		precTex = currentTex;
 		if (currentTexEnabled) {
@@ -405,6 +504,9 @@ public class JOGLRenderer implements Renderer {
 		fbVertices.flip();
 		fbTextures.flip();
 		fbColors.flip();
+		diagnosticsBatches++;
+		diagnosticsUploadedBytes += (long) (fbVertices.limit() + fbTextures.limit() + fbColors.limit())
+				* Buffers.SIZEOF_FLOAT;
 
 //		gl.glVertexPointer(vertSize, GL.GL_FLOAT, 0, fbVertices);
 		JOGLRenderer.gl.glBindBuffer(GL.GL_ARRAY_BUFFER, handlers[JOGLRenderer.vertBuffer]);

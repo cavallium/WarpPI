@@ -2,6 +2,7 @@ package it.cavallium.warppi.gui.graphicengine.impl.common;
 
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
+import it.cavallium.warppi.gui.graphicengine.RendererFrameDiagnostics;
 
 public class ReboundedRenderer implements Renderer {
 	private final Renderer renderer;
@@ -121,6 +122,11 @@ renderer.glDrawCharCenter(this.dx + x, this.dy + y, ch);
 	@Override
 	public BinaryFont getCurrentFont() {
 		return renderer.getCurrentFont();
+	}
+
+	@Override
+	public RendererFrameDiagnostics getFrameDiagnostics() {
+		return renderer.getFrameDiagnostics();
 	}
 
 	@Override

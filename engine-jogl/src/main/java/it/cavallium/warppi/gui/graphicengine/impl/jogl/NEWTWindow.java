@@ -496,6 +496,7 @@ class NEWTWindow implements GLEventListener {
 		gl.glEnableClientState(GLPointerFunc.GL_VERTEX_ARRAY);
 		gl.glEnableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);
 
+		renderer.beginFrameDiagnostics();
 		renderer.initDrawCycle();
 
 		engine.repaint();
@@ -507,6 +508,7 @@ class NEWTWindow implements GLEventListener {
 					layout.windowLogicalWidth(), JOGLKeyboardPanel.LOGICAL_HEIGHT);
 			keyboardPanel.render(renderer, layout.windowLogicalWidth(), engine.getKeyboardFont());
 		}
+		renderer.endFrameDiagnostics();
 
 		gl.glDisableClientState(GLPointerFunc.GL_COLOR_ARRAY);
 		gl.glDisableClientState(GLPointerFunc.GL_TEXTURE_COORD_ARRAY);

@@ -1,6 +1,7 @@
 package it.cavallium.warppi.gui.graphicengine.impl.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import it.cavallium.warppi.gui.graphicengine.BinaryFont;
 import it.cavallium.warppi.gui.graphicengine.Renderer;
+import it.cavallium.warppi.gui.graphicengine.RendererFrameDiagnostics;
 
 class ClippedRendererTest {
 
@@ -50,8 +52,18 @@ class ClippedRendererTest {
 		assertEquals(List.of("fill:25.0,25.0,5.0,7.0"), target.events);
 	}
 
+	@Test
+	void viewportWrappersPreserveBackendDiagnostics() {
+		final RecordingRenderer target = new RecordingRenderer();
+
+		assertSame(target.diagnostics, target.getClippedInstance(0, 0, 10, 10).getFrameDiagnostics());
+		assertSame(target.diagnostics, target.getBoundedInstance(0, 0, 10, 10).getFrameDiagnostics());
+	}
+
 	private static final class RecordingRenderer implements Renderer {
 		private final List<String> events = new ArrayList<>();
+		private final RendererFrameDiagnostics diagnostics = new RendererFrameDiagnostics(
+				true, "TEST", 1, 2, 1, 0, 64, 128, 10);
 		private final BinaryFont font = new BinaryFont() {
 			@Override public int getStringWidth(final String text) { return text.length() * 4; }
 			@Override public int getCharacterWidth() { return 4; }
@@ -79,6 +91,7 @@ class ClippedRendererTest {
 			events.add("text:" + x + "," + y + ":" + text);
 		}
 		@Override public BinaryFont getCurrentFont() { return font; }
+		@Override public RendererFrameDiagnostics getFrameDiagnostics() { return diagnostics; }
 		@Override public void glColor3i(final int r, final int g, final int b) {}
 		@Override public void glColor(final int color) {}
 		@Override public void glColor4i(final int red, final int green, final int blue, final int alpha) {}

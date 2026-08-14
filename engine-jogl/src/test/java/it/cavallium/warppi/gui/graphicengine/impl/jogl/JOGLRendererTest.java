@@ -5,12 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 
 import org.junit.jupiter.api.Test;
+
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.util.texture.Texture;
 
 class JOGLRendererTest {
 
@@ -82,6 +86,61 @@ class JOGLRendererTest {
 		renderer.glClearSkin();
 
 		assertFalse(renderer.currentTexEnabled);
+	}
+
+	@Test
+	void restoresSelectedFontTextureAfterSkinClear() throws IOException {
+		final JOGLRenderer renderer = new JOGLRenderer();
+		final JOGLFont font = new JOGLFont("smallest");
+		font.texture = new Texture(GL.GL_TEXTURE_2D);
+		font.textureW = 64;
+		font.textureH = 32;
+		renderer.currentFont = font;
+
+		renderer.glClearSkin();
+		renderer.selectCurrentFontTexture();
+
+		assertSame(font.texture, renderer.currentTex);
+		assertEquals(64, renderer.currentTexWidth);
+		assertEquals(32, renderer.currentTexHeight);
+	}
+
+	@Test
+	void normalizesReverseLineCoordinates() {
+		final JOGLRenderer renderer = rendererWithOneQuadBuffers();
+		renderer.glColor4f(1f, 1f, 1f, 1f);
+
+		renderer.glDrawLine(7, 10, 2, 3);
+
+		assertArrayEquals(new float[] {
+				2, 11, 0, 8, 11, 0, 2, 3, 0,
+				2, 3, 0, 8, 11, 0, 8, 3, 0
+		}, written(renderer.fbVertices));
+	}
+
+	@Test
+	void reportsSubmittedQuadsOnlyWhenDiagnosticsAreRequested() {
+		final JOGLRenderer renderer = rendererWithOneQuadBuffers();
+		renderer.beginFrameDiagnostics();
+		renderer.glColor4f(1f, 1f, 1f, 1f);
+		renderer.glFillColor(1, 2, 3, 4);
+		renderer.endFrameDiagnostics();
+
+		final var diagnostics = renderer.getFrameDiagnostics();
+		assertTrue(diagnostics.available());
+		assertEquals("JOGL GL2ES1", diagnostics.backend());
+		assertEquals(1, diagnostics.frameNumber());
+		assertEquals(1, diagnostics.quads());
+		assertEquals(6, diagnostics.vertices());
+		assertEquals(128, diagnostics.maxBatchQuads());
+	}
+
+	private static JOGLRenderer rendererWithOneQuadBuffers() {
+		final JOGLRenderer renderer = new JOGLRenderer();
+		renderer.fbVertices = FloatBuffer.allocate(18);
+		renderer.fbTextures = FloatBuffer.allocate(12);
+		renderer.fbColors = FloatBuffer.allocate(24);
+		return renderer;
 	}
 
 	private static float[] written(final FloatBuffer buffer) {

@@ -46,6 +46,14 @@ public interface Renderer {
 
 	BinaryFont getCurrentFont();
 
+	/**
+	 * Returns previous-frame submission counters when the backend exposes them.
+	 * Implementations must not block for a GPU timing query here.
+	 */
+	default RendererFrameDiagnostics getFrameDiagnostics() {
+		return RendererFrameDiagnostics.UNAVAILABLE;
+	}
+
 	default Renderer getBoundedInstance(int dx, int dy, int width, int height) {
 		return new ReboundedRenderer(this, dx, dy, width, height);
 	}
