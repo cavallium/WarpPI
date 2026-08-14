@@ -47,6 +47,31 @@ class KeyboardMatrixScannerTest {
 		assertEquals(List.of("0:7:true", "0:7:false"), fixture.events);
 	}
 
+	@Test
+	void exposesEveryRawColumnBeforeDebounce() {
+		final int[] rows = new int[KeyboardMatrixScanner.MATRIX_SIZE];
+		final List<String> samples = new ArrayList<>();
+		final List<String> transitions = new ArrayList<>();
+		final int[] selectedColumn = { -1 };
+		rows[3] = 1 << 2 | 1 << 3;
+		rows[5] = 1 << 1;
+		rows[6] = 1 << 2 | 1 << 3;
+
+		final KeyboardMatrixScanner scanner = new KeyboardMatrixScanner(
+				mask -> selectedColumn[0] = mask == 0 ? -1 : Integer.numberOfTrailingZeros(mask),
+				() -> rows[selectedColumn[0]],
+				(row, column, pressed) -> transitions.add(row + ":" + column + ":" + pressed),
+				(column, sampledRows) -> samples.add(column + ":" + sampledRows), 3);
+
+		scanner.scanOnce();
+
+		assertEquals(8, samples.size());
+		assertEquals("3:12", samples.get(3));
+		assertEquals("5:2", samples.get(5));
+		assertEquals("6:12", samples.get(6));
+		assertTrue(transitions.isEmpty());
+	}
+
 	private static final class MatrixFixture {
 		private final int[] rows = new int[KeyboardMatrixScanner.MATRIX_SIZE];
 		private final List<String> events = new ArrayList<>();

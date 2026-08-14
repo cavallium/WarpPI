@@ -15,23 +15,42 @@ final class KeyboardMatrixScanner {
 		void onTransition(int row, int column, boolean pressed);
 	}
 
+	@FunctionalInterface
+	interface SampleListener {
+		void onSample(int column, int sampledRows);
+	}
+
 	private final IntConsumer writeColumns;
 	private final IntSupplier readRows;
 	private final TransitionListener listener;
+	private final SampleListener sampleListener;
 	private final int debounceSamples;
 	private final int[] stableRowsByColumn = new int[MATRIX_SIZE];
 	private final byte[] consecutiveChanges = new byte[MATRIX_SIZE * MATRIX_SIZE];
 
 	KeyboardMatrixScanner(final SerialToParallel columns, final ParallelToSerial rows,
 			final TransitionListener listener, final int debounceSamples) {
-		this(columns::writeByte, rows::readByte, listener, debounceSamples);
+		this(columns::writeByte, rows::readByte, listener, null, debounceSamples);
+	}
+
+	KeyboardMatrixScanner(final SerialToParallel columns, final ParallelToSerial rows,
+			final TransitionListener listener, final SampleListener sampleListener,
+			final int debounceSamples) {
+		this(columns::writeByte, rows::readByte, listener, sampleListener, debounceSamples);
 	}
 
 	KeyboardMatrixScanner(final IntConsumer writeColumns, final IntSupplier readRows,
 			final TransitionListener listener, final int debounceSamples) {
+		this(writeColumns, readRows, listener, null, debounceSamples);
+	}
+
+	KeyboardMatrixScanner(final IntConsumer writeColumns, final IntSupplier readRows,
+			final TransitionListener listener, final SampleListener sampleListener,
+			final int debounceSamples) {
 		this.writeColumns = Objects.requireNonNull(writeColumns);
 		this.readRows = Objects.requireNonNull(readRows);
 		this.listener = Objects.requireNonNull(listener);
+		this.sampleListener = sampleListener;
 		if (debounceSamples < 1 || debounceSamples > Byte.MAX_VALUE)
 			throw new IllegalArgumentException("debounceSamples must be between 1 and 127");
 		this.debounceSamples = debounceSamples;
@@ -41,7 +60,10 @@ final class KeyboardMatrixScanner {
 		try {
 			for (int column = 0; column < MATRIX_SIZE; column++) {
 				writeColumns.accept(1 << column);
-				acceptSample(column, readRows.getAsInt() & 0xff);
+				final int sampledRows = readRows.getAsInt() & 0xff;
+				if (sampleListener != null)
+					sampleListener.onSample(column, sampledRows);
+				acceptSample(column, sampledRows);
 			}
 		} finally {
 			writeColumns.accept(0);

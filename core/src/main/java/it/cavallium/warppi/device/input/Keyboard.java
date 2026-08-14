@@ -15,7 +15,6 @@ import it.cavallium.warppi.event.KeyReleasedEvent;
 import it.cavallium.warppi.event.KeyboardEventListener;
 import it.cavallium.warppi.gui.DisplayManager;
 import it.cavallium.warppi.gui.screens.AppsMenuScreen;
-import it.cavallium.warppi.gui.screens.KeyboardDebugScreen;
 import it.cavallium.warppi.gui.screens.Screen;
 import it.cavallium.warppi.gui.screens.UIDemoScreen;
 
@@ -36,6 +35,7 @@ public class Keyboard {
 	private static final int INPUT_CLOCK_INHIBIT_GPIO = 13;
 
 	private static final Key[][] pressedRawKeys = new Key[MATRIX_SIZE][MATRIX_SIZE];
+	private static final KeyboardMatrixDiagnostics matrixDiagnostics = new KeyboardMatrixDiagnostics();
 	public static volatile boolean[][] debugKeysDown = new boolean[8][8];
 	public static volatile int debugKeyCode = -1;
 	public static volatile int debugKeyCodeRelease = -1;
@@ -109,10 +109,10 @@ public class Keyboard {
 		final SerialToParallel columns = new SerialToParallel(outputLatch, sharedClock, outputData);
 		final ParallelToSerial rows = new ParallelToSerial(inputLoad, clockInhibit, inputData, sharedClock,
 				gpio::delayMicroseconds);
-		final KeyboardMatrixScanner scanner = new KeyboardMatrixScanner(columns, rows, Keyboard::onMatrixTransition,
-				MATRIX_DEBOUNCE_SAMPLES);
+		final KeyboardMatrixScanner scanner = new KeyboardMatrixScanner(columns, rows,
+				Keyboard::onMatrixTransition, matrixDiagnostics::recordSample, MATRIX_DEBOUNCE_SAMPLES);
 
-		KeyboardDebugScreen.log("Started keyboard system");
+		matrixDiagnostics.scanningStarted();
 		try {
 			while (!Thread.currentThread().isInterrupted()) {
 				scanner.scanOnce();
@@ -122,7 +122,11 @@ public class Keyboard {
 			try {
 				scanner.releaseAll();
 			} finally {
-				setKeyboardPinsIdle(clockInhibit, inputLoad, outputLatch, outputData, sharedClock, columns);
+				try {
+					setKeyboardPinsIdle(clockInhibit, inputLoad, outputLatch, outputData, sharedClock, columns);
+				} finally {
+					matrixDiagnostics.scanningStopped();
+				}
 			}
 		}
 	}
@@ -139,8 +143,17 @@ public class Keyboard {
 	}
 
 	private static void onMatrixTransition(final int row, final int column, final boolean pressed) {
+		matrixDiagnostics.recordTransition(row, column, pressed);
 		debugKeysDown[row][column] = pressed;
 		keyRaw(row, column, !pressed);
+	}
+
+	public static KeyboardMatrixDiagnostics.Snapshot matrixDiagnosticsSnapshot() {
+		return matrixDiagnostics.snapshot();
+	}
+
+	public static void clearMatrixDiagnostics() {
+		matrixDiagnostics.clear();
 	}
 
 	/**
